@@ -117,7 +117,7 @@ export default async function HomePage() {
         <div className="flex flex-col items-center justify-between gap-10 rounded-3xl bg-brand-600 p-10 sm:p-14 lg:flex-row">
           <div className="max-w-xl text-center lg:text-left">
             <h2 className="text-3xl font-extrabold text-white">
-              Take RENTALDOME with you
+              Take EMLAKIE with you
             </h2>
             <p className="mt-3 text-lg text-brand-50">
               Search on the go, chat with landlords, and get instant alerts when new

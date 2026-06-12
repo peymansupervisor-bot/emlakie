@@ -41,7 +41,7 @@ export default function Footer() {
 
         <div className="mt-10 border-t border-gray-200 pt-6 text-xs text-gray-500">
           <p>
-            © {new Date().getFullYear()} RENTALDOME. All rights reserved. RENTALDOME is
+            © {new Date().getFullYear()} EMLAKIE. All rights reserved. EMLAKIE is
             committed to the principles of the Fair Housing Act and Equal Opportunity.
           </p>
         </div>

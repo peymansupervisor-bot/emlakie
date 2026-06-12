@@ -82,7 +82,7 @@ export default async function ListingPage({ params }: Props) {
           <div className="sticky top-24 rounded-2xl border border-gray-200 p-6 shadow-card">
             <h2 className="text-lg font-bold text-gray-900">Interested in this home?</h2>
             <p className="mt-2 text-sm text-gray-600">
-              Message the landlord and apply directly in the RENTALDOME app — it takes
+              Message the landlord and apply directly in the EMLAKIE app — it takes
               less than two minutes.
             </p>
             <Link

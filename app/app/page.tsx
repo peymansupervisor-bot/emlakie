@@ -2,9 +2,9 @@ import type { Metadata } from 'next';
 import AppBadges from '@/components/AppBadges';
 
 export const metadata: Metadata = {
-  title: 'Get the RENTALDOME App',
+  title: 'Get the EMLAKIE App',
   description:
-    'Search rentals, chat with landlords, and apply in minutes. RENTALDOME is coming soon to the App Store and Google Play.',
+    'Search rentals, chat with landlords, and apply in minutes. EMLAKIE is coming soon to the App Store and Google Play.',
 };
 
 export default function AppPage() {
@@ -16,10 +16,10 @@ export default function AppPage() {
         </svg>
       </div>
       <h1 className="mt-8 text-4xl font-extrabold text-gray-900">
-        The RENTALDOME app is almost here
+        The EMLAKIE app is almost here
       </h1>
       <p className="mt-4 max-w-xl text-lg text-gray-600">
-        We&apos;re putting the finishing touches on the RENTALDOME app for iPhone and
+        We&apos;re putting the finishing touches on the EMLAKIE app for iPhone and
         Android. Search on the go, message landlords instantly, and apply for your
         next home in under two minutes.
       </p>

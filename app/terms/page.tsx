@@ -12,11 +12,11 @@ export default function TermsPage() {
 
       <div className="mt-8 space-y-6 leading-relaxed text-gray-700">
         <p>
-          By using rentaldome.com or the RENTALDOME app you agree to these terms.
+          By using emlakie.com or the EMLAKIE app you agree to these terms.
         </p>
         <h2 className="text-xl font-bold text-gray-900">The service</h2>
         <p>
-          RENTALDOME is a platform that connects renters and landlords. We are not a
+          EMLAKIE is a platform that connects renters and landlords. We are not a
           party to any lease agreement, and we do not own, manage, or inspect the
           properties listed.
         </p>
@@ -34,8 +34,8 @@ export default function TermsPage() {
         <h2 className="text-xl font-bold text-gray-900">Contact</h2>
         <p>
           Questions? Email{' '}
-          <a href="mailto:support@rentaldome.com" className="font-semibold text-brand-600">
-            support@rentaldome.com
+          <a href="mailto:support@emlakie.com" className="font-semibold text-brand-600">
+            support@emlakie.com
           </a>
           .
         </p>

@@ -12,7 +12,7 @@ export default function PrivacyPage() {
 
       <div className="mt-8 space-y-6 leading-relaxed text-gray-700">
         <p>
-          RENTALDOME (&quot;we&quot;, &quot;us&quot;) operates rentaldome.com and the RENTALDOME
+          EMLAKIE (&quot;we&quot;, &quot;us&quot;) operates emlakie.com and the EMLAKIE
           mobile application. This policy describes what we collect and how we use it.
         </p>
         <h2 className="text-xl font-bold text-gray-900">Information we collect</h2>
@@ -30,8 +30,8 @@ export default function PrivacyPage() {
         <h2 className="text-xl font-bold text-gray-900">Contact</h2>
         <p>
           Questions about this policy? Email us at{' '}
-          <a href="mailto:support@rentaldome.com" className="font-semibold text-brand-600">
-            support@rentaldome.com
+          <a href="mailto:support@emlakie.com" className="font-semibold text-brand-600">
+            support@emlakie.com
           </a>
           .
         </p>

@@ -8,7 +8,7 @@ export default function Logo({ className = 'h-8' }: { className?: string }) {
         />
       </svg>
       <span className="text-2xl font-extrabold tracking-tight text-gray-900">
-        Rental<span className="text-brand-600">Dom</span>
+        RENTAL<span className="text-brand-600">DOME</span>
       </span>
     </span>
   );

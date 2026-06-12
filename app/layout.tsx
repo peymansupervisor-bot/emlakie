@@ -7,15 +7,15 @@ import './globals.css';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://rentaldom.com'),
+  metadataBase: new URL('https://rentaldome.com'),
   title: {
-    default: 'RentalDom — Find Your Next Rental Home',
-    template: '%s | RentalDom',
+    default: 'RENTALDOME — Find Your Next Rental Home',
+    template: '%s | RENTALDOME',
   },
   description:
-    'Browse houses, apartments, and condos for rent. RentalDom connects renters directly with landlords — no hassle, no runaround.',
+    'Browse houses, apartments, and condos for rent. RENTALDOME connects renters directly with landlords — no hassle, no runaround.',
   openGraph: {
-    siteName: 'RentalDom',
+    siteName: 'RENTALDOME',
     type: 'website',
   },
 };

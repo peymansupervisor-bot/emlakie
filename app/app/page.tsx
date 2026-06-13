@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Image from 'next/image';
 import AppBadges from '@/components/AppBadges';
 
 export const metadata: Metadata = {
@@ -10,11 +11,7 @@ export const metadata: Metadata = {
 export default function AppPage() {
   return (
     <section className="mx-auto flex max-w-3xl flex-col items-center px-4 py-24 text-center sm:px-6">
-      <div className="flex h-20 w-20 items-center justify-center rounded-3xl bg-brand-600 shadow-card">
-        <svg viewBox="0 0 32 32" className="h-12 w-12 fill-white">
-          <path d="M16 3 3 14h4v13h8v-8h2v8h8V14h4L16 3z" />
-        </svg>
-      </div>
+      <Image src="/logo.png" alt="Emlakie" width={80} height={80} className="rounded-3xl shadow-card" />
       <h1 className="mt-8 text-4xl font-extrabold text-gray-900">
         The EMLAKIE app is almost here
       </h1>

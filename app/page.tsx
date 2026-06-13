@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
+
 import SearchBar from '@/components/SearchBar';
 import ListingCard from '@/components/ListingCard';
 import AppBadges from '@/components/AppBadges';
@@ -127,10 +128,8 @@ export default async function HomePage() {
               <AppBadges />
             </div>
           </div>
-          <div className="hidden h-64 w-64 items-center justify-center rounded-full bg-brand-500/60 lg:flex">
-            <svg viewBox="0 0 32 32" className="h-32 w-32 fill-white/90">
-              <path d="M16 3 3 14h4v13h8v-8h2v8h8V14h4L16 3z" />
-            </svg>
+          <div className="hidden h-64 w-64 overflow-hidden rounded-full lg:flex">
+            <Image src="/logo.png" alt="Emlakie" width={256} height={256} className="h-full w-full object-cover" />
           </div>
         </div>
       </section>

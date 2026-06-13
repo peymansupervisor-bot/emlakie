@@ -35,6 +35,7 @@ jobs:
             "/landlords"
             "/privacy"
             "/terms"
+            "/accessibility"
           )
 
           mkdir -p ada-reports
@@ -61,7 +62,7 @@ jobs:
             process.env.SUPABASE_SERVICE_KEY
           );
 
-          const pages = ['/', '/rentals', '/login', '/landlords', '/privacy', '/terms'];
+          const pages = ['/', '/rentals', '/login', '/landlords', '/privacy', '/terms', '/accessibility'];
           const commit = process.env.GIT_COMMIT;
 
           async function saveAll() {

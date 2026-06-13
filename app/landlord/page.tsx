@@ -10,6 +10,14 @@ import { formatPrice, formatPropertyType } from '@/lib/format';
 
 type Tab = 'all' | 'forRent' | 'offMarket';
 
+function expiryText(iso?: string | null): { text: string; cls: string } {
+  if (!iso) return { text: '—', cls: 'text-gray-400' };
+  const days = Math.ceil((new Date(iso).getTime() - Date.now()) / 86400000);
+  if (days < 0) return { text: 'Expired', cls: 'font-semibold text-red-600' };
+  if (days <= 7) return { text: `${days}d left`, cls: 'font-semibold text-amber-600' };
+  return { text: `${days}d left`, cls: 'text-gray-500' };
+}
+
 const leaseLabel: Record<string, { label: string; cls: string }> = {
   active: { label: 'Seeking tenant', cls: 'text-brand-700' },
   rented: { label: 'Leased', cls: 'text-blue-700' },
@@ -148,7 +156,7 @@ export default function PropertiesPage() {
                 <th className="hidden px-4 py-3 sm:table-cell">Rent</th>
                 <th className="hidden px-4 py-3 md:table-cell">Views</th>
                 <th className="px-4 py-3">Leads</th>
-                <th className="hidden px-4 py-3 lg:table-cell">Lease</th>
+                <th className="hidden px-4 py-3 lg:table-cell">Expires</th>
                 <th className="px-4 py-3">Status</th>
               </tr>
             </thead>
@@ -189,8 +197,8 @@ export default function PropertiesPage() {
                       )}
                     </td>
                     <td className="hidden px-4 py-3 lg:table-cell">
-                      <span className={`text-sm font-semibold ${(leaseLabel[listing.status] ?? leaseLabel.draft).cls}`}>
-                        {(leaseLabel[listing.status] ?? leaseLabel.draft).label}
+                      <span className={`text-sm ${expiryText(listing.expiresAt).cls}`}>
+                        {expiryText(listing.expiresAt).text}
                       </span>
                     </td>
                     <td className="px-4 py-3">

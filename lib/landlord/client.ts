@@ -94,6 +94,21 @@ export async function updateListing(id: string, payload: Record<string, unknown>
   await api(`/listings/${id}`, { method: 'PUT', body: JSON.stringify(payload) });
 }
 
+export async function extendListing(id: string): Promise<LandlordListing> {
+  if (isDemo()) throw new Error('Demo mode: sign in with your phone to extend listings.');
+  return api<LandlordListing>(`/listings/${id}/extend`, { method: 'POST' });
+}
+
+export async function deactivateListing(id: string): Promise<void> {
+  if (isDemo()) throw new Error('Demo mode: sign in with your phone to deactivate listings.');
+  await api(`/listings/${id}/deactivate`, { method: 'POST' });
+}
+
+export async function markRented(id: string): Promise<void> {
+  if (isDemo()) throw new Error('Demo mode: sign in with your phone to update listings.');
+  await api(`/listings/${id}`, { method: 'PUT', body: JSON.stringify({ status: 'rented' }) });
+}
+
 // ─── Applications & messages ────────────────────────────────────────────────
 
 export async function getApplications(listingId: string): Promise<Application[]> {

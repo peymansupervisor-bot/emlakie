@@ -33,4 +33,5 @@ export interface Conversation {
 export type LandlordListing = Listing & {
   view_count?: number;
   applicant_count?: number;
+  expiresAt?: string | null;
 };

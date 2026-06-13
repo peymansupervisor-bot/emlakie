@@ -2,13 +2,38 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { getApplications, getMyListing } from '@/lib/landlord/client';
+import { deactivateListing, extendListing, getApplications, getMyListing, markRented } from '@/lib/landlord/client';
 import { Application, LandlordListing } from '@/lib/landlord/types';
 import { formatBaths, formatBeds, formatPrice, formatSqft } from '@/lib/format';
 
 type Tab = 'overview' | 'applications';
+
+function daysUntil(iso?: string | null): number | null {
+  if (!iso) return null;
+  return Math.ceil((new Date(iso).getTime() - Date.now()) / 86400000);
+}
+
+function ExpiryBadge({ expiresAt }: { expiresAt?: string | null }) {
+  const days = daysUntil(expiresAt);
+  if (days === null) return null;
+  if (days < 0) return (
+    <span className="rounded-full bg-red-100 px-3 py-1 text-xs font-bold text-red-700">
+      Expired
+    </span>
+  );
+  if (days <= 7) return (
+    <span className="rounded-full bg-amber-100 px-3 py-1 text-xs font-bold text-amber-700">
+      Expires in {days}d
+    </span>
+  );
+  return (
+    <span className="rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold text-gray-600">
+      {days} days left
+    </span>
+  );
+}
 
 function MatchScore({ score }: { score?: number }) {
   if (score == null) return null;
@@ -23,9 +48,49 @@ function MatchScore({ score }: { score?: number }) {
 
 export default function PropertyDashboardPage() {
   const { id } = useParams<{ id: string }>();
+  const router = useRouter();
   const [listing, setListing] = useState<LandlordListing | null | undefined>(undefined);
   const [applications, setApplications] = useState<Application[]>([]);
   const [tab, setTab] = useState<Tab>('overview');
+  const [actionBusy, setActionBusy] = useState(false);
+  const [actionMsg, setActionMsg] = useState('');
+
+  async function handleExtend() {
+    setActionBusy(true);
+    try {
+      const updated = await extendListing(id);
+      setListing(updated);
+      setActionMsg('Listing extended by 45 days.');
+    } catch (e) {
+      setActionMsg(e instanceof Error ? e.message : 'Could not extend.');
+    } finally {
+      setActionBusy(false);
+    }
+  }
+
+  async function handleDeactivate() {
+    if (!confirm('Deactivate this listing? It will no longer appear in search results.')) return;
+    setActionBusy(true);
+    try {
+      await deactivateListing(id);
+      router.push('/landlord');
+    } catch (e) {
+      setActionMsg(e instanceof Error ? e.message : 'Could not deactivate.');
+      setActionBusy(false);
+    }
+  }
+
+  async function handleMarkRented() {
+    if (!confirm('Mark this property as rented? It will be removed from active listings.')) return;
+    setActionBusy(true);
+    try {
+      await markRented(id);
+      router.push('/landlord');
+    } catch (e) {
+      setActionMsg(e instanceof Error ? e.message : 'Could not update status.');
+      setActionBusy(false);
+    }
+  }
 
   useEffect(() => {
     getMyListing(id).then(setListing).catch(() => setListing(null));
@@ -69,11 +134,31 @@ export default function PropertyDashboardPage() {
                 ✓ Listed for rent
               </span>
             )}
+            <ExpiryBadge expiresAt={listing.expiresAt} />
           </div>
           <p className="text-gray-600">
             {listing.city}, {listing.state} {listing.zip} · {formatPrice(listing.price)} ·{' '}
             {formatBeds(listing.bedrooms)} · {formatBaths(listing.bathrooms)} · {formatSqft(listing.sqft)}
           </p>
+
+          {/* Action buttons */}
+          {actionMsg && (
+            <p className="mt-2 text-sm font-semibold text-brand-700">{actionMsg}</p>
+          )}
+          <div className="mt-3 flex flex-wrap gap-2">
+            <button onClick={handleExtend} disabled={actionBusy}
+              className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-700 disabled:opacity-60">
+              Extend 45 days
+            </button>
+            <button onClick={handleMarkRented} disabled={actionBusy}
+              className="rounded-lg border border-blue-300 bg-blue-50 px-4 py-2 text-sm font-semibold text-blue-700 transition hover:bg-blue-100 disabled:opacity-60">
+              Mark as Rented
+            </button>
+            <button onClick={handleDeactivate} disabled={actionBusy}
+              className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-600 transition hover:border-red-300 hover:text-red-600 disabled:opacity-60">
+              Deactivate
+            </button>
+          </div>
         </div>
       </div>
 

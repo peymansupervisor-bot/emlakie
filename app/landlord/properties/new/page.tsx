@@ -47,7 +47,7 @@ export default function NewPropertyPage() {
   const [previews, setPreviews] = useState<string[]>([]);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
-  const [filterWarnings, setFilterWarnings] = useState<string[]>([]);
+  const [filterWarnings, setFilterWarnings] = useState<{term: string; reason: string; law: string; suggestion: string}[]>([]);
   const [filterChecking, setFilterChecking] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
   const filterTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -63,9 +63,9 @@ export default function NewPropertyPage() {
       });
       if (res.status === 422) {
         const data = await res.json();
-        setFilterWarnings(data.violations.map((v: { term: string; reason: string; law: string }) =>
-          `"${v.term}" — ${v.reason} (${v.law})`
-        ));
+        setFilterWarnings(data.violations.map((v: { term: string; reason: string; law: string; suggestion: string }) => ({
+          term: v.term, reason: v.reason, law: v.law, suggestion: v.suggestion,
+        })));
       } else {
         setFilterWarnings([]);
       }
@@ -305,9 +305,12 @@ export default function NewPropertyPage() {
               <div className="mt-3 rounded-xl border border-red-200 bg-red-50 p-4">
                 <p className="text-sm font-semibold text-red-700 mb-2">⚠ Fair Housing Violation Detected</p>
                 <p className="text-xs text-red-600 mb-2">This listing contains language that may violate federal or California fair housing laws. Please remove or rephrase the following:</p>
-                <ul className="space-y-1">
+                <ul className="space-y-3">
                   {filterWarnings.map((w, i) => (
-                    <li key={i} className="text-xs text-red-700">• {w}</li>
+                    <li key={i} className="text-xs">
+                      <p className="text-red-700 font-medium">• &ldquo;{w.term}&rdquo; — {w.reason} <span className="font-normal text-red-500">({w.law})</span></p>
+                      <p className="mt-1 text-green-700 bg-green-50 rounded-lg px-3 py-2">💡 <strong>Suggestion:</strong> {w.suggestion}</p>
+                    </li>
                   ))}
                 </ul>
               </div>

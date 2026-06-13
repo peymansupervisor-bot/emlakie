@@ -25,7 +25,7 @@ export default function SearchBar({ large = false }: { large?: boolean }) {
         type="text"
         value={city}
         onChange={(e) => setCity(e.target.value)}
-        placeholder="Enter a city — e.g. Bakersfield"
+        placeholder="Enter a city — e.g. Austin, Chicago"
         aria-label="Search by city"
         className={`min-w-0 flex-1 px-5 text-gray-900 placeholder-gray-400 outline-none ${
           large ? 'py-4 text-lg' : 'py-3 text-base'

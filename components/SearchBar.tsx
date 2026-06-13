@@ -17,12 +17,16 @@ export default function SearchBar({ large = false }: { large?: boolean }) {
   return (
     <form
       onSubmit={onSubmit}
+      role="search"
+      aria-label="Search rental listings"
       className={`flex w-full overflow-hidden rounded-xl bg-white shadow-card ${
         large ? 'max-w-2xl' : 'max-w-md'
       }`}
     >
+      <label htmlFor="search-city" className="sr-only">Search by city</label>
       <input
-        type="text"
+        id="search-city"
+        type="search"
         value={city}
         onChange={(e) => setCity(e.target.value)}
         placeholder="Enter a city — e.g. Austin, Chicago"

@@ -14,7 +14,7 @@ export default function Footer() {
             </p>
           </div>
 
-          <div className="grid grid-cols-2 gap-8 sm:grid-cols-3">
+          <nav aria-label="Footer navigation" className="grid grid-cols-2 gap-8 sm:grid-cols-3">
             <div>
               <h3 className="text-sm font-bold text-gray-900">Renters</h3>
               <ul className="mt-3 space-y-2 text-sm text-gray-600">
@@ -37,7 +37,7 @@ export default function Footer() {
                 <li><Link href="/accessibility" className="hover:text-brand-600">Accessibility</Link></li>
               </ul>
             </div>
-          </div>
+          </nav>
         </div>
 
         <div className="mt-10 border-t border-gray-200 pt-6 text-xs text-gray-500">

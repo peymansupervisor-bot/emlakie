@@ -24,8 +24,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body className={inter.className}>
+        <a href="#main-content" className="skip-link">Skip to main content</a>
         <Navbar />
-        <main className="min-h-[60vh]">{children}</main>
+        <main id="main-content" className="min-h-[60vh]">{children}</main>
         <Footer />
       </body>
     </html>

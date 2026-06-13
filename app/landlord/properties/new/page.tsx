@@ -47,10 +47,46 @@ export default function NewPropertyPage() {
   const [previews, setPreviews] = useState<string[]>([]);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
+  const [filterWarnings, setFilterWarnings] = useState<string[]>([]);
+  const [filterChecking, setFilterChecking] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
+  const filterTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  async function checkContent(text: string) {
+    if (!text.trim()) { setFilterWarnings([]); return; }
+    setFilterChecking(true);
+    try {
+      const res = await fetch('/api/validate-listing', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text }),
+      });
+      if (res.status === 422) {
+        const data = await res.json();
+        setFilterWarnings(data.violations.map((v: { term: string; reason: string; law: string }) =>
+          `"${v.term}" — ${v.reason} (${v.law})`
+        ));
+      } else {
+        setFilterWarnings([]);
+      }
+    } catch {
+      // silently ignore network errors during check
+    } finally {
+      setFilterChecking(false);
+    }
+  }
 
   function set(field: keyof FormData, value: string) {
     setForm((f) => ({ ...f, [field]: value }));
+    if (field === 'title' || field === 'description') {
+      if (filterTimer.current) clearTimeout(filterTimer.current);
+      filterTimer.current = setTimeout(() => {
+        const updated = field === 'title'
+          ? `${value} ${form.description}`
+          : `${form.title} ${value}`;
+        checkContent(updated);
+      }, 600);
+    }
   }
 
   function toggleAmenity(a: string) {
@@ -88,6 +124,7 @@ export default function NewPropertyPage() {
     if (step === 2) {
       if (!form.title.trim()) return 'Add a listing title.';
       if (form.description.length < 30) return 'Description must be at least 30 characters.';
+      if (filterWarnings.length > 0) return 'Please remove the flagged language before continuing.';
     }
     if (step === 3) {
       if (photos.length === 0) return 'Upload at least 1 photo.';
@@ -255,12 +292,26 @@ export default function NewPropertyPage() {
           <div>
             <label className={labelCls}>Description *</label>
             <textarea
-              className={`${inputCls} min-h-[160px] resize-y`}
+              className={`${inputCls} min-h-[160px] resize-y ${filterWarnings.length > 0 ? 'border-red-400 focus:border-red-500 focus:ring-red-400' : ''}`}
               placeholder="Describe the home, neighborhood, nearby transit, any house rules, etc."
               value={form.description}
               onChange={(e) => set('description', e.target.value)}
             />
-            <p className="mt-1 text-xs text-gray-500">{form.description.length} / 30 min characters</p>
+            <div className="mt-1 flex items-center justify-between">
+              <p className="text-xs text-gray-500">{form.description.length} / 30 min characters</p>
+              {filterChecking && <p className="text-xs text-gray-400">Checking content…</p>}
+            </div>
+            {filterWarnings.length > 0 && (
+              <div className="mt-3 rounded-xl border border-red-200 bg-red-50 p-4">
+                <p className="text-sm font-semibold text-red-700 mb-2">⚠ Fair Housing Violation Detected</p>
+                <p className="text-xs text-red-600 mb-2">This listing contains language that may violate federal or California fair housing laws. Please remove or rephrase the following:</p>
+                <ul className="space-y-1">
+                  {filterWarnings.map((w, i) => (
+                    <li key={i} className="text-xs text-red-700">• {w}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
           <div>
             <label className={labelCls}>Amenities</label>

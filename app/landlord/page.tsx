@@ -10,6 +10,13 @@ import { formatPrice, formatPropertyType } from '@/lib/format';
 
 type Tab = 'all' | 'forRent' | 'offMarket';
 
+const leaseLabel: Record<string, { label: string; cls: string }> = {
+  active: { label: 'Seeking tenant', cls: 'text-brand-700' },
+  rented: { label: 'Leased', cls: 'text-blue-700' },
+  paused: { label: 'Paused', cls: 'text-amber-700' },
+  draft: { label: '—', cls: 'text-gray-400' },
+};
+
 const statusPill: Record<string, { label: string; cls: string }> = {
   active: { label: 'Listed for rent', cls: 'bg-brand-100 text-brand-800' },
   rented: { label: 'Rented', cls: 'bg-blue-100 text-blue-800' },
@@ -23,6 +30,7 @@ export default function PropertiesPage() {
   const [listings, setListings] = useState<LandlordListing[] | null>(null);
   const [error, setError] = useState('');
   const [tab, setTab] = useState<Tab>('all');
+  const [search, setSearch] = useState('');
 
   useEffect(() => {
     getMyListings()
@@ -39,7 +47,15 @@ export default function PropertiesPage() {
 
   const forRent = listings.filter((l) => l.status === 'active');
   const offMarket = listings.filter((l) => l.status !== 'active');
-  const visible = tab === 'all' ? listings : tab === 'forRent' ? forRent : offMarket;
+  const byTab = tab === 'all' ? listings : tab === 'forRent' ? forRent : offMarket;
+  const q = search.toLowerCase();
+  const visible = q
+    ? byTab.filter((l) =>
+        l.address?.toLowerCase().includes(q) ||
+        l.city?.toLowerCase().includes(q) ||
+        l.zip?.includes(q)
+      )
+    : byTab;
 
   const tabs: { id: Tab; label: string }[] = [
     { id: 'all', label: `All (${listings.length})` },
@@ -86,20 +102,34 @@ export default function PropertiesPage() {
         </Link>
       </div>
 
-      <div className="mt-6 flex gap-2">
-        {tabs.map((t) => (
-          <button
-            key={t.id}
-            onClick={() => setTab(t.id)}
-            className={`rounded-full border px-4 py-1.5 text-sm font-semibold transition ${
-              tab === t.id
-                ? 'border-brand-600 bg-brand-50 text-brand-700'
-                : 'border-gray-300 text-gray-600 hover:border-gray-400'
-            }`}
-          >
-            {t.label}
-          </button>
-        ))}
+      <div className="mt-6 flex flex-wrap items-center gap-3">
+        <div className="flex gap-2">
+          {tabs.map((t) => (
+            <button
+              key={t.id}
+              onClick={() => setTab(t.id)}
+              className={`rounded-full border px-4 py-1.5 text-sm font-semibold transition ${
+                tab === t.id
+                  ? 'border-brand-600 bg-brand-50 text-brand-700'
+                  : 'border-gray-300 text-gray-600 hover:border-gray-400'
+              }`}
+            >
+              {t.label}
+            </button>
+          ))}
+        </div>
+        <div className="relative flex-1 min-w-[200px]">
+          <svg viewBox="0 0 24 24" className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 stroke-gray-400" fill="none" strokeWidth="2">
+            <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+          </svg>
+          <input
+            type="text"
+            placeholder="Search by address, city, or ZIP"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full rounded-xl border border-gray-300 py-1.5 pl-9 pr-4 text-sm outline-none focus:border-brand-600 focus:ring-1 focus:ring-brand-600"
+          />
+        </div>
       </div>
 
       {visible.length === 0 ? (
@@ -117,7 +147,8 @@ export default function PropertiesPage() {
                 <th className="px-4 py-3">Address</th>
                 <th className="hidden px-4 py-3 sm:table-cell">Rent</th>
                 <th className="hidden px-4 py-3 md:table-cell">Views</th>
-                <th className="px-4 py-3">Applicants</th>
+                <th className="px-4 py-3">Leads</th>
+                <th className="hidden px-4 py-3 lg:table-cell">Lease</th>
                 <th className="px-4 py-3">Status</th>
               </tr>
             </thead>
@@ -149,12 +180,18 @@ export default function PropertiesPage() {
                     </td>
                     <td className="px-4 py-3">
                       {listing.applicant_count ? (
-                        <span className="font-semibold text-brand-700">
-                          {listing.applicant_count} applicant{listing.applicant_count === 1 ? '' : 's'}
-                        </span>
+                        <Link href={`/landlord/leads?listing=${listing.id}`}
+                          className="font-semibold text-brand-700 hover:underline">
+                          {listing.applicant_count} new{listing.applicant_count === 1 ? '' : ''}
+                        </Link>
                       ) : (
                         <span className="text-gray-400">—</span>
                       )}
+                    </td>
+                    <td className="hidden px-4 py-3 lg:table-cell">
+                      <span className={`text-sm font-semibold ${(leaseLabel[listing.status] ?? leaseLabel.draft).cls}`}>
+                        {(leaseLabel[listing.status] ?? leaseLabel.draft).label}
+                      </span>
                     </td>
                     <td className="px-4 py-3">
                       <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${pill.cls}`}>

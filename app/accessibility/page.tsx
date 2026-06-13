@@ -51,7 +51,7 @@ export default function AccessibilityPage() {
           any barriers or have suggestions for improvement, please contact us:
         </p>
         <ul className="list-disc pl-6 space-y-2">
-          <li>Email: <a href="mailto:accessibility@emlakie.com" className="text-green-600 underline hover:text-green-700">accessibility@emlakie.com</a></li>
+          <li>Email: <a href="mailto:accessibility@emlakie.com" className="text-brand-600 underline hover:text-brand-700">accessibility@emlakie.com</a></li>
           <li>We aim to respond to accessibility feedback within <strong>2 business days</strong>.</li>
         </ul>
 

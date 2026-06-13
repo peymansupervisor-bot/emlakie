@@ -98,7 +98,7 @@ export default function LoginPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-3 rounded-lg text-sm transition disabled:opacity-50"
+                className="w-full bg-brand-600 hover:bg-brand-700 text-white font-medium py-3 rounded-lg text-sm transition disabled:opacity-50"
               >
                 {loading ? 'Sending...' : 'Send verification code'}
               </button>
@@ -120,7 +120,7 @@ export default function LoginPage() {
                   onChange={(e) => { setCode(e.target.value.replace(/\D/g, '').slice(0, 6)); setError('') }}
                   placeholder="000000"
                   maxLength={6}
-                  className="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm text-center tracking-widest text-lg outline-none focus:ring-2 focus:ring-green-600 focus:border-green-600"
+                  className="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm text-center tracking-widest text-lg outline-none focus:ring-2 focus:ring-brand-600 focus:border-brand-600"
                   autoFocus
                 />
               </div>
@@ -128,7 +128,7 @@ export default function LoginPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-3 rounded-lg text-sm transition disabled:opacity-50"
+                className="w-full bg-brand-600 hover:bg-brand-700 text-white font-medium py-3 rounded-lg text-sm transition disabled:opacity-50"
               >
                 {loading ? 'Verifying...' : 'Verify & sign in'}
               </button>

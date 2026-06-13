@@ -120,7 +120,7 @@ export default async function HomePage() {
             <h2 className="text-3xl font-extrabold text-white">
               Take EMLAKIE with you
             </h2>
-            <p className="mt-3 text-lg text-brand-50">
+            <p className="mt-3 text-lg text-white">
               Search on the go, chat with landlords, and get instant alerts when new
               homes hit the market. Coming soon to the App Store and Google Play.
             </p>

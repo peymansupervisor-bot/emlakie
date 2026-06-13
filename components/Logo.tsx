@@ -8,7 +8,7 @@ export default function Logo({ className = 'h-8' }: { className?: string }) {
         />
       </svg>
       <span className="text-2xl font-extrabold tracking-tight text-gray-900">
-        EMLA<span className="text-brand-600">KIE</span>
+        EMLAK<span className="text-brand-600">IE</span>
       </span>
     </span>
   );

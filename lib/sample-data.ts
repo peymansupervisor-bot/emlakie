@@ -1,6 +1,6 @@
 import { Listing } from './types';
 
-// Shown only while the RentalDom API is not yet live. Every card is labeled
+// Shown only while the Emlakie API is not yet live. Every card is labeled
 // "Sample" in the UI and the data disappears as soon as the API responds.
 export const sampleListings: Listing[] = [
   {

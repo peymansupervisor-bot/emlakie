@@ -3,9 +3,9 @@
 import { Application, Conversation, LandlordListing, LandlordUser } from './types';
 import { demoApplications, demoConversations, demoListings } from './demo-data';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'https://api.rentaldom.com/api';
-const TOKEN_KEY = 'rentaldom_token';
-const DEMO_KEY = 'rentaldom_demo';
+const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'https://api.emlakie.com/api';
+const TOKEN_KEY = 'emlakie_token';
+const DEMO_KEY = 'emlakie_demo';
 
 export function getToken(): string | null {
   if (typeof window === 'undefined') return null;

@@ -1,7 +1,7 @@
 import type { MetadataRoute } from 'next';
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const base = 'https://rentaldom.com';
+  const base = 'https://emlakie.com';
   return [
     { url: base, changeFrequency: 'daily', priority: 1 },
     { url: `${base}/rentals`, changeFrequency: 'hourly', priority: 0.9 },

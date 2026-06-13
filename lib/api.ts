@@ -1,7 +1,7 @@
 import { Listing, ListingFilters, ListingsResponse } from './types';
 import { sampleListings } from './sample-data';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'https://api.rentaldom.com/api';
+const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'https://api.emlakie.com/api';
 
 function filterSamples(filters: ListingFilters): Listing[] {
   return sampleListings.filter((l) => {

@@ -9,7 +9,7 @@ on:
 jobs:
   ada-audit:
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' || (github.event_name == 'deployment_status' && github.event.deployment_status.state == 'success')
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch' || (github.event_name == 'deployment_status' && github.event.deployment_status.state == 'success')
 
     steps:
       - uses: actions/checkout@v4

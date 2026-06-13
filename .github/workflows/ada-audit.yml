@@ -21,8 +21,8 @@ jobs:
 
       - name: Install Chromium dependencies
         run: |
-          sudo apt-get update
-          sudo apt-get install -y \
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq \
             libatk1.0-0 libatk-bridge2.0-0 libcups2 libdrm2 \
             libxkbcommon0 libxcomposite1 libxdamage1 libxfixes3 \
             libxrandr2 libgbm1 libasound2t64 libpango-1.0-0 \
@@ -56,35 +56,27 @@ jobs:
             echo "==============================="
             echo "Auditing $BASE_URL$PAGE ..."
             echo "==============================="
-            SAFE_NAME=$(echo $PAGE | tr '/' '_' | sed 's/^_$/home/')
+            SAFE_NAME=$(echo "$PAGE" | tr '/' '_' | sed 's/^_$/home/')
 
             pa11y "$BASE_URL$PAGE" \
-              --standard WCAG2AA \
+              --config .pa11yci.json \
               --reporter json \
-              --timeout 60000 \
-              --wait 8000 \
-              --include-notices \
-              --include-warnings \
-              --viewport.width 1280 \
-              --viewport.height 800 \
-              --chromium-arg --no-sandbox \
-              --chromium-arg --disable-setuid-sandbox \
-              --chromium-arg --disable-dev-shm-usage \
               > "ada-reports/${SAFE_NAME}.json" 2>"ada-reports/${SAFE_NAME}.stderr" || true
 
-            # Count issues found
-            ISSUE_COUNT=$(node -e "
-              try {
-                const d = JSON.parse(require('fs').readFileSync('ada-reports/${SAFE_NAME}.json','utf8'));
-                console.log(d.length);
-              } catch(e) { console.log('error'); }
-            ")
-            echo "  → $ISSUE_COUNT issues found on $PAGE"
-
-            # Show stderr if any
             if [ -s "ada-reports/${SAFE_NAME}.stderr" ]; then
               echo "  [stderr]: $(cat ada-reports/${SAFE_NAME}.stderr)"
             fi
+
+            ISSUE_COUNT=$(node -e "
+              try {
+                const d = JSON.parse(require('fs').readFileSync('ada-reports/${SAFE_NAME}.json','utf8'));
+                const e = d.filter(i=>i.type==='error').length;
+                const w = d.filter(i=>i.type==='warning').length;
+                const n = d.filter(i=>i.type==='notice').length;
+                console.log('errors: ' + e + ', warnings: ' + w + ', notices: ' + n);
+              } catch(e) { console.log('parse error: ' + e.message); }
+            " 2>/dev/null)
+            echo "  → $ISSUE_COUNT"
           done
 
           echo ""
@@ -107,12 +99,10 @@ jobs:
               const safeName = page.replace(/\//g, '_').replace(/^_$/, 'home');
               const filePath = 'ada-reports/' + safeName + '.json';
               let issues = [];
-              let passed = true;
 
               try {
                 const raw = fs.readFileSync(filePath, 'utf8');
                 issues = JSON.parse(raw);
-                passed = issues.filter(i => i.type === 'error').length === 0;
               } catch(e) {
                 console.log('Could not read report for ' + page + ': ' + e.message);
               }
@@ -120,6 +110,7 @@ jobs:
               const errors   = issues.filter(i => i.type === 'error').length;
               const warnings = issues.filter(i => i.type === 'warning').length;
               const notices  = issues.filter(i => i.type === 'notice').length;
+              const passed   = errors === 0;
 
               const { error } = await supabase.from('ada_audit_logs').insert({
                 page_url: 'https://emlakie.com' + page,
@@ -132,11 +123,12 @@ jobs:
               });
 
               if (error) console.log('Supabase error for ' + page + ':', error.message);
-              else console.log('Logged ' + page + ' — errors: ' + errors + ', warnings: ' + warnings + ', notices: ' + notices);
+              else console.log('Saved ' + page + ' — errors: ' + errors + ', warnings: ' + warnings + ', notices: ' + notices);
             }
+            console.log('All results saved to Supabase.');
           }
 
-          saveAll().then(() => console.log('All audit results saved to Supabase'));
+          saveAll();
           "
 
       - name: Upload ADA reports

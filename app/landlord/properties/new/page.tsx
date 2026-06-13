@@ -1,0 +1,391 @@
+'use client';
+
+import { useRouter } from 'next/navigation';
+import { useRef, useState } from 'react';
+import { createListing } from '@/lib/landlord/client';
+
+const PROPERTY_TYPES = ['house', 'apartment', 'condo', 'townhouse', 'studio', 'room'];
+const AMENITIES_LIST = [
+  'Air conditioning', 'Heating', 'In-unit laundry', 'Laundry in building',
+  'Dishwasher', 'Parking', 'Garage', 'Pet-friendly', 'Pool', 'Gym',
+  'Balcony', 'Furnished', 'Hardwood floors', 'EV charging', 'Storage',
+];
+
+type Step = 1 | 2 | 3 | 4;
+
+interface FormData {
+  address: string;
+  city: string;
+  state: string;
+  zip: string;
+  propertyType: string;
+  bedrooms: string;
+  bathrooms: string;
+  sqft: string;
+  price: string;
+  availableFrom: string;
+  title: string;
+  description: string;
+  amenities: string[];
+}
+
+const empty: FormData = {
+  address: '', city: '', state: '', zip: '',
+  propertyType: 'house', bedrooms: '1', bathrooms: '1',
+  sqft: '', price: '', availableFrom: '',
+  title: '', description: '', amenities: [],
+};
+
+const inputCls = 'w-full rounded-xl border border-gray-300 px-4 py-3 text-sm outline-none focus:border-brand-600 focus:ring-1 focus:ring-brand-600';
+const labelCls = 'block text-sm font-semibold text-gray-700 mb-1';
+
+export default function NewPropertyPage() {
+  const router = useRouter();
+  const [step, setStep] = useState<Step>(1);
+  const [form, setForm] = useState<FormData>(empty);
+  const [photos, setPhotos] = useState<File[]>([]);
+  const [previews, setPreviews] = useState<string[]>([]);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState('');
+  const fileRef = useRef<HTMLInputElement>(null);
+
+  function set(field: keyof FormData, value: string) {
+    setForm((f) => ({ ...f, [field]: value }));
+  }
+
+  function toggleAmenity(a: string) {
+    setForm((f) => ({
+      ...f,
+      amenities: f.amenities.includes(a)
+        ? f.amenities.filter((x) => x !== a)
+        : [...f.amenities, a],
+    }));
+  }
+
+  function addPhotos(files: FileList | null) {
+    if (!files) return;
+    const newFiles = Array.from(files).filter((f) => f.type.startsWith('image/'));
+    setPhotos((prev) => [...prev, ...newFiles]);
+    newFiles.forEach((f) => {
+      const reader = new FileReader();
+      reader.onload = (e) => setPreviews((prev) => [...prev, e.target?.result as string]);
+      reader.readAsDataURL(f);
+    });
+  }
+
+  function removePhoto(i: number) {
+    setPhotos((p) => p.filter((_, idx) => idx !== i));
+    setPreviews((p) => p.filter((_, idx) => idx !== i));
+  }
+
+  function validateStep(): string {
+    if (step === 1) {
+      if (!form.address.trim()) return 'Address is required.';
+      if (!form.city.trim()) return 'City is required.';
+      if (!form.state.trim()) return 'State is required.';
+      if (!form.price.trim() || isNaN(+form.price) || +form.price < 100) return 'Enter a valid monthly rent.';
+    }
+    if (step === 2) {
+      if (!form.title.trim()) return 'Add a listing title.';
+      if (form.description.length < 30) return 'Description must be at least 30 characters.';
+    }
+    if (step === 3) {
+      if (photos.length === 0) return 'Upload at least 1 photo.';
+    }
+    return '';
+  }
+
+  function next() {
+    const err = validateStep();
+    if (err) { setError(err); return; }
+    setError('');
+    setStep((s) => (s + 1) as Step);
+  }
+
+  async function submit() {
+    setBusy(true);
+    setError('');
+    try {
+      const fd = new FormData();
+      fd.append('title', form.title);
+      fd.append('description', form.description);
+      fd.append('address', form.address);
+      fd.append('city', form.city);
+      fd.append('state', form.state);
+      fd.append('zip', form.zip);
+      fd.append('price', form.price);
+      fd.append('bedrooms', form.bedrooms);
+      fd.append('bathrooms', form.bathrooms);
+      fd.append('sqft', form.sqft);
+      fd.append('propertyType', form.propertyType);
+      fd.append('availableFrom', form.availableFrom);
+      fd.append('amenities', JSON.stringify(form.amenities));
+      photos.forEach((f) => fd.append('photos', f));
+      await createListing(fd);
+      router.push('/landlord?created=1');
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Could not publish the listing. Please try again.');
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  const steps = ['Property details', 'Description', 'Photos', 'Review'];
+
+  return (
+    <div className="mx-auto max-w-2xl">
+      {/* Back */}
+      <button onClick={() => step === 1 ? router.push('/landlord') : setStep((s) => (s - 1) as Step)}
+        className="text-sm font-semibold text-brand-600 hover:text-brand-700">
+        ← {step === 1 ? 'All properties' : 'Back'}
+      </button>
+
+      <h1 className="mt-4 text-3xl font-extrabold text-gray-900">Add a property</h1>
+
+      {/* Step indicator */}
+      <div className="mt-6 flex items-center gap-2">
+        {steps.map((label, i) => {
+          const n = (i + 1) as Step;
+          const done = n < step;
+          const active = n === step;
+          return (
+            <div key={label} className="flex items-center gap-2">
+              <div className={`flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold transition ${
+                done ? 'bg-brand-600 text-white' : active ? 'border-2 border-brand-600 text-brand-700' : 'border border-gray-300 text-gray-400'
+              }`}>
+                {done ? '✓' : n}
+              </div>
+              <span className={`hidden text-xs font-semibold sm:block ${active ? 'text-brand-700' : 'text-gray-400'}`}>
+                {label}
+              </span>
+              {i < steps.length - 1 && <div className="h-px w-6 bg-gray-200" />}
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Error */}
+      {error && (
+        <p className="mt-4 rounded-xl bg-red-50 px-4 py-3 text-sm font-medium text-red-700">{error}</p>
+      )}
+
+      {/* Step 1: Property details */}
+      {step === 1 && (
+        <div className="mt-8 space-y-5">
+          <div>
+            <label className={labelCls}>Street address *</label>
+            <input className={inputCls} placeholder="123 Main St" value={form.address}
+              onChange={(e) => set('address', e.target.value)} />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className={labelCls}>City *</label>
+              <input className={inputCls} placeholder="Austin" value={form.city}
+                onChange={(e) => set('city', e.target.value)} />
+            </div>
+            <div>
+              <label className={labelCls}>State *</label>
+              <input className={inputCls} placeholder="TX" maxLength={2}
+                value={form.state} onChange={(e) => set('state', e.target.value.toUpperCase())} />
+            </div>
+          </div>
+          <div>
+            <label className={labelCls}>ZIP code</label>
+            <input className={inputCls} placeholder="78745" maxLength={5} value={form.zip}
+              onChange={(e) => set('zip', e.target.value)} />
+          </div>
+          <div>
+            <label className={labelCls}>Property type</label>
+            <select className={inputCls} value={form.propertyType}
+              onChange={(e) => set('propertyType', e.target.value)}>
+              {PROPERTY_TYPES.map((t) => (
+                <option key={t} value={t}>{t.charAt(0).toUpperCase() + t.slice(1)}</option>
+              ))}
+            </select>
+          </div>
+          <div className="grid grid-cols-3 gap-4">
+            <div>
+              <label className={labelCls}>Bedrooms</label>
+              <select className={inputCls} value={form.bedrooms}
+                onChange={(e) => set('bedrooms', e.target.value)}>
+                {['0','1','2','3','4','5','6'].map((n) => (
+                  <option key={n} value={n}>{n === '0' ? 'Studio' : n}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className={labelCls}>Bathrooms</label>
+              <select className={inputCls} value={form.bathrooms}
+                onChange={(e) => set('bathrooms', e.target.value)}>
+                {['1','1.5','2','2.5','3','4'].map((n) => (
+                  <option key={n} value={n}>{n}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className={labelCls}>Sq ft</label>
+              <input className={inputCls} type="number" placeholder="900" value={form.sqft}
+                onChange={(e) => set('sqft', e.target.value)} />
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className={labelCls}>Monthly rent ($) *</label>
+              <input className={inputCls} type="number" placeholder="1500" value={form.price}
+                onChange={(e) => set('price', e.target.value)} />
+            </div>
+            <div>
+              <label className={labelCls}>Available from</label>
+              <input className={inputCls} type="date" value={form.availableFrom}
+                onChange={(e) => set('availableFrom', e.target.value)} />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Step 2: Description & amenities */}
+      {step === 2 && (
+        <div className="mt-8 space-y-5">
+          <div>
+            <label className={labelCls}>Listing title *</label>
+            <input className={inputCls} placeholder="Bright 2BR in downtown Austin with parking"
+              value={form.title} onChange={(e) => set('title', e.target.value)} />
+            <p className="mt-1 text-xs text-gray-500">Make it specific — renters search by keywords.</p>
+          </div>
+          <div>
+            <label className={labelCls}>Description *</label>
+            <textarea
+              className={`${inputCls} min-h-[160px] resize-y`}
+              placeholder="Describe the home, neighborhood, nearby transit, any house rules, etc."
+              value={form.description}
+              onChange={(e) => set('description', e.target.value)}
+            />
+            <p className="mt-1 text-xs text-gray-500">{form.description.length} / 30 min characters</p>
+          </div>
+          <div>
+            <label className={labelCls}>Amenities</label>
+            <div className="flex flex-wrap gap-2">
+              {AMENITIES_LIST.map((a) => (
+                <button key={a} type="button" onClick={() => toggleAmenity(a)}
+                  className={`rounded-full border px-3 py-1.5 text-sm font-medium transition ${
+                    form.amenities.includes(a)
+                      ? 'border-brand-600 bg-brand-50 text-brand-700'
+                      : 'border-gray-300 text-gray-600 hover:border-gray-400'
+                  }`}>
+                  {a}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Step 3: Photos */}
+      {step === 3 && (
+        <div className="mt-8 space-y-5">
+          <p className="text-sm text-gray-600">
+            Upload photos of your property. Good photos get more applicants.
+          </p>
+
+          {/* Drop zone */}
+          <button type="button" onClick={() => fileRef.current?.click()}
+            onDragOver={(e) => e.preventDefault()}
+            onDrop={(e) => { e.preventDefault(); addPhotos(e.dataTransfer.files); }}
+            className="flex w-full flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-gray-300 py-10 text-gray-500 transition hover:border-brand-400 hover:bg-brand-50">
+            <svg viewBox="0 0 24 24" className="h-10 w-10 stroke-gray-400" fill="none" strokeWidth="1.5">
+              <path strokeLinecap="round" strokeLinejoin="round"
+                d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
+            </svg>
+            <span className="font-semibold">Click or drag photos here</span>
+            <span className="text-xs">JPG, PNG — up to 20 photos</span>
+          </button>
+          <input ref={fileRef} type="file" accept="image/*" multiple className="hidden"
+            onChange={(e) => addPhotos(e.target.files)} />
+
+          {/* Preview grid */}
+          {previews.length > 0 && (
+            <div className="grid grid-cols-3 gap-3 sm:grid-cols-4">
+              {previews.map((src, i) => (
+                <div key={i} className="group relative aspect-square overflow-hidden rounded-xl bg-gray-100">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={src} alt="" className="h-full w-full object-cover" />
+                  {i === 0 && (
+                    <span className="absolute left-1 top-1 rounded-full bg-brand-600 px-2 py-0.5 text-xs font-bold text-white">
+                      Cover
+                    </span>
+                  )}
+                  <button onClick={() => removePhoto(i)}
+                    className="absolute right-1 top-1 flex h-6 w-6 items-center justify-center rounded-full bg-black/60 text-white opacity-0 transition group-hover:opacity-100">
+                    ×
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+          <p className="text-sm text-gray-500">{photos.length} photo{photos.length !== 1 ? 's' : ''} selected</p>
+        </div>
+      )}
+
+      {/* Step 4: Review */}
+      {step === 4 && (
+        <div className="mt-8 space-y-4">
+          <div className="rounded-2xl border border-gray-200 p-5 shadow-card">
+            <h2 className="font-bold text-gray-900">Property</h2>
+            <p className="mt-1 text-gray-700">{form.address}, {form.city}, {form.state} {form.zip}</p>
+            <p className="text-sm text-gray-500 mt-0.5">
+              {form.propertyType} · {form.bedrooms === '0' ? 'Studio' : `${form.bedrooms} bed`} · {form.bathrooms} bath
+              {form.sqft ? ` · ${form.sqft} sqft` : ''}
+            </p>
+          </div>
+
+          <div className="rounded-2xl border border-gray-200 p-5 shadow-card">
+            <h2 className="font-bold text-gray-900">Rent</h2>
+            <p className="mt-1 text-2xl font-extrabold text-brand-700">
+              ${(+form.price).toLocaleString()}<span className="text-base font-medium text-gray-500">/mo</span>
+            </p>
+            {form.availableFrom && (
+              <p className="text-sm text-gray-500">Available {new Date(form.availableFrom).toLocaleDateString()}</p>
+            )}
+          </div>
+
+          <div className="rounded-2xl border border-gray-200 p-5 shadow-card">
+            <h2 className="font-bold text-gray-900">{form.title}</h2>
+            <p className="mt-2 text-sm text-gray-700 line-clamp-4">{form.description}</p>
+            {form.amenities.length > 0 && (
+              <p className="mt-2 text-xs text-gray-500">{form.amenities.join(' · ')}</p>
+            )}
+          </div>
+
+          <div className="rounded-2xl border border-gray-200 p-5 shadow-card">
+            <h2 className="font-bold text-gray-900">Photos</h2>
+            <div className="mt-3 flex gap-2 overflow-x-auto pb-1">
+              {previews.map((src, i) => (
+                <div key={i} className="relative h-20 w-28 shrink-0 overflow-hidden rounded-lg">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={src} alt="" className="h-full w-full object-cover" />
+                </div>
+              ))}
+            </div>
+            <p className="mt-2 text-sm text-gray-500">{photos.length} photo{photos.length !== 1 ? 's' : ''}</p>
+          </div>
+        </div>
+      )}
+
+      {/* Navigation buttons */}
+      <div className="mt-8 flex gap-3">
+        {step < 4 && (
+          <button onClick={next}
+            className="flex-1 rounded-xl bg-brand-600 py-3 font-semibold text-white transition hover:bg-brand-700">
+            Continue →
+          </button>
+        )}
+        {step === 4 && (
+          <button onClick={submit} disabled={busy}
+            className="flex-1 rounded-xl bg-brand-600 py-3 font-semibold text-white transition hover:bg-brand-700 disabled:opacity-60">
+            {busy ? 'Publishing…' : 'Publish listing'}
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}

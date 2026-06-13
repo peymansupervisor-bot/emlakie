@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { getMyListings } from '@/lib/landlord/client';
 import { LandlordListing } from '@/lib/landlord/types';
 import { formatPrice, formatPropertyType } from '@/lib/format';
@@ -17,6 +18,8 @@ const statusPill: Record<string, { label: string; cls: string }> = {
 };
 
 export default function PropertiesPage() {
+  const searchParams = useSearchParams();
+  const justCreated = searchParams.get('created') === '1';
   const [listings, setListings] = useState<LandlordListing[] | null>(null);
   const [error, setError] = useState('');
   const [tab, setTab] = useState<Tab>('all');
@@ -44,8 +47,35 @@ export default function PropertiesPage() {
     { id: 'offMarket', label: `Off market (${offMarket.length})` },
   ];
 
+  const totalViews = listings?.reduce((s, l) => s + (l.view_count ?? 0), 0) ?? 0;
+  const totalApplicants = listings?.reduce((s, l) => s + (l.applicant_count ?? 0), 0) ?? 0;
+  const activeCount = listings?.filter((l) => l.status === 'active').length ?? 0;
+
   return (
     <div>
+      {justCreated && (
+        <div className="mb-6 rounded-xl bg-brand-50 border border-brand-200 px-5 py-4 text-brand-800 font-semibold">
+          ✓ Your listing was published successfully! It may take a few minutes to appear in search results.
+        </div>
+      )}
+
+      {/* Stats overview */}
+      {listings && listings.length > 0 && (
+        <div className="mb-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
+          {[
+            { label: 'Active listings', value: activeCount },
+            { label: 'Total listings', value: listings.length },
+            { label: 'Total views', value: totalViews },
+            { label: 'Total applicants', value: totalApplicants },
+          ].map((s) => (
+            <div key={s.label} className="rounded-2xl border border-gray-200 bg-white p-4 shadow-card">
+              <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">{s.label}</p>
+              <p className="mt-1 text-2xl font-extrabold text-gray-900">{s.value}</p>
+            </div>
+          ))}
+        </div>
+      )}
+
       <div className="flex flex-wrap items-center justify-between gap-4">
         <h1 className="text-3xl font-extrabold text-gray-900">Properties</h1>
         <Link

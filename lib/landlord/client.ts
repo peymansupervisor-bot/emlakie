@@ -75,9 +75,18 @@ export async function getMyListing(id: string): Promise<LandlordListing | null> 
   return listings.find((l) => l.id === id) ?? null;
 }
 
-export async function createListing(payload: Record<string, unknown>): Promise<LandlordListing> {
+export async function createListing(formData: FormData): Promise<LandlordListing> {
   if (isDemo()) throw new Error('Demo mode: sign in with your phone to publish real listings.');
-  return api<LandlordListing>('/listings', { method: 'POST', body: JSON.stringify(payload) });
+  const token = getToken();
+  const res = await fetch(`${API_URL}/listings`, {
+    method: 'POST',
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
+    body: formData,
+    signal: AbortSignal.timeout(30000),
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error((data as { error?: string }).error ?? `Upload failed (${res.status})`);
+  return data as LandlordListing;
 }
 
 export async function updateListing(id: string, payload: Record<string, unknown>): Promise<void> {

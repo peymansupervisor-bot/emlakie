@@ -23,11 +23,18 @@ export interface Listing {
 
 export interface ListingFilters {
   city?: string;
+  zip?: string;
   minPrice?: string;
   maxPrice?: string;
   bedrooms?: string;
   propertyType?: string;
   page?: string;
+}
+
+export interface ZipLocation {
+  zip: string;
+  city: string;
+  state: string;
 }
 
 export interface ListingsResponse {

@@ -1,10 +1,11 @@
-import { Listing, ListingFilters, ListingsResponse } from './types';
+import { Listing, ListingFilters, ListingsResponse, ZipLocation } from './types';
 import { sampleListings } from './sample-data';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'https://api.emlakie.com/api';
 
 function filterSamples(filters: ListingFilters): Listing[] {
   return sampleListings.filter((l) => {
+    if (filters.zip && l.zip !== filters.zip) return false;
     if (filters.city && !l.city.toLowerCase().includes(filters.city.toLowerCase())) return false;
     if (filters.minPrice && l.price < +filters.minPrice) return false;
     if (filters.maxPrice && l.price > +filters.maxPrice) return false;
@@ -31,6 +32,28 @@ export async function getListings(filters: ListingFilters = {}): Promise<Listing
   } catch {
     const listings = filterSamples(filters);
     return { listings, total: listings.length, usingSampleData: true };
+  }
+}
+
+export async function getAllZips(): Promise<ZipLocation[]> {
+  try {
+    const res = await fetch(`${API_URL}/listings/locations`, {
+      next: { revalidate: 3600 },
+      signal: AbortSignal.timeout(5000),
+    });
+    if (!res.ok) throw new Error(`API returned ${res.status}`);
+    return await res.json();
+  } catch {
+    const seen = new Set<string>();
+    return sampleListings
+      .filter((l) => l.zip)
+      .reduce<ZipLocation[]>((acc, l) => {
+        if (!seen.has(l.zip!)) {
+          seen.add(l.zip!);
+          acc.push({ zip: l.zip!, city: l.city, state: l.state ?? '' });
+        }
+        return acc;
+      }, []);
   }
 }
 

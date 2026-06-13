@@ -7,10 +7,10 @@ export default function ListingCard({ listing }: { listing: Listing }) {
   const photo = listing.photos?.[0];
 
   return (
-    <Link
-      href={`/rentals/${listing.id}`}
-      className="group overflow-hidden rounded-xl bg-white shadow-card transition hover:shadow-card-hover"
-    >
+    <article className="group relative overflow-hidden rounded-xl bg-white shadow-card transition hover:shadow-card-hover">
+      {/* Stretched link covers the whole card */}
+      <Link href={`/rentals/${listing.id}`} className="absolute inset-0 z-0" aria-label={listing.title} />
+
       <div className="relative aspect-[4/3] bg-gray-100">
         {photo ? (
           <Image
@@ -46,7 +46,15 @@ export default function ListingCard({ listing }: { listing: Listing }) {
           {listing.address}, {listing.city}
           {listing.state ? `, ${listing.state}` : ''}
         </p>
+        {listing.zip && (
+          <Link
+            href={`/homes/${listing.zip}`}
+            className="relative z-10 mt-2 inline-block rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-semibold text-gray-600 hover:bg-brand-50 hover:text-brand-700"
+          >
+            {listing.zip}
+          </Link>
+        )}
       </div>
-    </Link>
+    </article>
   );
 }

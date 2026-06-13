@@ -12,7 +12,7 @@ export default function PrivacyPage() {
 
       <div className="mt-8 space-y-6 leading-relaxed text-gray-700">
         <p>
-          EMLAKIE (&quot;we&quot;, &quot;us&quot;) operates emlakie.com and the EMLAKIE
+          EMLAKIE LLC (&quot;we&quot;, &quot;us&quot;, &quot;EMLAKIE&quot;) operates emlakie.com and the EMLAKIE
           mobile application. This policy describes what we collect and how we use it.
         </p>
         <h2 className="text-xl font-bold text-gray-900">Information we collect</h2>

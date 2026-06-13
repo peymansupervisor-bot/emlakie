@@ -12,7 +12,7 @@ export default function TermsPage() {
 
       <div className="mt-8 space-y-6 leading-relaxed text-gray-700">
         <p>
-          By using emlakie.com or the EMLAKIE app you agree to these terms.
+          By using emlakie.com or the EMLAKIE app you agree to these Terms of Service with EMLAKIE LLC, a California limited liability company.
         </p>
         <h2 className="text-xl font-bold text-gray-900">The service</h2>
         <p>

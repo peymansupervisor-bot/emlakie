@@ -19,10 +19,21 @@ jobs:
         with:
           node-version: '22'
 
-      - name: Install pa11y and supabase client
-        run: npm install -g pa11y pa11y-reporter-json && npm install @supabase/supabase-js
+      - name: Install Chromium dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libatk1.0-0 libatk-bridge2.0-0 libcups2 libdrm2 \
+            libxkbcommon0 libxcomposite1 libxdamage1 libxfixes3 \
+            libxrandr2 libgbm1 libasound2t64 libpango-1.0-0 \
+            libcairo2 libnspr4 libnss3
 
-      - name: Run ADA audit and log to Supabase
+      - name: Install pa11y and supabase client
+        run: |
+          npm install -g pa11y pa11y-reporter-json
+          npm install @supabase/supabase-js
+
+      - name: Run thorough ADA audit and log to Supabase
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
@@ -42,21 +53,46 @@ jobs:
           mkdir -p ada-reports
 
           for PAGE in "${PAGES[@]}"; do
-            echo "Auditing $BASE_URL$PAGE..."
-            SAFE_NAME=$(echo $PAGE | tr '/' '_' | tr -d '.')
+            echo "==============================="
+            echo "Auditing $BASE_URL$PAGE ..."
+            echo "==============================="
+            SAFE_NAME=$(echo $PAGE | tr '/' '_' | sed 's/^_$/home/')
+
             pa11y "$BASE_URL$PAGE" \
               --standard WCAG2AA \
               --reporter json \
-              --timeout 30000 \
-              --wait 2000 \
-              > "ada-reports/${SAFE_NAME}.json" 2>/dev/null || true
+              --timeout 60000 \
+              --wait 8000 \
+              --include-notices \
+              --include-warnings \
+              --viewport.width 1280 \
+              --viewport.height 800 \
+              --chromium-arg --no-sandbox \
+              --chromium-arg --disable-setuid-sandbox \
+              --chromium-arg --disable-dev-shm-usage \
+              > "ada-reports/${SAFE_NAME}.json" 2>"ada-reports/${SAFE_NAME}.stderr" || true
+
+            # Count issues found
+            ISSUE_COUNT=$(node -e "
+              try {
+                const d = JSON.parse(require('fs').readFileSync('ada-reports/${SAFE_NAME}.json','utf8'));
+                console.log(d.length);
+              } catch(e) { console.log('error'); }
+            ")
+            echo "  → $ISSUE_COUNT issues found on $PAGE"
+
+            # Show stderr if any
+            if [ -s "ada-reports/${SAFE_NAME}.stderr" ]; then
+              echo "  [stderr]: $(cat ada-reports/${SAFE_NAME}.stderr)"
+            fi
           done
 
-          # Save all results to Supabase
+          echo ""
+          echo "Saving all results to Supabase..."
+
           node -e "
           const { createClient } = require('@supabase/supabase-js');
           const fs = require('fs');
-          const path = require('path');
 
           const supabase = createClient(
             process.env.SUPABASE_URL,
@@ -68,30 +104,35 @@ jobs:
 
           async function saveAll() {
             for (const page of pages) {
-              const safeName = page.replace(/\//g, '_').replace(/^_/, '') || '_';
-              const filePath = 'ada-reports/' + (page === '/' ? '_' : safeName) + '.json';
-              let violations = [];
+              const safeName = page.replace(/\//g, '_').replace(/^_$/, 'home');
+              const filePath = 'ada-reports/' + safeName + '.json';
+              let issues = [];
               let passed = true;
 
               try {
                 const raw = fs.readFileSync(filePath, 'utf8');
-                violations = JSON.parse(raw);
-                passed = violations.length === 0;
+                issues = JSON.parse(raw);
+                passed = issues.filter(i => i.type === 'error').length === 0;
               } catch(e) {
-                violations = [];
+                console.log('Could not read report for ' + page + ': ' + e.message);
               }
 
-              await supabase.from('ada_audit_logs').insert({
+              const errors   = issues.filter(i => i.type === 'error').length;
+              const warnings = issues.filter(i => i.type === 'warning').length;
+              const notices  = issues.filter(i => i.type === 'notice').length;
+
+              const { error } = await supabase.from('ada_audit_logs').insert({
                 page_url: 'https://emlakie.com' + page,
                 standard: 'WCAG2AA',
-                violations_count: violations.length,
-                violations: violations,
+                violations_count: errors,
+                violations: issues,
                 passed: passed,
                 git_commit: commit,
                 triggered_by: 'github-action'
               });
 
-              console.log('Logged ' + page + ': ' + violations.length + ' violations');
+              if (error) console.log('Supabase error for ' + page + ':', error.message);
+              else console.log('Logged ' + page + ' — errors: ' + errors + ', warnings: ' + warnings + ', notices: ' + notices);
             }
           }
 

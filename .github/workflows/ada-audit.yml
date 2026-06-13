@@ -16,7 +16,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
 
       - name: Install pa11y and supabase client
         run: npm install -g pa11y pa11y-reporter-json && npm install @supabase/supabase-js

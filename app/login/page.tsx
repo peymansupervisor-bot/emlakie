@@ -78,15 +78,17 @@ export default function LoginPage() {
             <p className="text-gray-500 text-sm mb-6">Enter your cell phone number to receive a verification code.</p>
             <form onSubmit={handleSendCode} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Phone number</label>
+                <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">Phone number</label>
                 <div className="flex items-center border border-gray-300 rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-green-600 focus-within:border-green-600">
-                  <span className="px-3 py-3 bg-gray-50 text-gray-500 text-sm border-r border-gray-300">+1</span>
+                  <span className="px-3 py-3 bg-gray-50 text-gray-500 text-sm border-r border-gray-300" aria-hidden="true">+1</span>
                   <input
+                    id="phone"
                     type="tel"
                     value={phone}
                     onChange={handlePhoneChange}
                     placeholder="(555) 000-0000"
                     maxLength={14}
+                    aria-label="US phone number"
                     className="flex-1 px-3 py-3 text-sm outline-none"
                     autoFocus
                   />
@@ -141,11 +143,11 @@ export default function LoginPage() {
           </>
         )}
 
-        <p className="text-xs text-gray-400 text-center mt-6">
+        <p className="text-xs text-gray-600 text-center mt-6">
           By signing in, you agree to our{' '}
-          <a href="/terms" className="underline hover:text-gray-600">Terms</a>{' '}
+          <a href="/terms" className="underline hover:text-gray-800">Terms</a>{' '}
           and{' '}
-          <a href="/privacy" className="underline hover:text-gray-600">Privacy Policy</a>.
+          <a href="/privacy" className="underline hover:text-gray-800">Privacy Policy</a>.
         </p>
       </div>
     </div>

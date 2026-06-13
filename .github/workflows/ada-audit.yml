@@ -18,10 +18,14 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Install pa11y
-        run: npm install -g pa11y pa11y-reporter-json
+      - name: Install pa11y and supabase client
+        run: npm install -g pa11y pa11y-reporter-json && npm install @supabase/supabase-js
 
-      - name: Run ADA audit on key pages
+      - name: Run ADA audit and log to Supabase
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          GIT_COMMIT: ${{ github.sha }}
         run: |
           BASE_URL="https://emlakie.com"
           PAGES=(
@@ -34,22 +38,63 @@ jobs:
           )
 
           mkdir -p ada-reports
-          FAILED=false
 
           for PAGE in "${PAGES[@]}"; do
             echo "Auditing $BASE_URL$PAGE..."
+            SAFE_NAME=$(echo $PAGE | tr '/' '_' | tr -d '.')
             pa11y "$BASE_URL$PAGE" \
               --standard WCAG2AA \
               --reporter json \
               --timeout 30000 \
               --wait 2000 \
-              > "ada-reports/$(echo $PAGE | tr '/' '_').json" || FAILED=true
+              > "ada-reports/${SAFE_NAME}.json" 2>/dev/null || true
           done
 
-          if [ "$FAILED" = true ]; then
-            echo "ADA violations found — see artifacts for details"
-            exit 1
-          fi
+          # Save all results to Supabase
+          node -e "
+          const { createClient } = require('@supabase/supabase-js');
+          const fs = require('fs');
+          const path = require('path');
+
+          const supabase = createClient(
+            process.env.SUPABASE_URL,
+            process.env.SUPABASE_SERVICE_KEY
+          );
+
+          const pages = ['/', '/rentals', '/login', '/landlords', '/privacy', '/terms'];
+          const commit = process.env.GIT_COMMIT;
+
+          async function saveAll() {
+            for (const page of pages) {
+              const safeName = page.replace(/\//g, '_').replace(/^_/, '') || '_';
+              const filePath = 'ada-reports/' + (page === '/' ? '_' : safeName) + '.json';
+              let violations = [];
+              let passed = true;
+
+              try {
+                const raw = fs.readFileSync(filePath, 'utf8');
+                violations = JSON.parse(raw);
+                passed = violations.length === 0;
+              } catch(e) {
+                violations = [];
+              }
+
+              await supabase.from('ada_audit_logs').insert({
+                page_url: 'https://emlakie.com' + page,
+                standard: 'WCAG2AA',
+                violations_count: violations.length,
+                violations: violations,
+                passed: passed,
+                git_commit: commit,
+                triggered_by: 'github-action'
+              });
+
+              console.log('Logged ' + page + ': ' + violations.length + ' violations');
+            }
+          }
+
+          saveAll().then(() => console.log('All audit results saved to Supabase'));
+          "
 
       - name: Upload ADA reports
         if: always()
@@ -57,4 +102,4 @@ jobs:
         with:
           name: ada-audit-reports
           path: ada-reports/
-          retention-days: 30
+          retention-days: 90

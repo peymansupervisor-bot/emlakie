@@ -5,6 +5,8 @@ import Gallery from '@/components/Gallery';
 import { getListing, getListings } from '@/lib/api';
 import { formatBaths, formatBeds, formatPrice, formatPropertyType, formatSqft } from '@/lib/format';
 import ListingCard from '@/components/ListingCard';
+import EValue from '@/components/EValue';
+import { calculateEValue } from '@/lib/e-value';
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -30,8 +32,22 @@ export default async function ListingPage({ params }: Props) {
   const isExpired = listing.status === 'expired';
   const isUnavailable = isRented || isExpired;
 
-  // Fetch similar active listings in the same city for SEO + conversion
-  const { listings: similar } = await getListings({ city: listing.city });
+  // E-Value + similar listings — only for inactive listings
+  const [eValue, { listings: similar }] = await Promise.all([
+    isUnavailable
+      ? calculateEValue({
+          id: listing.id,
+          city: listing.city,
+          state: listing.state,
+          bedrooms: listing.bedrooms,
+          bathrooms: listing.bathrooms,
+          sqft: listing.sqft,
+          property_type: listing.property_type,
+          price: listing.price,
+        })
+      : Promise.resolve(null),
+    getListings({ city: listing.city }),
+  ]);
   const similarActive = similar.filter((l) => l.id !== listing.id && l.status === 'active').slice(0, 3);
 
   return (
@@ -105,6 +121,9 @@ export default async function ListingPage({ params }: Props) {
               </ul>
             </>
           )}
+
+          {/* E-Value — only shown on inactive listings */}
+          {isUnavailable && eValue && <EValue ev={eValue} />}
         </div>
 
         {/* Contact / status card */}

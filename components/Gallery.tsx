@@ -40,7 +40,7 @@ export default function Gallery({ photos, title }: { photos: string[]; title: st
                 i === active ? 'border-brand-600' : 'border-transparent opacity-70 hover:opacity-100'
               }`}
             >
-              <Image src={photo} alt="" fill sizes="112px" className="object-cover" />
+              <Image src={photo} alt={`Photo ${i + 1} of ${photos.length}`} fill sizes="112px" className="object-cover" />
             </button>
           ))}
         </div>

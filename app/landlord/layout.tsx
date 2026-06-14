@@ -58,7 +58,7 @@ export default function LandlordLayout({ children }: { children: React.ReactNode
           <div className="flex items-center justify-between py-4">
             <div>
               <p className="text-xs font-semibold uppercase tracking-widest text-green-200">Landlord Portal</p>
-              <h1 className="text-xl font-extrabold leading-tight">Welcome back</h1>
+              <p className="text-xl font-extrabold leading-tight">Welcome back</p>
             </div>
             <div className="flex items-center gap-3">
               <Link

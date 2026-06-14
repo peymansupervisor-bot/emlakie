@@ -18,8 +18,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!listing) return { title: 'Listing not found' };
   const statusLabel = listing.status === 'rented' ? ' [Rented]' : listing.status === 'expired' ? ' [Expired]' : '';
   return {
-    title: `${listing.title}${statusLabel} — ${formatPrice(listing.price)}`,
+    title: `${listing.title}${statusLabel} — ${formatPrice(listing.price)}/mo | EMLAKIE`,
     description: listing.description?.slice(0, 160),
+    openGraph: {
+      title: `${listing.title} — ${formatPrice(listing.price)}/mo`,
+      description: listing.description?.slice(0, 160) ?? '',
+      type: 'website',
+      images: listing.photos?.[0]
+        ? [{ url: listing.photos[0], width: 1200, height: 630, alt: listing.title }]
+        : [],
+    },
   };
 }
 

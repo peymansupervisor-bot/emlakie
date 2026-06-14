@@ -55,7 +55,7 @@ const empty: FormData = {
   title: '', description: '', amenities: [],
 };
 
-const inputCls = 'w-full rounded-xl border border-gray-300 px-4 py-3 text-sm outline-none focus:border-brand-600 focus:ring-1 focus:ring-brand-600';
+const inputCls = 'w-full rounded-xl border border-gray-300 px-4 py-3 text-sm outline-none focus:border-brand-600 focus:ring-0';
 const labelCls = 'block text-sm font-semibold text-gray-700 mb-1';
 
 function AddressField({ onSelect, onType }: {

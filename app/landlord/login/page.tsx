@@ -134,8 +134,7 @@ export default function LandlordLoginPage() {
       {/* LOGIN */}
       {step === 'login' && (
         <>
-          <h1 className="text-3xl font-extrabold text-gray-900">Landlord sign in</h1>
-          <p className="mt-2 text-gray-500">Sign in to manage your listings.</p>
+          <h1 className="text-3xl font-extrabold text-gray-900">Landlord Sign In to Manage Your Listings</h1>
           {message && <p className="mt-4 rounded-lg bg-green-50 px-4 py-3 text-sm text-green-700">{message}</p>}
           <form onSubmit={onLogin} className="mt-8 space-y-4">
             <input type="email" value={email} onChange={(e) => setEmail(e.target.value)}

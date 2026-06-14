@@ -5,16 +5,23 @@ function fmt(n: number) {
 }
 
 const confidenceConfig = {
-  high:   { label: 'High confidence',   color: 'text-brand-700 bg-brand-50 border-brand-200',   dot: 'bg-brand-500' },
-  medium: { label: 'Medium confidence', color: 'text-amber-700 bg-amber-50 border-amber-200',   dot: 'bg-amber-400' },
-  low:    { label: 'Low confidence',    color: 'text-gray-600  bg-gray-50  border-gray-200',    dot: 'bg-gray-400'  },
+  high:   { label: 'High confidence',   color: 'text-brand-700 bg-brand-50 border-brand-200', dot: 'bg-brand-500' },
+  medium: { label: 'Medium confidence', color: 'text-amber-700 bg-amber-50 border-amber-200', dot: 'bg-amber-400' },
+  low:    { label: 'Low confidence',    color: 'text-gray-600  bg-gray-50  border-gray-200',  dot: 'bg-gray-400'  },
+}
+
+const aptTypes: Record<string, string> = {
+  apartment: 'apartment',
+  studio: 'studio apartment',
 }
 
 export default function EValue({ ev }: { ev: EValueResult }) {
   const conf = confidenceConfig[ev.confidence]
+  const aptLabel = aptTypes[ev.propertyType]
 
   return (
     <section aria-label="E-Value estimate" className="mt-10 rounded-2xl border border-gray-200 bg-white p-6 shadow-card">
+
       {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
@@ -34,8 +41,10 @@ export default function EValue({ ev }: { ev: EValueResult }) {
         </span>
       </div>
 
-      {/* Two big numbers */}
-      <div className="mt-6 grid grid-cols-2 gap-4">
+      {/* Value cards */}
+      <div className={`mt-6 grid gap-4 ${ev.showSale ? 'grid-cols-2' : 'grid-cols-1 max-w-xs'}`}>
+
+        {/* E-Rent — always shown */}
         <div className="rounded-xl bg-brand-50 p-4">
           <p className="text-xs font-bold uppercase tracking-wide text-brand-700">E-Rent</p>
           <p className="mt-1 text-3xl font-extrabold text-gray-900">{fmt(ev.eRent)}</p>
@@ -45,15 +54,30 @@ export default function EValue({ ev }: { ev: EValueResult }) {
           </p>
         </div>
 
-        <div className="rounded-xl bg-gray-50 p-4">
-          <p className="text-xs font-bold uppercase tracking-wide text-gray-600">E-Sale</p>
-          <p className="mt-1 text-3xl font-extrabold text-gray-900">{fmt(ev.eSale)}</p>
-          <p className="mt-0.5 text-sm text-gray-500">estimated sale value</p>
-          <p className="mt-2 text-xs text-gray-400">
-            Based on {ev.capRate}% cap rate
+        {/* E-Sale — only for individually saleable property types */}
+        {ev.showSale && ev.eSale !== null && (
+          <div className="rounded-xl bg-gray-50 p-4">
+            <p className="text-xs font-bold uppercase tracking-wide text-gray-600">E-Sale</p>
+            <p className="mt-1 text-3xl font-extrabold text-gray-900">{fmt(ev.eSale)}</p>
+            <p className="mt-0.5 text-sm text-gray-500">estimated sale value</p>
+            <p className="mt-2 text-xs text-gray-400">
+              Based on {ev.capRate}% cap rate
+            </p>
+          </div>
+        )}
+      </div>
+
+      {/* Apartment notice — replaces E-Sale card */}
+      {!ev.showSale && aptLabel && (
+        <div className="mt-4 rounded-xl border border-gray-200 bg-gray-50 px-4 py-3">
+          <p className="text-sm font-semibold text-gray-700">Why no sale value?</p>
+          <p className="mt-1 text-sm text-gray-600">
+            This is an individual {aptLabel} unit within a multi-unit building. Apartment units
+            do not have a separate deed and cannot be sold individually — only the entire
+            building can be sold. E-Sale is not applicable here.
           </p>
         </div>
-      </div>
+      )}
 
       {/* Last rent vs E-Rent comparison */}
       {ev.lastRent > 0 && (
@@ -64,13 +88,12 @@ export default function EValue({ ev }: { ev: EValueResult }) {
           </div>
           <div className="flex items-center justify-between text-sm mt-1">
             <span className="text-gray-600">vs. current market</span>
-            {ev.eRent !== ev.lastRent && (
+            {ev.eRent !== ev.lastRent ? (
               <span className={`font-semibold ${ev.eRent > ev.lastRent ? 'text-brand-700' : 'text-red-600'}`}>
                 {ev.eRent > ev.lastRent ? '▲' : '▼'}{' '}
                 {Math.abs(Math.round(((ev.eRent - ev.lastRent) / ev.lastRent) * 100))}% market shift
               </span>
-            )}
-            {ev.eRent === ev.lastRent && (
+            ) : (
               <span className="font-semibold text-gray-600">At market rate</span>
             )}
           </div>

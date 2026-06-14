@@ -1,13 +1,23 @@
 import { createClient } from '@supabase/supabase-js'
 
+// Property types where individual units can be bought/sold with a separate deed
+export const INDIVIDUALLY_SALEABLE = ['house', 'condo', 'townhouse'] as const
+export type SaleableType = typeof INDIVIDUALLY_SALEABLE[number]
+
+export function canSellIndividually(propertyType: string): boolean {
+  return INDIVIDUALLY_SALEABLE.includes(propertyType as SaleableType)
+}
+
 export interface EValueResult {
   eRent: number           // estimated market rent $/mo
-  eSale: number           // estimated sale value $
+  eSale: number | null    // estimated sale value $ — null for apartments/studios
+  showSale: boolean       // false for apartment/studio (no individual deed)
   confidence: 'high' | 'medium' | 'low'
   comparablesCount: number
   priceRange: { min: number; max: number }
   capRate: number         // % used for sale estimate
   lastRent: number        // the listing's own last recorded rent
+  propertyType: string
 }
 
 const CAP_RATE = 0.055   // 5.5% — standard residential cap rate
@@ -79,10 +89,13 @@ export async function calculateEValue(listing: {
   }
 
   const eRent = prices.length > 0
-    ? roundToNearest(median(prices), 25)    // round to nearest $25
-    : roundToNearest(listing.price * 1.03, 25)  // fallback: +3% market drift
+    ? roundToNearest(median(prices), 25)         // round to nearest $25
+    : roundToNearest(listing.price * 1.03, 25)   // fallback: +3% market drift
 
-  const eSale = roundToNearest((eRent * 12) / CAP_RATE, 1000)
+  const sellable = canSellIndividually(listing.property_type)
+  const eSale = sellable
+    ? roundToNearest((eRent * 12) / CAP_RATE, 1000)
+    : null
 
   const priceMin = prices.length > 0 ? Math.min(...prices) : eRent * 0.9
   const priceMax = prices.length > 0 ? Math.max(...prices) : eRent * 1.1
@@ -94,6 +107,7 @@ export async function calculateEValue(listing: {
   return {
     eRent,
     eSale,
+    showSale: sellable,
     confidence,
     comparablesCount: workingSet.length,
     priceRange: {
@@ -102,5 +116,6 @@ export async function calculateEValue(listing: {
     },
     capRate: CAP_RATE * 100,
     lastRent: listing.price,
+    propertyType: listing.property_type,
   }
 }

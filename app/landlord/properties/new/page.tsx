@@ -120,6 +120,7 @@ export default function NewPropertyPage() {
   const router = useRouter();
   const [step, setStep] = useState<Step>(1);
   const [form, setForm] = useState<FormData>(empty);
+  const [mapsReady, setMapsReady] = useState(false);
   const [photos, setPhotos] = useState<File[]>([]);
   const [previews, setPreviews] = useState<string[]>([]);
   const [busy, setBusy] = useState(false);
@@ -256,6 +257,7 @@ export default function NewPropertyPage() {
       <Script
         src={`https://maps.googleapis.com/maps/api/js?key=${mapsKey}&libraries=places`}
         strategy="afterInteractive"
+        onLoad={() => setMapsReady(true)}
       />
     )}
     <div className="mx-auto max-w-2xl">
@@ -299,12 +301,21 @@ export default function NewPropertyPage() {
         <div className="mt-8 space-y-5">
           <div>
             <label className={labelCls}>Street address *</label>
-            <AddressField
-              onSelect={(address, city, state, zip) =>
-                setForm((f) => ({ ...f, address, city, state, zip }))
-              }
-              onType={(address) => setForm((f) => ({ ...f, address }))}
-            />
+            {mapsReady ? (
+              <AddressField
+                onSelect={(address, city, state, zip) =>
+                  setForm((f) => ({ ...f, address, city, state, zip }))
+                }
+                onType={(address) => setForm((f) => ({ ...f, address }))}
+              />
+            ) : (
+              <input
+                className={inputCls}
+                placeholder="123 Main St"
+                value={form.address}
+                onChange={(e) => setForm((f) => ({ ...f, address: e.target.value }))}
+              />
+            )}
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>

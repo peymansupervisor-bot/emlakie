@@ -92,8 +92,44 @@ export default function LandlordLoginPage() {
     </div>
   );
 
+  const steps = [
+    { title: 'Post your property', body: 'Add photos, set your rent, and publish in under five minutes — right from your phone.' },
+    { title: 'Get matched applicants', body: 'Our AI scores every application against your listing so the best-fit tenants rise to the top.' },
+    { title: 'Chat and decide', body: 'Message applicants directly, schedule showings, and approve your tenant — all in one place.' },
+  ];
+
   return (
-    <div className="mx-auto flex max-w-md flex-col px-4 py-16 sm:px-6">
+    <>
+    {/* Hero */}
+    <section className="bg-gradient-to-b from-brand-50 to-white">
+      <div className="mx-auto max-w-7xl px-4 py-20 text-center sm:px-6">
+        <h1 className="mx-auto max-w-2xl text-4xl font-extrabold text-gray-900 sm:text-5xl">
+          Fill your rental <span className="text-brand-600">faster</span>
+        </h1>
+        <p className="mx-auto mt-4 max-w-xl text-lg text-gray-600">
+          Post your property for free, get AI-matched applicants, and talk to tenants directly. No listing fees, no commissions.
+        </p>
+      </div>
+    </section>
+
+    {/* How it works */}
+    <section className="mx-auto max-w-7xl px-4 pb-16 sm:px-6">
+      <h2 className="text-center text-2xl font-extrabold text-gray-900">How it works</h2>
+      <div className="mt-10 grid gap-8 sm:grid-cols-3">
+        {steps.map((step, i) => (
+          <div key={step.title} className="rounded-2xl border border-gray-200 p-6 shadow-card">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-600 text-lg font-bold text-white">
+              {i + 1}
+            </div>
+            <h3 className="mt-4 text-lg font-bold text-gray-900">{step.title}</h3>
+            <p className="mt-2 text-gray-600">{step.body}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    {/* Login / signup form */}
+    <div className="mx-auto flex max-w-md flex-col px-4 pb-16 sm:px-6">
 
       {/* LOGIN */}
       {step === 'login' && (
@@ -187,5 +223,6 @@ export default function LandlordLoginPage() {
         </button>
       </div>
     </div>
+    </>
   );
 }

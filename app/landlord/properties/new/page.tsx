@@ -1,16 +1,10 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import Script from 'next/script';
+import usePlacesAutocomplete, { getGeocode } from 'use-places-autocomplete';
 import { createListing } from '@/lib/landlord/client';
-
-declare global {
-  interface Window {
-    google: typeof google;
-    initPlaces?: () => void;
-  }
-}
 
 const PROPERTY_TYPES = [
   { value: 'house',     label: 'House' },
@@ -64,6 +58,64 @@ const empty: FormData = {
 const inputCls = 'w-full rounded-xl border border-gray-300 px-4 py-3 text-sm outline-none focus:border-brand-600 focus:ring-1 focus:ring-brand-600';
 const labelCls = 'block text-sm font-semibold text-gray-700 mb-1';
 
+function AddressField({ onSelect }: {
+  onSelect: (address: string, city: string, state: string, zip: string) => void;
+}) {
+  const { ready, value, suggestions: { status, data }, setValue, clearSuggestions } = usePlacesAutocomplete({
+    requestOptions: { componentRestrictions: { country: 'us' }, types: ['address'] },
+    debounce: 250,
+  });
+  const [open, setOpen] = useState(false);
+
+  async function handleSelect(description: string) {
+    setValue(description, false);
+    clearSuggestions();
+    setOpen(false);
+    try {
+      const results = await getGeocode({ address: description });
+      const comps = results[0].address_components;
+      let streetNumber = '', route = '', city = '', state = '', zip = '';
+      for (const c of comps) {
+        const t = c.types[0];
+        if (t === 'street_number') streetNumber = c.long_name;
+        else if (t === 'route') route = c.short_name;
+        else if (t === 'locality') city = c.long_name;
+        else if (t === 'administrative_area_level_1') state = c.short_name;
+        else if (t === 'postal_code') zip = c.long_name;
+      }
+      const address = streetNumber ? `${streetNumber} ${route}` : route;
+      setValue(address, false);
+      onSelect(address, city, state, zip);
+    } catch {/* ignore */}
+  }
+
+  return (
+    <div className="relative">
+      <input
+        className={inputCls}
+        placeholder="123 Main St"
+        value={value}
+        disabled={!ready}
+        autoComplete="off"
+        onChange={(e) => { setValue(e.target.value); setOpen(true); }}
+        onBlur={() => setTimeout(() => setOpen(false), 150)}
+        onFocus={() => { if (data.length) setOpen(true); }}
+      />
+      {open && status === 'OK' && (
+        <ul className="absolute z-50 mt-1 w-full rounded-xl border border-gray-200 bg-white shadow-lg">
+          {data.map(({ place_id, description }) => (
+            <li key={place_id}
+              onMouseDown={() => handleSelect(description)}
+              className="cursor-pointer px-4 py-2.5 text-sm text-gray-700 hover:bg-green-50 hover:text-green-800 first:rounded-t-xl last:rounded-b-xl">
+              {description}
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
+
 export default function NewPropertyPage() {
   const router = useRouter();
   const [step, setStep] = useState<Step>(1);
@@ -76,47 +128,6 @@ export default function NewPropertyPage() {
   const [filterChecking, setFilterChecking] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
   const filterTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const addressRef = useRef<HTMLInputElement>(null);
-  const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
-
-  useEffect(() => {
-    function initAutocomplete() {
-      if (!addressRef.current || !window.google?.maps?.places) return;
-      const ac = new window.google.maps.places.Autocomplete(addressRef.current, {
-        types: ['address'],
-        componentRestrictions: { country: 'us' },
-        fields: ['address_components', 'formatted_address'],
-      });
-      autocompleteRef.current = ac;
-      ac.addListener('place_changed', () => {
-        const place = ac.getPlace();
-        if (!place.address_components) return;
-        let streetNumber = '', route = '', city = '', state = '', zip = '';
-        for (const comp of place.address_components) {
-          const type = comp.types[0];
-          if (type === 'street_number') streetNumber = comp.long_name;
-          else if (type === 'route') route = comp.short_name;
-          else if (type === 'locality') city = comp.long_name;
-          else if (type === 'administrative_area_level_1') state = comp.short_name;
-          else if (type === 'postal_code') zip = comp.long_name;
-        }
-        const address = streetNumber ? `${streetNumber} ${route}` : route;
-        if (addressRef.current) addressRef.current.value = address;
-        setForm((f) => ({ ...f, address, city, state, zip }));
-      });
-    }
-
-    if (window.google?.maps?.places) {
-      initAutocomplete();
-    } else {
-      window.initPlaces = initAutocomplete;
-    }
-    return () => {
-      if (autocompleteRef.current) {
-        window.google?.maps?.event?.clearInstanceListeners(autocompleteRef.current);
-      }
-    };
-  }, []);
 
   async function checkContent(text: string) {
     if (!text.trim()) { setFilterWarnings([]); return; }
@@ -182,8 +193,7 @@ export default function NewPropertyPage() {
 
   function validateStep(): string {
     if (step === 1) {
-      const addressVal = addressRef.current?.value?.trim() ?? form.address.trim();
-      if (!addressVal) return 'Address is required.';
+      if (!form.address.trim()) return 'Address is required.';
       if (!form.city.trim()) return 'City is required.';
       if (!form.state.trim()) return 'State is required.';
       if (!form.price.trim() || isNaN(+form.price) || +form.price < 100) return 'Enter a valid monthly rent.';
@@ -201,10 +211,6 @@ export default function NewPropertyPage() {
   }
 
   function next() {
-    if (step === 1 && addressRef.current) {
-      const v = addressRef.current.value.trim();
-      if (v) setForm((f) => ({ ...f, address: v }));
-    }
     const err = validateStep();
     if (err) { setError(err); return; }
     setError('');
@@ -248,8 +254,8 @@ export default function NewPropertyPage() {
     <>
     {mapsKey && (
       <Script
-        src={`https://maps.googleapis.com/maps/api/js?key=${mapsKey}&libraries=places&callback=initPlaces`}
-        strategy="lazyOnload"
+        src={`https://maps.googleapis.com/maps/api/js?key=${mapsKey}&libraries=places`}
+        strategy="afterInteractive"
       />
     )}
     <div className="mx-auto max-w-2xl">
@@ -293,12 +299,10 @@ export default function NewPropertyPage() {
         <div className="mt-8 space-y-5">
           <div>
             <label className={labelCls}>Street address *</label>
-            <input
-              ref={addressRef}
-              className={inputCls}
-              placeholder="123 Main St"
-              defaultValue={form.address}
-              autoComplete="new-password"
+            <AddressField
+              onSelect={(address, city, state, zip) =>
+                setForm((f) => ({ ...f, address, city, state, zip }))
+              }
             />
           </div>
           <div className="grid grid-cols-2 gap-4">

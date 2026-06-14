@@ -19,7 +19,7 @@ export default function Navbar() {
             For Tenants
           </Link>
           <Link
-            href="/landlords"
+            href="/landlord"
             className="text-sm font-semibold text-gray-700 hover:text-brand-600"
           >
             For Landlords

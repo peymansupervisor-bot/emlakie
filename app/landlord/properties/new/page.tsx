@@ -58,10 +58,11 @@ const empty: FormData = {
 const inputCls = 'w-full rounded-xl border border-gray-300 px-4 py-3 text-sm outline-none focus:border-brand-600 focus:ring-1 focus:ring-brand-600';
 const labelCls = 'block text-sm font-semibold text-gray-700 mb-1';
 
-function AddressField({ onSelect }: {
+function AddressField({ onSelect, onType }: {
   onSelect: (address: string, city: string, state: string, zip: string) => void;
+  onType: (address: string) => void;
 }) {
-  const { ready, value, suggestions: { status, data }, setValue, clearSuggestions } = usePlacesAutocomplete({
+  const { value, suggestions: { status, data }, setValue, clearSuggestions } = usePlacesAutocomplete({
     requestOptions: { componentRestrictions: { country: 'us' }, types: ['address'] },
     debounce: 250,
   });
@@ -95,9 +96,8 @@ function AddressField({ onSelect }: {
         className={inputCls}
         placeholder="123 Main St"
         value={value}
-        disabled={!ready}
         autoComplete="off"
-        onChange={(e) => { setValue(e.target.value); setOpen(true); }}
+        onChange={(e) => { setValue(e.target.value); onType(e.target.value); setOpen(true); }}
         onBlur={() => setTimeout(() => setOpen(false), 150)}
         onFocus={() => { if (data.length) setOpen(true); }}
       />
@@ -303,6 +303,7 @@ export default function NewPropertyPage() {
               onSelect={(address, city, state, zip) =>
                 setForm((f) => ({ ...f, address, city, state, zip }))
               }
+              onType={(address) => setForm((f) => ({ ...f, address }))}
             />
           </div>
           <div className="grid grid-cols-2 gap-4">

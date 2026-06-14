@@ -41,6 +41,21 @@ export async function verifyOtp(phone: string, token: string): Promise<void> {
   if (error) throw new Error(error.message);
 }
 
+export async function signInWithPassword(email: string, password: string): Promise<void> {
+  const { error } = await supabase.auth.signInWithPassword({ email, password });
+  if (error) throw new Error(error.message);
+}
+
+export async function signUpWithPassword(email: string, password: string): Promise<void> {
+  const { error } = await supabase.auth.signUp({ email, password, options: { emailRedirectTo: `${window.location.origin}/landlord` } });
+  if (error) throw new Error(error.message);
+}
+
+export async function resetPassword(email: string): Promise<void> {
+  const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo: `${window.location.origin}/landlord/reset-password` });
+  if (error) throw new Error(error.message);
+}
+
 export async function sendEmailOtp(email: string): Promise<void> {
   const { error } = await supabase.auth.signInWithOtp({
     email,

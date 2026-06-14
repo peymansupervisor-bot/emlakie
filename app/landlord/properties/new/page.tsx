@@ -1,8 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useEffect, useRef, useState } from 'react';
-import Script from 'next/script';
+import { useRef, useState } from 'react';
 import { createListing } from '@/lib/landlord/client';
 
 const PROPERTY_TYPES = [
@@ -57,68 +56,58 @@ const empty: FormData = {
 const inputCls = 'w-full rounded-xl border border-gray-300 px-4 py-3 text-sm outline-none focus:border-brand-600 focus:ring-0';
 const labelCls = 'block text-sm font-semibold text-gray-700 mb-1';
 
-/* global google */
+type NominatimSuggestion = { display: string; address: string; city: string; state: string; zip: string };
+
 function AddressField({ onSelect, onType }: {
   onSelect: (address: string, city: string, state: string, zip: string) => void;
   onType: (address: string) => void;
 }) {
   const [value, setValue] = useState('');
-  const [suggestions, setSuggestions] = useState<google.maps.places.AutocompleteSuggestion[]>([]);
+  const [suggestions, setSuggestions] = useState<NominatimSuggestion[]>([]);
   const [open, setOpen] = useState(false);
-  const debounceRef = useRef<ReturnType<typeof setTimeout>>();
-  const sessionTokenRef = useRef<google.maps.places.AutocompleteSessionToken | null>(null);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  useEffect(() => {
-    sessionTokenRef.current = new google.maps.places.AutocompleteSessionToken();
-  }, []);
-
-  async function fetchSuggestions(input: string) {
-    if (input.length < 3) { setSuggestions([]); setOpen(false); return; }
-    try {
-      const { suggestions: results } = await google.maps.places.AutocompleteSuggestion.fetchAutocompleteSuggestions({
-        input,
-        sessionToken: sessionTokenRef.current ?? undefined,
-        includedRegionCodes: ['us'],
-        includedPrimaryTypes: ['street_address', 'premise'],
-      });
-      setSuggestions(results);
-      setOpen(results.length > 0);
-    } catch { setSuggestions([]); }
+  function lookup(val: string) {
+    if (timerRef.current) clearTimeout(timerRef.current);
+    if (val.length < 4) { setSuggestions([]); setOpen(false); return; }
+    timerRef.current = setTimeout(async () => {
+      try {
+        const q = encodeURIComponent(`${val}, USA`);
+        const res = await fetch(
+          `https://nominatim.openstreetmap.org/search?q=${q}&format=json&addressdetails=1&limit=5&countrycodes=us`,
+          { headers: { 'Accept-Language': 'en' } }
+        );
+        const data = await res.json();
+        const results: NominatimSuggestion[] = data
+          .map((r: any) => {
+            const a = r.address ?? {};
+            const streetNum = a.house_number ?? '';
+            const road = a.road ?? '';
+            const street = [streetNum, road].filter(Boolean).join(' ');
+            const city = a.city ?? a.town ?? a.village ?? '';
+            const state = a.state ?? '';
+            const zip = a.postcode ?? '';
+            return { display: r.display_name, address: street, city, state, zip };
+          })
+          .filter((r: NominatimSuggestion) => r.address);
+        setSuggestions(results);
+        setOpen(results.length > 0);
+      } catch { setSuggestions([]); setOpen(false); }
+    }, 350);
   }
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     const v = e.target.value;
     setValue(v);
     onType(v);
-    clearTimeout(debounceRef.current);
-    debounceRef.current = setTimeout(() => fetchSuggestions(v), 250);
+    lookup(v);
   }
 
-  async function handleSelect(suggestion: google.maps.places.AutocompleteSuggestion) {
-    const pred = suggestion.placePrediction;
-    if (!pred) return;
-    const text = pred.text.toString();
-    setValue(text);
+  function handleSelect(s: NominatimSuggestion) {
+    setValue(s.address);
     setSuggestions([]);
     setOpen(false);
-    try {
-      const place = pred.toPlace();
-      await place.fetchFields({ fields: ['addressComponents'] });
-      const comps = place.addressComponents ?? [];
-      let streetNumber = '', route = '', city = '', state = '', zip = '';
-      for (const c of comps) {
-        const types = c.types;
-        if (types.includes('street_number')) streetNumber = c.longText ?? '';
-        else if (types.includes('route')) route = c.shortText ?? '';
-        else if (types.includes('locality')) city = c.longText ?? '';
-        else if (types.includes('administrative_area_level_1')) state = c.shortText ?? '';
-        else if (types.includes('postal_code')) zip = c.longText ?? '';
-      }
-      const address = streetNumber ? `${streetNumber} ${route}` : route;
-      setValue(address);
-      sessionTokenRef.current = new google.maps.places.AutocompleteSessionToken();
-      onSelect(address, city, state, zip);
-    } catch {/* ignore */}
+    onSelect(s.address, s.city, s.state, s.zip);
   }
 
   return (
@@ -138,7 +127,8 @@ function AddressField({ onSelect, onType }: {
             <li key={i}
               onMouseDown={() => handleSelect(s)}
               className="cursor-pointer px-4 py-2.5 text-sm text-gray-700 hover:bg-green-50 hover:text-green-800 first:rounded-t-xl last:rounded-b-xl">
-              {s.placePrediction?.text.toString()}
+              <span className="font-medium">{s.address}</span>
+              <span className="ml-2 text-xs text-gray-400">{s.city}{s.state ? `, ${s.state}` : ''}{s.zip ? ` ${s.zip}` : ''}</span>
             </li>
           ))}
         </ul>
@@ -151,7 +141,7 @@ export default function NewPropertyPage() {
   const router = useRouter();
   const [step, setStep] = useState<Step>(1);
   const [form, setForm] = useState<FormData>(empty);
-  const [mapsReady, setMapsReady] = useState(false);
+
   const [photos, setPhotos] = useState<File[]>([]);
   const [previews, setPreviews] = useState<string[]>([]);
   const [busy, setBusy] = useState(false);
@@ -280,17 +270,7 @@ export default function NewPropertyPage() {
 
   const steps = ['Property details', 'Description', 'Photos', 'Review'];
 
-  const mapsKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
-
   return (
-    <>
-    {mapsKey && (
-      <Script
-        src={`https://maps.googleapis.com/maps/api/js?key=${mapsKey}&libraries=places&v=weekly`}
-        strategy="afterInteractive"
-        onLoad={() => setMapsReady(true)}
-      />
-    )}
     <div className="mx-auto max-w-2xl">
       {/* Back */}
       <button onClick={() => step === 1 ? router.push('/landlord') : setStep((s) => (s - 1) as Step)}
@@ -332,21 +312,12 @@ export default function NewPropertyPage() {
         <div className="mt-8 space-y-5">
           <div>
             <label className={labelCls}>Street address *</label>
-            {mapsReady ? (
-              <AddressField
-                onSelect={(address, city, state, zip) =>
-                  setForm((f) => ({ ...f, address, city, state, zip }))
-                }
-                onType={(address) => setForm((f) => ({ ...f, address }))}
-              />
-            ) : (
-              <input
-                className={inputCls}
-                placeholder="123 Main St"
-                value={form.address}
-                onChange={(e) => setForm((f) => ({ ...f, address: e.target.value }))}
-              />
-            )}
+            <AddressField
+              onSelect={(address, city, state, zip) =>
+                setForm((f) => ({ ...f, address, city, state, zip }))
+              }
+              onType={(address) => setForm((f) => ({ ...f, address }))}
+            />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
@@ -603,6 +574,5 @@ export default function NewPropertyPage() {
         )}
       </div>
     </div>
-    </>
   );
 }

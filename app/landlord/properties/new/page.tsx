@@ -100,13 +100,9 @@ export default function NewPropertyPage() {
           else if (type === 'administrative_area_level_1') state = comp.short_name;
           else if (type === 'postal_code') zip = comp.long_name;
         }
-        setForm((f) => ({
-          ...f,
-          address: streetNumber ? `${streetNumber} ${route}` : route,
-          city,
-          state,
-          zip,
-        }));
+        const address = streetNumber ? `${streetNumber} ${route}` : route;
+        if (addressRef.current) addressRef.current.value = address;
+        setForm((f) => ({ ...f, address, city, state, zip }));
       });
     }
 
@@ -296,7 +292,7 @@ export default function NewPropertyPage() {
               ref={addressRef}
               className={inputCls}
               placeholder="123 Main St"
-              value={form.address}
+              defaultValue={form.address}
               onChange={(e) => set('address', e.target.value)}
               autoComplete="new-password"
             />

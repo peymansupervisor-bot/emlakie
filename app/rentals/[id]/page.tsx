@@ -2,31 +2,57 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import Gallery from '@/components/Gallery';
-import { getListing } from '@/lib/api';
+import { getListing, getListings } from '@/lib/api';
 import { formatBaths, formatBeds, formatPrice, formatPropertyType, formatSqft } from '@/lib/format';
+import ListingCard from '@/components/ListingCard';
 
 interface Props {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const listing = await getListing(params.id);
+  const { id } = await params;
+  const listing = await getListing(id);
   if (!listing) return { title: 'Listing not found' };
+  const statusLabel = listing.status === 'rented' ? ' [Rented]' : listing.status === 'expired' ? ' [Expired]' : '';
   return {
-    title: `${listing.title} — ${formatPrice(listing.price)}`,
+    title: `${listing.title}${statusLabel} — ${formatPrice(listing.price)}`,
     description: listing.description?.slice(0, 160),
   };
 }
 
 export default async function ListingPage({ params }: Props) {
-  const listing = await getListing(params.id);
+  const { id } = await params;
+  const listing = await getListing(id);
   if (!listing) notFound();
+
+  const isRented = listing.status === 'rented';
+  const isExpired = listing.status === 'expired';
+  const isUnavailable = isRented || isExpired;
+
+  // Fetch similar active listings in the same city for SEO + conversion
+  const { listings: similar } = await getListings({ city: listing.city });
+  const similarActive = similar.filter((l) => l.id !== listing.id && l.status === 'active').slice(0, 3);
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
       <Link href="/rentals" className="text-sm font-semibold text-brand-600 hover:text-brand-700">
         ← Back to search
       </Link>
+
+      {/* Status banner for unavailable listings */}
+      {isUnavailable && (
+        <div className={`mt-4 rounded-xl px-5 py-4 ${isRented ? 'bg-blue-50 border border-blue-200' : 'bg-amber-50 border border-amber-200'}`}>
+          <p className={`font-bold text-lg ${isRented ? 'text-blue-800' : 'text-amber-800'}`}>
+            {isRented ? '🔑 This property has been rented' : '⏰ This listing has expired'}
+          </p>
+          <p className={`mt-1 text-sm ${isRented ? 'text-blue-700' : 'text-amber-700'}`}>
+            {isRented
+              ? 'This rental is no longer available. Browse active listings below or search for similar homes in the area.'
+              : 'This listing is no longer active. The landlord may relist it — browse similar active listings below.'}
+          </p>
+        </div>
+      )}
 
       <div className="mt-4">
         <Gallery photos={listing.photos ?? []} title={listing.title} />
@@ -36,11 +62,15 @@ export default async function ListingPage({ params }: Props) {
         {/* Main column */}
         <div className="flex-1">
           <div className="flex flex-wrap items-center gap-3">
-            <h1 className="text-3xl font-extrabold text-gray-900">{formatPrice(listing.price)}</h1>
+            <h1 className="text-3xl font-extrabold text-gray-900">{formatPrice(listing.price)}<span className="text-base font-medium text-gray-500">/mo</span></h1>
+            {isRented && (
+              <span className="rounded-full bg-blue-100 px-3 py-1 text-sm font-bold text-blue-800">Rented</span>
+            )}
+            {isExpired && (
+              <span className="rounded-full bg-amber-100 px-3 py-1 text-sm font-bold text-amber-800">No Longer Available</span>
+            )}
             {listing.isSample && (
-              <span className="rounded-md bg-gray-900/80 px-2 py-1 text-xs font-semibold text-white">
-                Sample listing
-              </span>
+              <span className="rounded-md bg-gray-900/80 px-2 py-1 text-xs font-semibold text-white">Sample listing</span>
             )}
           </div>
 
@@ -77,26 +107,70 @@ export default async function ListingPage({ params }: Props) {
           )}
         </div>
 
-        {/* Contact card */}
+        {/* Contact / status card */}
         <aside className="lg:w-80">
           <div className="sticky top-24 rounded-2xl border border-gray-200 p-6 shadow-card">
-            <h2 className="text-lg font-bold text-gray-900">Interested in this home?</h2>
-            <p className="mt-2 text-sm text-gray-600">
-              Message the landlord and apply directly in the EMLAKIE app — it takes
-              less than two minutes.
-            </p>
-            <Link
-              href="/app"
-              className="mt-5 block rounded-xl bg-brand-600 py-3 text-center font-semibold text-white transition hover:bg-brand-700"
-            >
-              Apply in the App
-            </Link>
-            <p className="mt-3 text-center text-xs text-gray-500">
-              Free for renters. No account needed to browse.
-            </p>
+            {isUnavailable ? (
+              <>
+                <h2 className="text-lg font-bold text-gray-900">Looking for something similar?</h2>
+                <p className="mt-2 text-sm text-gray-600">
+                  This home is no longer available, but we have other rentals in {listing.city} you might love.
+                </p>
+                <Link
+                  href={`/rentals?city=${encodeURIComponent(listing.city)}`}
+                  className="mt-5 block rounded-xl bg-brand-600 py-3 text-center font-semibold text-white transition hover:bg-brand-700"
+                >
+                  Search in {listing.city}
+                </Link>
+                <Link
+                  href="/rentals"
+                  className="mt-3 block text-center text-sm font-semibold text-brand-600 hover:text-brand-700"
+                >
+                  Browse all rentals
+                </Link>
+              </>
+            ) : (
+              <>
+                <h2 className="text-lg font-bold text-gray-900">Interested in this home?</h2>
+                <p className="mt-2 text-sm text-gray-600">
+                  Message the landlord and apply directly in the EMLAKIE app — it takes less than two minutes.
+                </p>
+                <Link
+                  href="/app"
+                  className="mt-5 block rounded-xl bg-brand-600 py-3 text-center font-semibold text-white transition hover:bg-brand-700"
+                >
+                  Apply in the App
+                </Link>
+                <p className="mt-3 text-center text-xs text-gray-500">
+                  Free for renters. No account needed to browse.
+                </p>
+              </>
+            )}
           </div>
         </aside>
       </div>
+
+      {/* Similar active listings — shown on rented/expired pages for SEO + conversion */}
+      {isUnavailable && similarActive.length > 0 && (
+        <section className="mt-16">
+          <h2 className="text-2xl font-extrabold text-gray-900">
+            Similar homes available in {listing.city}
+          </h2>
+          <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {similarActive.map((l) => (
+              <ListingCard key={l.id} listing={l} />
+            ))}
+          </div>
+          <div className="mt-8 text-center">
+            <Link
+              href={`/rentals?city=${encodeURIComponent(listing.city)}`}
+              className="rounded-xl border-2 border-brand-600 px-6 py-3 font-semibold text-brand-600 transition hover:bg-brand-50"
+            >
+              See all rentals in {listing.city}
+            </Link>
+          </div>
+        </section>
+      )}
     </div>
   );
 }

@@ -19,6 +19,8 @@ export interface Listing {
   availableFrom?: string;
   view_count?: number;
   isSample?: boolean;
+  dom?: number;
+  domStartDate?: string | null;
 }
 
 export interface ListingFilters {

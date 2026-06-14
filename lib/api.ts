@@ -1,7 +1,37 @@
+import { createClient } from '@supabase/supabase-js';
 import { Listing, ListingFilters, ListingsResponse, ZipLocation } from './types';
 import { sampleListings } from './sample-data';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'https://api.emlakie.com/api';
+
+function supabaseAdmin() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_KEY ?? process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  );
+}
+
+function rowToListing(row: Record<string, unknown>): Listing {
+  return {
+    id: row.id as string,
+    title: row.title as string,
+    description: row.description as string | undefined,
+    address: row.address as string,
+    city: row.city as string,
+    state: row.state as string,
+    zip: row.zip as string | undefined,
+    price: Number(row.price),
+    bedrooms: Number(row.bedrooms),
+    bathrooms: Number(row.bathrooms),
+    sqft: Number(row.sqft),
+    property_type: row.property_type as Listing['property_type'],
+    amenities: (row.amenities as string[]) ?? [],
+    photos: (row.photos as string[]) ?? [],
+    status: row.status as string,
+    availableFrom: row.available_from as string | undefined,
+    view_count: Number(row.view_count ?? 0),
+  };
+}
 
 function filterSamples(filters: ListingFilters): Listing[] {
   return sampleListings.filter((l) => {
@@ -16,19 +46,27 @@ function filterSamples(filters: ListingFilters): Listing[] {
 }
 
 export async function getListings(filters: ListingFilters = {}): Promise<ListingsResponse> {
-  const params = new URLSearchParams();
-  for (const [key, value] of Object.entries(filters)) {
-    if (value) params.set(key, value);
-  }
-
   try {
-    const res = await fetch(`${API_URL}/listings?${params.toString()}`, {
-      next: { revalidate: 300 },
-      signal: AbortSignal.timeout(5000),
-    });
-    if (!res.ok) throw new Error(`API returned ${res.status}`);
-    const data = await res.json();
-    return { listings: data.listings ?? [], total: data.total ?? 0, usingSampleData: false };
+    const sb = supabaseAdmin();
+    let query = sb.from('listings').select('*', { count: 'exact' }).eq('status', 'active');
+    if (filters.city) query = query.ilike('city', `%${filters.city}%`);
+    if (filters.zip) query = query.eq('zip', filters.zip);
+    if (filters.minPrice) query = query.gte('price', Number(filters.minPrice));
+    if (filters.maxPrice) query = query.lte('price', Number(filters.maxPrice));
+    if (filters.bedrooms) query = query.eq('bedrooms', Number(filters.bedrooms));
+    if (filters.propertyType) query = query.eq('property_type', filters.propertyType);
+
+    const page = Number(filters.page ?? 1);
+    const pageSize = 20;
+    query = query.order('created_at', { ascending: false }).range((page - 1) * pageSize, page * pageSize - 1);
+
+    const { data, count, error } = await query;
+    if (error) throw error;
+
+    const listings = (data ?? []).map(rowToListing);
+    if (listings.length > 0) return { listings, total: count ?? listings.length, usingSampleData: false };
+    // Fall through to sample data if Supabase has no listings yet
+    throw new Error('no listings');
   } catch {
     const listings = filterSamples(filters);
     return { listings, total: listings.length, usingSampleData: true };
@@ -63,12 +101,21 @@ export async function getListing(id: string): Promise<Listing | null> {
   }
 
   try {
-    const res = await fetch(`${API_URL}/listings/${id}`, {
-      next: { revalidate: 300 },
-      signal: AbortSignal.timeout(5000),
-    });
-    if (!res.ok) return null;
-    return await res.json();
+    const sb = supabaseAdmin();
+    // Fetch all statuses except deactivated — rented/expired stay visible for SEO
+    const { data, error } = await sb
+      .from('listings')
+      .select('*')
+      .eq('id', id)
+      .in('status', ['active', 'rented', 'expired'])
+      .single();
+
+    if (error || !data) return null;
+
+    // Increment view count (fire and forget)
+    sb.from('listings').update({ view_count: (data.view_count ?? 0) + 1 }).eq('id', id).then(() => {});
+
+    return rowToListing(data);
   } catch {
     return null;
   }

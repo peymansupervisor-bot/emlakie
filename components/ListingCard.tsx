@@ -46,14 +46,21 @@ export default function ListingCard({ listing }: { listing: Listing }) {
           {listing.address}, {listing.city}
           {listing.state ? `, ${listing.state}` : ''}
         </p>
-        {listing.zip && (
-          <Link
-            href={`/homes/${listing.zip}`}
-            className="relative z-10 mt-2 inline-block rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-semibold text-gray-600 hover:bg-brand-50 hover:text-brand-700"
-          >
-            {listing.zip}
-          </Link>
-        )}
+        <div className="mt-2 flex flex-wrap items-center gap-2">
+          {listing.zip && (
+            <Link
+              href={`/homes/${listing.zip}`}
+              className="relative z-10 rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-semibold text-gray-600 hover:bg-brand-50 hover:text-brand-700"
+            >
+              {listing.zip}
+            </Link>
+          )}
+          {listing.dom != null && (
+            <span className="text-xs text-gray-400">
+              {listing.dom === 0 ? 'Listed today' : `${listing.dom} days on market`}
+            </span>
+          )}
+        </div>
       </div>
     </article>
   );

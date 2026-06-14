@@ -25,8 +25,8 @@ export default function Footer() {
             <div>
               <h3 className="text-sm font-bold text-gray-900">Landlords</h3>
               <ul className="mt-3 space-y-2 text-sm text-gray-600">
-                <li><Link href="/landlords" className="hover:text-brand-600">List a property</Link></li>
-                <li><Link href="/landlords#how-it-works" className="hover:text-brand-600">How it works</Link></li>
+                <li><Link href="/landlord" className="hover:text-brand-600">List a property</Link></li>
+                <li><Link href="/landlord#how-it-works" className="hover:text-brand-600">How it works</Link></li>
               </ul>
             </div>
             <div>
@@ -35,6 +35,7 @@ export default function Footer() {
                 <li><Link href="/privacy" className="hover:text-brand-600">Privacy</Link></li>
                 <li><Link href="/terms" className="hover:text-brand-600">Terms</Link></li>
                 <li><Link href="/accessibility" className="hover:text-brand-600">Accessibility</Link></li>
+                <li><Link href="/disclaimer" className="hover:text-brand-600">Disclaimer</Link></li>
               </ul>
             </div>
           </nav>

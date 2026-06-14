@@ -22,13 +22,16 @@ export default function LandlordLayout({ children }: { children: React.ReactNode
   const [demo,  setDemo]  = useState(false);
 
   useEffect(() => {
-    const signedIn = await isSignedIn();
-    if (!isLogin && !signedIn) {
-      router.replace('/landlord/login');
-      return;
+    async function check() {
+      const signedIn = await isSignedIn();
+      if (!isLogin && !signedIn) {
+        router.replace('/landlord/login');
+        return;
+      }
+      setDemo(isDemo());
+      setReady(true);
     }
-    setDemo(isDemo());
-    setReady(true);
+    check();
   }, [isLogin, pathname, router]);
 
   if (isLogin) return <>{children}</>;
@@ -46,7 +49,7 @@ export default function LandlordLayout({ children }: { children: React.ReactNode
           {demo && (
             <div className="border-b border-green-500 py-2 text-center text-xs font-semibold text-green-100">
               Demo mode —{' '}
-              <Link href="/landlord/login" className="underline text-white">sign in with your phone</Link>
+              <Link href="/landlord/login" className="underline text-white">sign in with your email</Link>
               {' '}to manage real listings
             </div>
           )}

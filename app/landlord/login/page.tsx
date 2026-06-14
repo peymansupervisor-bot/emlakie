@@ -53,7 +53,7 @@ export default function LandlordLoginPage() {
       <h1 className="text-3xl font-extrabold text-gray-900">Landlord sign in</h1>
       <p className="mt-2 text-gray-600">
         {step === 'email'
-          ? 'Enter your email and we'll send you a sign-in code.'
+          ? "Enter your email and we'll send you a sign-in code."
           : `We sent a 6-digit code to ${email}.`}
       </p>
 

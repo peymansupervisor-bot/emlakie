@@ -4,7 +4,22 @@ import { useRouter } from 'next/navigation';
 import { useRef, useState } from 'react';
 import { createListing } from '@/lib/landlord/client';
 
-const PROPERTY_TYPES = ['house', 'apartment', 'condo', 'townhouse', 'studio', 'room'];
+const PROPERTY_TYPES = [
+  { value: 'house',     label: 'House' },
+  { value: 'apartment', label: 'Apartment' },
+  { value: 'condo',     label: 'Condominium (Condo)' },
+  { value: 'townhouse', label: 'Townhouse' },
+  { value: 'studio',    label: 'Studio' },
+  { value: 'adu',       label: 'ADU (Accessory Dwelling Unit)' },
+  { value: 'jadu',      label: 'JADU (Junior ADU)' },
+  { value: 'room',      label: 'Room' },
+];
+
+// Studio ownership choices — determines E-Value sale eligibility
+const STUDIO_OWNERSHIP = [
+  { value: 'apartment', label: 'Apartment unit (part of a multi-unit building, rental only)' },
+  { value: 'condo',     label: 'Condominium (has its own deed, can be sold)' },
+];
 const AMENITIES_LIST = [
   'Air conditioning', 'Heating', 'In-unit laundry', 'Laundry in building',
   'Dishwasher', 'Parking', 'Garage', 'Pet-friendly', 'Pool', 'Gym',
@@ -19,6 +34,7 @@ interface FormData {
   state: string;
   zip: string;
   propertyType: string;
+  ownershipType: string;   // only required when propertyType === 'studio'
   bedrooms: string;
   bathrooms: string;
   sqft: string;
@@ -31,7 +47,8 @@ interface FormData {
 
 const empty: FormData = {
   address: '', city: '', state: '', zip: '',
-  propertyType: 'house', bedrooms: '1', bathrooms: '1',
+  propertyType: 'house', ownershipType: '',
+  bedrooms: '1', bathrooms: '1',
   sqft: '', price: '', availableFrom: '',
   title: '', description: '', amenities: [],
 };
@@ -120,6 +137,7 @@ export default function NewPropertyPage() {
       if (!form.city.trim()) return 'City is required.';
       if (!form.state.trim()) return 'State is required.';
       if (!form.price.trim() || isNaN(+form.price) || +form.price < 100) return 'Enter a valid monthly rent.';
+      if (form.propertyType === 'studio' && !form.ownershipType) return 'Please specify whether this studio is an apartment unit or a condominium.';
     }
     if (step === 2) {
       if (!form.title.trim()) return 'Add a listing title.';
@@ -157,6 +175,7 @@ export default function NewPropertyPage() {
       fd.append('propertyType', form.propertyType);
       fd.append('availableFrom', form.availableFrom);
       fd.append('amenities', JSON.stringify(form.amenities));
+      if (form.ownershipType) fd.append('ownershipType', form.ownershipType);
       photos.forEach((f) => fd.append('photos', f));
       await createListing(fd);
       router.push('/landlord?created=1');
@@ -236,10 +255,38 @@ export default function NewPropertyPage() {
             <select className={inputCls} value={form.propertyType}
               onChange={(e) => set('propertyType', e.target.value)}>
               {PROPERTY_TYPES.map((t) => (
-                <option key={t} value={t}>{t.charAt(0).toUpperCase() + t.slice(1)}</option>
+                <option key={t.value} value={t.value}>{t.label}</option>
               ))}
             </select>
           </div>
+
+          {/* Studio ownership clarification — required for accurate E-Value */}
+          {form.propertyType === 'studio' && (
+            <div className="rounded-xl border border-amber-200 bg-amber-50 p-4">
+              <label className="block text-sm font-semibold text-amber-900 mb-2">
+                Is this studio an apartment or a condominium? *
+              </label>
+              <p className="text-xs text-amber-700 mb-3">
+                This helps EMLAKIE accurately show the E-Value sale estimate. Studios in apartment
+                buildings cannot be sold individually — only condominiums can.
+              </p>
+              <div className="space-y-2">
+                {STUDIO_OWNERSHIP.map((o) => (
+                  <label key={o.value} className="flex items-start gap-3 cursor-pointer">
+                    <input
+                      type="radio"
+                      name="ownershipType"
+                      value={o.value}
+                      checked={form.ownershipType === o.value}
+                      onChange={(e) => set('ownershipType', e.target.value)}
+                      className="mt-0.5 accent-brand-600"
+                    />
+                    <span className="text-sm text-amber-900">{o.label}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+          )}
           <div className="grid grid-cols-3 gap-4">
             <div>
               <label className={labelCls}>Bedrooms</label>

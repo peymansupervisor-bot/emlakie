@@ -12,7 +12,8 @@ export interface Listing {
   bedrooms: number;
   bathrooms: number;
   sqft: number;
-  property_type: 'apartment' | 'house' | 'condo' | 'studio' | 'townhouse' | 'commercial';
+  property_type: 'apartment' | 'house' | 'condo' | 'studio' | 'townhouse' | 'room' | 'adu' | 'jadu' | 'commercial';
+  ownership_type?: 'apartment' | 'condo' | 'adu' | 'jadu' | null;
   amenities: string[];
   photos: string[];
   status: string;

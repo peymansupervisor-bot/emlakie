@@ -1,23 +1,49 @@
 import { createClient } from '@supabase/supabase-js'
 
-// Property types where individual units can be bought/sold with a separate deed
-export const INDIVIDUALLY_SALEABLE = ['house', 'condo', 'townhouse'] as const
-export type SaleableType = typeof INDIVIDUALLY_SALEABLE[number]
+// Property types that always have an individual deed — can be sold as standalone units
+export const ALWAYS_SALEABLE   = ['house', 'condo', 'townhouse'] as const
 
-export function canSellIndividually(propertyType: string): boolean {
-  return INDIVIDUALLY_SALEABLE.includes(propertyType as SaleableType)
+// Property types that are NEVER individually saleable
+// ADU/JADU are attached to the main parcel; apartments are multi-unit buildings
+export const NEVER_SALEABLE    = ['apartment', 'adu', 'jadu'] as const
+
+// Studio is ambiguous — need ownership_type to decide
+// If ownership_type === 'condo' → saleable; otherwise → not saleable
+
+export function canSellIndividually(
+  propertyType: string,
+  ownershipType?: string | null
+): boolean {
+  if ((ALWAYS_SALEABLE as readonly string[]).includes(propertyType)) return true
+  if ((NEVER_SALEABLE  as readonly string[]).includes(propertyType)) return false
+  // Studio: rely on landlord's declared ownership_type
+  if (propertyType === 'studio') return ownershipType === 'condo'
+  return false
+}
+
+export function saleNotApplicableReason(
+  propertyType: string,
+  ownershipType?: string | null
+): string {
+  if (propertyType === 'adu')  return 'ADUs (Accessory Dwelling Units) are legally attached to the main parcel and cannot be sold separately from the primary property.'
+  if (propertyType === 'jadu') return 'JADUs (Junior ADUs) are part of the primary residence structure and share the same deed. They cannot be sold as a standalone unit.'
+  if (propertyType === 'apartment') return 'This is an individual unit within a multi-unit apartment building. Apartment units do not have a separate deed and cannot be sold independently — only the entire building can be sold.'
+  if (propertyType === 'studio' && ownershipType !== 'condo') return 'This studio is part of an apartment building and does not have an individual deed. Only condominium-titled studios can be sold as standalone units.'
+  return ''
 }
 
 export interface EValueResult {
-  eRent: number           // estimated market rent $/mo
-  eSale: number | null    // estimated sale value $ — null for apartments/studios
-  showSale: boolean       // false for apartment/studio (no individual deed)
+  eRent: number
+  eSale: number | null
+  showSale: boolean
+  saleNotApplicableReason: string   // explanation when showSale is false
   confidence: 'high' | 'medium' | 'low'
   comparablesCount: number
   priceRange: { min: number; max: number }
-  capRate: number         // % used for sale estimate
-  lastRent: number        // the listing's own last recorded rent
+  capRate: number
+  lastRent: number
   propertyType: string
+  ownershipType?: string | null
 }
 
 const CAP_RATE = 0.055   // 5.5% — standard residential cap rate
@@ -50,7 +76,8 @@ export async function calculateEValue(listing: {
   bathrooms: number
   sqft?: number
   property_type: string
-  price: number           // the listing's own last rent
+  ownership_type?: string | null
+  price: number
 }): Promise<EValueResult> {
   const sb = supabase()
 
@@ -92,7 +119,7 @@ export async function calculateEValue(listing: {
     ? roundToNearest(median(prices), 25)         // round to nearest $25
     : roundToNearest(listing.price * 1.03, 25)   // fallback: +3% market drift
 
-  const sellable = canSellIndividually(listing.property_type)
+  const sellable = canSellIndividually(listing.property_type, listing.ownership_type)
   const eSale = sellable
     ? roundToNearest((eRent * 12) / CAP_RATE, 1000)
     : null
@@ -108,6 +135,7 @@ export async function calculateEValue(listing: {
     eRent,
     eSale,
     showSale: sellable,
+    saleNotApplicableReason: saleNotApplicableReason(listing.property_type, listing.ownership_type),
     confidence,
     comparablesCount: workingSet.length,
     priceRange: {
@@ -117,5 +145,6 @@ export async function calculateEValue(listing: {
     capRate: CAP_RATE * 100,
     lastRent: listing.price,
     propertyType: listing.property_type,
+    ownershipType: listing.ownership_type,
   }
 }

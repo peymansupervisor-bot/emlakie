@@ -43,6 +43,7 @@ export default async function ListingPage({ params }: Props) {
           bathrooms: listing.bathrooms,
           sqft: listing.sqft,
           property_type: listing.property_type,
+          ownership_type: listing.ownership_type,
           price: listing.price,
         })
       : Promise.resolve(null),

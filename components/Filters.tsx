@@ -31,8 +31,8 @@ export default function Filters() {
           if (e.target.value.trim() !== (searchParams.get('city') ?? ''))
             setFilter('city', e.target.value.trim());
         }}
-        placeholder="City"
-        aria-label="Filter by city"
+        placeholder="City or ZIP"
+        aria-label="Filter by city or ZIP code"
         className={`${selectClass} w-44 placeholder-gray-400`}
       />
 

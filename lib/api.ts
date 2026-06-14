@@ -33,10 +33,15 @@ function rowToListing(row: Record<string, unknown>): Listing {
   };
 }
 
+const isZip = (v: string) => /^\d{5}$/.test(v.trim());
+
 function filterSamples(filters: ListingFilters): Listing[] {
   return sampleListings.filter((l) => {
     if (filters.zip && l.zip !== filters.zip) return false;
-    if (filters.city && !l.city.toLowerCase().includes(filters.city.toLowerCase())) return false;
+    if (filters.city) {
+      if (isZip(filters.city)) { if (l.zip !== filters.city.trim()) return false; }
+      else if (!l.city.toLowerCase().includes(filters.city.toLowerCase())) return false;
+    }
     if (filters.minPrice && l.price < +filters.minPrice) return false;
     if (filters.maxPrice && l.price > +filters.maxPrice) return false;
     if (filters.bedrooms && l.bedrooms !== +filters.bedrooms) return false;
@@ -49,7 +54,10 @@ export async function getListings(filters: ListingFilters = {}): Promise<Listing
   try {
     const sb = supabaseAdmin();
     let query = sb.from('listings').select('*', { count: 'exact' }).eq('status', 'active');
-    if (filters.city) query = query.ilike('city', `%${filters.city}%`);
+    if (filters.city) {
+      if (isZip(filters.city)) query = query.eq('zip', filters.city.trim());
+      else query = query.ilike('city', `%${filters.city}%`);
+    }
     if (filters.zip) query = query.eq('zip', filters.zip);
     if (filters.minPrice) query = query.gte('price', Number(filters.minPrice));
     if (filters.maxPrice) query = query.lte('price', Number(filters.maxPrice));

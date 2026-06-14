@@ -18,8 +18,9 @@ export default async function RentalsPage({
 }) {
   const { listings, total, usingSampleData } = await getListings(searchParams);
 
+  const isZipSearch = searchParams.city && /^\d{5}$/.test(searchParams.city.trim());
   const heading = searchParams.city
-    ? `Rentals in ${searchParams.city}`
+    ? `Rentals in ${isZipSearch ? 'ZIP ' : ''}${searchParams.city}`
     : 'All rentals';
 
   return (

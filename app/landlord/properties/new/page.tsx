@@ -182,7 +182,8 @@ export default function NewPropertyPage() {
 
   function validateStep(): string {
     if (step === 1) {
-      if (!form.address.trim()) return 'Address is required.';
+      const addressVal = addressRef.current?.value?.trim() ?? form.address.trim();
+      if (!addressVal) return 'Address is required.';
       if (!form.city.trim()) return 'City is required.';
       if (!form.state.trim()) return 'State is required.';
       if (!form.price.trim() || isNaN(+form.price) || +form.price < 100) return 'Enter a valid monthly rent.';
@@ -200,6 +201,10 @@ export default function NewPropertyPage() {
   }
 
   function next() {
+    if (step === 1 && addressRef.current) {
+      const v = addressRef.current.value.trim();
+      if (v) setForm((f) => ({ ...f, address: v }));
+    }
     const err = validateStep();
     if (err) { setError(err); return; }
     setError('');
@@ -293,7 +298,6 @@ export default function NewPropertyPage() {
               className={inputCls}
               placeholder="123 Main St"
               defaultValue={form.address}
-              onChange={(e) => set('address', e.target.value)}
               autoComplete="new-password"
             />
           </div>

@@ -50,7 +50,7 @@ export default function ListingCard({ listing }: { listing: Listing }) {
           {listing.zip && (
             <Link
               href={`/homes/${listing.zip}`}
-              className="relative z-10 rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-semibold text-gray-600 hover:bg-brand-50 hover:text-brand-700"
+              className="relative z-10 rounded-full bg-gray-100 px-3 py-1.5 text-xs font-semibold text-gray-600 hover:bg-brand-50 hover:text-brand-700"
             >
               {listing.zip}
             </Link>

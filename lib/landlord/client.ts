@@ -31,6 +31,16 @@ export async function signOut() {
   await supabase.auth.signOut();
 }
 
+export async function sendOtp(phone: string): Promise<void> {
+  const { error } = await supabase.auth.signInWithOtp({ phone });
+  if (error) throw new Error(error.message);
+}
+
+export async function verifyOtp(phone: string, token: string): Promise<void> {
+  const { error } = await supabase.auth.verifyOtp({ phone, token, type: 'sms' });
+  if (error) throw new Error(error.message);
+}
+
 // ─── Internal fetch helper ────────────────────────────────────────────────────
 
 async function api<T>(path: string, init: RequestInit = {}): Promise<T> {

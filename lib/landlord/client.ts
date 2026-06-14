@@ -133,3 +133,8 @@ export async function getConversations(): Promise<Conversation[]> {
   if (isDemo()) return demoConversations;
   return [];
 }
+
+export async function getCurrentUserId(): Promise<string> {
+  const { data: { session } } = await supabase.auth.getSession();
+  return session?.user?.id ?? '';
+}

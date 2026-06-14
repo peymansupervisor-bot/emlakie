@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { getMyListings } from '@/lib/landlord/client';
+import { getMyListings, getCurrentUserId } from '@/lib/landlord/client';
 import { LandlordListing } from '@/lib/landlord/types';
 import { formatPrice } from '@/lib/format';
 
@@ -34,13 +34,34 @@ export default function BoostPage() {
   const [listings, setListings] = useState<LandlordListing[]>([]);
   const [selected, setSelected] = useState<string>('');
   const [plan, setPlan] = useState(BOOST_OPTIONS[1].id);
+  const [loading, setLoading] = useState(false);
+  const [userId, setUserId] = useState<string>('');
 
   useEffect(() => {
     getMyListings().then((data) => {
       setListings(data);
       if (data.length > 0) setSelected(data[0].id);
     }).catch(() => {});
+    getCurrentUserId().then(setUserId).catch(() => {});
   }, []);
+
+  async function handleBoost() {
+    if (!selected || !userId) return;
+    setLoading(true);
+    try {
+      const res = await fetch('/api/create-boost-checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ listingId: selected, planId: plan, userId }),
+      });
+      const { url, error } = await res.json();
+      if (error) { alert(error); setLoading(false); return; }
+      window.location.href = url;
+    } catch {
+      alert('Something went wrong. Please try again.');
+      setLoading(false);
+    }
+  }
 
   const activeListing = listings.find((l) => l.id === selected);
   const selectedPlan  = BOOST_OPTIONS.find((p) => p.id === plan)!;
@@ -160,12 +181,12 @@ export default function BoostPage() {
             <p className="text-3xl font-extrabold text-gray-900">${selectedPlan.price}</p>
           </div>
           <button
-            disabled
-            className="w-full rounded-xl py-3 text-sm font-bold text-white opacity-60 cursor-not-allowed"
+            onClick={handleBoost}
+            disabled={loading}
+            className="w-full rounded-xl py-3 text-sm font-bold text-white transition hover:opacity-90 disabled:opacity-60 disabled:cursor-not-allowed"
             style={{ backgroundColor: '#16a34a' }}
-            title="Stripe integration coming soon"
           >
-            Boost Now — ${selectedPlan.price} (coming soon)
+            {loading ? 'Redirecting to checkout…' : `Boost Now — $${selectedPlan.price}`}
           </button>
           <p className="mt-3 text-center text-xs text-gray-400">
             Secure checkout · No subscription · Cancel anytime

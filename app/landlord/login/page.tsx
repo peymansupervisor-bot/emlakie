@@ -2,29 +2,22 @@
 
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { enterDemo, sendOtp, verifyOtp } from '@/lib/landlord/client';
+import { enterDemo, sendEmailOtp, verifyEmailOtp } from '@/lib/landlord/client';
 
 export default function LandlordLoginPage() {
   const router = useRouter();
-  const [step, setStep] = useState<'phone' | 'code'>('phone');
-  const [phone, setPhone] = useState('');
+  const [step, setStep] = useState<'email' | 'code'>('email');
+  const [email, setEmail] = useState('');
   const [code, setCode] = useState('');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
-
-  function normalizePhone(input: string): string {
-    const digits = input.replace(/\D/g, '');
-    if (digits.length === 10) return `+1${digits}`;
-    if (digits.length === 11 && digits.startsWith('1')) return `+${digits}`;
-    return input.startsWith('+') ? input : `+${digits}`;
-  }
 
   async function onSendCode(e: React.FormEvent) {
     e.preventDefault();
     setBusy(true);
     setError('');
     try {
-      await sendOtp(normalizePhone(phone));
+      await sendEmailOtp(email.trim().toLowerCase());
       setStep('code');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Could not send the code. Please try again.');
@@ -38,7 +31,7 @@ export default function LandlordLoginPage() {
     setBusy(true);
     setError('');
     try {
-      await verifyOtp(normalizePhone(phone), code.trim());
+      await verifyEmailOtp(email.trim().toLowerCase(), code.trim());
       router.push('/landlord');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Invalid code. Please try again.');
@@ -59,20 +52,20 @@ export default function LandlordLoginPage() {
     <div className="mx-auto flex max-w-md flex-col px-4 py-16 sm:px-6">
       <h1 className="text-3xl font-extrabold text-gray-900">Landlord sign in</h1>
       <p className="mt-2 text-gray-600">
-        {step === 'phone'
-          ? 'Enter your phone number and we’ll text you a sign-in code.'
-          : `We sent a 6-digit code to ${phone}.`}
+        {step === 'email'
+          ? 'Enter your email and we'll send you a sign-in code.'
+          : `We sent a 6-digit code to ${email}.`}
       </p>
 
-      {step === 'phone' ? (
+      {step === 'email' ? (
         <form onSubmit={onSendCode} className="mt-8 space-y-4">
           <input
-            type="tel"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            placeholder="(661) 555-0123"
-            aria-label="Phone number"
-            autoComplete="tel"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="you@example.com"
+            aria-label="Email address"
+            autoComplete="email"
             required
             className={inputClass}
           />
@@ -81,7 +74,7 @@ export default function LandlordLoginPage() {
             disabled={busy}
             className="w-full rounded-xl bg-brand-600 py-3 font-semibold text-white transition hover:bg-brand-700 disabled:opacity-60"
           >
-            {busy ? 'Sending…' : 'Text me a code'}
+            {busy ? 'Sending…' : 'Email me a code'}
           </button>
         </form>
       ) : (
@@ -106,10 +99,10 @@ export default function LandlordLoginPage() {
           </button>
           <button
             type="button"
-            onClick={() => setStep('phone')}
+            onClick={() => setStep('email')}
             className="w-full text-sm font-semibold text-gray-600 hover:text-brand-600"
           >
-            Use a different number
+            Use a different email
           </button>
         </form>
       )}

@@ -22,7 +22,8 @@ export default function LandlordLayout({ children }: { children: React.ReactNode
   const [demo,  setDemo]  = useState(false);
 
   useEffect(() => {
-    if (!isLogin && !isSignedIn()) {
+    const signedIn = await isSignedIn();
+    if (!isLogin && !signedIn) {
       router.replace('/landlord/login');
       return;
     }

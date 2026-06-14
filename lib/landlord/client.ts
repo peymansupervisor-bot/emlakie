@@ -41,6 +41,16 @@ export async function verifyOtp(phone: string, token: string): Promise<void> {
   if (error) throw new Error(error.message);
 }
 
+export async function sendEmailOtp(email: string): Promise<void> {
+  const { error } = await supabase.auth.signInWithOtp({ email, options: { shouldCreateUser: true } });
+  if (error) throw new Error(error.message);
+}
+
+export async function verifyEmailOtp(email: string, token: string): Promise<void> {
+  const { error } = await supabase.auth.verifyOtp({ email, token, type: 'email' });
+  if (error) throw new Error(error.message);
+}
+
 // ─── Internal fetch helper ────────────────────────────────────────────────────
 
 async function api<T>(path: string, init: RequestInit = {}): Promise<T> {

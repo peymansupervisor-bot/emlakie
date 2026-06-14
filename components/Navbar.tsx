@@ -16,7 +16,7 @@ export default function Navbar() {
             href="/rentals"
             className="text-sm font-semibold text-gray-700 hover:text-brand-600"
           >
-            Find Rentals
+            For Tenants
           </Link>
           <Link
             href="/landlords"
@@ -35,7 +35,7 @@ export default function Navbar() {
         {/* Mobile */}
         <div className="flex items-center gap-4 md:hidden">
           <Link href="/rentals" className="text-sm font-semibold text-gray-700">
-            Rentals
+            For Tenants
           </Link>
           <Link
             href="/app"

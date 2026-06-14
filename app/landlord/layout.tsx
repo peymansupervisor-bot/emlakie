@@ -11,6 +11,7 @@ const TABS = [
   { href: '/landlord/leads',    label: 'Inquiries'      },
   { href: '/landlord/messages', label: 'Messages'       },
   { href: '/landlord/alerts',   label: 'Notifications'  },
+  { href: '/landlord/payments', label: '⚡ Boost'        },
 ];
 
 export default function LandlordLayout({ children }: { children: React.ReactNode }) {

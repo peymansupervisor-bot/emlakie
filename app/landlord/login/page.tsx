@@ -104,7 +104,7 @@ export default function LandlordLoginPage() {
     <section className="bg-gradient-to-b from-brand-50 to-white">
       <div className="mx-auto max-w-7xl px-4 py-20 text-center sm:px-6">
         <h1 className="mx-auto max-w-2xl text-4xl font-extrabold text-gray-900 sm:text-5xl">
-          Fill your rental <span className="text-brand-600">faster</span>
+          To rent out your property <span className="text-brand-600">faster</span>
         </h1>
         <p className="mx-auto mt-4 max-w-xl text-lg text-gray-600">
           Post your property for free, get AI-matched applicants, and talk to tenants directly. No listing fees, no commissions.

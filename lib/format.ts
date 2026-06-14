@@ -1,4 +1,5 @@
 export function formatPrice(price: number): string {
+  if (!price || isNaN(price)) return 'Contact for price';
   return `$${price.toLocaleString('en-US')}/mo`;
 }
 

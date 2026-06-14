@@ -64,9 +64,13 @@ export async function getListings(filters: ListingFilters = {}): Promise<Listing
     if (error) throw error;
 
     const listings = (data ?? []).map(rowToListing);
-    if (listings.length > 0) return { listings, total: count ?? listings.length, usingSampleData: false };
-    // Fall through to sample data if Supabase has no listings yet
-    throw new Error('no listings');
+    const MIN_LISTINGS = 6;
+    if (listings.length >= MIN_LISTINGS) return { listings, total: count ?? listings.length, usingSampleData: false };
+    // Pad with samples when fewer than MIN_LISTINGS real listings exist
+    const realIds = new Set(listings.map((l) => l.id));
+    const samples = filterSamples(filters).filter((s) => !realIds.has(s.id));
+    const padded = [...listings, ...samples].slice(0, Math.max(listings.length, MIN_LISTINGS));
+    return { listings: padded, total: padded.length, usingSampleData: listings.length === 0 };
   } catch {
     const listings = filterSamples(filters);
     return { listings, total: listings.length, usingSampleData: true };

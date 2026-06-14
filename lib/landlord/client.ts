@@ -42,7 +42,13 @@ export async function verifyOtp(phone: string, token: string): Promise<void> {
 }
 
 export async function sendEmailOtp(email: string): Promise<void> {
-  const { error } = await supabase.auth.signInWithOtp({ email, options: { shouldCreateUser: true } });
+  const { error } = await supabase.auth.signInWithOtp({
+    email,
+    options: {
+      shouldCreateUser: true,
+      emailRedirectTo: `${window.location.origin}/landlord`,
+    },
+  });
   if (error) throw new Error(error.message);
 }
 

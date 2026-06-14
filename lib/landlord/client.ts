@@ -95,12 +95,20 @@ export async function deactivateListing(id: string): Promise<void> {
   await api(`/api/listings/${id}/deactivate`, { method: 'POST' });
 }
 
-export async function markRented(id: string): Promise<void> {
+export async function markRented(
+  id: string,
+  opts?: { finalRent?: number; leaseTerm?: string }
+): Promise<void> {
   if (isDemo()) throw new Error('Demo mode: sign in with your phone to update listings.');
   await api(`/api/listings/${id}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ status: 'rented' }),
+    body: JSON.stringify({
+      status: 'rented',
+      rented_at: new Date().toISOString(),
+      ...(opts?.finalRent  ? { final_rent: opts.finalRent }   : {}),
+      ...(opts?.leaseTerm  ? { lease_term: opts.leaseTerm }   : {}),
+    }),
   });
 }
 

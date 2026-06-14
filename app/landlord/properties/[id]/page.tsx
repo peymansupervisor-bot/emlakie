@@ -10,6 +10,13 @@ import { formatBaths, formatBeds, formatPrice, formatSqft } from '@/lib/format';
 
 type Tab = 'overview' | 'applications';
 
+const LEASE_TERMS = [
+  { value: 'month_to_month', label: 'Month-to-month' },
+  { value: '6_months',       label: '6 months' },
+  { value: '12_months',      label: '12 months' },
+  { value: '24_months',      label: '24 months' },
+]
+
 function daysUntil(iso?: string | null): number | null {
   if (!iso) return null;
   return Math.ceil((new Date(iso).getTime() - Date.now()) / 86400000);
@@ -54,6 +61,9 @@ export default function PropertyDashboardPage() {
   const [tab, setTab] = useState<Tab>('overview');
   const [actionBusy, setActionBusy] = useState(false);
   const [actionMsg, setActionMsg] = useState('');
+  const [rentedModal, setRentedModal] = useState(false);
+  const [finalRent, setFinalRent] = useState('');
+  const [leaseTerm, setLeaseTerm] = useState('12_months');
 
   async function handleExtend() {
     setActionBusy(true);
@@ -81,14 +91,22 @@ export default function PropertyDashboardPage() {
   }
 
   async function handleMarkRented() {
-    if (!confirm('Mark this property as rented? It will be removed from active listings.')) return;
+    setFinalRent(listing?.price ? String(listing.price) : '');
+    setRentedModal(true);
+  }
+
+  async function submitRented() {
     setActionBusy(true);
     try {
-      await markRented(id);
+      await markRented(id, {
+        finalRent: finalRent ? Number(finalRent) : undefined,
+        leaseTerm,
+      });
       router.push('/landlord');
     } catch (e) {
       setActionMsg(e instanceof Error ? e.message : 'Could not update status.');
       setActionBusy(false);
+      setRentedModal(false);
     }
   }
 
@@ -183,6 +201,70 @@ export default function PropertyDashboardPage() {
           </button>
         ))}
       </div>
+
+      {/* Mark as Rented modal */}
+      {rentedModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
+          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl">
+            <h2 className="text-lg font-extrabold text-gray-900">Mark as Rented</h2>
+            <p className="mt-1 text-sm text-gray-500">
+              This data helps EMLAKIE provide accurate E-Value estimates and supports licensed
+              appraisers who use our comparable rental data.
+            </p>
+
+            <div className="mt-5 space-y-4">
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-1">
+                  Final rent amount <span className="font-normal text-gray-400">(what the tenant actually pays)</span>
+                </label>
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 font-semibold">$</span>
+                  <input
+                    type="number"
+                    value={finalRent}
+                    onChange={(e) => setFinalRent(e.target.value)}
+                    className="w-full rounded-xl border border-gray-300 py-2.5 pl-8 pr-3 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-200"
+                    placeholder={listing?.price ? String(listing.price) : '0'}
+                  />
+                </div>
+                <p className="mt-1 text-xs text-gray-400">
+                  Pre-filled with your asking price. Update if tenant negotiated a different rate.
+                </p>
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-1">Lease term</label>
+                <select
+                  value={leaseTerm}
+                  onChange={(e) => setLeaseTerm(e.target.value)}
+                  className="w-full rounded-xl border border-gray-300 py-2.5 px-3 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-200"
+                >
+                  {LEASE_TERMS.map((t) => (
+                    <option key={t.value} value={t.value}>{t.label}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <div className="mt-6 flex gap-3">
+              <button
+                onClick={submitRented}
+                disabled={actionBusy}
+                className="flex-1 rounded-xl bg-brand-600 py-2.5 text-sm font-bold text-white transition hover:bg-brand-700 disabled:opacity-60"
+              >
+                {actionBusy ? 'Saving…' : 'Confirm — Mark as Rented'}
+              </button>
+              <button
+                onClick={() => setRentedModal(false)}
+                disabled={actionBusy}
+                className="rounded-xl border border-gray-300 px-4 py-2.5 text-sm font-semibold text-gray-600 transition hover:border-gray-400"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {tab === 'overview' ? (
         <div className="mt-8 grid gap-6 sm:grid-cols-3">

@@ -575,6 +575,90 @@ export const posts: Post[] = [
 <p>Browse Las Vegas rentals on EMLAKIE — posted directly by landlords, no broker fees.</p>
     `.trim(),
   },
+  {
+    slug: 'average-rent-kansas-city-2026',
+    title: 'Average Rent in Kansas City, MO in 2026: Midwest Value at Its Best',
+    description: 'Kansas City offers some of the most affordable rents of any major US metro. Here\'s what renters pay across the Plaza, Crossroads, Midtown, and beyond.',
+    date: '2026-06-02',
+    category: 'Market Trends',
+    readTime: 4,
+    content: `
+<p>Kansas City, Missouri consistently ranks among the most affordable large metros in the United States. With a vibrant arts scene, a world-famous BBQ culture, a booming tech and healthcare sector, and rents that are a fraction of coastal cities, KC is increasingly attracting remote workers and young professionals priced out of bigger markets.</p>
+
+<h2>Citywide Averages</h2>
+<ul>
+  <li><strong>Studio:</strong> $850–$1,200/mo</li>
+  <li><strong>1-Bedroom:</strong> $1,000–$1,600/mo</li>
+  <li><strong>2-Bedroom:</strong> $1,300–$2,000/mo</li>
+</ul>
+
+<h2>Rent by Neighborhood</h2>
+<ul>
+  <li><strong>Country Club Plaza:</strong> $1,400–$2,200/mo (1BR) — KC's most upscale walkable district; Spanish-inspired architecture, upscale retail</li>
+  <li><strong>Crossroads Arts District:</strong> $1,100–$1,800/mo (1BR) — renovated warehouses, galleries, restaurants; the most trendy neighborhood in the city</li>
+  <li><strong>Midtown / Westport:</strong> $1,000–$1,600/mo (1BR) — eclectic, bar-heavy, popular with young renters</li>
+  <li><strong>River Market:</strong> $1,100–$1,700/mo (1BR) — historic district near the Missouri River; farmers market and loft-style apartments</li>
+  <li><strong>Brookside / Waldo:</strong> $1,000–$1,500/mo (1BR) — charming, residential, family-friendly</li>
+  <li><strong>Overland Park (KS side):</strong> $1,100–$1,700/mo (1BR) — suburban, excellent schools, Johnson County</li>
+</ul>
+
+<h2>Why KC Is One of America's Best-Kept Secrets</h2>
+<p>Kansas City offers a quality of life that punches well above its price point. The streetcar line has revitalized downtown. The city has a thriving live music scene (birthplace of jazz), world-class BBQ, and a passionate sports culture (Chiefs, Royals). Remote workers from LA or NYC can cut their rent in half without sacrificing much in terms of lifestyle.</p>
+
+<h2>Kansas City Renter Tips</h2>
+<ul>
+  <li>Missouri has no statewide rent control.</li>
+  <li>The KC metro straddles two states (Missouri and Kansas) — verify which state your unit is in, as tax rates differ.</li>
+  <li>A car is generally needed outside of the streetcar corridor and Crossroads.</li>
+  <li>Winters can be harsh with significant snowfall; ask about heating costs and whether utilities are included.</li>
+  <li>Tornado season runs April through June — many buildings have basement shelters.</li>
+</ul>
+
+<p>Find Kansas City rentals on EMLAKIE — listed directly by landlords, no broker fees.</p>
+    `.trim(),
+  },
+  {
+    slug: 'average-rent-omaha-nebraska-2026',
+    title: 'Average Rent in Omaha, Nebraska in 2026: Affordable Living in the Heartland',
+    description: 'Omaha is one of the most underrated rental markets in the US — stable, affordable, and growing. Here\'s what renters pay across Midtown, Benson, Dundee, and more.',
+    date: '2026-06-01',
+    category: 'Market Trends',
+    readTime: 4,
+    content: `
+<p>Omaha, Nebraska doesn't make many national headlines, but it consistently ranks near the top of livability surveys — low unemployment, low cost of living, strong job market, and a surprisingly vibrant food and arts scene. For renters, it's one of the best-value cities in the country in 2026.</p>
+
+<h2>Citywide Averages</h2>
+<ul>
+  <li><strong>Studio:</strong> $750–$1,050/mo</li>
+  <li><strong>1-Bedroom:</strong> $900–$1,400/mo</li>
+  <li><strong>2-Bedroom:</strong> $1,100–$1,700/mo</li>
+</ul>
+
+<h2>Rent by Neighborhood</h2>
+<ul>
+  <li><strong>Midtown Crossing:</strong> $1,100–$1,700/mo (1BR) — modern mixed-use development; walkable, close to medical center</li>
+  <li><strong>Benson:</strong> $900–$1,300/mo (1BR) — Omaha's hippest neighborhood; bars, live music, bungalows</li>
+  <li><strong>Dundee / Happy Hollow:</strong> $950–$1,400/mo (1BR) — charming, tree-lined streets, historic homes converted to apartments</li>
+  <li><strong>Old Market:</strong> $1,000–$1,600/mo (1BR) — historic brick district; restaurants, galleries, cobblestone streets</li>
+  <li><strong>Aksarben / Elmwood:</strong> $1,000–$1,500/mo (1BR) — popular with young professionals near UNO</li>
+  <li><strong>Bellevue / Papillion:</strong> $850–$1,200/mo (1BR) — southern suburbs; Offutt Air Force Base proximity</li>
+</ul>
+
+<h2>Omaha's Economy: Sturdier Than You'd Think</h2>
+<p>Omaha is home to five Fortune 500 companies — including Berkshire Hathaway (Warren Buffett's company), Union Pacific, and Mutual of Omaha. The healthcare and financial services industries provide a stable employment base. Unemployment consistently runs below the national average, which gives renters confidence in long-term job security.</p>
+
+<h2>Omaha Renter Tips</h2>
+<ul>
+  <li>Nebraska has no rent control.</li>
+  <li>Omaha winters are cold and snowy; ask whether snow removal and heat are included in rent.</li>
+  <li>A car is necessary — public transit is limited outside of downtown.</li>
+  <li>The city is generally landlord-friendly, so read your lease carefully before signing.</li>
+  <li>Tornado risk is real from April through June; look for units with access to a basement or shelter.</li>
+</ul>
+
+<p>Browse Omaha rentals on EMLAKIE — connect directly with landlords, no middlemen.</p>
+    `.trim(),
+  },
 ];
 
 export function getPost(slug: string): Post | undefined {

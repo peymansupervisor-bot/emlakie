@@ -358,17 +358,17 @@ export default async function HomePage() {
       </section>
 
       {/* App promo */}
-      <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6">
-        <div className="flex flex-col items-center justify-between gap-10 rounded-3xl bg-brand-600 p-10 sm:p-14 lg:flex-row">
+      <section className="mx-auto max-w-7xl px-4 py-10 sm:py-16 sm:px-6">
+        <div className="flex flex-col items-center justify-between gap-8 rounded-2xl bg-brand-600 px-6 py-10 sm:rounded-3xl sm:px-14 sm:py-14 lg:flex-row">
           <div className="max-w-xl text-center lg:text-left">
-            <h2 className="text-3xl font-extrabold text-white">
+            <h2 className="text-2xl font-extrabold text-white sm:text-3xl">
               Take EMLAKIE with you
             </h2>
-            <p className="mt-3 text-lg text-white">
+            <p className="mt-3 text-base text-green-100 sm:text-lg">
               Search on the go, chat with landlords, and get instant alerts when new
-              homes hit the market. Coming soon to the App Store and Google Play.
+              homes hit the market.
             </p>
-            <div className="mt-8 flex justify-center lg:justify-start">
+            <div className="mt-6 flex justify-center lg:justify-start">
               <AppBadges />
             </div>
           </div>

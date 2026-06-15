@@ -4,8 +4,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { createClient } from '@supabase/supabase-js';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
-
 const PLANS: Record<string, { label: string; price: number; days: number }> = {
   '7day':  { label: '7-Day Boost',  price: 1900,  days: 7  },
   '30day': { label: '30-Day Boost', price: 4900,  days: 30 },
@@ -13,6 +11,7 @@ const PLANS: Record<string, { label: string; price: number; days: number }> = {
 };
 
 export async function POST(req: NextRequest) {
+  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
   const { listingId, planId, userId } = await req.json();
 
   const plan = PLANS[planId];

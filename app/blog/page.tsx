@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   alternates: { canonical: 'https://emlakie.com/blog' },
 };
 
-export const CATEGORY_COLORS: Record<string, string> = {
+const CATEGORY_COLORS: Record<string, string> = {
   'Market Trends':       'bg-blue-50 text-blue-700',
   'Neighborhood Guides': 'bg-purple-50 text-purple-700',
   'Renter Tips':         'bg-green-50 text-green-700',

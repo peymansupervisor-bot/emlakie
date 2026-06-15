@@ -26,7 +26,6 @@ export default function Footer() {
               <h3 className="text-sm font-bold text-gray-900">Landlords</h3>
               <ul className="mt-3 space-y-2 text-sm text-gray-600">
                 <li><Link href="/landlord/login" className="hover:text-brand-600">List a property</Link></li>
-                <li><Link href="/landlord/login#how-it-works" className="hover:text-brand-600">How it works</Link></li>
               </ul>
             </div>
             <div>

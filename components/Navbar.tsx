@@ -25,6 +25,12 @@ export default function Navbar() {
             For Landlords
           </Link>
           <Link
+            href="/blog"
+            className="text-sm font-semibold text-gray-700 hover:text-brand-600"
+          >
+            Blog
+          </Link>
+          <Link
             href="/app"
             className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-700"
           >

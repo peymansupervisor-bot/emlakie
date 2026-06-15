@@ -14,410 +14,224 @@ export default async function HomePage() {
     <>
       {/* Hero */}
       <section className="relative overflow-hidden bg-white">
-        {/* SVG Skyline */}
+        {/* SVG Neighborhood Illustration */}
         <svg
-          viewBox="0 0 1400 420"
+          viewBox="0 0 1400 500"
           xmlns="http://www.w3.org/2000/svg"
           aria-hidden="true"
-          preserveAspectRatio="xMidYMid slice"
-          className="h-[480px] w-full sm:h-[540px]"
+          preserveAspectRatio="xMidYMax slice"
+          className="h-[480px] w-full sm:h-[560px]"
         >
           <defs>
             <linearGradient id="hsky" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stopColor="#FFFFFF"/>
-              <stop offset="100%" stopColor="#F4F8F6"/>
+              <stop offset="100%" stopColor="#F2F7F4"/>
             </linearGradient>
-            <linearGradient id="hground" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#E8ECEB"/>
-              <stop offset="100%" stopColor="#D4DAD8"/>
+            <linearGradient id="hgnd" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#C8DECE"/>
+              <stop offset="100%" stopColor="#9EC4A8"/>
             </linearGradient>
             <linearGradient id="hfadeL" x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0%" stopColor="#FFFFFF" stopOpacity="1"/>
+              <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.9"/>
               <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0"/>
             </linearGradient>
             <linearGradient id="hfadeR" x1="0" y1="0" x2="1" y2="0">
               <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0"/>
-              <stop offset="100%" stopColor="#FFFFFF" stopOpacity="1"/>
+              <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0.9"/>
             </linearGradient>
             <linearGradient id="hshade" x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0%" stopColor="#000000" stopOpacity="0.04"/>
+              <stop offset="0%" stopColor="#000000" stopOpacity="0.08"/>
               <stop offset="100%" stopColor="#000000" stopOpacity="0"/>
+            </linearGradient>
+            <linearGradient id="hwk" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#E4E8E5"/>
+              <stop offset="100%" stopColor="#CDD3CF"/>
             </linearGradient>
           </defs>
 
           {/* Sky */}
-          <rect width="1400" height="420" fill="url(#hsky)"/>
+          <rect width="1400" height="500" fill="url(#hsky)"/>
 
-          {/* Diagonal accent lines */}
-          <line x1="0" y1="380" x2="1400" y2="290" stroke="#6FAF8F" strokeWidth="0.6" opacity="0.25"/>
-          <line x1="0" y1="390" x2="1400" y2="300" stroke="#6FAF8F" strokeWidth="0.4" opacity="0.15"/>
+          {/* Rolling terrain */}
+          <path d="M0,400 C200,385 500,378 750,386 C1000,394 1200,380 1400,387 L1400,500 L0,500Z" fill="#D6E8DC"/>
+          <path d="M0,415 C180,403 450,396 720,403 C990,410 1220,398 1400,404 L1400,500 L0,500Z" fill="url(#hgnd)"/>
+          <path d="M0,440 C200,433 600,428 900,434 C1150,440 1300,430 1400,435 L1400,500 L0,500Z" fill="#B8D0BF"/>
 
-          {/* Far background ghost buildings */}
-          <g fill="#E8ECEB" opacity="0.55">
-            <rect x="30"   y="280" width="28" height="110"/>
-            <rect x="62"   y="260" width="22" height="130"/>
-            <rect x="88"   y="272" width="34" height="118"/>
-            <rect x="126"  y="248" width="26" height="142"/>
-            <rect x="156"  y="265" width="30" height="125"/>
-            <rect x="192"  y="255" width="20" height="135"/>
-            <rect x="1148" y="268" width="26" height="122"/>
-            <rect x="1178" y="252" width="32" height="138"/>
-            <rect x="1214" y="262" width="24" height="128"/>
-            <rect x="1242" y="245" width="28" height="145"/>
-            <rect x="1274" y="258" width="22" height="132"/>
-            <rect x="1300" y="270" width="30" height="120"/>
-            <rect x="1334" y="255" width="24" height="135"/>
-            <rect x="1362" y="272" width="28" height="118"/>
+          {/* HOME 1 — Modern ranch */}
+          <ellipse cx="235" cy="420" rx="105" ry="7" fill="#1E5A46" opacity="0.1"/>
+          <rect x="130" y="362" width="220" height="58" fill="#FFFFFF"/>
+          <rect x="130" y="362" width="220" height="58" stroke="#E0E8E4" strokeWidth="0.5" fill="none"/>
+          <polygon points="124,362 356,362 363,348 117,348" fill="#2E3135"/>
+          <polygon points="124,362 356,362 363,348 117,348" fill="url(#hshade)"/>
+          <rect x="117" y="345" width="246" height="5" fill="#1E5A46" rx="1"/>
+          <rect x="148" y="330" width="12" height="20" fill="#404548"/>
+          <rect x="146" y="328" width="16" height="5" fill="#2E3135" rx="1"/>
+          <rect x="130" y="367" width="90" height="53" fill="#F2F5F3"/>
+          <g stroke="#D0D8D4" strokeWidth="0.6" fill="none">
+            <rect x="137" y="372" width="76" height="44" rx="0.5"/>
+            <line x1="137" y1="383" x2="213" y2="383"/>
+            <line x1="137" y1="394" x2="213" y2="394"/>
+            <line x1="137" y1="405" x2="213" y2="405"/>
+            <line x1="175" y1="372" x2="175" y2="416"/>
           </g>
+          <rect x="236" y="370" width="38" height="24" fill="#C8E0D0" rx="0.5"/>
+          <line x1="255" y1="370" x2="255" y2="394" stroke="#fff" strokeWidth="0.8"/>
+          <line x1="236" y1="382" x2="274" y2="382" stroke="#fff" strokeWidth="0.8"/>
+          <rect x="282" y="370" width="32" height="24" fill="#C8E0D0" rx="0.5"/>
+          <line x1="282" y1="382" x2="314" y2="382" stroke="#fff" strokeWidth="0.8"/>
+          <rect x="318" y="370" width="28" height="50" fill="#1E5A46" rx="0.5"/>
+          <rect x="322" y="374" width="20" height="28" fill="#6FAF8F" opacity="0.3" rx="0.5"/>
+          <circle cx="338" cy="400" r="2" fill="#C8A96E" opacity="0.9"/>
+          <ellipse cx="138" cy="416" rx="14" ry="9" fill="#6FAF8F" opacity="0.7"/>
+          <ellipse cx="340" cy="416" rx="12" ry="8" fill="#6FAF8F" opacity="0.7"/>
+          <ellipse cx="352" cy="417" rx="8" ry="6" fill="#1E5A46" opacity="0.5"/>
+          <rect x="100" y="368" width="4" height="46" fill="#8B6B4E"/>
+          <ellipse cx="102" cy="358" rx="18" ry="22" fill="#1E5A46" opacity="0.88"/>
+          <path d="M238,420 L228,450 L250,450 L243,420Z" fill="url(#hwk)" opacity="0.7"/>
 
-          {/* Left cluster */}
-          <rect x="80"  y="245" width="42" height="145" fill="#E8ECEB"/>
-          <g stroke="#FFFFFF" strokeWidth="0.6" opacity="0.9">
-            <line x1="96"  y1="245" x2="96"  y2="390"/>
-            <line x1="112" y1="245" x2="112" y2="390"/>
-            <line x1="80"  y1="265" x2="122" y2="265"/>
-            <line x1="80"  y1="285" x2="122" y2="285"/>
-            <line x1="80"  y1="305" x2="122" y2="305"/>
-            <line x1="80"  y1="325" x2="122" y2="325"/>
-            <line x1="80"  y1="345" x2="122" y2="345"/>
-            <line x1="80"  y1="365" x2="122" y2="365"/>
-          </g>
-          <rect x="126" y="210" width="50" height="180" fill="#2E3135"/>
-          <rect x="126" y="210" width="50" height="180" fill="url(#hshade)"/>
-          <g stroke="#FFFFFF" strokeWidth="0.5" opacity="0.08">
-            <line x1="142" y1="210" x2="142" y2="390"/>
-            <line x1="158" y1="210" x2="158" y2="390"/>
-            <line x1="126" y1="228" x2="176" y2="228"/>
-            <line x1="126" y1="246" x2="176" y2="246"/>
-            <line x1="126" y1="264" x2="176" y2="264"/>
-            <line x1="126" y1="282" x2="176" y2="282"/>
-            <line x1="126" y1="300" x2="176" y2="300"/>
-            <line x1="126" y1="318" x2="176" y2="318"/>
-            <line x1="126" y1="336" x2="176" y2="336"/>
-            <line x1="126" y1="354" x2="176" y2="354"/>
-            <line x1="126" y1="372" x2="176" y2="372"/>
-          </g>
-          <g fill="#6FAF8F" opacity="0.55">
-            <rect x="130" y="215" width="8" height="10"/>
-            <rect x="142" y="215" width="8" height="10"/>
-            <rect x="130" y="233" width="8" height="10"/>
-            <rect x="158" y="233" width="8" height="10"/>
-            <rect x="142" y="251" width="8" height="10"/>
-            <rect x="158" y="215" width="8" height="10"/>
-            <rect x="130" y="269" width="8" height="10"/>
-          </g>
-          <rect x="180" y="228" width="36" height="162" fill="#6FAF8F" opacity="0.35"/>
-          <rect x="180" y="226" width="36" height="3" fill="#1E5A46" opacity="0.4"/>
-          <g stroke="#FFFFFF" strokeWidth="0.5" opacity="0.5">
-            <line x1="198" y1="228" x2="198" y2="390"/>
-            <line x1="180" y1="248" x2="216" y2="248"/>
-            <line x1="180" y1="268" x2="216" y2="268"/>
-            <line x1="180" y1="288" x2="216" y2="288"/>
-            <line x1="180" y1="308" x2="216" y2="308"/>
-            <line x1="180" y1="328" x2="216" y2="328"/>
-            <line x1="180" y1="348" x2="216" y2="348"/>
-            <line x1="180" y1="368" x2="216" y2="368"/>
-          </g>
-          <rect x="220" y="300" width="60" height="90" fill="#E8ECEB"/>
-          <rect x="220" y="298" width="60" height="3" fill="#6FAF8F" opacity="0.5"/>
-          <g stroke="#FFFFFF" strokeWidth="0.6" opacity="0.8">
-            <line x1="240" y1="300" x2="240" y2="390"/>
-            <line x1="260" y1="300" x2="260" y2="390"/>
-            <line x1="220" y1="320" x2="280" y2="320"/>
-            <line x1="220" y1="340" x2="280" y2="340"/>
-            <line x1="220" y1="360" x2="280" y2="360"/>
-            <line x1="220" y1="380" x2="280" y2="380"/>
-          </g>
-          <rect x="284" y="255" width="44" height="135" fill="#2E3135" opacity="0.7"/>
-          <g stroke="#FFFFFF" strokeWidth="0.5" opacity="0.06">
-            <line x1="300" y1="255" x2="300" y2="390"/>
-            <line x1="314" y1="255" x2="314" y2="390"/>
-            <line x1="284" y1="273" x2="328" y2="273"/>
-            <line x1="284" y1="291" x2="328" y2="291"/>
-            <line x1="284" y1="309" x2="328" y2="309"/>
-            <line x1="284" y1="327" x2="328" y2="327"/>
-            <line x1="284" y1="345" x2="328" y2="345"/>
-            <line x1="284" y1="363" x2="328" y2="363"/>
-            <line x1="284" y1="381" x2="328" y2="381"/>
-          </g>
-          <g fill="#6FAF8F" opacity="0.4">
-            <rect x="288" y="260" width="7" height="9"/>
-            <rect x="302" y="278" width="7" height="9"/>
-            <rect x="316" y="260" width="7" height="9"/>
-          </g>
-          <rect x="332" y="238" width="38" height="152" fill="#E8ECEB"/>
-          <rect x="332" y="236" width="38" height="3" fill="#2E3135" opacity="0.3"/>
-          <g stroke="#FFFFFF" strokeWidth="0.5" opacity="0.7">
-            <line x1="351" y1="238" x2="351" y2="390"/>
-            <line x1="332" y1="256" x2="370" y2="256"/>
-            <line x1="332" y1="274" x2="370" y2="274"/>
-            <line x1="332" y1="292" x2="370" y2="292"/>
-            <line x1="332" y1="310" x2="370" y2="310"/>
-            <line x1="332" y1="328" x2="370" y2="328"/>
-            <line x1="332" y1="346" x2="370" y2="346"/>
-            <line x1="332" y1="364" x2="370" y2="364"/>
-            <line x1="332" y1="382" x2="370" y2="382"/>
-          </g>
+          {/* HOME 2 — Craftsman */}
+          <ellipse cx="565" cy="418" rx="125" ry="8" fill="#1E5A46" opacity="0.09"/>
+          <rect x="448" y="336" width="234" height="82" fill="#FAFBF9"/>
+          <rect x="448" y="336" width="234" height="82" stroke="#E2E8E4" strokeWidth="0.5" fill="none"/>
+          <polygon points="438,336 692,336 674,294 456,294" fill="#2E3135"/>
+          <polygon points="438,336 692,336 674,294 456,294" fill="url(#hshade)"/>
+          <line x1="456" y1="294" x2="674" y2="294" stroke="#1E5A46" strokeWidth="2.5"/>
+          <rect x="448" y="370" width="234" height="16" fill="#EDEEED" rx="0.5"/>
+          <rect x="462" y="340" width="9" height="30" fill="#E8ECEB"/>
+          <rect x="460" y="336" width="13" height="6" fill="#D0D8D4" rx="0.5"/>
+          <rect x="566" y="340" width="9" height="30" fill="#E8ECEB"/>
+          <rect x="564" y="336" width="13" height="6" fill="#D0D8D4" rx="0.5"/>
+          <rect x="662" y="340" width="9" height="30" fill="#E8ECEB"/>
+          <rect x="660" y="336" width="13" height="6" fill="#D0D8D4" rx="0.5"/>
+          <rect x="462" y="362" width="210" height="2.5" fill="#D0D8D4" rx="1"/>
+          <rect x="462" y="368" width="210" height="2.5" fill="#D0D8D4" rx="1"/>
+          <rect x="460" y="310" width="52" height="30" fill="#C8DDD0" rx="0.5"/>
+          <line x1="486" y1="310" x2="486" y2="340" stroke="#fff" strokeWidth="1"/>
+          <line x1="460" y1="325" x2="512" y2="325" stroke="#fff" strokeWidth="1"/>
+          <rect x="455" y="310" width="5" height="30" fill="#2E3135" opacity="0.25" rx="0.3"/>
+          <rect x="512" y="310" width="5" height="30" fill="#2E3135" opacity="0.25" rx="0.3"/>
+          <rect x="614" y="310" width="52" height="30" fill="#C8DDD0" rx="0.5"/>
+          <line x1="640" y1="310" x2="640" y2="340" stroke="#fff" strokeWidth="1"/>
+          <line x1="614" y1="325" x2="666" y2="325" stroke="#fff" strokeWidth="1"/>
+          <rect x="609" y="310" width="5" height="30" fill="#2E3135" opacity="0.25" rx="0.3"/>
+          <rect x="666" y="310" width="5" height="30" fill="#2E3135" opacity="0.25" rx="0.3"/>
+          <rect x="547" y="342" width="36" height="76" fill="#1E5A46" rx="0.5"/>
+          <rect x="551" y="346" width="12" height="20" fill="#6FAF8F" opacity="0.35" rx="0.3"/>
+          <rect x="565" y="346" width="12" height="20" fill="#6FAF8F" opacity="0.35" rx="0.3"/>
+          <circle cx="567" cy="376" r="2.5" fill="#C8A96E" opacity="0.9"/>
+          <rect x="468" y="268" width="16" height="28" fill="#A05A3A" opacity="0.75"/>
+          <rect x="466" y="264" width="20" height="6" fill="#8B4E30" opacity="0.85" rx="0.5"/>
+          <rect x="540" y="386" width="50" height="5" fill="#DDEAE1" rx="0.5"/>
+          <rect x="536" y="390" width="58" height="5" fill="#D0D8D4" rx="0.5"/>
+          <ellipse cx="457" cy="415" rx="16" ry="10" fill="#6FAF8F" opacity="0.72"/>
+          <ellipse cx="445" cy="414" rx="10" ry="8" fill="#1E5A46" opacity="0.5"/>
+          <ellipse cx="676" cy="415" rx="14" ry="10" fill="#6FAF8F" opacity="0.72"/>
+          <rect x="420" y="330" width="4" height="82" fill="#8B6B4E"/>
+          <ellipse cx="422" cy="320" rx="20" ry="25" fill="#1E5A46" opacity="0.9"/>
+          <rect x="703" y="328" width="4" height="86" fill="#8B6B4E"/>
+          <ellipse cx="705" cy="317" rx="19" ry="24" fill="#1E5A46" opacity="0.88"/>
+          <path d="M558,418 L546,450 L572,450 L563,418Z" fill="url(#hwk)" opacity="0.7"/>
 
-          {/* Left-center flanking tower */}
-          <rect x="374" y="195" width="52" height="195" fill="#2E3135"/>
-          <rect x="374" y="195" width="52" height="195" fill="url(#hshade)"/>
-          <rect x="374" y="192" width="52" height="4" fill="#1E5A46"/>
-          <rect x="396" y="178" width="8" height="17" fill="#2E3135"/>
-          <rect x="398" y="174" width="4" height="6" fill="#1E5A46"/>
-          <g stroke="#FFFFFF" strokeWidth="0.5" opacity="0.07">
-            <line x1="392" y1="195" x2="392" y2="390"/>
-            <line x1="410" y1="195" x2="410" y2="390"/>
-            <line x1="374" y1="213" x2="426" y2="213"/>
-            <line x1="374" y1="231" x2="426" y2="231"/>
-            <line x1="374" y1="249" x2="426" y2="249"/>
-            <line x1="374" y1="267" x2="426" y2="267"/>
-            <line x1="374" y1="285" x2="426" y2="285"/>
-            <line x1="374" y1="303" x2="426" y2="303"/>
-            <line x1="374" y1="321" x2="426" y2="321"/>
-            <line x1="374" y1="339" x2="426" y2="339"/>
-            <line x1="374" y1="357" x2="426" y2="357"/>
-            <line x1="374" y1="375" x2="426" y2="375"/>
+          {/* HOME 3 — Contemporary suburban */}
+          <ellipse cx="886" cy="418" rx="122" ry="8" fill="#1E5A46" opacity="0.09"/>
+          <rect x="756" y="326" width="136" height="92" fill="#FDFEFD"/>
+          <rect x="756" y="326" width="136" height="92" stroke="#E0E8E4" strokeWidth="0.5" fill="none"/>
+          <rect x="890" y="350" width="96" height="68" fill="#F6F8F6"/>
+          <rect x="890" y="350" width="96" height="68" stroke="#E0E8E4" strokeWidth="0.5" fill="none"/>
+          <polygon points="750,326 898,326 884,298 764,298" fill="#2E3135"/>
+          <polygon points="750,326 898,326 884,298 764,298" fill="url(#hshade)"/>
+          <polygon points="886,350 990,350 984,334 892,334" fill="#2E3135" opacity="0.88"/>
+          <rect x="750" y="324" width="148" height="4" fill="#1E5A46" opacity="0.65"/>
+          <rect x="886" y="348" width="104" height="3.5" fill="#1E5A46" opacity="0.45"/>
+          <rect x="764" y="303" width="44" height="26" fill="#C8DCCF" rx="0.5"/>
+          <line x1="786" y1="303" x2="786" y2="329" stroke="#fff" strokeWidth="0.8"/>
+          <line x1="764" y1="316" x2="808" y2="316" stroke="#fff" strokeWidth="0.8"/>
+          <rect x="820" y="303" width="44" height="26" fill="#C8DCCF" rx="0.5"/>
+          <line x1="842" y1="303" x2="842" y2="329" stroke="#fff" strokeWidth="0.8"/>
+          <line x1="820" y1="316" x2="864" y2="316" stroke="#fff" strokeWidth="0.8"/>
+          <rect x="762" y="340" width="36" height="26" fill="#C8DCCF" rx="0.5"/>
+          <line x1="762" y1="353" x2="798" y2="353" stroke="#fff" strokeWidth="0.8"/>
+          <rect x="832" y="340" width="36" height="26" fill="#C8DCCF" rx="0.5"/>
+          <line x1="832" y1="353" x2="868" y2="353" stroke="#fff" strokeWidth="0.8"/>
+          <rect x="804" y="346" width="28" height="72" fill="#2E3135" rx="0.5"/>
+          <rect x="807" y="349" width="22" height="34" fill="#6FAF8F" opacity="0.3" rx="0.3"/>
+          <circle cx="820" cy="386" r="2.5" fill="#C8A96E" opacity="0.9"/>
+          <rect x="898" y="358" width="80" height="58" fill="#E8ECEB" rx="0.5"/>
+          <g stroke="#D0D8D4" strokeWidth="0.5" fill="none">
+            <line x1="898" y1="370" x2="978" y2="370"/>
+            <line x1="898" y1="382" x2="978" y2="382"/>
+            <line x1="898" y1="394" x2="978" y2="394"/>
+            <line x1="938" y1="358" x2="938" y2="416"/>
           </g>
-          <g fill="#6FAF8F" opacity="0.5">
-            <rect x="378" y="199" width="9" height="11"/>
-            <rect x="392" y="199" width="9" height="11"/>
-            <rect x="378" y="218" width="9" height="11"/>
-            <rect x="410" y="199" width="9" height="11"/>
-            <rect x="410" y="235" width="9" height="11"/>
-            <rect x="392" y="253" width="9" height="11"/>
-          </g>
+          <ellipse cx="762" cy="416" rx="14" ry="9" fill="#6FAF8F" opacity="0.7"/>
+          <ellipse cx="982" cy="416" rx="12" ry="8" fill="#6FAF8F" opacity="0.65"/>
+          <rect x="990" y="372" width="4" height="44" fill="#8B6B4E"/>
+          <ellipse cx="992" cy="363" rx="16" ry="20" fill="#1E5A46" opacity="0.85"/>
+          <path d="M812,420 L800,450 L824,450 L817,420Z" fill="url(#hwk)" opacity="0.7"/>
 
-          {/* Hero tower — deep forest green */}
-          <rect x="430" y="120" width="82" height="270" fill="#1E5A46"/>
-          <rect x="490" y="120" width="22" height="270" fill="#000000" opacity="0.06"/>
-          <rect x="430" y="116" width="82" height="5" fill="#16a34a" opacity="0.8"/>
-          <rect x="467" y="88"  width="8"  height="30" fill="#1E5A46"/>
-          <rect x="469" y="82"  width="4"  height="10" fill="#6FAF8F" opacity="0.7"/>
-          <rect x="442" y="104" width="58" height="16" fill="#164033"/>
-          <rect x="448" y="108" width="12" height="8" fill="#1E5A46"/>
-          <rect x="466" y="108" width="12" height="8" fill="#1E5A46"/>
-          <rect x="484" y="108" width="12" height="8" fill="#1E5A46"/>
-          <g stroke="#FFFFFF" strokeWidth="0.6" opacity="0.12">
-            <line x1="452" y1="120" x2="452" y2="390"/>
-            <line x1="472" y1="120" x2="472" y2="390"/>
-            <line x1="492" y1="120" x2="492" y2="390"/>
-            <line x1="430" y1="140" x2="512" y2="140"/>
-            <line x1="430" y1="158" x2="512" y2="158"/>
-            <line x1="430" y1="176" x2="512" y2="176"/>
-            <line x1="430" y1="194" x2="512" y2="194"/>
-            <line x1="430" y1="212" x2="512" y2="212"/>
-            <line x1="430" y1="230" x2="512" y2="230"/>
-            <line x1="430" y1="248" x2="512" y2="248"/>
-            <line x1="430" y1="266" x2="512" y2="266"/>
-            <line x1="430" y1="284" x2="512" y2="284"/>
-            <line x1="430" y1="302" x2="512" y2="302"/>
-            <line x1="430" y1="320" x2="512" y2="320"/>
-            <line x1="430" y1="338" x2="512" y2="338"/>
-            <line x1="430" y1="356" x2="512" y2="356"/>
-            <line x1="430" y1="374" x2="512" y2="374"/>
+          {/* HOME 4 — Upscale cottage */}
+          <ellipse cx="1168" cy="419" rx="112" ry="8" fill="#1E5A46" opacity="0.09"/>
+          <rect x="1062" y="347" width="206" height="71" fill="#FDFBF7"/>
+          <rect x="1062" y="347" width="206" height="71" stroke="#E8E4DF" strokeWidth="0.5" fill="none"/>
+          <polygon points="1052,347 1278,347 1256,294 1074,294" fill="#2E3135"/>
+          <polygon points="1052,347 1278,347 1256,294 1074,294" fill="url(#hshade)"/>
+          <polygon points="1052,347 1278,347 1256,294 1074,294" fill="#A05A3A" opacity="0.10"/>
+          <line x1="1074" y1="294" x2="1256" y2="294" stroke="#2E3135" strokeWidth="2"/>
+          <rect x="1138" y="278" width="54" height="22" fill="#F8F5F0" rx="0.5"/>
+          <polygon points="1134,278 1196,278 1183,262 1147,262" fill="#2E3135"/>
+          <rect x="1142" y="280" width="20" height="17" fill="#B0CEC0" rx="0.3"/>
+          <line x1="1152" y1="280" x2="1152" y2="297" stroke="#fff" strokeWidth="0.8"/>
+          <rect x="1166" y="280" width="20" height="17" fill="#B0CEC0" rx="0.3"/>
+          <line x1="1176" y1="280" x2="1176" y2="297" stroke="#fff" strokeWidth="0.8"/>
+          <rect x="1232" y="272" width="18" height="25" fill="#A09078" opacity="0.82"/>
+          <rect x="1230" y="268" width="22" height="6" fill="#8B7A60" opacity="0.88" rx="0.5"/>
+          <rect x="1070" y="320" width="52" height="30" fill="#B0CEC0" rx="0.5"/>
+          <line x1="1096" y1="320" x2="1096" y2="350" stroke="#fff" strokeWidth="1"/>
+          <line x1="1070" y1="335" x2="1122" y2="335" stroke="#fff" strokeWidth="1"/>
+          <rect x="1065" y="320" width="6" height="30" fill="#6FAF8F" opacity="0.55" rx="0.3"/>
+          <rect x="1121" y="320" width="6" height="30" fill="#6FAF8F" opacity="0.55" rx="0.3"/>
+          <rect x="1206" y="320" width="50" height="30" fill="#B0CEC0" rx="0.5"/>
+          <line x1="1231" y1="320" x2="1231" y2="350" stroke="#fff" strokeWidth="1"/>
+          <line x1="1206" y1="335" x2="1256" y2="335" stroke="#fff" strokeWidth="1"/>
+          <rect x="1201" y="320" width="6" height="30" fill="#6FAF8F" opacity="0.55" rx="0.3"/>
+          <rect x="1256" y="320" width="6" height="30" fill="#6FAF8F" opacity="0.55" rx="0.3"/>
+          <path d="M1145,418 L1145,358 Q1145,342 1165,342 Q1185,342 1185,358 L1185,418Z" fill="#1E5A46" opacity="0.82"/>
+          <path d="M1147,358 Q1147,344 1165,344 Q1183,344 1183,358Z" fill="#B0CEC0" opacity="0.65"/>
+          <circle cx="1178" cy="384" r="2.5" fill="#C8A96E" opacity="0.9"/>
+          <rect x="1070" y="350" width="52" height="6" fill="#6FAF8F" opacity="0.38" rx="0.8"/>
+          <rect x="1206" y="350" width="50" height="6" fill="#6FAF8F" opacity="0.38" rx="0.8"/>
+          <g opacity="0.6">
+            <circle cx="1082" cy="352" r="2.2" fill="#E8A0A8"/>
+            <circle cx="1100" cy="352" r="2.2" fill="#E8A0A8"/>
+            <circle cx="1218" cy="352" r="2.2" fill="#E8A0A8"/>
+            <circle cx="1236" cy="352" r="2.2" fill="#E8A0A8"/>
           </g>
-          <g fill="#FFFFFF" opacity="0.14">
-            <rect x="434" y="124" width="14" height="12"/>
-            <rect x="452" y="124" width="14" height="12"/>
-            <rect x="470" y="124" width="14" height="12"/>
-            <rect x="434" y="142" width="14" height="12"/>
-            <rect x="470" y="142" width="14" height="12"/>
-            <rect x="452" y="160" width="14" height="12"/>
-            <rect x="434" y="178" width="14" height="12"/>
-            <rect x="490" y="142" width="14" height="12"/>
-            <rect x="470" y="196" width="14" height="12"/>
-            <rect x="452" y="214" width="14" height="12"/>
-            <rect x="434" y="232" width="14" height="12"/>
-            <rect x="490" y="196" width="14" height="12"/>
-          </g>
-          <rect x="430" y="120" width="82" height="40" fill="#FFFFFF" opacity="0.04"/>
+          <rect x="1138" y="417" width="54" height="5" fill="#E4E0DA" rx="0.5"/>
+          <ellipse cx="1066" cy="413" rx="15" ry="10" fill="#6FAF8F" opacity="0.72"/>
+          <ellipse cx="1056" cy="412" rx="10" ry="7" fill="#1E5A46" opacity="0.52"/>
+          <ellipse cx="1264" cy="413" rx="15" ry="10" fill="#6FAF8F" opacity="0.72"/>
+          <rect x="1030" y="332" width="4" height="82" fill="#8B6B4E"/>
+          <ellipse cx="1032" cy="322" rx="21" ry="27" fill="#1E5A46" opacity="0.9"/>
+          <rect x="1296" y="340" width="4" height="74" fill="#8B6B4E"/>
+          <ellipse cx="1298" cy="330" rx="19" ry="24" fill="#1E5A46" opacity="0.85"/>
+          <path d="M1165,419 L1155,448 L1175,448 L1168,419Z" fill="url(#hwk)" opacity="0.7"/>
 
-          {/* Right flanking tower */}
-          <rect x="516" y="172" width="56" height="218" fill="#2E3135" opacity="0.9"/>
-          <rect x="516" y="168" width="56" height="5" fill="#1E5A46"/>
-          <rect x="536" y="155" width="6"  height="16" fill="#2E3135"/>
-          <g stroke="#FFFFFF" strokeWidth="0.5" opacity="0.07">
-            <line x1="534" y1="172" x2="534" y2="390"/>
-            <line x1="552" y1="172" x2="552" y2="390"/>
-            <line x1="516" y1="190" x2="572" y2="190"/>
-            <line x1="516" y1="208" x2="572" y2="208"/>
-            <line x1="516" y1="226" x2="572" y2="226"/>
-            <line x1="516" y1="244" x2="572" y2="244"/>
-            <line x1="516" y1="262" x2="572" y2="262"/>
-            <line x1="516" y1="280" x2="572" y2="280"/>
-            <line x1="516" y1="298" x2="572" y2="298"/>
-            <line x1="516" y1="316" x2="572" y2="316"/>
-            <line x1="516" y1="334" x2="572" y2="334"/>
-            <line x1="516" y1="352" x2="572" y2="352"/>
-            <line x1="516" y1="370" x2="572" y2="370"/>
-          </g>
-          <g fill="#6FAF8F" opacity="0.45">
-            <rect x="520" y="176" width="9" height="11"/>
-            <rect x="534" y="194" width="9" height="11"/>
-            <rect x="554" y="176" width="9" height="11"/>
-            <rect x="520" y="212" width="9" height="11"/>
-            <rect x="554" y="212" width="9" height="11"/>
-            <rect x="534" y="248" width="9" height="11"/>
-          </g>
+          {/* Mid trees between homes */}
+          <rect x="390" y="352" width="3.5" height="62" fill="#8B6B4E" opacity="0.65"/>
+          <ellipse cx="392" cy="343" rx="15" ry="19" fill="#1E5A46" opacity="0.48"/>
+          <rect x="736" y="348" width="3.5" height="66" fill="#8B6B4E" opacity="0.6"/>
+          <ellipse cx="738" cy="339" rx="14" ry="17" fill="#1E5A46" opacity="0.43"/>
 
-          {/* Right cluster */}
-          <rect x="576" y="218" width="46" height="172" fill="#E8ECEB"/>
-          <rect x="576" y="215" width="46" height="4" fill="#2E3135" opacity="0.2"/>
-          <g stroke="#FFFFFF" strokeWidth="0.5" opacity="0.7">
-            <line x1="599" y1="218" x2="599" y2="390"/>
-            <line x1="576" y1="236" x2="622" y2="236"/>
-            <line x1="576" y1="254" x2="622" y2="254"/>
-            <line x1="576" y1="272" x2="622" y2="272"/>
-            <line x1="576" y1="290" x2="622" y2="290"/>
-            <line x1="576" y1="308" x2="622" y2="308"/>
-            <line x1="576" y1="326" x2="622" y2="326"/>
-            <line x1="576" y1="344" x2="622" y2="344"/>
-            <line x1="576" y1="362" x2="622" y2="362"/>
-            <line x1="576" y1="380" x2="622" y2="380"/>
-          </g>
-          <rect x="626" y="238" width="54" height="152" fill="#2E3135" opacity="0.75"/>
-          <rect x="626" y="235" width="54" height="4" fill="#1E5A46" opacity="0.6"/>
-          <g stroke="#FFFFFF" strokeWidth="0.5" opacity="0.06">
-            <line x1="644" y1="238" x2="644" y2="390"/>
-            <line x1="662" y1="238" x2="662" y2="390"/>
-            <line x1="626" y1="256" x2="680" y2="256"/>
-            <line x1="626" y1="274" x2="680" y2="274"/>
-            <line x1="626" y1="292" x2="680" y2="292"/>
-            <line x1="626" y1="310" x2="680" y2="310"/>
-            <line x1="626" y1="328" x2="680" y2="328"/>
-            <line x1="626" y1="346" x2="680" y2="346"/>
-            <line x1="626" y1="364" x2="680" y2="364"/>
-            <line x1="626" y1="382" x2="680" y2="382"/>
-          </g>
-          <g fill="#6FAF8F" opacity="0.4">
-            <rect x="630" y="242" width="9" height="11"/>
-            <rect x="644" y="260" width="9" height="11"/>
-            <rect x="662" y="242" width="9" height="11"/>
-          </g>
-          <rect x="684" y="200" width="44" height="190" fill="#6FAF8F" opacity="0.28"/>
-          <rect x="684" y="197" width="44" height="4" fill="#1E5A46" opacity="0.5"/>
-          <g stroke="#FFFFFF" strokeWidth="0.5" opacity="0.45">
-            <line x1="706" y1="200" x2="706" y2="390"/>
-            <line x1="684" y1="218" x2="728" y2="218"/>
-            <line x1="684" y1="236" x2="728" y2="236"/>
-            <line x1="684" y1="254" x2="728" y2="254"/>
-            <line x1="684" y1="272" x2="728" y2="272"/>
-            <line x1="684" y1="290" x2="728" y2="290"/>
-            <line x1="684" y1="308" x2="728" y2="308"/>
-            <line x1="684" y1="326" x2="728" y2="326"/>
-            <line x1="684" y1="344" x2="728" y2="344"/>
-            <line x1="684" y1="362" x2="728" y2="362"/>
-            <line x1="684" y1="380" x2="728" y2="380"/>
-          </g>
-          <rect x="732" y="295" width="72" height="95" fill="#E8ECEB"/>
-          <rect x="732" y="292" width="72" height="4" fill="#6FAF8F" opacity="0.5"/>
-          <g stroke="#FFFFFF" strokeWidth="0.6" opacity="0.8">
-            <line x1="756" y1="295" x2="756" y2="390"/>
-            <line x1="780" y1="295" x2="780" y2="390"/>
-            <line x1="732" y1="315" x2="804" y2="315"/>
-            <line x1="732" y1="335" x2="804" y2="335"/>
-            <line x1="732" y1="355" x2="804" y2="355"/>
-            <line x1="732" y1="375" x2="804" y2="375"/>
-          </g>
-          <rect x="808" y="248" width="48" height="142" fill="#2E3135" opacity="0.65"/>
-          <rect x="808" y="245" width="48" height="4" fill="#1E5A46" opacity="0.4"/>
-          <g stroke="#FFFFFF" strokeWidth="0.5" opacity="0.06">
-            <line x1="826" y1="248" x2="826" y2="390"/>
-            <line x1="844" y1="248" x2="844" y2="390"/>
-            <line x1="808" y1="266" x2="856" y2="266"/>
-            <line x1="808" y1="284" x2="856" y2="284"/>
-            <line x1="808" y1="302" x2="856" y2="302"/>
-            <line x1="808" y1="320" x2="856" y2="320"/>
-            <line x1="808" y1="338" x2="856" y2="338"/>
-            <line x1="808" y1="356" x2="856" y2="356"/>
-            <line x1="808" y1="374" x2="856" y2="374"/>
-          </g>
-          <g fill="#6FAF8F" opacity="0.4">
-            <rect x="812" y="252" width="9" height="10"/>
-            <rect x="826" y="270" width="9" height="10"/>
-            <rect x="844" y="252" width="9" height="10"/>
-          </g>
-          <rect x="860" y="225" width="36" height="165" fill="#E8ECEB"/>
-          <rect x="860" y="222" width="36" height="4" fill="#2E3135" opacity="0.2"/>
-          <g stroke="#FFFFFF" strokeWidth="0.5" opacity="0.7">
-            <line x1="878" y1="225" x2="878" y2="390"/>
-            <line x1="860" y1="243" x2="896" y2="243"/>
-            <line x1="860" y1="261" x2="896" y2="261"/>
-            <line x1="860" y1="279" x2="896" y2="279"/>
-            <line x1="860" y1="297" x2="896" y2="297"/>
-            <line x1="860" y1="315" x2="896" y2="315"/>
-            <line x1="860" y1="333" x2="896" y2="333"/>
-            <line x1="860" y1="351" x2="896" y2="351"/>
-            <line x1="860" y1="369" x2="896" y2="369"/>
-            <line x1="860" y1="387" x2="896" y2="387"/>
-          </g>
-          <rect x="900" y="195" width="52" height="195" fill="#1E5A46" opacity="0.82"/>
-          <rect x="900" y="191" width="52" height="5" fill="#16a34a" opacity="0.7"/>
-          <rect x="922" y="178" width="8" height="16" fill="#1E5A46"/>
-          <g stroke="#FFFFFF" strokeWidth="0.5" opacity="0.11">
-            <line x1="918" y1="195" x2="918" y2="390"/>
-            <line x1="936" y1="195" x2="936" y2="390"/>
-            <line x1="900" y1="213" x2="952" y2="213"/>
-            <line x1="900" y1="231" x2="952" y2="231"/>
-            <line x1="900" y1="249" x2="952" y2="249"/>
-            <line x1="900" y1="267" x2="952" y2="267"/>
-            <line x1="900" y1="285" x2="952" y2="285"/>
-            <line x1="900" y1="303" x2="952" y2="303"/>
-            <line x1="900" y1="321" x2="952" y2="321"/>
-            <line x1="900" y1="339" x2="952" y2="339"/>
-            <line x1="900" y1="357" x2="952" y2="357"/>
-            <line x1="900" y1="375" x2="952" y2="375"/>
-          </g>
-          <g fill="#FFFFFF" opacity="0.12">
-            <rect x="904" y="199" width="10" height="11"/>
-            <rect x="918" y="199" width="10" height="11"/>
-            <rect x="904" y="217" width="10" height="11"/>
-            <rect x="938" y="217" width="10" height="11"/>
-            <rect x="918" y="253" width="10" height="11"/>
-            <rect x="904" y="271" width="10" height="11"/>
-          </g>
-          <rect x="956"  y="258" width="42" height="132" fill="#2E3135" opacity="0.55"/>
-          <rect x="956"  y="255" width="42" height="4"   fill="#6FAF8F" opacity="0.4"/>
-          <g stroke="#FFFFFF" strokeWidth="0.5" opacity="0.05">
-            <line x1="974"  y1="258" x2="974"  y2="390"/>
-            <line x1="956"  y1="276" x2="998"  y2="276"/>
-            <line x1="956"  y1="294" x2="998"  y2="294"/>
-            <line x1="956"  y1="312" x2="998"  y2="312"/>
-            <line x1="956"  y1="330" x2="998"  y2="330"/>
-            <line x1="956"  y1="348" x2="998"  y2="348"/>
-            <line x1="956"  y1="366" x2="998"  y2="366"/>
-            <line x1="956"  y1="384" x2="998"  y2="384"/>
-          </g>
-          <rect x="1002" y="275" width="34" height="115" fill="#E8ECEB"/>
-          <rect x="1040" y="255" width="40" height="135" fill="#6FAF8F" opacity="0.22"/>
-          <rect x="1040" y="252" width="40" height="4" fill="#1E5A46" opacity="0.35"/>
-          <g stroke="#FFFFFF" strokeWidth="0.5" opacity="0.4">
-            <line x1="1060" y1="255" x2="1060" y2="390"/>
-            <line x1="1040" y1="273" x2="1080" y2="273"/>
-            <line x1="1040" y1="291" x2="1080" y2="291"/>
-            <line x1="1040" y1="309" x2="1080" y2="309"/>
-            <line x1="1040" y1="327" x2="1080" y2="327"/>
-            <line x1="1040" y1="345" x2="1080" y2="345"/>
-            <line x1="1040" y1="363" x2="1080" y2="363"/>
-            <line x1="1040" y1="381" x2="1080" y2="381"/>
-          </g>
-          <rect x="1084" y="265" width="38" height="125" fill="#2E3135" opacity="0.5"/>
-          <rect x="1126" y="280" width="30" height="110" fill="#E8ECEB"/>
-          <rect x="1160" y="268" width="36" height="122" fill="#6FAF8F" opacity="0.2"/>
-          <rect x="1200" y="275" width="28" height="115" fill="#E8ECEB" opacity="0.7"/>
+          {/* Edge vignettes */}
+          <rect x="0" y="0" width="110" height="500" fill="url(#hfadeL)"/>
+          <rect x="1290" y="0" width="110" height="500" fill="url(#hfadeR)"/>
 
-          {/* Horizon */}
-          <line x1="0" y1="390" x2="1400" y2="390" stroke="#2E3135" strokeWidth="0.6" opacity="0.2"/>
-          <rect x="0" y="390" width="1400" height="30" fill="url(#hground)" opacity="0.35"/>
-
-          {/* Edge vignette */}
-          <rect x="0"    y="0" width="100" height="420" fill="url(#hfadeL)"/>
-          <rect x="1300" y="0" width="100" height="420" fill="url(#hfadeR)"/>
+          {/* Subtle focal glow */}
+          <ellipse cx="700" cy="160" rx="380" ry="100" fill="#6FAF8F" opacity="0.022"/>
         </svg>
 
-        {/* Text + search overlay */}
-        <div className="absolute inset-0 flex flex-col items-center justify-center px-4 text-center">
+        {/* Text + search overlay — positioned in the clear upper ~75% */}
+        <div className="absolute inset-x-0 top-0 flex h-[75%] flex-col items-center justify-center px-4 text-center">
           <p className="text-xs font-semibold uppercase tracking-[0.25em] text-brand-600">
             National Real Estate
           </p>

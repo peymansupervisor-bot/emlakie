@@ -162,6 +162,419 @@ export const posts: Post[] = [
 <p>EMLAKIE lets LA landlords post rentals directly to tenants — no broker fees, no middlemen. Tenants apply through the app or website, and you receive an email with their income, credit score, and an AI match score so you can compare applicants at a glance.</p>
     `.trim(),
   },
+  // ── National city articles ──────────────────────────────────────────────
+  {
+    slug: 'average-rent-seattle-2026',
+    title: 'Average Rent in Seattle in 2026: Neighborhood-by-Neighborhood Breakdown',
+    description: 'Seattle rents have stabilized after years of rapid growth. Here\'s what to budget across Capitol Hill, Ballard, SLU, and beyond.',
+    date: '2026-06-12',
+    category: 'Market Trends',
+    readTime: 5,
+    content: `
+<p>Seattle's rental market has cooled from its pandemic-era peaks but remains one of the pricier markets in the country, driven by tech industry employment at Amazon, Microsoft, and a dense startup ecosystem. Here's what renters are paying in 2026.</p>
+
+<h2>Citywide Averages</h2>
+<ul>
+  <li><strong>Studio:</strong> $1,500–$1,900/mo</li>
+  <li><strong>1-Bedroom:</strong> $1,900–$2,500/mo</li>
+  <li><strong>2-Bedroom:</strong> $2,600–$3,400/mo</li>
+</ul>
+
+<h2>Rent by Neighborhood</h2>
+<ul>
+  <li><strong>South Lake Union (SLU):</strong> $2,300–$3,200/mo (1BR) — Amazon HQ proximity pushes prices up; newer high-rises dominate</li>
+  <li><strong>Capitol Hill:</strong> $1,900–$2,700/mo (1BR) — walkable, vibrant nightlife, older stock keeps prices more reasonable</li>
+  <li><strong>Ballard:</strong> $1,800–$2,500/mo (1BR) — popular with young professionals; Scandinavian charm meets craft brewery culture</li>
+  <li><strong>Queen Anne:</strong> $2,000–$2,800/mo (1BR) — family-friendly, great city views, quieter pace</li>
+  <li><strong>Beacon Hill:</strong> $1,500–$2,000/mo (1BR) — best value close to downtown; light rail access</li>
+  <li><strong>Bellevue (Eastside):</strong> $2,200–$3,100/mo (1BR) — Microsoft corridor, newer construction, suburban feel</li>
+</ul>
+
+<h2>What's Shaping Seattle's Market</h2>
+<p>Washington has no state income tax, which makes it especially attractive for high earners relocating from California. The city has seen significant apartment construction downtown and in SLU, which has slightly relieved pressure. Remote work has also boosted demand in outer neighborhoods and suburbs like Redmond and Kirkland.</p>
+
+<h2>Renter Tips for Seattle</h2>
+<ul>
+  <li>Units near light rail stations command a premium — factor in car savings if you're choosing between neighborhoods.</li>
+  <li>Many Seattle buildings include utilities in rent; always ask what's covered.</li>
+  <li>Seattle has strong tenant protections: landlords must give 20 days' notice for rent increases above 10%.</li>
+  <li>Parking can add $150–$250/mo — clarify before signing.</li>
+</ul>
+
+<p>Browse Seattle rentals on EMLAKIE — listed directly by landlords, no broker fees.</p>
+    `.trim(),
+  },
+  {
+    slug: 'average-rent-new-york-city-2026',
+    title: 'Average Rent in New York City in 2026: Manhattan, Brooklyn, Queens & Beyond',
+    description: 'NYC rents hit record highs in 2026. Here\'s a borough-by-borough breakdown of what you\'ll pay and where to find value.',
+    date: '2026-06-11',
+    category: 'Market Trends',
+    readTime: 6,
+    content: `
+<p>New York City remains the most expensive rental market in the United States, with median rents in Manhattan consistently above $4,000/month for a one-bedroom. But borough-by-borough differences are massive — here's what renters are paying across the five boroughs in 2026.</p>
+
+<h2>Manhattan</h2>
+<ul>
+  <li><strong>Studio:</strong> $2,800–$3,800/mo</li>
+  <li><strong>1-Bedroom:</strong> $3,800–$5,500/mo</li>
+  <li><strong>2-Bedroom:</strong> $5,500–$8,000+/mo</li>
+</ul>
+<p>Midtown and the Upper West/East Side lead in price. Harlem and Inwood offer relatively better value while remaining in Manhattan.</p>
+
+<h2>Brooklyn</h2>
+<ul>
+  <li><strong>1-Bedroom:</strong> $2,800–$4,200/mo (Williamsburg, DUMBO)</li>
+  <li><strong>1-Bedroom:</strong> $2,000–$2,800/mo (Crown Heights, Flatbush, Sunset Park)</li>
+</ul>
+<p>Brooklyn has overtaken parts of Manhattan in desirability. Williamsburg and Park Slope are pricey; Flatbush and Crown Heights still offer genuine value.</p>
+
+<h2>Queens</h2>
+<ul>
+  <li><strong>1-Bedroom:</strong> $1,900–$2,800/mo (Astoria, Long Island City)</li>
+  <li><strong>1-Bedroom:</strong> $1,500–$2,200/mo (Jackson Heights, Flushing, Jamaica)</li>
+</ul>
+<p>Queens is the best-value borough for renters who need to commute into Manhattan. Jackson Heights and Flushing offer exceptional food culture at significantly lower rents.</p>
+
+<h2>The Bronx & Staten Island</h2>
+<p>The Bronx averages $1,600–$2,200/mo for a one-bedroom — the lowest of any borough. Staten Island ($1,700–$2,300/mo) is more suburban but requires the ferry or a car for most commutes.</p>
+
+<h2>Key Things NYC Renters Should Know</h2>
+<ul>
+  <li><strong>Broker fees:</strong> Under NYC law, landlords must now pay broker fees — not tenants.</li>
+  <li><strong>Rent stabilization:</strong> Many older buildings are rent-stabilized; ask if a unit qualifies before applying.</li>
+  <li><strong>Guarantors:</strong> Many landlords require income of 40–45× monthly rent; if you fall short, a guarantor service like Insurent may be needed.</li>
+  <li><strong>Move fast:</strong> Good units in desirable neighborhoods rent within 24–48 hours of listing.</li>
+</ul>
+
+<p>Search NYC rentals on EMLAKIE — all listed directly by landlords.</p>
+    `.trim(),
+  },
+  {
+    slug: 'average-rent-chicago-2026',
+    title: 'Average Rent in Chicago in 2026: The Most Affordable Major City?',
+    description: 'Chicago offers more square footage per dollar than almost any other major US city. Here\'s what renters pay across Lincoln Park, Wicker Park, Logan Square, and more.',
+    date: '2026-06-10',
+    category: 'Market Trends',
+    readTime: 5,
+    content: `
+<p>Chicago is one of the best-kept secrets in the US rental market. It's a world-class city — lakefront access, world-class dining, excellent public transit — at a fraction of the cost of New York, LA, or San Francisco. Here's what renters are paying in 2026.</p>
+
+<h2>Citywide Averages</h2>
+<ul>
+  <li><strong>Studio:</strong> $1,100–$1,500/mo</li>
+  <li><strong>1-Bedroom:</strong> $1,400–$2,200/mo</li>
+  <li><strong>2-Bedroom:</strong> $1,800–$3,000/mo</li>
+</ul>
+
+<h2>Rent by Neighborhood</h2>
+<ul>
+  <li><strong>Lincoln Park / Lakeview:</strong> $1,800–$2,800/mo (1BR) — premium lakefront neighborhood, great restaurants and bars</li>
+  <li><strong>Wicker Park / Bucktown:</strong> $1,700–$2,500/mo (1BR) — trendy, walkable, strong arts scene</li>
+  <li><strong>Logan Square:</strong> $1,400–$2,100/mo (1BR) — best value on the Blue Line, rapidly gentrifying</li>
+  <li><strong>River North / Streeterville:</strong> $2,000–$3,200/mo (1BR) — downtown luxury high-rises</li>
+  <li><strong>Hyde Park:</strong> $1,200–$1,800/mo (1BR) — U of Chicago area, good value, quieter pace</li>
+  <li><strong>Pilsen / Little Village:</strong> $1,100–$1,600/mo (1BR) — most affordable close-in neighborhoods</li>
+</ul>
+
+<h2>Why Chicago Stands Out</h2>
+<p>Despite being the third-largest city in the US, Chicago's rents are roughly 40–50% lower than comparable NYC or LA neighborhoods. The city's flat geography and excellent CTA train network mean you don't need a car to live well. The lakefront park system — 26 miles of public beaches — is free and accessible from almost every neighborhood.</p>
+
+<h2>What to Watch Out For</h2>
+<ul>
+  <li>Illinois property taxes are among the highest in the country — landlords often pass costs through in rent.</li>
+  <li>Winters are brutal; heating costs can add $100–$200/mo from November through March. Ask if heat is included.</li>
+  <li>Chicago has a robust tenant protection ordinance; security deposits must be held in interest-bearing accounts.</li>
+</ul>
+
+<p>Browse Chicago rentals on EMLAKIE — connect directly with landlords, no fees.</p>
+    `.trim(),
+  },
+  {
+    slug: 'average-rent-austin-2026',
+    title: 'Average Rent in Austin in 2026: Has the Market Finally Cooled?',
+    description: 'After years of explosive rent growth, Austin\'s market has softened. Here\'s what renters are paying today across East Austin, South Congress, and the suburbs.',
+    date: '2026-06-09',
+    category: 'Market Trends',
+    readTime: 5,
+    content: `
+<p>Austin experienced one of the most dramatic rent spikes in US history between 2020 and 2023 — some neighborhoods saw rents rise 40% in a single year. In 2026, a wave of new apartment supply has brought prices back down to earth. Here's where things stand.</p>
+
+<h2>Citywide Averages</h2>
+<ul>
+  <li><strong>Studio:</strong> $1,200–$1,600/mo</li>
+  <li><strong>1-Bedroom:</strong> $1,500–$2,200/mo</li>
+  <li><strong>2-Bedroom:</strong> $2,000–$3,000/mo</li>
+</ul>
+
+<h2>Rent by Neighborhood</h2>
+<ul>
+  <li><strong>Downtown / Rainey Street:</strong> $2,000–$3,200/mo (1BR) — high-rises, walkable, nightlife</li>
+  <li><strong>East Austin:</strong> $1,700–$2,500/mo (1BR) — the trendiest zip code in the city; cafes, food trucks, murals</li>
+  <li><strong>South Congress (SoCo):</strong> $1,800–$2,600/mo (1BR) — classic Austin character</li>
+  <li><strong>Hyde Park / UT Area:</strong> $1,400–$2,000/mo (1BR) — quieter, tree-lined streets</li>
+  <li><strong>Mueller:</strong> $1,600–$2,200/mo (1BR) — master-planned, walkable, family-friendly</li>
+  <li><strong>Round Rock / Cedar Park:</strong> $1,200–$1,700/mo (1BR) — suburbs with strong school districts</li>
+</ul>
+
+<h2>The Supply Surge</h2>
+<p>Austin permitted more apartments per capita than almost any other US city between 2022 and 2025. That supply has hit the market in 2026, giving renters more negotiating power. Landlords in many buildings are offering 1–2 months of free rent as concessions — always ask.</p>
+
+<h2>Austin Renter Tips</h2>
+<ul>
+  <li>Texas has no rent control — landlords can raise rents freely at lease renewal.</li>
+  <li>Austin traffic is notoriously bad; live near your workplace or on the MetroRail line if possible.</li>
+  <li>Many complexes have resort-style amenities that justify slightly higher rents (pools, co-working, dog parks).</li>
+  <li>The heat is real: cooling costs in summer can add $150–$250/mo to your budget.</li>
+</ul>
+
+<p>Find Austin rentals on EMLAKIE — no broker fees, direct from landlords.</p>
+    `.trim(),
+  },
+  {
+    slug: 'average-rent-miami-2026',
+    title: 'Average Rent in Miami in 2026: Sun, Sand, and Steep Prices',
+    description: 'Miami remains one of the fastest-growing rental markets in the US. Here\'s what renters pay across Brickell, Wynwood, Little Havana, and more.',
+    date: '2026-06-08',
+    category: 'Market Trends',
+    readTime: 5,
+    content: `
+<p>Miami has transformed from a regional city into a major financial and tech hub over the past five years, drawing transplants from New York, California, and Latin America. The result: rents that have more than doubled since 2020 in some neighborhoods. Here's the 2026 picture.</p>
+
+<h2>Citywide Averages</h2>
+<ul>
+  <li><strong>Studio:</strong> $1,800–$2,400/mo</li>
+  <li><strong>1-Bedroom:</strong> $2,200–$3,200/mo</li>
+  <li><strong>2-Bedroom:</strong> $3,000–$4,500/mo</li>
+</ul>
+
+<h2>Rent by Neighborhood</h2>
+<ul>
+  <li><strong>Brickell:</strong> $2,800–$4,200/mo (1BR) — Miami's financial district; luxury towers, walkable</li>
+  <li><strong>Wynwood:</strong> $2,400–$3,400/mo (1BR) — art district turned tech hub; trendy but pricey</li>
+  <li><strong>Miami Beach / South Beach:</strong> $2,500–$4,000/mo (1BR) — tourist proximity drives prices; older Art Deco buildings offer better value</li>
+  <li><strong>Edgewater / Midtown:</strong> $2,200–$3,200/mo (1BR) — newer construction, bayfront views</li>
+  <li><strong>Little Havana:</strong> $1,600–$2,400/mo (1BR) — best value close to downtown; vibrant Cuban culture</li>
+  <li><strong>Hialeah / Doral:</strong> $1,700–$2,400/mo (1BR) — large Latino community; more affordable suburbs</li>
+</ul>
+
+<h2>The Insurance Factor</h2>
+<p>Florida's homeowner insurance crisis has spilled into the rental market. Many landlords have passed increased insurance costs through to tenants via higher rents. Always ask what's included and expect utility costs (AC in summer) to be significant — budget $150–$300/mo.</p>
+
+<h2>Miami Renter Tips</h2>
+<ul>
+  <li>Florida has no rent control after the 2023 state preemption law.</li>
+  <li>Flood zone matters: units in flood-prone areas face periodic disruption; check FEMA maps.</li>
+  <li>A car is essentially required outside of Brickell and Miami Beach.</li>
+  <li>The Brightline rail now connects Miami to Fort Lauderdale and West Palm Beach — opening up more affordable markets for commuters.</li>
+</ul>
+
+<p>Browse Miami rentals on EMLAKIE — listed directly by landlords.</p>
+    `.trim(),
+  },
+  {
+    slug: 'average-rent-phoenix-2026',
+    title: 'Average Rent in Phoenix in 2026: Affordable Desert Living',
+    description: 'Phoenix is one of the few major Sun Belt cities where rents have actually declined from their 2022 peak. Here\'s what renters pay today.',
+    date: '2026-06-07',
+    category: 'Market Trends',
+    readTime: 4,
+    content: `
+<p>Phoenix was one of the hottest rental markets in the country in 2021–2022, with rents rising over 30% in some areas. A wave of new apartment construction has since brought prices back down significantly, making it one of the best markets for renters in 2026.</p>
+
+<h2>Citywide Averages</h2>
+<ul>
+  <li><strong>Studio:</strong> $1,000–$1,400/mo</li>
+  <li><strong>1-Bedroom:</strong> $1,200–$1,800/mo</li>
+  <li><strong>2-Bedroom:</strong> $1,600–$2,400/mo</li>
+</ul>
+
+<h2>Rent by Area</h2>
+<ul>
+  <li><strong>Scottsdale:</strong> $1,700–$2,600/mo (1BR) — upscale, resort-adjacent, newer construction</li>
+  <li><strong>Tempe / ASU area:</strong> $1,300–$1,900/mo (1BR) — college town energy, light rail access</li>
+  <li><strong>Downtown Phoenix:</strong> $1,400–$2,000/mo (1BR) — revitalized arts district, Roosevelt Row</li>
+  <li><strong>Chandler / Gilbert:</strong> $1,400–$1,900/mo (1BR) — family-friendly tech-corridor suburbs</li>
+  <li><strong>Glendale / Peoria:</strong> $1,100–$1,600/mo (1BR) — most affordable in the metro</li>
+</ul>
+
+<h2>Why Phoenix Is a Renter's Market Right Now</h2>
+<p>Developers built aggressively in response to the 2021–2022 surge, and those units are now hitting the market simultaneously. Vacancy rates are above 10% in many submarkets, giving renters genuine negotiating power. One to two months of free rent as a concession is common in newer complexes.</p>
+
+<h2>What to Budget Beyond Rent</h2>
+<ul>
+  <li><strong>Cooling:</strong> Summers routinely hit 115°F. Budget $150–$300/mo for electricity June–September.</li>
+  <li><strong>Car dependency:</strong> Phoenix is one of the most car-dependent cities in the US. Factor in gas and insurance.</li>
+  <li>Arizona has no rent control — but the current tenant-friendly conditions make it easy to negotiate.</li>
+</ul>
+
+<p>Find Phoenix rentals on EMLAKIE — direct from landlords, no fees.</p>
+    `.trim(),
+  },
+  {
+    slug: 'average-rent-denver-2026',
+    title: 'Average Rent in Denver in 2026: Mile High Prices',
+    description: 'Denver\'s outdoor lifestyle commands a premium. Here\'s what renters pay across Capitol Hill, RiNo, Washington Park, and the suburbs.',
+    date: '2026-06-06',
+    category: 'Market Trends',
+    readTime: 5,
+    content: `
+<p>Denver has grown dramatically over the past decade, driven by the outdoor recreation lifestyle, a booming tech scene, and cannabis legalization drawing residents from across the country. Rents have risen steadily, though a recent construction surge has eased pressure slightly.</p>
+
+<h2>Citywide Averages</h2>
+<ul>
+  <li><strong>Studio:</strong> $1,300–$1,700/mo</li>
+  <li><strong>1-Bedroom:</strong> $1,600–$2,300/mo</li>
+  <li><strong>2-Bedroom:</strong> $2,100–$3,000/mo</li>
+</ul>
+
+<h2>Rent by Neighborhood</h2>
+<ul>
+  <li><strong>LoDo / Union Station:</strong> $2,000–$3,000/mo (1BR) — walkable, transit hub, luxury buildings</li>
+  <li><strong>RiNo (River North):</strong> $1,800–$2,600/mo (1BR) — Denver's arts and brewery district; rapidly gentrifying</li>
+  <li><strong>Capitol Hill:</strong> $1,400–$2,000/mo (1BR) — bohemian character, older buildings, best walkability</li>
+  <li><strong>Washington Park:</strong> $1,700–$2,400/mo (1BR) — families and young professionals; great park access</li>
+  <li><strong>Aurora:</strong> $1,300–$1,800/mo (1BR) — diverse eastern suburb, airport proximity</li>
+  <li><strong>Lakewood / Englewood:</strong> $1,400–$1,900/mo (1BR) — light rail access to downtown, suburban feel</li>
+</ul>
+
+<h2>The Denver Outdoor Premium</h2>
+<p>Living in Denver means easy access to world-class skiing, hiking, and cycling — and landlords know it. That lifestyle premium is baked into rents, especially in neighborhoods close to the mountains like Edgewater and Sloan's Lake. If you can work remotely, consider cities like Fort Collins or Boulder which offer similar mountain access at comparable or lower rents.</p>
+
+<h2>Denver Renter Tips</h2>
+<ul>
+  <li>Colorado has no statewide rent control.</li>
+  <li>The RTD light rail system is excellent — living near a station can eliminate the need for a car.</li>
+  <li>Altitude adjustment is real; budget a few weeks for acclimation if moving from sea level.</li>
+  <li>Dog-friendly units command a premium in Denver — pet deposits are common.</li>
+</ul>
+
+<p>Browse Denver rentals on EMLAKIE — all listed directly by landlords.</p>
+    `.trim(),
+  },
+  {
+    slug: 'average-rent-atlanta-2026',
+    title: 'Average Rent in Atlanta in 2026: The South\'s Fastest-Growing Market',
+    description: 'Atlanta\'s rental market has grown rapidly alongside its booming film and tech industries. Here\'s what renters pay across Midtown, Buckhead, Decatur, and more.',
+    date: '2026-06-05',
+    category: 'Market Trends',
+    readTime: 5,
+    content: `
+<p>Atlanta has emerged as one of the most important cities in the American South, driven by the film industry (it's the third-largest film production market in the world), a booming tech scene, and a steady flow of residents from higher-cost cities. Here's what renters are paying in 2026.</p>
+
+<h2>Citywide Averages</h2>
+<ul>
+  <li><strong>Studio:</strong> $1,300–$1,700/mo</li>
+  <li><strong>1-Bedroom:</strong> $1,500–$2,200/mo</li>
+  <li><strong>2-Bedroom:</strong> $1,900–$2,800/mo</li>
+</ul>
+
+<h2>Rent by Neighborhood</h2>
+<ul>
+  <li><strong>Buckhead:</strong> $1,900–$3,000/mo (1BR) — upscale, luxury high-rises, corporate headquarters</li>
+  <li><strong>Midtown:</strong> $1,700–$2,500/mo (1BR) — arts district, Piedmont Park, Beltline access</li>
+  <li><strong>Old Fourth Ward / Inman Park:</strong> $1,600–$2,400/mo (1BR) — most walkable neighborhoods; Beltline trail</li>
+  <li><strong>West Midtown / Westside:</strong> $1,500–$2,200/mo (1BR) — emerging food and design district</li>
+  <li><strong>Decatur:</strong> $1,500–$2,100/mo (1BR) — suburban charm inside the perimeter; great schools</li>
+  <li><strong>East Atlanta / East Point:</strong> $1,100–$1,700/mo (1BR) — best value; MARTA access</li>
+</ul>
+
+<h2>The Beltline Effect</h2>
+<p>The Atlanta Beltline — a 22-mile loop of trails and transit connecting 45 neighborhoods — has transformed real estate near its path. Units within walking distance of the Beltline command a 10–20% rent premium but offer genuine car-light living in an otherwise car-dependent city.</p>
+
+<h2>Atlanta Renter Tips</h2>
+<ul>
+  <li>Traffic on I-285 and I-85 is among the worst in the country. Live close to work or near MARTA.</li>
+  <li>Georgia has no rent control.</li>
+  <li>Summers are hot and humid — cooling costs run $100–$200/mo from May through September.</li>
+  <li>Many landlords in Atlanta require renters insurance as a lease condition.</li>
+</ul>
+
+<p>Browse Atlanta rentals on EMLAKIE — connect directly with landlords.</p>
+    `.trim(),
+  },
+  {
+    slug: 'average-rent-houston-2026',
+    title: 'Average Rent in Houston in 2026: America\'s Most Affordable Major City',
+    description: 'Houston consistently ranks as one of the most affordable large cities in the US. Here\'s what renters pay across Midtown, Montrose, the Heights, and beyond.',
+    date: '2026-06-04',
+    category: 'Market Trends',
+    readTime: 4,
+    content: `
+<p>Houston's lack of zoning laws has long kept housing costs among the lowest of any major American city. Combined with no state income tax, it remains one of the most financially attractive cities for renters in the country.</p>
+
+<h2>Citywide Averages</h2>
+<ul>
+  <li><strong>Studio:</strong> $1,000–$1,400/mo</li>
+  <li><strong>1-Bedroom:</strong> $1,200–$1,800/mo</li>
+  <li><strong>2-Bedroom:</strong> $1,500–$2,300/mo</li>
+</ul>
+
+<h2>Rent by Neighborhood</h2>
+<ul>
+  <li><strong>Midtown:</strong> $1,500–$2,200/mo (1BR) — walkable by Houston standards; bars, restaurants, light rail</li>
+  <li><strong>Montrose:</strong> $1,400–$2,100/mo (1BR) — Houston's most eclectic neighborhood; arts, dining, LGBTQ+ community</li>
+  <li><strong>The Heights:</strong> $1,500–$2,200/mo (1BR) — craftsman bungalows, farmers market, family-friendly</li>
+  <li><strong>EaDo (East Downtown):</strong> $1,300–$1,900/mo (1BR) — emerging arts and sports district</li>
+  <li><strong>Energy Corridor:</strong> $1,200–$1,700/mo (1BR) — oil and gas hub in west Houston</li>
+  <li><strong>Sugar Land / Pearland:</strong> $1,200–$1,700/mo (1BR) — affordable family suburbs</li>
+</ul>
+
+<h2>Why Houston Stays Affordable</h2>
+<p>Houston famously has no traditional zoning code, which means developers can build housing almost anywhere. This flexibility keeps supply robust and prices in check. The city is also vast — over 670 square miles — meaning land is rarely scarce.</p>
+
+<h2>Houston Renter Tips</h2>
+<ul>
+  <li>A car is non-negotiable in most of Houston. Factor car costs into your housing budget.</li>
+  <li>Flooding is a genuine concern. Check whether your unit or building has flooded in the past; ask about flood insurance.</li>
+  <li>Texas has no rent control and landlord-friendly eviction laws — read your lease carefully.</li>
+  <li>Heat and humidity are intense; cooling bills run $150–$250/mo in summer.</li>
+</ul>
+
+<p>Find Houston rentals on EMLAKIE — all listed directly by landlords, no fees.</p>
+    `.trim(),
+  },
+  {
+    slug: 'average-rent-las-vegas-2026',
+    title: 'Average Rent in Las Vegas in 2026: Beyond the Strip',
+    description: 'Las Vegas has become a serious residential city. Here\'s what renters pay in Summerlin, Henderson, Downtown, and across the valley.',
+    date: '2026-06-03',
+    category: 'Market Trends',
+    readTime: 4,
+    content: `
+<p>Las Vegas has grown far beyond its casino and entertainment roots. With no state income tax, a lower cost of living than neighboring California, and a booming sports scene (NFL Raiders, NHL Golden Knights, NBA Aces, and Formula 1), Las Vegas is attracting permanent residents in record numbers. Here's what renters are paying in 2026.</p>
+
+<h2>Metro Averages</h2>
+<ul>
+  <li><strong>Studio:</strong> $1,100–$1,500/mo</li>
+  <li><strong>1-Bedroom:</strong> $1,300–$1,900/mo</li>
+  <li><strong>2-Bedroom:</strong> $1,700–$2,500/mo</li>
+</ul>
+
+<h2>Rent by Area</h2>
+<ul>
+  <li><strong>Summerlin:</strong> $1,600–$2,400/mo (1BR) — master-planned community; Red Rock Canyon access; premium feel</li>
+  <li><strong>Henderson:</strong> $1,400–$2,000/mo (1BR) — consistently rated one of the safest cities in the US; family-friendly</li>
+  <li><strong>Downtown Las Vegas:</strong> $1,200–$1,800/mo (1BR) — Arts District renaissance; walkable for Vegas; younger crowd</li>
+  <li><strong>Southwest Las Vegas:</strong> $1,400–$1,900/mo (1BR) — newer construction, quiet suburban neighborhoods</li>
+  <li><strong>North Las Vegas:</strong> $1,100–$1,600/mo (1BR) — most affordable in the valley; improving infrastructure</li>
+</ul>
+
+<h2>The California Exodus Effect</h2>
+<p>Las Vegas continues to absorb residents fleeing California's high costs and taxes. This has pushed rents up from their historical lows but has also brought investment and improved amenities. Many transplants find they can afford the same quality of housing for 40–50% less than in LA or the Bay Area.</p>
+
+<h2>Las Vegas Renter Tips</h2>
+<ul>
+  <li>Nevada has no rent control.</li>
+  <li>Summer temperatures regularly exceed 110°F — cooling costs can hit $200–$350/mo in July and August.</li>
+  <li>A car is essential; public transit outside of the Strip is limited.</li>
+  <li>Water scarcity is a long-term concern; look for newer buildings with water-efficient appliances.</li>
+  <li>Many landlords require proof of income at 2.5–3× monthly rent.</li>
+</ul>
+
+<p>Browse Las Vegas rentals on EMLAKIE — posted directly by landlords, no broker fees.</p>
+    `.trim(),
+  },
 ];
 
 export function getPost(slug: string): Post | undefined {

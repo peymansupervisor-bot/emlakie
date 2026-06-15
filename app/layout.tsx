@@ -15,9 +15,24 @@ export const metadata: Metadata = {
   },
   description:
     'Browse houses, apartments, and condos for rent. EMLAKIE connects renters directly with landlords — no hassle, no runaround.',
+  alternates: {
+    canonical: 'https://emlakie.com',
+  },
   openGraph: {
     siteName: 'EMLAKIE',
     type: 'website',
+    images: [
+      {
+        url: '/logo.png',
+        width: 512,
+        height: 512,
+        alt: 'EMLAKIE — Find Your Next Rental Home',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    images: ['/logo.png'],
   },
   icons: {
     icon: [

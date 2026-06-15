@@ -6,14 +6,17 @@ import { getListings } from '@/lib/api';
 import { ListingFilters } from '@/lib/types';
 
 export const metadata: Metadata = {
-  title: 'Homes & Apartments for Rent | EMLAKIE',
+  title: 'Homes & Apartments for Rent',
   description:
     'Search houses, apartments, condos, and townhomes for rent directly from landlords. Filter by price, bedrooms, and property type.',
+  alternates: { canonical: 'https://emlakie.com/rentals' },
   openGraph: {
     title: 'Homes & Apartments for Rent | EMLAKIE',
     description: 'Search rentals directly from landlords — no middlemen, no fees.',
     type: 'website',
+    images: [{ url: '/logo.png', width: 512, height: 512, alt: 'EMLAKIE Rentals' }],
   },
+  twitter: { card: 'summary_large_image', images: ['/logo.png'] },
 };
 
 export default async function RentalsPage({

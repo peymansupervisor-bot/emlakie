@@ -1,10 +1,37 @@
 import Link from 'next/link';
 import Image from 'next/image';
+import type { Metadata } from 'next';
 
 import SearchBar from '@/components/SearchBar';
 import ListingCard from '@/components/ListingCard';
 import AppBadges from '@/components/AppBadges';
 import { getListings } from '@/lib/api';
+
+export const metadata: Metadata = {
+  alternates: { canonical: 'https://emlakie.com' },
+};
+
+const websiteSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'EMLAKIE',
+  url: 'https://emlakie.com',
+  description: 'Browse houses, apartments, and condos for rent. EMLAKIE connects renters directly with landlords.',
+  potentialAction: {
+    '@type': 'SearchAction',
+    target: { '@type': 'EntryPoint', urlTemplate: 'https://emlakie.com/rentals?city={search_term_string}' },
+    'query-input': 'required name=search_term_string',
+  },
+};
+
+const organizationSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'EMLAKIE',
+  url: 'https://emlakie.com',
+  logo: 'https://emlakie.com/logo.png',
+  contactPoint: { '@type': 'ContactPoint', email: 'support@emlakie.com', contactType: 'customer service' },
+};
 
 export default async function HomePage() {
   const { listings } = await getListings();
@@ -12,6 +39,14 @@ export default async function HomePage() {
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
+      />
       {/* Hero */}
       <section className="relative overflow-hidden bg-white">
         {/* SVG Neighborhood Illustration */}

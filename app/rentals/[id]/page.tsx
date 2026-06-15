@@ -18,16 +18,18 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!listing) return { title: 'Listing not found' };
   const statusLabel = listing.status === 'rented' ? ' [Rented]' : listing.status === 'expired' ? ' [Expired]' : '';
   return {
-    title: `${listing.title}${statusLabel} — ${formatPrice(listing.price)}/mo | EMLAKIE`,
+    title: `${listing.title}${statusLabel} — ${formatPrice(listing.price)}/mo`,
     description: listing.description?.slice(0, 160),
+    alternates: { canonical: `https://emlakie.com/rentals/${id}` },
     openGraph: {
       title: `${listing.title} — ${formatPrice(listing.price)}/mo`,
       description: listing.description?.slice(0, 160) ?? '',
       type: 'website',
       images: listing.photos?.[0]
         ? [{ url: listing.photos[0], width: 1200, height: 630, alt: listing.title }]
-        : [],
+        : [{ url: '/logo.png', width: 512, height: 512, alt: 'EMLAKIE' }],
     },
+    twitter: { card: 'summary_large_image' },
   };
 }
 
@@ -59,8 +61,35 @@ export default async function ListingPage({ params }: Props) {
   ]);
   const similarActive = similar.filter((l) => l.id !== listing.id && l.status === 'active').slice(0, 3);
 
+  const listingSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'RealEstateListing',
+    name: listing.title,
+    description: listing.description ?? '',
+    url: `https://emlakie.com/rentals/${listing.id}`,
+    image: listing.photos?.[0] ?? 'https://emlakie.com/logo.png',
+    offers: {
+      '@type': 'Offer',
+      price: listing.price,
+      priceCurrency: 'USD',
+      priceSpecification: { '@type': 'UnitPriceSpecification', price: listing.price, priceCurrency: 'USD', unitCode: 'MON' },
+      availability: listing.status === 'active' ? 'https://schema.org/InStock' : 'https://schema.org/SoldOut',
+    },
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: listing.address ?? '',
+      addressLocality: listing.city ?? '',
+      addressRegion: listing.state ?? '',
+      postalCode: listing.zip ?? '',
+      addressCountry: 'US',
+    },
+    numberOfRooms: listing.bedrooms,
+    floorSize: listing.sqft ? { '@type': 'QuantitativeValue', value: listing.sqft, unitCode: 'FTK' } : undefined,
+  };
+
   return (
     <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(listingSchema) }} />
       <Link href="/rentals" className="text-sm font-semibold text-brand-600 hover:text-brand-700">
         ← Back to search
       </Link>

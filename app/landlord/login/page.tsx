@@ -113,7 +113,7 @@ export default function LandlordLoginPage() {
     </section>
 
     {/* How it works */}
-    <section className="mx-auto max-w-7xl px-4 pb-16 sm:px-6">
+    <section id="how-it-works" className="mx-auto max-w-7xl px-4 pb-16 sm:px-6">
       <h2 className="text-center text-2xl font-extrabold text-gray-900">How it works</h2>
       <div className="mt-10 grid gap-8 sm:grid-cols-3">
         {steps.map((step, i) => (

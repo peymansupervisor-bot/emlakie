@@ -1,10 +1,8 @@
 import Link from 'next/link';
-import Image from 'next/image';
 import type { Metadata } from 'next';
 
 import SearchBar from '@/components/SearchBar';
 import ListingCard from '@/components/ListingCard';
-import AppBadges from '@/components/AppBadges';
 import { getListings } from '@/lib/api';
 
 export const metadata: Metadata = {
@@ -357,26 +355,6 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* App promo */}
-      <section className="mx-auto max-w-7xl px-4 py-10 sm:py-16 sm:px-6">
-        <div className="flex flex-col items-center justify-between gap-8 rounded-2xl bg-brand-600 px-6 py-10 sm:rounded-3xl sm:px-14 sm:py-14 lg:flex-row">
-          <div className="max-w-xl text-center lg:text-left">
-            <h2 className="text-2xl font-extrabold text-white sm:text-3xl">
-              Take EMLAKIE with you
-            </h2>
-            <p className="mt-3 text-base text-green-100 sm:text-lg">
-              Search on the go, chat with landlords, and get instant alerts when new
-              homes hit the market.
-            </p>
-            <div className="mt-6 flex justify-center lg:justify-start">
-              <AppBadges />
-            </div>
-          </div>
-          <div className="hidden h-64 w-64 overflow-hidden rounded-full lg:flex">
-            <Image src="/logo.png" alt="Emlakie" width={256} height={256} className="h-full w-full object-cover" />
-          </div>
-        </div>
-      </section>
     </>
   );
 }

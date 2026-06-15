@@ -231,7 +231,7 @@ export default async function HomePage() {
         </svg>
 
         {/* Text + search overlay — positioned in the clear upper ~75% */}
-        <div className="absolute inset-x-0 top-0 flex h-[75%] flex-col items-center justify-center px-4 text-center">
+        <div className="absolute inset-x-0 top-0 flex h-[55%] flex-col items-center justify-center px-4 text-center">
           <p className="text-xs font-semibold uppercase tracking-[0.25em] text-brand-600">
             National Real Estate
           </p>

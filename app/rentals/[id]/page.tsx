@@ -7,6 +7,7 @@ import { formatBaths, formatBeds, formatPrice, formatPropertyType, formatSqft } 
 import ListingCard from '@/components/ListingCard';
 import EValue from '@/components/EValue';
 import { calculateEValue } from '@/lib/e-value';
+import ApplyForm from '@/components/ApplyForm';
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -187,21 +188,7 @@ export default async function ListingPage({ params }: Props) {
                 </Link>
               </>
             ) : (
-              <>
-                <h2 className="text-lg font-bold text-gray-900">Interested in this home?</h2>
-                <p className="mt-2 text-sm text-gray-600">
-                  Message the landlord and apply directly in the EMLAKIE app — it takes less than two minutes.
-                </p>
-                <Link
-                  href="/app"
-                  className="mt-5 block rounded-xl bg-brand-600 py-3 text-center font-semibold text-white transition hover:bg-brand-700"
-                >
-                  Apply in the App
-                </Link>
-                <p className="mt-3 text-center text-xs text-gray-500">
-                  Free for renters. No account needed to browse.
-                </p>
-              </>
+              <ApplyForm listingId={listing.id} listingPrice={listing.price} />
             )}
           </div>
         </aside>

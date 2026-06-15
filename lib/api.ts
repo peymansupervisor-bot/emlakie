@@ -107,6 +107,57 @@ export async function getAllZips(): Promise<ZipLocation[]> {
   }
 }
 
+export interface CityLocation {
+  city: string;
+  state: string;
+  slug: string; // lowercase, hyphenated e.g. "los-angeles"
+}
+
+export async function getAllCities(): Promise<CityLocation[]> {
+  try {
+    const sb = supabaseAdmin();
+    const { data } = await sb
+      .from('listings')
+      .select('city, state')
+      .eq('status', 'active')
+      .not('city', 'is', null);
+
+    if (!data || data.length === 0) throw new Error('no data');
+
+    const seen = new Set<string>();
+    return data.reduce<CityLocation[]>((acc, row) => {
+      const city = (row.city as string).trim();
+      const state = (row.state as string | null)?.trim() ?? '';
+      const key = `${city}|${state}`.toLowerCase();
+      if (!seen.has(key)) {
+        seen.add(key);
+        acc.push({ city, state, slug: city.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '') });
+      }
+      return acc;
+    }, []);
+  } catch {
+    // Fall back to sample data cities
+    const seen = new Set<string>();
+    return sampleListings.reduce<CityLocation[]>((acc, l) => {
+      const key = `${l.city}|${l.state ?? ''}`.toLowerCase();
+      if (!seen.has(key)) {
+        seen.add(key);
+        acc.push({ city: l.city, state: l.state ?? '', slug: l.city.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '') });
+      }
+      return acc;
+    }, []);
+  }
+}
+
+export async function getListingsByCity(citySlug: string): Promise<{ listings: Listing[]; total: number; city: string; state: string; usingSampleData: boolean } | null> {
+  const cities = await getAllCities();
+  const match = cities.find(c => c.slug === citySlug);
+  if (!match) return null;
+
+  const result = await getListings({ city: match.city });
+  return { ...result, city: match.city, state: match.state };
+}
+
 export async function getListing(id: string): Promise<Listing | null> {
   if (id.startsWith('sample-')) {
     return sampleListings.find((l) => l.id === id) ?? null;

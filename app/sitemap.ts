@@ -1,10 +1,10 @@
 import type { MetadataRoute } from 'next';
-import { getAllZips } from '@/lib/api';
+import { getAllZips, getAllCities } from '@/lib/api';
 import { posts } from '@/lib/blog';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = 'https://emlakie.com';
-  const zips = await getAllZips();
+  const [zips, cities] = await Promise.all([getAllZips(), getAllCities()]);
 
   const zipPages: MetadataRoute.Sitemap = zips.map(({ zip }) => ({
     url: `${base}/homes/${zip}`,
@@ -28,6 +28,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${base}/rentals/short-term`, changeFrequency: 'weekly', priority: 0.8 },
     { url: `${base}/rentals/section-8`, changeFrequency: 'weekly', priority: 0.8 },
     ...blogPages,
+    ...cities.map(c => ({
+      url: `${base}/rentals/city/${c.slug}`,
+      changeFrequency: 'daily' as const,
+      priority: 0.85,
+    })),
     ...zipPages,
     { url: `${base}/landlord/login`, changeFrequency: 'monthly', priority: 0.7 },
     { url: `${base}/app`, changeFrequency: 'monthly', priority: 0.6 },

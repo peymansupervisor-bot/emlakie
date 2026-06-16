@@ -9,7 +9,7 @@ export default function ListingCard({ listing }: { listing: Listing }) {
   return (
     <article className="group relative overflow-hidden rounded-xl bg-white shadow-card transition hover:shadow-card-hover">
       {/* Stretched link covers the whole card */}
-      <Link href={`/rentals/${listing.id}`} className="absolute inset-0 z-0" aria-label={listing.title} />
+      <Link href={`/rentals/${listing.id}`} className="absolute inset-0 z-10" aria-label={listing.title} />
 
       <div className="relative aspect-[4/3] bg-gray-100">
         {photo ? (
@@ -50,7 +50,7 @@ export default function ListingCard({ listing }: { listing: Listing }) {
           {listing.zip && (
             <Link
               href={`/homes/${listing.zip}`}
-              className="relative z-10 rounded-full bg-gray-100 px-3 py-1.5 text-xs font-semibold text-gray-600 hover:bg-brand-50 hover:text-brand-700"
+              className="relative z-20 rounded-full bg-gray-100 px-3 py-1.5 text-xs font-semibold text-gray-600 hover:bg-brand-50 hover:text-brand-700"
             >
               {listing.zip}
             </Link>

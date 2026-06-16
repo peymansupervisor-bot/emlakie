@@ -18,19 +18,27 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const listing = await getListing(id);
   if (!listing) return { title: 'Listing not found' };
   const statusLabel = listing.status === 'rented' ? ' [Rented]' : listing.status === 'expired' ? ' [Expired]' : '';
+  const shortDesc = listing.description
+    ? listing.description.length > 155
+      ? listing.description.slice(0, 155).replace(/\s+\S*$/, '') + '…'
+      : listing.description
+    : undefined;
   return {
     title: `${listing.title}${statusLabel} — ${formatPrice(listing.price)}/mo`,
-    description: listing.description?.slice(0, 160),
+    description: shortDesc,
     alternates: { canonical: `https://emlakie.com/rentals/${id}` },
     openGraph: {
       title: `${listing.title} — ${formatPrice(listing.price)}/mo`,
-      description: listing.description?.slice(0, 160) ?? '',
+      description: shortDesc ?? '',
       type: 'website',
       images: listing.photos?.[0]
         ? [{ url: listing.photos[0], width: 1200, height: 630, alt: listing.title }]
         : [{ url: '/logo.png', width: 512, height: 512, alt: 'EMLAKIE' }],
     },
-    twitter: { card: 'summary_large_image' },
+    twitter: {
+      card: 'summary_large_image',
+      images: listing.photos?.[0] ? [listing.photos[0]] : ['/logo.png'],
+    },
   };
 }
 

@@ -7,14 +7,31 @@ export const metadata: Metadata = {
   title: 'Section 8 Rentals — Housing Choice Voucher Accepted',
   description: 'Find landlords who accept Section 8 Housing Choice Vouchers. Browse rental homes that welcome HCV tenants — no broker fees.',
   alternates: { canonical: 'https://emlakie.com/rentals/section-8' },
+  openGraph: {
+    title: 'Section 8 Rentals — Housing Choice Voucher Accepted',
+    description: 'Find landlords who accept Section 8 Housing Choice Vouchers. Browse rental homes that welcome HCV tenants — no broker fees.',
+    images: [{ url: '/logo.png', width: 512, height: 512, alt: 'EMLAKIE' }],
+  },
 };
 
 const schema = {
   '@context': 'https://schema.org',
-  '@type': 'WebPage',
-  name: 'Section 8 Rentals',
-  description: 'Find rental homes from landlords who accept Section 8 Housing Choice Vouchers across the United States.',
-  url: 'https://emlakie.com/rentals/section-8',
+  '@graph': [
+    {
+      '@type': 'WebPage',
+      name: 'Section 8 Rentals',
+      description: 'Find rental homes from landlords who accept Section 8 Housing Choice Vouchers across the United States.',
+      url: 'https://emlakie.com/rentals/section-8',
+    },
+    {
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://emlakie.com' },
+        { '@type': 'ListItem', position: 2, name: 'Rentals', item: 'https://emlakie.com/rentals' },
+        { '@type': 'ListItem', position: 3, name: 'Section 8 Rentals', item: 'https://emlakie.com/rentals/section-8' },
+      ],
+    },
+  ],
 };
 
 export default async function Section8Page() {

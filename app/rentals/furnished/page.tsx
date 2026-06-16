@@ -7,14 +7,31 @@ export const metadata: Metadata = {
   title: 'Furnished Rentals — Move-In Ready Apartments & Houses',
   description: 'Browse furnished apartments and houses for rent. Move in with just your suitcase — ideal for relocations, travel nurses, and short-term stays.',
   alternates: { canonical: 'https://emlakie.com/rentals/furnished' },
+  openGraph: {
+    title: 'Furnished Rentals — Move-In Ready Apartments & Houses',
+    description: 'Browse furnished apartments and houses for rent. Move in with just your suitcase — ideal for relocations, travel nurses, and short-term stays.',
+    images: [{ url: '/logo.png', width: 512, height: 512, alt: 'EMLAKIE' }],
+  },
 };
 
 const schema = {
   '@context': 'https://schema.org',
-  '@type': 'WebPage',
-  name: 'Furnished Rentals',
-  description: 'Find move-in ready furnished apartments and houses for rent across the United States.',
-  url: 'https://emlakie.com/rentals/furnished',
+  '@graph': [
+    {
+      '@type': 'WebPage',
+      name: 'Furnished Rentals',
+      description: 'Find move-in ready furnished apartments and houses for rent across the United States.',
+      url: 'https://emlakie.com/rentals/furnished',
+    },
+    {
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://emlakie.com' },
+        { '@type': 'ListItem', position: 2, name: 'Rentals', item: 'https://emlakie.com/rentals' },
+        { '@type': 'ListItem', position: 3, name: 'Furnished Rentals', item: 'https://emlakie.com/rentals/furnished' },
+      ],
+    },
+  ],
 };
 
 export default async function FurnishedPage() {

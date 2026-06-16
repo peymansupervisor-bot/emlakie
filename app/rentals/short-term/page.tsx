@@ -7,14 +7,31 @@ export const metadata: Metadata = {
   title: 'Short-Term Rentals — Monthly & Flexible Lease Apartments',
   description: 'Find short-term and month-to-month rentals. Flexible leases for relocations, travel nurses, remote workers, and anyone who needs housing without a long commitment.',
   alternates: { canonical: 'https://emlakie.com/rentals/short-term' },
+  openGraph: {
+    title: 'Short-Term Rentals — Monthly & Flexible Lease Apartments',
+    description: 'Find short-term and month-to-month rentals. Flexible leases for relocations, travel nurses, remote workers, and anyone who needs housing without a long commitment.',
+    images: [{ url: '/logo.png', width: 512, height: 512, alt: 'EMLAKIE' }],
+  },
 };
 
 const schema = {
   '@context': 'https://schema.org',
-  '@type': 'WebPage',
-  name: 'Short-Term Rentals',
-  description: 'Browse short-term and month-to-month rental homes across the United States.',
-  url: 'https://emlakie.com/rentals/short-term',
+  '@graph': [
+    {
+      '@type': 'WebPage',
+      name: 'Short-Term Rentals',
+      description: 'Browse short-term and month-to-month rental homes across the United States.',
+      url: 'https://emlakie.com/rentals/short-term',
+    },
+    {
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://emlakie.com' },
+        { '@type': 'ListItem', position: 2, name: 'Rentals', item: 'https://emlakie.com/rentals' },
+        { '@type': 'ListItem', position: 3, name: 'Short-Term Rentals', item: 'https://emlakie.com/rentals/short-term' },
+      ],
+    },
+  ],
 };
 
 export default async function ShortTermPage() {

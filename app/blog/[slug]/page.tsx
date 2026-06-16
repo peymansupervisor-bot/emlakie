@@ -24,6 +24,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description: post.description,
       type: 'article',
       publishedTime: post.date,
+      images: [{ url: '/logo.png', width: 512, height: 512, alt: 'EMLAKIE' }],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      images: ['/logo.png'],
     },
   };
 }
@@ -48,12 +53,24 @@ export default async function BlogPostPage({ params }: Props) {
 
   const articleSchema = {
     '@context': 'https://schema.org',
-    '@type': 'Article',
-    headline: post.title,
-    description: post.description,
-    datePublished: post.date,
-    publisher: { '@type': 'Organization', name: 'EMLAKIE', url: 'https://emlakie.com' },
-    url: `https://emlakie.com/blog/${slug}`,
+    '@graph': [
+      {
+        '@type': 'Article',
+        headline: post.title,
+        description: post.description,
+        datePublished: post.date,
+        publisher: { '@type': 'Organization', name: 'EMLAKIE', url: 'https://emlakie.com' },
+        url: `https://emlakie.com/blog/${slug}`,
+      },
+      {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://emlakie.com' },
+          { '@type': 'ListItem', position: 2, name: 'Blog', item: 'https://emlakie.com/blog' },
+          { '@type': 'ListItem', position: 3, name: post.title, item: `https://emlakie.com/blog/${slug}` },
+        ],
+      },
+    ],
   };
 
   return (
@@ -80,7 +97,7 @@ export default async function BlogPostPage({ params }: Props) {
 
       {/* CTA */}
       <div className="mt-12 rounded-2xl bg-brand-600 px-8 py-8 text-center">
-        <h2 className="text-xl font-extrabold text-white">Find your next home in LA</h2>
+        <h2 className="text-xl font-extrabold text-white">Find your next rental home</h2>
         <p className="mt-2 text-sm text-green-100">Browse listings posted directly by landlords — no broker fees.</p>
         <Link href="/rentals"
           className="mt-5 inline-block rounded-xl bg-white px-6 py-3 text-sm font-bold text-brand-700 transition hover:bg-green-50">

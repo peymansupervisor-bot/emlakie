@@ -31,6 +31,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       title: `Homes for Rent in ${label}`,
       description: `Find your next home in ${label}. Search rentals by price, bedrooms, and property type on EMLAKIE.`,
       type: 'website',
+      images: [{ url: '/logo.png', width: 512, height: 512, alt: 'EMLAKIE' }],
     },
   };
 }
@@ -52,10 +53,22 @@ export default async function CityPage({ params }: Props) {
 
   const schema = {
     '@context': 'https://schema.org',
-    '@type': 'WebPage',
-    name: `Homes for Rent in ${label}`,
-    description: `Browse rental listings in ${label} on EMLAKIE.`,
-    url: `https://emlakie.com/rentals/city/${slug}`,
+    '@graph': [
+      {
+        '@type': 'WebPage',
+        name: `Homes for Rent in ${label}`,
+        description: `Browse rental listings in ${label} on EMLAKIE.`,
+        url: `https://emlakie.com/rentals/city/${slug}`,
+      },
+      {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://emlakie.com' },
+          { '@type': 'ListItem', position: 2, name: 'Rentals', item: 'https://emlakie.com/rentals' },
+          { '@type': 'ListItem', position: 3, name: label, item: `https://emlakie.com/rentals/city/${slug}` },
+        ],
+      },
+    ],
   };
 
   return (

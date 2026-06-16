@@ -3,6 +3,12 @@ import type { Metadata } from 'next';
 export const metadata: Metadata = {
   title: 'Terms of Service | EMLAKIE',
   description: 'Terms of Service for EMLAKIE — please read before using our platform.',
+  alternates: { canonical: 'https://emlakie.com/terms' },
+  openGraph: {
+    title: 'Terms of Service | EMLAKIE',
+    description: 'Terms of Service for EMLAKIE — please read before using our platform.',
+    images: [{ url: '/logo.png', width: 512, height: 512, alt: 'EMLAKIE' }],
+  },
 };
 
 export default function TermsPage() {

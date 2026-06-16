@@ -42,10 +42,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: `Homes for Rent in ${label} | Emlakie`,
     description: `Browse rentals in ${label}. Find apartments, houses, condos, and townhomes for rent on Emlakie — America's rental marketplace.`,
-    alternates: { canonical: `/homes/${params.zip}` },
+    alternates: { canonical: `https://emlakie.com/homes/${params.zip}` },
     openGraph: {
       title: `Homes for Rent in ${label}`,
       description: `Find your next home in ${city}, ${state}. Search rentals by price, bedrooms, and property type.`,
+      images: [{ url: '/logo.png', width: 512, height: 512, alt: 'EMLAKIE' }],
     },
   };
 }
@@ -73,8 +74,20 @@ export default async function ZipPage({ params }: Props) {
     ? Math.round(listings.map((l) => l.bedrooms).reduce((a, b) => a + b, 0) / listings.length)
     : null;
 
+  const breadcrumbSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://emlakie.com' },
+      { '@type': 'ListItem', position: 2, name: 'Rentals', item: 'https://emlakie.com/rentals' },
+      { '@type': 'ListItem', position: 3, name: state, item: `https://emlakie.com/rentals?city=${encodeURIComponent(city)}` },
+      { '@type': 'ListItem', position: 4, name: `${label} ${params.zip}`, item: `https://emlakie.com/homes/${params.zip}` },
+    ],
+  };
+
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
       {/* Breadcrumb */}
       <nav className="flex flex-wrap items-center gap-1 text-sm text-gray-500">
         <Link href="/" className="hover:text-brand-600">Home</Link>

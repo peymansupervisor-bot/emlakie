@@ -6,6 +6,12 @@ export const metadata: Metadata = {
   title: 'Rental Market Insights & Guides',
   description: 'Average rent data, neighborhood guides, and tips for renters and landlords across the United States.',
   alternates: { canonical: 'https://emlakie.com/blog' },
+  openGraph: {
+    title: 'Rental Market Insights & Guides | EMLAKIE',
+    description: 'Average rent data, neighborhood guides, and tips for renters and landlords across the United States.',
+    type: 'website',
+    images: [{ url: '/logo.png', width: 512, height: 512, alt: 'EMLAKIE' }],
+  },
 };
 
 const CATEGORY_COLORS: Record<string, string> = {
@@ -19,6 +25,15 @@ function formatDate(iso: string) {
   return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 }
 
+const collectionSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: 'Rental Market Insights & Guides',
+  description: 'Average rent data, neighborhood guides, and tips for renters and landlords across the United States.',
+  url: 'https://emlakie.com/blog',
+  publisher: { '@type': 'Organization', name: 'EMLAKIE', url: 'https://emlakie.com' },
+};
+
 export default function BlogPage() {
   const [featured, ...rest] = posts;
   const marketPosts = rest.filter(p => p.category === 'Market Trends');
@@ -26,6 +41,7 @@ export default function BlogPage() {
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionSchema) }} />
       <p className="text-xs font-semibold uppercase tracking-widest text-brand-600">EMLAKIE Blog</p>
       <h1 className="mt-2 text-3xl font-extrabold text-gray-900">Rental Market Insights</h1>
       <p className="mt-2 text-gray-500">Average rents, neighborhood guides, and tips for renters and landlords nationwide.</p>

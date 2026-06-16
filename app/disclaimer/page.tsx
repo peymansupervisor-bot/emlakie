@@ -3,6 +3,12 @@ import type { Metadata } from 'next';
 export const metadata: Metadata = {
   title: 'Legal Disclaimer | EMLAKIE',
   description: 'Legal disclaimer for EMLAKIE — please read before using our platform.',
+  alternates: { canonical: 'https://emlakie.com/disclaimer' },
+  openGraph: {
+    title: 'Legal Disclaimer | EMLAKIE',
+    description: 'Legal disclaimer for EMLAKIE — please read before using our platform.',
+    images: [{ url: '/logo.png', width: 512, height: 512, alt: 'EMLAKIE' }],
+  },
 };
 
 export default function DisclaimerPage() {

@@ -7,14 +7,31 @@ export const metadata: Metadata = {
   title: 'Pet-Friendly Rentals — Apartments & Houses That Allow Pets',
   description: 'Find pet-friendly apartments, houses, and condos for rent. Browse listings from landlords who welcome dogs, cats, and other pets — no broker fees.',
   alternates: { canonical: 'https://emlakie.com/rentals/pet-friendly' },
+  openGraph: {
+    title: 'Pet-Friendly Rentals — Apartments & Houses That Allow Pets',
+    description: 'Find pet-friendly apartments, houses, and condos for rent. Browse listings from landlords who welcome dogs, cats, and other pets — no broker fees.',
+    images: [{ url: '/logo.png', width: 512, height: 512, alt: 'EMLAKIE' }],
+  },
 };
 
 const schema = {
   '@context': 'https://schema.org',
-  '@type': 'WebPage',
-  name: 'Pet-Friendly Rentals',
-  description: 'Browse pet-friendly rental homes across the United States. Apartments, houses, and condos that allow dogs, cats, and other pets.',
-  url: 'https://emlakie.com/rentals/pet-friendly',
+  '@graph': [
+    {
+      '@type': 'WebPage',
+      name: 'Pet-Friendly Rentals',
+      description: 'Browse pet-friendly rental homes across the United States. Apartments, houses, and condos that allow dogs, cats, and other pets.',
+      url: 'https://emlakie.com/rentals/pet-friendly',
+    },
+    {
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://emlakie.com' },
+        { '@type': 'ListItem', position: 2, name: 'Rentals', item: 'https://emlakie.com/rentals' },
+        { '@type': 'ListItem', position: 3, name: 'Pet-Friendly Rentals', item: 'https://emlakie.com/rentals/pet-friendly' },
+      ],
+    },
+  ],
 };
 
 export default async function PetFriendlyPage() {

@@ -2,9 +2,14 @@ import type { Metadata } from 'next';
 import ContactFlow from '@/components/ContactFlow';
 
 export const metadata: Metadata = {
-  title: 'Contact Us',
+  title: 'Contact Us | EMLAKIE',
   description: 'Get help with EMLAKIE — for renters, landlords, and general inquiries.',
   alternates: { canonical: 'https://emlakie.com/contact' },
+  openGraph: {
+    title: 'Contact Us | EMLAKIE',
+    description: 'Get help with EMLAKIE — for renters, landlords, and general inquiries.',
+    images: [{ url: '/logo.png', width: 512, height: 512, alt: 'EMLAKIE' }],
+  },
 };
 
 export default function ContactPage() {

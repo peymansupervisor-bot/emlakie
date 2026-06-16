@@ -3,6 +3,12 @@ import type { Metadata } from 'next';
 export const metadata: Metadata = {
   title: 'Accessibility Statement | EMLAKIE',
   description: 'EMLAKIE is committed to ensuring our website is accessible to people with disabilities.',
+  alternates: { canonical: 'https://emlakie.com/accessibility' },
+  openGraph: {
+    title: 'Accessibility Statement | EMLAKIE',
+    description: 'EMLAKIE is committed to ensuring our website is accessible to people with disabilities.',
+    images: [{ url: '/logo.png', width: 512, height: 512, alt: 'EMLAKIE' }],
+  },
 };
 
 export default function AccessibilityPage() {

@@ -22,7 +22,7 @@ export default function ListingCard({ listing }: { listing: Listing }) {
           />
         ) : (
           <div className="flex h-full items-center justify-center text-gray-400">
-            <svg viewBox="0 0 32 32" className="h-12 w-12 fill-current opacity-40">
+            <svg viewBox="0 0 32 32" className="h-12 w-12 fill-current opacity-40" aria-hidden="true">
               <path d="M16 3 3 14h4v13h8v-8h2v8h8V14h4L16 3z" />
             </svg>
           </div>

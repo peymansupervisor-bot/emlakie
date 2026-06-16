@@ -8,8 +8,8 @@ export default function Gallery({ photos, title }: { photos: string[]; title: st
 
   if (photos.length === 0) {
     return (
-      <div className="flex aspect-[16/9] items-center justify-center rounded-2xl bg-gray-100 text-gray-400">
-        <svg viewBox="0 0 32 32" className="h-16 w-16 fill-current opacity-40">
+      <div className="flex aspect-[16/9] items-center justify-center rounded-2xl bg-gray-100 text-gray-400" aria-label="No photos available">
+        <svg viewBox="0 0 32 32" className="h-16 w-16 fill-current opacity-40" aria-hidden="true">
           <path d="M16 3 3 14h4v13h8v-8h2v8h8V14h4L16 3z" />
         </svg>
       </div>
@@ -35,8 +35,9 @@ export default function Gallery({ photos, title }: { photos: string[]; title: st
             <button
               key={photo}
               onClick={() => setActive(i)}
-              aria-label={`Show photo ${i + 1}`}
-              className={`relative h-20 w-28 shrink-0 overflow-hidden rounded-lg border-2 transition ${
+              aria-label={`Show photo ${i + 1} of ${photos.length}`}
+              aria-pressed={i === active}
+              className={`relative h-24 w-32 shrink-0 overflow-hidden rounded-lg border-2 transition ${
                 i === active ? 'border-brand-600' : 'border-transparent opacity-70 hover:opacity-100'
               }`}
             >

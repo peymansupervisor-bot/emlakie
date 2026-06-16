@@ -111,11 +111,13 @@ export default function PropertiesPage() {
       </div>
 
       <div className="mt-6 flex flex-wrap items-center gap-3">
-        <div className="flex gap-2">
+        <div role="tablist" aria-label="Filter properties" className="flex gap-2">
           {tabs.map((t) => (
             <button
               key={t.id}
+              role="tab"
               onClick={() => setTab(t.id)}
+              aria-selected={tab === t.id}
               className={`rounded-full border px-4 py-1.5 text-sm font-semibold transition ${
                 tab === t.id
                   ? 'border-brand-600 bg-brand-50 text-brand-700'
@@ -127,10 +129,12 @@ export default function PropertiesPage() {
           ))}
         </div>
         <div className="relative flex-1 min-w-[200px]">
-          <svg viewBox="0 0 24 24" className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 stroke-gray-400" fill="none" strokeWidth="2">
+          <label htmlFor="property-search" className="sr-only">Search properties</label>
+          <svg viewBox="0 0 24 24" className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 stroke-gray-400" fill="none" strokeWidth="2" aria-hidden="true">
             <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
           </svg>
           <input
+            id="property-search"
             type="text"
             placeholder="Search by address, city, or ZIP"
             value={search}
@@ -152,12 +156,12 @@ export default function PropertiesPage() {
           <table className="w-full text-left text-sm">
             <thead className="border-b border-gray-200 bg-gray-50 text-xs font-semibold uppercase tracking-wide text-gray-500">
               <tr>
-                <th className="px-4 py-3">Address</th>
-                <th className="hidden px-4 py-3 sm:table-cell">Rent</th>
-                <th className="hidden px-4 py-3 md:table-cell">Views</th>
-                <th className="px-4 py-3">Leads</th>
-                <th className="hidden px-4 py-3 lg:table-cell">Expires</th>
-                <th className="px-4 py-3">Status</th>
+                <th scope="col" className="px-4 py-3">Address</th>
+                <th scope="col" className="hidden px-4 py-3 sm:table-cell">Rent</th>
+                <th scope="col" className="hidden px-4 py-3 md:table-cell">Views</th>
+                <th scope="col" className="px-4 py-3">Leads</th>
+                <th scope="col" className="hidden px-4 py-3 lg:table-cell">Expires</th>
+                <th scope="col" className="px-4 py-3">Status</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">

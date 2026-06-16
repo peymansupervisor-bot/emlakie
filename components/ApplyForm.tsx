@@ -68,9 +68,9 @@ export default function ApplyForm({ listingId, listingPrice }: Props) {
 
   if (step === 'success') {
     return (
-      <div className="text-center py-4">
+      <div className="text-center py-4" role="status">
         <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-green-50">
-          <svg viewBox="0 0 24 24" className="h-7 w-7 stroke-brand-600" fill="none" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <svg viewBox="0 0 24 24" className="h-7 w-7 stroke-brand-600" fill="none" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
             <path d="m5 13 4 4L19 7" />
           </svg>
         </div>
@@ -90,37 +90,46 @@ export default function ApplyForm({ listingId, listingPrice }: Props) {
       <div className="mt-4 space-y-3">
         {/* Name */}
         <div>
-          <label className="block text-xs font-semibold text-gray-600 mb-1">Full Name *</label>
+          <label htmlFor="apply-name" className="block text-xs font-semibold text-gray-600 mb-1">Full Name *</label>
           <input
+            id="apply-name"
             type="text"
             value={name}
             onChange={e => setName(e.target.value)}
             placeholder="Jane Smith"
+            required
+            aria-required="true"
             className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
           />
         </div>
 
         {/* Phone */}
         <div>
-          <label className="block text-xs font-semibold text-gray-600 mb-1">Phone Number *</label>
+          <label htmlFor="apply-phone" className="block text-xs font-semibold text-gray-600 mb-1">Phone Number *</label>
           <input
+            id="apply-phone"
             type="tel"
             value={phone}
             onChange={e => setPhone(e.target.value)}
             placeholder="+1 (555) 000-0000"
+            required
+            aria-required="true"
             className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
           />
         </div>
 
         {/* Income */}
         <div>
-          <label className="block text-xs font-semibold text-gray-600 mb-1">Monthly Income (USD) *</label>
+          <label htmlFor="apply-income" className="block text-xs font-semibold text-gray-600 mb-1">Monthly Income (USD) *</label>
           <input
+            id="apply-income"
             type="number"
             value={income}
             onChange={e => setIncome(e.target.value)}
             placeholder="e.g. 5000"
             min="0"
+            required
+            aria-required="true"
             className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
           />
           {incomeRatio && (
@@ -134,8 +143,9 @@ export default function ApplyForm({ listingId, listingPrice }: Props) {
         {/* Credit Score + Move-in — side by side */}
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="block text-xs font-semibold text-gray-600 mb-1">Credit Score</label>
+            <label htmlFor="apply-credit" className="block text-xs font-semibold text-gray-600 mb-1">Credit Score</label>
             <input
+              id="apply-credit"
               type="number"
               value={creditScore}
               onChange={e => setCreditScore(e.target.value)}
@@ -146,8 +156,9 @@ export default function ApplyForm({ listingId, listingPrice }: Props) {
             />
           </div>
           <div>
-            <label className="block text-xs font-semibold text-gray-600 mb-1">Move-in Date</label>
+            <label htmlFor="apply-movein" className="block text-xs font-semibold text-gray-600 mb-1">Move-in Date</label>
             <input
+              id="apply-movein"
               type="date"
               value={moveIn}
               onChange={e => setMoveIn(e.target.value)}
@@ -159,19 +170,22 @@ export default function ApplyForm({ listingId, listingPrice }: Props) {
 
         {/* Message */}
         <div>
-          <label className="block text-xs font-semibold text-gray-600 mb-1">Message to Landlord *</label>
+          <label htmlFor="apply-message" className="block text-xs font-semibold text-gray-600 mb-1">Message to Landlord *</label>
           <textarea
+            id="apply-message"
             value={message}
             onChange={e => setMessage(e.target.value)}
             placeholder="Introduce yourself and why you're interested..."
             rows={3}
+            required
+            aria-required="true"
             className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 resize-none"
           />
         </div>
       </div>
 
       {error && (
-        <p className="mt-2 text-xs text-red-600 font-medium">{error}</p>
+        <p role="alert" className="mt-2 text-xs text-red-600 font-medium">{error}</p>
       )}
 
       <button

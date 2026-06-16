@@ -155,9 +155,9 @@ function EmailForm({ subject: initialSubject }: { subject?: string }) {
 
   if (done) {
     return (
-      <div className="flex flex-col items-center py-10 text-center">
+      <div className="flex flex-col items-center py-10 text-center" role="status">
         <div className="flex h-14 w-14 items-center justify-center rounded-full bg-green-50">
-          <svg viewBox="0 0 24 24" className="h-7 w-7 stroke-brand-600" fill="none" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <svg viewBox="0 0 24 24" className="h-7 w-7 stroke-brand-600" fill="none" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
             <path d="m5 13 4 4L19 7" />
           </svg>
         </div>
@@ -171,27 +171,30 @@ function EmailForm({ subject: initialSubject }: { subject?: string }) {
     <form onSubmit={handleSubmit} noValidate className="space-y-3">
       <div className="grid gap-3 sm:grid-cols-2">
         <div>
-          <label className="block text-xs font-semibold text-gray-600 mb-1">Full Name *</label>
-          <input type="text" value={name} onChange={e => setName(e.target.value)} placeholder="Jane Smith"
+          <label htmlFor="contact-name" className="block text-xs font-semibold text-gray-600 mb-1">Full Name *</label>
+          <input id="contact-name" type="text" value={name} onChange={e => setName(e.target.value)} placeholder="Jane Smith"
+            required aria-required="true"
             className="w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500" />
         </div>
         <div>
-          <label className="block text-xs font-semibold text-gray-600 mb-1">Email *</label>
-          <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="jane@example.com"
+          <label htmlFor="contact-email" className="block text-xs font-semibold text-gray-600 mb-1">Email *</label>
+          <input id="contact-email" type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="jane@example.com"
+            required aria-required="true"
             className="w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500" />
         </div>
       </div>
       <div>
-        <label className="block text-xs font-semibold text-gray-600 mb-1">Subject</label>
-        <input type="text" value={subject} onChange={e => setSubject(e.target.value)}
+        <label htmlFor="contact-subject" className="block text-xs font-semibold text-gray-600 mb-1">Subject</label>
+        <input id="contact-subject" type="text" value={subject} onChange={e => setSubject(e.target.value)}
           className="w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500" />
       </div>
       <div>
-        <label className="block text-xs font-semibold text-gray-600 mb-1">Message *</label>
-        <textarea value={message} onChange={e => setMessage(e.target.value)} rows={5} placeholder="How can we help?"
+        <label htmlFor="contact-message" className="block text-xs font-semibold text-gray-600 mb-1">Message *</label>
+        <textarea id="contact-message" value={message} onChange={e => setMessage(e.target.value)} rows={5} placeholder="How can we help?"
+          required aria-required="true"
           className="w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 resize-none" />
       </div>
-      {error && <p className="text-xs text-red-600 font-medium">{error}</p>}
+      {error && <p role="alert" className="text-xs text-red-600 font-medium">{error}</p>}
       <button type="submit" disabled={loading}
         className="w-full rounded-xl bg-brand-600 py-3 text-sm font-semibold text-white transition hover:bg-brand-700 disabled:opacity-60">
         {loading ? 'Sending…' : 'Send Message'}
@@ -212,22 +215,24 @@ export default function ContactFlow() {
 
   /* Breadcrumb */
   const breadcrumb = (
-    <nav className="mb-6 flex items-center gap-2 text-sm text-gray-400">
-      <button onClick={reset} className={`font-medium transition ${!role ? 'text-gray-900 cursor-default' : 'hover:text-brand-600'}`}>
+    <nav aria-label="Breadcrumb" className="mb-6 flex items-center gap-2 text-sm text-gray-400">
+      <button onClick={reset} className={`font-medium transition ${!role ? 'text-gray-900 cursor-default' : 'hover:text-brand-600'}`}
+        aria-current={!role ? 'page' : undefined}>
         Contact
       </button>
       {role && (
         <>
-          <span>/</span>
-          <button onClick={() => setTopic(null)} className={`font-medium transition ${!topic ? 'text-gray-900 cursor-default' : 'hover:text-brand-600'}`}>
+          <span aria-hidden="true">/</span>
+          <button onClick={() => setTopic(null)} className={`font-medium transition ${!topic ? 'text-gray-900 cursor-default' : 'hover:text-brand-600'}`}
+            aria-current={!topic ? 'page' : undefined}>
             {ROLES.find(r => r.id === role)?.label}
           </button>
         </>
       )}
       {topic && (
         <>
-          <span>/</span>
-          <span className="font-medium text-gray-900">{topic.label}</span>
+          <span aria-hidden="true">/</span>
+          <span className="font-medium text-gray-900" aria-current="page">{topic.label}</span>
         </>
       )}
     </nav>

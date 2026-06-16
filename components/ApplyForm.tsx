@@ -84,7 +84,7 @@ export default function ApplyForm({ listingId, listingPrice }: Props) {
 
   return (
     <form onSubmit={handleSubmit} noValidate>
-      <h2 className="text-lg font-bold text-gray-900">Apply for this home</h2>
+      <h2 className="text-lg font-bold text-gray-900">Request more information</h2>
       <p className="mt-1 text-sm text-gray-500">Goes directly to the landlord — no middlemen.</p>
 
       <div className="mt-4 space-y-3">

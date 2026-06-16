@@ -273,7 +273,7 @@ export default async function HomePage() {
           <h1 className="mt-3 max-w-3xl text-4xl font-extrabold text-gray-900 sm:text-5xl">
             Find your next home
           </h1>
-          <p className="mt-3 max-w-xl text-lg font-medium text-gray-600">
+          <p className="mt-3 max-w-2xl text-lg font-medium text-gray-600">
             Before brokers took over, renting was simple. We brought that back.
           </p>
           <div className="mt-8 w-full max-w-2xl">

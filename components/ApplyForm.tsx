@@ -195,7 +195,7 @@ export default function ApplyForm({ listingId, listingPrice }: Props) {
       >
         {loading ? 'Submitting…' : 'Send Application'}
       </button>
-      <p className="mt-2 text-center text-xs text-gray-400">Free for renters · No account needed</p>
+      <p className="mt-2 text-center text-xs text-gray-400">No account needed</p>
     </form>
   );
 }

@@ -274,7 +274,7 @@ export default async function HomePage() {
             Find your next home
           </h1>
           <p className="mt-3 max-w-xl text-lg font-medium text-gray-600">
-            Houses, apartments, and condos for rent — direct from landlords.
+            Before brokers took over, renting was simple. We brought that back.
           </p>
           <div className="mt-8 w-full max-w-2xl">
             <SearchBar large />

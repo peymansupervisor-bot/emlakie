@@ -8,6 +8,7 @@ import ListingCard from '@/components/ListingCard';
 import EValue from '@/components/EValue';
 import { calculateEValue } from '@/lib/e-value';
 import ApplyForm from '@/components/ApplyForm';
+import NearbyPlaces from '@/components/NearbyPlaces';
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -167,6 +168,11 @@ export default async function ListingPage({ params }: Props) {
                 ))}
               </ul>
             </>
+          )}
+
+          {/* Nearby places */}
+          {listing.lat && listing.lng && (
+            <NearbyPlaces lat={listing.lat} lng={listing.lng} />
           )}
 
           {/* E-Value — only shown on inactive listings */}

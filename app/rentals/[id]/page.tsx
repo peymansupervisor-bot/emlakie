@@ -9,6 +9,7 @@ import EValue from '@/components/EValue';
 import { calculateEValue } from '@/lib/e-value';
 import ApplyForm from '@/components/ApplyForm';
 import NearbyPlaces from '@/components/NearbyPlaces';
+import StreetView from '@/components/StreetView';
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -169,6 +170,15 @@ export default async function ListingPage({ params }: Props) {
               </ul>
             </>
           )}
+
+          {/* Street View */}
+          <StreetView
+            lat={listing.lat}
+            lng={listing.lng}
+            address={listing.address}
+            city={listing.city}
+            state={listing.state}
+          />
 
           {/* Nearby places */}
           {listing.lat && listing.lng && (

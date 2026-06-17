@@ -20,19 +20,24 @@ export const metadata: Metadata = {
   },
   openGraph: {
     siteName: 'EMLAKIE',
+    title: 'EMLAKIE — Find Your Next Rental Home',
+    description: 'Browse houses, apartments, and condos for rent. EMLAKIE connects renters directly with landlords — no hassle, no runaround.',
     type: 'website',
+    url: 'https://emlakie.com',
     images: [
       {
-        url: '/logo.png',
-        width: 512,
-        height: 512,
+        url: '/opengraph-image',
+        width: 1200,
+        height: 630,
         alt: 'EMLAKIE — Find Your Next Rental Home',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    images: ['/logo.png'],
+    title: 'EMLAKIE — Find Your Next Rental Home',
+    description: 'Browse houses, apartments, and condos for rent. EMLAKIE connects renters directly with landlords.',
+    images: ['/opengraph-image'],
   },
   icons: {
     icon: [

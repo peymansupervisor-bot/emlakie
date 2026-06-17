@@ -2,6 +2,7 @@
 
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import { useState, useRef, useEffect } from 'react';
+import { isAddressQuery } from '@/lib/nominatim';
 
 const PRICE_OPTIONS = [500, 1000, 1500, 2000, 2500, 3000, 4000, 5000];
 
@@ -57,11 +58,18 @@ export default function Filters() {
         type="text"
         defaultValue={searchParams.get('city') ?? ''}
         onKeyDown={(e) => {
-          if (e.key === 'Enter') setFilter('city', (e.target as HTMLInputElement).value.trim());
+          if (e.key === 'Enter') {
+            const val = (e.target as HTMLInputElement).value.trim();
+            if (isAddressQuery(val)) { router.push(`/property?address=${encodeURIComponent(val)}`); }
+            else setFilter('city', val);
+          }
         }}
         onBlur={(e) => {
-          if (e.target.value.trim() !== (searchParams.get('city') ?? ''))
-            setFilter('city', e.target.value.trim());
+          const val = e.target.value.trim();
+          if (val !== (searchParams.get('city') ?? '')) {
+            if (isAddressQuery(val)) { router.push(`/property?address=${encodeURIComponent(val)}`); }
+            else setFilter('city', val);
+          }
         }}
         placeholder="City or ZIP"
         aria-label="Filter by city or ZIP code"

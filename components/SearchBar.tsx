@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { isAddressQuery } from '@/lib/nominatim';
 
 export default function SearchBar({ large = false }: { large?: boolean }) {
   const router = useRouter();
@@ -9,9 +10,13 @@ export default function SearchBar({ large = false }: { large?: boolean }) {
 
   function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    const params = new URLSearchParams();
-    if (q.trim()) params.set('q', q.trim());
-    router.push(`/rentals${params.size ? `?${params}` : ''}`);
+    const val = q.trim();
+    if (!val) { router.push('/rentals'); return; }
+    if (isAddressQuery(val)) {
+      router.push(`/property?address=${encodeURIComponent(val)}`);
+    } else {
+      router.push(`/rentals?q=${encodeURIComponent(val)}`);
+    }
   }
 
   return (

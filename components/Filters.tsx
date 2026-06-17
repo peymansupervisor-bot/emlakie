@@ -2,7 +2,7 @@
 
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import { useState, useRef, useEffect } from 'react';
-import { isAddressQuery } from '@/lib/nominatim';
+import { isAddressQuery } from '@/lib/address-utils';
 
 const PRICE_OPTIONS = [500, 1000, 1500, 2000, 2500, 3000, 4000, 5000];
 

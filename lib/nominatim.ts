@@ -31,7 +31,4 @@ export async function geocodeAddress(query: string): Promise<NominatimResult | n
   }
 }
 
-export function isAddressQuery(q: string): boolean {
-  // Starts with a number followed by a street name — classic US address pattern
-  return /^\d+\s+[a-zA-Z]/.test(q.trim());
-}
+export { isAddressQuery } from './address-utils';

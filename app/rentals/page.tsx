@@ -1,9 +1,11 @@
 import { Suspense } from 'react';
+import { redirect } from 'next/navigation';
 import type { Metadata } from 'next';
 import Filters from '@/components/Filters';
 import RentalsClient from '@/components/RentalsClient';
 import { getListings } from '@/lib/api';
 import { ListingFilters } from '@/lib/types';
+import { isAddressQuery } from '@/lib/address-utils';
 
 export const metadata: Metadata = {
   title: 'Homes & Apartments for Rent',
@@ -24,6 +26,11 @@ export default async function RentalsPage({
 }: {
   searchParams: ListingFilters;
 }) {
+  // If q looks like a street address, send to property lookup page
+  if (searchParams.q && isAddressQuery(searchParams.q)) {
+    redirect(`/property?address=${encodeURIComponent(searchParams.q)}`);
+  }
+
   const { listings, total, usingSampleData } = await getListings(searchParams);
 
   const searchTerm = searchParams.q || searchParams.city;

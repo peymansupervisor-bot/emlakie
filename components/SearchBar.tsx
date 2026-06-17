@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { isAddressQuery } from '@/lib/nominatim';
+import { isAddressQuery } from '@/lib/address-utils';
 
 export default function SearchBar({ large = false }: { large?: boolean }) {
   const router = useRouter();

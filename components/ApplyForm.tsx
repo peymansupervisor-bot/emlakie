@@ -51,7 +51,7 @@ export default function ApplyForm({ listingId, listingPrice }: Props) {
       if (!res.ok) {
         const body = await res.json().catch(() => ({}));
         if (res.status === 409) {
-          setError('You have already submitted an application for this listing.');
+          setError('You have already sent an inquiry for this listing.');
         } else {
           setError(body.error ?? 'Something went wrong. Please try again.');
         }
@@ -74,8 +74,8 @@ export default function ApplyForm({ listingId, listingPrice }: Props) {
             <path d="m5 13 4 4L19 7" />
           </svg>
         </div>
-        <h3 className="text-base font-bold text-gray-900">Application Sent!</h3>
-        <p className="mt-1 text-sm text-gray-500">The landlord will review your info and reach out directly.</p>
+        <h3 className="text-base font-bold text-gray-900">Inquiry Sent!</h3>
+        <p className="mt-1 text-sm text-gray-500">The landlord will review your message and reach out directly.</p>
       </div>
     );
   }
@@ -84,7 +84,7 @@ export default function ApplyForm({ listingId, listingPrice }: Props) {
 
   return (
     <form onSubmit={handleSubmit} noValidate>
-      <h2 className="text-lg font-bold text-gray-900">Request more information</h2>
+      <h2 className="text-lg font-bold text-gray-900">Contact the landlord</h2>
       <p className="mt-1 text-sm text-gray-500">Goes directly to the landlord — no middlemen.</p>
 
       <div className="mt-4 space-y-3">
@@ -193,7 +193,7 @@ export default function ApplyForm({ listingId, listingPrice }: Props) {
         disabled={loading}
         className="mt-4 w-full rounded-xl bg-brand-600 py-3 text-sm font-semibold text-white transition hover:bg-brand-700 disabled:opacity-60"
       >
-        {loading ? 'Submitting…' : 'Send Application'}
+        {loading ? 'Sending…' : 'Send Inquiry'}
       </button>
       <p className="mt-2 text-center text-xs text-gray-400">No account needed</p>
     </form>

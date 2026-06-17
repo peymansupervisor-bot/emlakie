@@ -28,7 +28,7 @@ export default function SupportChat() {
   const [loading, setLoading] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
 
-  const prevLengthRef = useRef(0);
+  const prevLengthRef = useRef(1);
   useEffect(() => {
     if (messages.length > prevLengthRef.current || loading) {
       bottomRef.current?.scrollIntoView({ behavior: 'smooth' });

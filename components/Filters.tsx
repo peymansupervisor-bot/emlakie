@@ -16,6 +16,7 @@ export default function Filters() {
   const searchParams = useSearchParams();
   const [amenityOpen, setAmenityOpen] = useState(false);
   const amenityRef = useRef<HTMLDivElement>(null);
+  const [dropdownPos, setDropdownPos] = useState({ top: 0, right: 0 });
 
   const selectedAmenities = searchParams.get('amenities')
     ? searchParams.get('amenities')!.split(',').filter(Boolean)
@@ -135,7 +136,11 @@ export default function Filters() {
       {/* Amenities dropdown */}
       <div className="relative" ref={amenityRef}>
         <button
-          onClick={() => setAmenityOpen((o) => !o)}
+          onClick={(e) => {
+            const r = (e.currentTarget as HTMLButtonElement).getBoundingClientRect();
+            setDropdownPos({ top: r.bottom + 6, right: window.innerWidth - r.right });
+            setAmenityOpen((o) => !o);
+          }}
           className={`flex items-center gap-1.5 rounded-lg border px-3 py-2 text-sm font-medium outline-none transition ${
             selectedAmenities.length > 0
               ? 'border-brand-600 bg-brand-50 text-brand-700'
@@ -154,7 +159,10 @@ export default function Filters() {
         </button>
 
         {amenityOpen && (
-          <div className="absolute right-0 top-full mt-1.5 z-[9999] min-w-max rounded-xl border border-gray-200 bg-white p-3 shadow-lg">
+          <div
+            style={{ position: 'fixed', top: dropdownPos.top, right: dropdownPos.right }}
+            className="z-[9999] min-w-[200px] rounded-xl border border-gray-200 bg-white p-3 shadow-lg"
+          >
             <div className="grid grid-cols-1 gap-1">
               {AMENITY_OPTIONS.map((a) => (
                 <label key={a} className="flex cursor-pointer items-center gap-2.5 rounded-lg px-2 py-1.5 text-sm text-gray-700 hover:bg-gray-50">

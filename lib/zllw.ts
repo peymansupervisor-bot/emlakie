@@ -12,28 +12,40 @@ export interface ZllwPropertyData {
   lotSize: number | null;
   homeType: string | null;
   zestimate: number | null;
+  rentZestimate: number | null;
   listPriceLow: number | null;
   priceHistory: ZllwPriceEvent[];
   zpid: number | null;
 }
+
+const HEADERS = (key: string) => ({
+  'Content-Type': 'application/json',
+  'x-rapidapi-host': 'zllw-working-api.p.rapidapi.com',
+  'x-rapidapi-key': key,
+});
 
 export async function getPropertyData(address: string): Promise<ZllwPropertyData | null> {
   const key = process.env.RAPIDAPI_KEY;
   if (!key) return null;
 
   try {
-    const url = `https://zllw-working-api.p.rapidapi.com/pro/byaddress?propertyaddress=${encodeURIComponent(address)}`;
-    const res = await fetch(url, {
-      headers: {
-        'Content-Type': 'application/json',
-        'x-rapidapi-host': 'zllw-working-api.p.rapidapi.com',
-        'x-rapidapi-key': key,
-      },
-      next: { revalidate: 86400 },
-    });
-    const data = await res.json();
-    const pd = data?.propertyDetails;
+    const [propRes, rentRes] = await Promise.all([
+      fetch(
+        `https://zllw-working-api.p.rapidapi.com/pro/byaddress?propertyaddress=${encodeURIComponent(address)}`,
+        { headers: HEADERS(key), next: { revalidate: 86400 } }
+      ),
+      fetch(
+        `https://zllw-working-api.p.rapidapi.com/graph_charts?byaddress=${encodeURIComponent(address)}&which=rent_zestimate_history&recent_first=True`,
+        { headers: HEADERS(key), next: { revalidate: 86400 } }
+      ),
+    ]);
+
+    const [propData, rentData] = await Promise.all([propRes.json(), rentRes.json()]);
+    const pd = propData?.propertyDetails;
     if (!pd) return null;
+
+    const rentPoints: { x: number; y: number }[] = rentData?.DataPoints?.homeValueChartData?.[0]?.points ?? [];
+    const rentZestimate = rentPoints.length > 0 ? rentPoints[0].y : null;
 
     const raw: ZllwPriceEvent[] = (pd.priceHistory ?? []).filter(
       (e: ZllwPriceEvent) => e.event && (e.price != null || e.event === 'Sold')
@@ -45,6 +57,7 @@ export async function getPropertyData(address: string): Promise<ZllwPropertyData
       lotSize: pd.lotSize ?? null,
       homeType: pd.homeType ?? null,
       zestimate: pd.zestimate ?? null,
+      rentZestimate,
       listPriceLow: pd.listPriceLow ?? null,
       priceHistory: raw.slice(0, 10),
       zpid: pd.zpid ?? null,

@@ -110,6 +110,18 @@ export default async function PropertyPage({ searchParams }: Props) {
 
           {/* Property details */}
           <div className="flex flex-col gap-4">
+            {/* Rent Zestimate — hero card */}
+            {propData?.rentZestimate && (
+              <div className="rounded-2xl bg-brand-600 p-6 text-white shadow-lg">
+                <p className="text-sm font-medium text-brand-100 uppercase tracking-wide">Est. Monthly Rent</p>
+                <p className="mt-1 text-5xl font-extrabold tracking-tight">
+                  ${propData.rentZestimate.toLocaleString()}
+                  <span className="ml-1 text-xl font-normal text-brand-200">/mo</span>
+                </p>
+                <p className="mt-2 text-xs text-brand-200">Rental estimate powered by Zillow Rent Zestimate®</p>
+              </div>
+            )}
+
             <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
               <h2 className="mb-4 text-base font-bold text-gray-900">Property Info</h2>
               <dl className="space-y-3 text-sm">

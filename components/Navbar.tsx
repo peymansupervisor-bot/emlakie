@@ -13,12 +13,6 @@ export default function Navbar() {
 
         <div className="hidden items-center gap-6 md:flex">
           <Link
-            href="/rentals"
-            className="text-sm font-semibold text-gray-700 hover:text-brand-600"
-          >
-            For Tenants
-          </Link>
-          <Link
             href="/landlord"
             className="text-sm font-semibold text-gray-700 hover:text-brand-600"
           >
@@ -46,9 +40,6 @@ export default function Navbar() {
 
         {/* Mobile */}
         <div className="flex items-center gap-3 md:hidden">
-          <Link href="/rentals" className="text-sm font-semibold text-gray-700">
-            Tenants
-          </Link>
           <Link href="/landlord" className="text-sm font-semibold text-gray-700">
             Landlords
           </Link>

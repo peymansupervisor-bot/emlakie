@@ -41,12 +41,16 @@ export default async function RentalsPage({
       </div>
 
       {/* Map + list view */}
-      <RentalsClient
-        listings={listings}
-        total={total}
-        usingSampleData={usingSampleData}
-        heading={heading}
-      />
+      <Suspense>
+        <RentalsClient
+          listings={listings}
+          total={total}
+          usingSampleData={usingSampleData}
+          heading={heading}
+          filters={searchParams as Record<string, string>}
+          searchLabel={heading}
+        />
+      </Suspense>
     </div>
   );
 }

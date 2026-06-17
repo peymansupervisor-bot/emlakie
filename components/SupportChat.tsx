@@ -7,6 +7,15 @@ interface Message {
   text: string;
 }
 
+const SUGGESTIONS = [
+  'My listing isn\'t showing up in search',
+  'I\'m not receiving emails from the site',
+  'How do I edit my listing?',
+  'I want to cancel my email alert',
+  'A tenant contacted me — where do I see it?',
+  'How do I upload photos to my listing?',
+];
+
 export default function SupportChat() {
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -99,6 +108,24 @@ export default function SupportChat() {
         )}
         <div ref={bottomRef} />
       </div>
+
+      {/* Suggestion chips — only shown before user sends first message */}
+      {messages.length === 1 && (
+        <div className="border-t border-gray-100 px-4 py-3">
+          <p className="mb-2 text-xs font-medium text-gray-400">Common questions</p>
+          <div className="flex flex-wrap gap-2">
+            {SUGGESTIONS.map((s) => (
+              <button
+                key={s}
+                onClick={() => setInput(s)}
+                className="rounded-full border border-gray-200 bg-gray-50 px-3 py-1.5 text-xs font-medium text-gray-600 transition hover:border-green-400 hover:bg-green-50 hover:text-green-700"
+              >
+                {s}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Input */}
       <div className="border-t border-gray-100 p-4">

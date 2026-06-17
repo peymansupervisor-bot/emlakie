@@ -26,12 +26,13 @@ export default function SupportChat() {
   const [input, setInput] = useState('');
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
-  const bottomRef = useRef<HTMLDivElement>(null);
+  const messagesRef = useRef<HTMLDivElement>(null);
 
   const prevLengthRef = useRef(1);
   useEffect(() => {
     if (messages.length > prevLengthRef.current || loading) {
-      bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+      const el = messagesRef.current;
+      if (el) el.scrollTop = el.scrollHeight;
     }
     prevLengthRef.current = messages.length;
   }, [messages, loading]);
@@ -76,7 +77,7 @@ export default function SupportChat() {
       </div>
 
       {/* Messages */}
-      <div className="flex flex-col gap-4 overflow-y-auto p-5" style={{ minHeight: 360, maxHeight: 480 }}>
+      <div ref={messagesRef} className="flex flex-col gap-4 overflow-y-auto p-5" style={{ minHeight: 360, maxHeight: 480 }}>
         {messages.map((msg, i) => (
           <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
             {msg.role === 'assistant' && (
@@ -115,7 +116,6 @@ export default function SupportChat() {
             </div>
           </div>
         )}
-        <div ref={bottomRef} />
       </div>
 
       {/* Suggestion chips — only shown before user sends first message */}

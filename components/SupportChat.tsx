@@ -28,8 +28,12 @@ export default function SupportChat() {
   const [loading, setLoading] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
 
+  const prevLengthRef = useRef(0);
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (messages.length > prevLengthRef.current || loading) {
+      bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }
+    prevLengthRef.current = messages.length;
   }, [messages, loading]);
 
   async function send() {

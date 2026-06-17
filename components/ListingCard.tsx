@@ -61,6 +61,9 @@ export default function ListingCard({ listing }: { listing: Listing }) {
           {listing.address}, {listing.city}
           {listing.state ? `, ${listing.state}` : ''}
         </p>
+        {listing.listing_source === 'broker' && listing.license_number && (
+          <p className="mt-0.5 text-xs text-blue-600 font-medium">License # {listing.license_number}</p>
+        )}
         <div className="mt-2 flex flex-wrap items-center gap-2">
           {listing.zip && (
             <Link

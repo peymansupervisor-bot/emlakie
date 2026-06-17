@@ -44,6 +44,7 @@ interface FormData {
   description: string;
   amenities: string[];
   isBroker: boolean | null;
+  licenseNumber: string;
 }
 
 const empty: FormData = {
@@ -53,6 +54,7 @@ const empty: FormData = {
   sqft: '', price: '', availableFrom: '',
   title: '', description: '', amenities: [],
   isBroker: null,
+  licenseNumber: '',
 };
 
 const inputCls = 'w-full rounded-xl border border-gray-300 px-4 py-3 text-sm outline-none focus:border-brand-600 focus:ring-0';
@@ -218,6 +220,7 @@ export default function NewPropertyPage() {
   function validateStep(): string {
     if (step === 1) {
       if (form.isBroker === null) return 'Please tell us whether you are the property owner or a licensed broker.';
+      if (form.isBroker && !form.licenseNumber.trim()) return 'Please enter your real estate license number.';
       if (!form.address.trim()) return 'Address is required.';
       if (!form.city.trim()) return 'City is required.';
       if (!form.state.trim()) return 'State is required.';
@@ -261,6 +264,7 @@ export default function NewPropertyPage() {
       fd.append('availableFrom', form.availableFrom);
       fd.append('amenities', JSON.stringify(form.amenities));
       fd.append('listingSource', form.isBroker ? 'broker' : 'owner');
+      if (form.isBroker && form.licenseNumber.trim()) fd.append('licenseNumber', form.licenseNumber.trim());
       if (form.ownershipType) fd.append('ownershipType', form.ownershipType);
       photos.forEach((f) => fd.append('photos', f));
       await createListing(fd);
@@ -344,9 +348,22 @@ export default function NewPropertyPage() {
               </button>
             </div>
             {form.isBroker === true && (
-              <p className="mt-3 text-xs text-blue-700 bg-blue-50 rounded-lg px-3 py-2">
-                Your listing will be labeled <strong>Broker Listed</strong> so renters know it's professionally represented.
-              </p>
+              <div className="mt-3 rounded-lg bg-blue-50 px-3 py-3 space-y-2">
+                <p className="text-xs text-blue-700">
+                  Your listing will be labeled <strong>Broker Listed</strong> so renters know it&apos;s professionally represented.
+                </p>
+                <label className="block text-xs font-semibold text-blue-800">
+                  Real estate license number *
+                  <input
+                    type="text"
+                    value={form.licenseNumber}
+                    onChange={(e) => set('licenseNumber', e.target.value.toUpperCase())}
+                    placeholder="e.g. CA-DRE 01234567"
+                    className="mt-1 w-full rounded-lg border border-blue-200 bg-white px-3 py-2 text-sm font-normal text-gray-800 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-200 placeholder-gray-400"
+                  />
+                </label>
+                <p className="text-[11px] text-blue-600">This will be displayed on your listing as required by law.</p>
+              </div>
             )}
             {form.isBroker === false && (
               <p className="mt-3 text-xs text-brand-700 bg-brand-50 rounded-lg px-3 py-2">

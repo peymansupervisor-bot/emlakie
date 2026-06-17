@@ -23,6 +23,7 @@ export interface Listing {
   dom?: number;
   domStartDate?: string | null;
   listing_source?: 'owner' | 'broker' | 'mls';
+  license_number?: string | null;
 }
 
 export interface ListingFilters {

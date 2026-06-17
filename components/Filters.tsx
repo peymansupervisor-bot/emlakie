@@ -141,7 +141,7 @@ export default function Filters() {
         </button>
 
         {amenityOpen && (
-          <div className="absolute left-0 top-full z-50 mt-1.5 w-56 rounded-xl border border-gray-200 bg-white p-3 shadow-lg">
+          <div className="absolute left-0 top-full z-50 mt-1.5 w-52 min-w-max rounded-xl border border-gray-200 bg-white p-3 shadow-lg">
             <div className="grid grid-cols-1 gap-1">
               {AMENITY_OPTIONS.map((a) => (
                 <label key={a} className="flex cursor-pointer items-center gap-2.5 rounded-lg px-2 py-1.5 text-sm text-gray-700 hover:bg-gray-50">

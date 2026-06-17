@@ -33,8 +33,8 @@ export default async function RentalsPage({
 
   return (
     <div className="flex flex-col">
-      {/* Filters bar */}
-      <div className="border-b border-gray-100 bg-white px-4 py-3 sm:px-6">
+      {/* Filters bar — relative + z-index so dropdown overlays the overflow-hidden RentalsClient below */}
+      <div className="relative z-20 border-b border-gray-100 bg-white px-4 py-3 sm:px-6">
         <Suspense>
           <Filters />
         </Suspense>

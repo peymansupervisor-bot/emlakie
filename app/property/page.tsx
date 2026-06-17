@@ -1,6 +1,7 @@
 import { geocodeAddress } from '@/lib/nominatim';
 import { getListings } from '@/lib/api';
 import { getAreaEValue } from '@/lib/e-value';
+import { getPropertyData } from '@/lib/zllw';
 import Link from 'next/link';
 import ListingCard from '@/components/ListingCard';
 import Navbar from '@/components/Navbar';
@@ -34,9 +35,10 @@ export default async function PropertyPage({ searchParams }: Props) {
     );
   }
 
-  const [geo, { listings }] = await Promise.all([
+  const [geo, { listings }, propData] = await Promise.all([
     geocodeAddress(rawAddress),
     getListings({ q: rawAddress }),
+    getPropertyData(rawAddress),
   ]);
 
   const addr = geo?.address;
@@ -187,6 +189,45 @@ export default async function PropertyPage({ searchParams }: Props) {
               </div>
             )}
 
+            {/* Property details from ZLLW */}
+            {propData && (propData.yearBuilt || propData.livingArea || propData.homeType || propData.zestimate) && (
+              <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+                <h2 className="mb-4 text-base font-bold text-gray-900">Property Details</h2>
+                <dl className="space-y-3 text-sm">
+                  {propData.homeType && (
+                    <div className="flex justify-between">
+                      <dt className="text-gray-500">Type</dt>
+                      <dd className="font-medium text-gray-900 capitalize">{propData.homeType.replace(/_/g, ' ').toLowerCase()}</dd>
+                    </div>
+                  )}
+                  {propData.yearBuilt && (
+                    <div className="flex justify-between">
+                      <dt className="text-gray-500">Year built</dt>
+                      <dd className="font-medium text-gray-900">{propData.yearBuilt}</dd>
+                    </div>
+                  )}
+                  {propData.livingArea && (
+                    <div className="flex justify-between">
+                      <dt className="text-gray-500">Living area</dt>
+                      <dd className="font-medium text-gray-900">{propData.livingArea.toLocaleString()} sqft</dd>
+                    </div>
+                  )}
+                  {propData.lotSize && (
+                    <div className="flex justify-between">
+                      <dt className="text-gray-500">Lot size</dt>
+                      <dd className="font-medium text-gray-900">{propData.lotSize.toLocaleString()} sqft</dd>
+                    </div>
+                  )}
+                  {propData.zestimate && (
+                    <div className="flex justify-between">
+                      <dt className="text-gray-500">Est. market value</dt>
+                      <dd className="font-bold text-brand-700">${propData.zestimate.toLocaleString()}</dd>
+                    </div>
+                  )}
+                </dl>
+              </div>
+            )}
+
             {/* List this property CTA */}
             <div className="rounded-2xl border border-brand-200 bg-brand-50 p-6">
               <h3 className="font-bold text-brand-800">Own this property?</h3>
@@ -200,6 +241,50 @@ export default async function PropertyPage({ searchParams }: Props) {
             </div>
           </div>
         </div>
+
+        {/* Price history */}
+        {propData && propData.priceHistory.length > 0 && (
+          <section className="mt-10">
+            <h2 className="mb-4 text-xl font-bold text-gray-900">Sales &amp; Price History</h2>
+            <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-gray-100 bg-gray-50 text-xs text-gray-500">
+                    <th className="px-4 py-3 text-left font-semibold">Date</th>
+                    <th className="px-4 py-3 text-left font-semibold">Event</th>
+                    <th className="px-4 py-3 text-right font-semibold">Price</th>
+                    <th className="hidden sm:table-cell px-4 py-3 text-right font-semibold">$/sqft</th>
+                    <th className="hidden sm:table-cell px-4 py-3 text-left font-semibold">Source</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-100">
+                  {propData.priceHistory.map((evt, i) => (
+                    <tr key={i} className="hover:bg-gray-50 transition-colors">
+                      <td className="px-4 py-3 text-gray-600">{evt.date}</td>
+                      <td className="px-4 py-3">
+                        <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${
+                          evt.event === 'Sold' ? 'bg-green-100 text-green-700' :
+                          evt.event === 'Listed for sale' ? 'bg-blue-100 text-blue-700' :
+                          evt.event === 'Price change' ? 'bg-yellow-100 text-yellow-700' :
+                          'bg-gray-100 text-gray-600'
+                        }`}>
+                          {evt.event}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3 text-right font-semibold text-gray-900">
+                        {evt.price ? `$${evt.price.toLocaleString()}` : '—'}
+                      </td>
+                      <td className="hidden sm:table-cell px-4 py-3 text-right text-gray-500">
+                        {evt.pricePerSquareFoot ? `$${evt.pricePerSquareFoot}` : '—'}
+                      </td>
+                      <td className="hidden sm:table-cell px-4 py-3 text-gray-400 text-xs">{evt.source}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </section>
+        )}
 
         {/* Matching listings */}
         {matchingListings.length > 0 && (

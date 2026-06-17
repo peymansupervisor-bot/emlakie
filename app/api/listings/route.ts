@@ -71,6 +71,7 @@ export async function POST(req: NextRequest) {
       sqft: formData.get('sqft') ? Number(formData.get('sqft')) : null,
       property_type: formData.get('propertyType') as string,
       ownership_type: formData.get('ownershipType') as string || null,
+      listing_source: (formData.get('listingSource') as string) || 'owner',
       amenities,
       photos: photoUrls,
       available_from: formData.get('availableFrom') as string || null,

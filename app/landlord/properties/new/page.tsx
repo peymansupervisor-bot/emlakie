@@ -43,6 +43,7 @@ interface FormData {
   title: string;
   description: string;
   amenities: string[];
+  isBroker: boolean | null;
 }
 
 const empty: FormData = {
@@ -51,6 +52,7 @@ const empty: FormData = {
   bedrooms: '1', bathrooms: '1',
   sqft: '', price: '', availableFrom: '',
   title: '', description: '', amenities: [],
+  isBroker: null,
 };
 
 const inputCls = 'w-full rounded-xl border border-gray-300 px-4 py-3 text-sm outline-none focus:border-brand-600 focus:ring-0';
@@ -175,7 +177,7 @@ export default function NewPropertyPage() {
     }
   }
 
-  function set(field: keyof FormData, value: string) {
+  function set(field: keyof FormData, value: string | boolean | null) {
     setForm((f) => ({ ...f, [field]: value }));
     if (field === 'title' || field === 'description') {
       if (filterTimer.current) clearTimeout(filterTimer.current);
@@ -215,6 +217,7 @@ export default function NewPropertyPage() {
 
   function validateStep(): string {
     if (step === 1) {
+      if (form.isBroker === null) return 'Please tell us whether you are the property owner or a licensed broker.';
       if (!form.address.trim()) return 'Address is required.';
       if (!form.city.trim()) return 'City is required.';
       if (!form.state.trim()) return 'State is required.';
@@ -257,6 +260,7 @@ export default function NewPropertyPage() {
       fd.append('propertyType', form.propertyType);
       fd.append('availableFrom', form.availableFrom);
       fd.append('amenities', JSON.stringify(form.amenities));
+      fd.append('listingSource', form.isBroker ? 'broker' : 'owner');
       if (form.ownershipType) fd.append('ownershipType', form.ownershipType);
       photos.forEach((f) => fd.append('photos', f));
       await createListing(fd);
@@ -310,6 +314,47 @@ export default function NewPropertyPage() {
       {/* Step 1: Property details */}
       {step === 1 && (
         <div className="mt-8 space-y-5">
+          {/* Broker / Owner question */}
+          <div className="rounded-xl border border-gray-200 bg-gray-50 p-4">
+            <p className="text-sm font-semibold text-gray-800 mb-3">Are you the property owner or a licensed real estate broker/agent? *</p>
+            <div className="flex gap-3">
+              <button
+                type="button"
+                onClick={() => set('isBroker', false)}
+                className={`flex-1 rounded-xl border-2 px-4 py-3 text-sm font-semibold transition ${
+                  form.isBroker === false
+                    ? 'border-brand-600 bg-brand-50 text-brand-700'
+                    : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
+                }`}
+              >
+                🏠 Property Owner
+                <span className="block text-xs font-normal mt-0.5 text-current opacity-70">I own this property directly</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => set('isBroker', true)}
+                className={`flex-1 rounded-xl border-2 px-4 py-3 text-sm font-semibold transition ${
+                  form.isBroker === true
+                    ? 'border-blue-500 bg-blue-50 text-blue-700'
+                    : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
+                }`}
+              >
+                🪪 Broker / Agent
+                <span className="block text-xs font-normal mt-0.5 text-current opacity-70">I'm a licensed real estate professional</span>
+              </button>
+            </div>
+            {form.isBroker === true && (
+              <p className="mt-3 text-xs text-blue-700 bg-blue-50 rounded-lg px-3 py-2">
+                Your listing will be labeled <strong>Broker Listed</strong> so renters know it's professionally represented.
+              </p>
+            )}
+            {form.isBroker === false && (
+              <p className="mt-3 text-xs text-brand-700 bg-brand-50 rounded-lg px-3 py-2">
+                Your listing will show an <strong>Owner Direct</strong> badge — renters love going straight to the source.
+              </p>
+            )}
+          </div>
+
           <div>
             <label className={labelCls}>Street address *</label>
             <AddressField

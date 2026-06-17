@@ -20,6 +20,7 @@ export default function Filters() {
   const selectedAmenities = searchParams.get('amenities')
     ? searchParams.get('amenities')!.split(',').filter(Boolean)
     : [];
+  const ownerDirect = searchParams.get('ownerDirect') === '1';
 
   useEffect(() => {
     function handleClick(e: MouseEvent) {
@@ -118,6 +119,18 @@ export default function Filters() {
         <option value="townhouse">Townhouse</option>
         <option value="studio">Studio</option>
       </select>
+
+      {/* Owner-direct toggle */}
+      <button
+        onClick={() => setFilter('ownerDirect', ownerDirect ? '' : '1')}
+        className={`flex items-center gap-1.5 rounded-lg border px-3 py-2 text-sm font-medium outline-none transition ${
+          ownerDirect
+            ? 'border-brand-600 bg-brand-600 text-white'
+            : 'border-gray-300 bg-white text-gray-700 hover:border-gray-400'
+        }`}
+      >
+        🏠 Owner Direct
+      </button>
 
       {/* Amenities dropdown */}
       <div className="relative" ref={amenityRef}>

@@ -32,6 +32,7 @@ function rowToListing(row: Record<string, unknown>): Listing {
     status: row.status as string,
     availableFrom: row.available_from as string | undefined,
     view_count: Number(row.view_count ?? 0),
+    listing_source: (row.listing_source as Listing['listing_source']) ?? 'owner',
   };
 }
 
@@ -72,6 +73,7 @@ export async function getListings(filters: ListingFilters = {}): Promise<Listing
     if (filters.amenities) {
       filters.amenities.split(',').forEach((a) => { query = query.contains('amenities', [a.trim()]); });
     }
+    if (filters.ownerDirect === '1') query = query.eq('listing_source', 'owner');
 
     const page = Number(filters.page ?? 1);
     const pageSize = 20;

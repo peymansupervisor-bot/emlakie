@@ -50,9 +50,11 @@ export default function Footer() {
 
           {/* Platform disclaimer */}
           <p>
-            This website is an informational platform only — listings are posted by independent landlords and no
-            brokerage, agency, or property management services are provided through this site. No content
-            constitutes legal, financial, or professional advice.
+            EMLAKIE is a direct-rental platform connecting property owners and tenants without the need for a
+            broker. Listings marked <strong>Owner Direct</strong> are posted by the property owner. Listings
+            marked <strong>Broker Listed</strong> are submitted by licensed real estate professionals on behalf
+            of their clients. No brokerage, agency, or property management services are provided by EMLAKIE LLC
+            through this site. No content constitutes legal, financial, or professional advice.
           </p>
 
           {/* Listing accuracy */}
@@ -71,13 +73,14 @@ export default function Footer() {
           <div>
             <p className="font-semibold text-gray-600">MLS &amp; Third-Party Listing Data</p>
             <p className="mt-1">
-              Some listings displayed on this site are sourced from Multiple Listing Services (MLS) and third-party
-              listing aggregators including ListHub. This data is provided for consumers' personal, non-commercial
-              use and may not be used for any purpose other than to identify prospective rental properties.
-              Information is deemed reliable but not guaranteed. Listing data is updated regularly but may not
-              reflect the most current availability. The listing broker's offer of cooperation is made only to
-              participants of the MLS where the listing is filed. EMLAKIE LLC is not a licensed real estate broker
-              or agent and does not represent buyers, sellers, landlords, or tenants in any transaction.
+              Certain listings displayed on this site (labeled <strong>MLS</strong>) are sourced from Multiple
+              Listing Services (MLS) and third-party aggregators including ListHub. This data is provided for
+              consumers&apos; personal, non-commercial use only and may not be used for any purpose other than
+              to identify prospective rental properties. Such data is deemed reliable but not guaranteed.
+              Listing data is updated regularly but may not reflect the most current availability. The listing
+              broker&apos;s offer of cooperation is made only to participants of the MLS where the listing is
+              filed. EMLAKIE LLC is not a licensed real estate broker or agent and does not represent any party
+              in a transaction.
             </p>
           </div>
 

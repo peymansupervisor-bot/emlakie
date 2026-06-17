@@ -22,6 +22,7 @@ export interface Listing {
   isSample?: boolean;
   dom?: number;
   domStartDate?: string | null;
+  listing_source?: 'owner' | 'broker' | 'mls';
 }
 
 export interface ListingFilters {
@@ -33,6 +34,7 @@ export interface ListingFilters {
   propertyType?: string;
   amenities?: string;
   page?: string;
+  ownerDirect?: string;
 }
 
 export interface ZipLocation {

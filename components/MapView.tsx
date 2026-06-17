@@ -11,12 +11,14 @@ interface Props {
   drawMode?: boolean;
   onPolygonChange?: (points: [number, number][] | null) => void;
   clearSignal?: number;
+  satellite?: boolean;
 }
 
-export default function MapView({ listings, activeId, onMarkerClick, drawMode = false, onPolygonChange, clearSignal }: Props) {
+export default function MapView({ listings, activeId, onMarkerClick, drawMode = false, onPolygonChange, clearSignal, satellite = false }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<any>(null);
   const markersRef = useRef<Map<string, any>>(new Map());
+  const tileRef = useRef<any>(null);
   const drawRef = useRef<{
     points: [number, number][];
     polyline: any;
@@ -48,6 +50,27 @@ export default function MapView({ listings, activeId, onMarkerClick, drawMode = 
     d.dots.forEach((dot) => dot.remove());
     drawRef.current = { points: [], polyline: null, polygon: null, dots: [], closeCircle: null };
   }, []);
+
+  // Swap tile layer when satellite toggle changes
+  useEffect(() => {
+    if (!mapRef.current) return;
+    const { map, L } = mapRef.current;
+    if (tileRef.current) tileRef.current.remove();
+    if (satellite) {
+      tileRef.current = L.tileLayer(
+        'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+        { attribution: 'Tiles &copy; Esri', maxZoom: 19 }
+      ).addTo(map);
+    } else {
+      tileRef.current = L.tileLayer(
+        'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
+        {
+          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/">CARTO</a>',
+          subdomains: 'abcd', maxZoom: 19,
+        }
+      ).addTo(map);
+    }
+  }, [satellite]);
 
   // Clear polygon when user clicks "Clear area"
   useEffect(() => {
@@ -153,7 +176,7 @@ export default function MapView({ listings, activeId, onMarkerClick, drawMode = 
 
       const map = L.map(containerRef.current!, { zoomControl: false }).setView(center, mappable.length > 0 ? 11 : 4);
       L.control.zoom({ position: 'bottomright' }).addTo(map);
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+      tileRef.current = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/">CARTO</a>',
         subdomains: 'abcd',
         maxZoom: 19,

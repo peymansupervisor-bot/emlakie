@@ -39,6 +39,7 @@ export default function RentalsClient({ listings, total, usingSampleData, headin
   };
 
   const [clearSignal, setClearSignal] = useState(0);
+  const [satellite, setSatellite] = useState(false);
 
   const clearPolygon = () => {
     setPolygon(null);
@@ -127,6 +128,24 @@ export default function RentalsClient({ listings, total, usingSampleData, headin
               {drawMode ? 'Drawing…' : 'Draw area'}
             </button>
           )
+        )}
+
+        {/* Satellite toggle */}
+        {hasMappable && (view === 'map' || view === 'split') && (
+          <button
+            onClick={() => setSatellite((s) => !s)}
+            className={`hidden items-center gap-1.5 rounded-xl border px-3 py-1.5 text-xs font-semibold transition sm:flex ${
+              satellite
+                ? 'border-blue-600 bg-blue-600 text-white'
+                : 'border-gray-300 text-gray-600 hover:bg-gray-50'
+            }`}
+          >
+            <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <circle cx="12" cy="12" r="3" />
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 2v2m0 16v2M2 12h2m16 0h2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" />
+            </svg>
+            {satellite ? 'Street map' : 'Satellite'}
+          </button>
         )}
 
         {/* Save Search button */}
@@ -232,6 +251,7 @@ export default function RentalsClient({ listings, total, usingSampleData, headin
               drawMode={drawMode}
               onPolygonChange={handlePolygonChange}
               clearSignal={clearSignal}
+              satellite={satellite}
             />
           </div>
         )}

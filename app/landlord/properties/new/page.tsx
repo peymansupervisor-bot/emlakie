@@ -220,7 +220,10 @@ export default function NewPropertyPage() {
   function validateStep(): string {
     if (step === 1) {
       if (form.isBroker === null) return 'Please tell us whether you are the property owner or a licensed broker.';
-      if (form.isBroker && !form.licenseNumber.trim()) return 'Please enter your real estate license number.';
+      if (form.isBroker) {
+        const parts = form.licenseNumber.trim().split(' ');
+        if (parts.length < 2 || !parts[0] || !parts[1]) return 'Please select your license state and enter your license number.';
+      }
       if (!form.address.trim()) return 'Address is required.';
       if (!form.city.trim()) return 'City is required.';
       if (!form.state.trim()) return 'State is required.';
@@ -352,17 +355,35 @@ export default function NewPropertyPage() {
                 <p className="text-xs text-blue-700">
                   Your listing will be labeled <strong>Broker Listed</strong> so renters know it&apos;s professionally represented.
                 </p>
-                <label className="block text-xs font-semibold text-blue-800">
-                  Real estate license number *
-                  <input
-                    type="text"
-                    value={form.licenseNumber}
-                    onChange={(e) => set('licenseNumber', e.target.value.toUpperCase())}
-                    placeholder="e.g. CA-DRE 01234567"
-                    className="mt-1 w-full rounded-lg border border-blue-200 bg-white px-3 py-2 text-sm font-normal text-gray-800 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-200 placeholder-gray-400"
-                  />
-                </label>
-                <p className="text-[11px] text-blue-600">This will be displayed on your listing as required by law.</p>
+                <div>
+                  <p className="text-xs font-semibold text-blue-800 mb-1">Real estate license number *</p>
+                  <div className="flex gap-2">
+                    <select
+                      value={form.licenseNumber.split(' ')[0] ?? ''}
+                      onChange={(e) => {
+                        const num = form.licenseNumber.split(' ').slice(1).join(' ');
+                        set('licenseNumber', `${e.target.value} ${num}`.trim());
+                      }}
+                      className="w-20 shrink-0 rounded-lg border border-blue-200 bg-white px-2 py-2 text-sm text-gray-800 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-200"
+                    >
+                      <option value="">State</option>
+                      {['AL','AK','AZ','AR','CA','CO','CT','DE','FL','GA','HI','ID','IL','IN','IA','KS','KY','LA','ME','MD','MA','MI','MN','MS','MO','MT','NE','NV','NH','NJ','NM','NY','NC','ND','OH','OK','OR','PA','RI','SC','SD','TN','TX','UT','VT','VA','WA','WV','WI','WY'].map((s) => (
+                        <option key={s} value={s}>{s}</option>
+                      ))}
+                    </select>
+                    <input
+                      type="text"
+                      value={form.licenseNumber.split(' ').slice(1).join(' ')}
+                      onChange={(e) => {
+                        const state = form.licenseNumber.split(' ')[0] ?? '';
+                        set('licenseNumber', `${state} ${e.target.value.toUpperCase()}`.trim());
+                      }}
+                      placeholder="01234567"
+                      className="flex-1 rounded-lg border border-blue-200 bg-white px-3 py-2 text-sm text-gray-800 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-200 placeholder-gray-400"
+                    />
+                  </div>
+                  <p className="mt-1 text-[11px] text-blue-600">Displayed on your listing as required by law — e.g. CA 01726653</p>
+                </div>
               </div>
             )}
             {form.isBroker === false && (

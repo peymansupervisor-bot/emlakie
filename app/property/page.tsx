@@ -1,5 +1,6 @@
 import { geocodeAddress } from '@/lib/nominatim';
 import { getListings } from '@/lib/api';
+import { getAreaEValue } from '@/lib/e-value';
 import Link from 'next/link';
 import ListingCard from '@/components/ListingCard';
 import Navbar from '@/components/Navbar';
@@ -41,6 +42,8 @@ export default async function PropertyPage({ searchParams }: Props) {
   const addr = geo?.address;
   const city = addr?.city ?? addr?.town ?? addr?.village ?? '';
   const state = addr?.state ?? '';
+  const areaEValue = city ? await getAreaEValue(city, state) : null;
+
   const zip = addr?.postcode ?? '';
   const neighborhood = addr?.neighbourhood ?? addr?.suburb ?? '';
   const street = [addr?.house_number, addr?.road].filter(Boolean).join(' ');
@@ -146,6 +149,43 @@ export default async function PropertyPage({ searchParams }: Props) {
                 )}
               </dl>
             </div>
+
+            {/* E-Value */}
+            {areaEValue && (areaEValue.medianRent || areaEValue.byBedrooms.length > 0) && (
+              <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-base font-bold text-gray-900">E-Value™</h2>
+                  <span className="rounded-full bg-brand-50 px-2.5 py-0.5 text-xs font-semibold text-brand-700">
+                    {city}
+                  </span>
+                </div>
+                <p className="text-xs text-gray-400 mb-4">Estimated rent based on {areaEValue.comparablesCount} active {city} listings on EMLAKIE</p>
+
+                {areaEValue.byBedrooms.length > 0 ? (
+                  <div className="space-y-2">
+                    {areaEValue.byBedrooms.map((row) => (
+                      <div key={row.bedrooms} className="flex items-center gap-3">
+                        <span className="w-16 text-sm text-gray-500 shrink-0">{row.label}</span>
+                        <div className="flex-1 h-2 rounded-full bg-gray-100 overflow-hidden">
+                          <div
+                            className="h-full rounded-full bg-brand-500"
+                            style={{ width: `${Math.min(100, (row.median / (areaEValue.medianRent! * 1.5)) * 100)}%` }}
+                          />
+                        </div>
+                        <span className="text-sm font-bold text-gray-900 w-24 text-right">
+                          ${row.median.toLocaleString()}<span className="text-xs font-normal text-gray-400">/mo</span>
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                ) : areaEValue.medianRent ? (
+                  <div className="text-center py-2">
+                    <p className="text-3xl font-extrabold text-brand-600">${areaEValue.medianRent.toLocaleString()}<span className="text-base font-normal text-gray-400">/mo</span></p>
+                    <p className="text-xs text-gray-400 mt-1">Median rent estimate</p>
+                  </div>
+                ) : null}
+              </div>
+            )}
 
             {/* List this property CTA */}
             <div className="rounded-2xl border border-brand-200 bg-brand-50 p-6">

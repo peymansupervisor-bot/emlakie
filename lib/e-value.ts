@@ -68,6 +68,49 @@ function roundToNearest(value: number, nearest: number): number {
   return Math.round(value / nearest) * nearest
 }
 
+export interface AreaEValue {
+  city: string;
+  state: string;
+  medianRent: number | null;
+  byBedrooms: { bedrooms: number; label: string; median: number; count: number }[];
+  comparablesCount: number;
+}
+
+export async function getAreaEValue(city: string, state: string): Promise<AreaEValue> {
+  const sb = supabase();
+  const { data } = await sb
+    .from('listings')
+    .select('price, bedrooms')
+    .ilike('city', `%${city}%`)
+    .eq('status', 'active')
+    .limit(200);
+
+  const comps = (data ?? []).filter((c) => Number(c.price) > 0);
+
+  const grouped: Record<number, number[]> = {};
+  for (const c of comps) {
+    const bd = Number(c.bedrooms);
+    if (!grouped[bd]) grouped[bd] = [];
+    grouped[bd].push(Number(c.price));
+  }
+
+  const bedroomLabels: Record<number, string> = { 0: 'Studio', 1: '1 bed', 2: '2 beds', 3: '3 beds', 4: '4 beds', 5: '5+ beds' };
+
+  const byBedrooms = Object.entries(grouped)
+    .map(([bd, prices]) => ({
+      bedrooms: Number(bd),
+      label: bedroomLabels[Number(bd)] ?? `${bd} beds`,
+      median: roundToNearest(median(prices), 25),
+      count: prices.length,
+    }))
+    .sort((a, b) => a.bedrooms - b.bedrooms);
+
+  const allPrices = comps.map((c) => Number(c.price));
+  const medianRent = allPrices.length > 0 ? roundToNearest(median(allPrices), 25) : null;
+
+  return { city, state, medianRent, byBedrooms, comparablesCount: comps.length };
+}
+
 export async function calculateEValue(listing: {
   id: string
   city: string

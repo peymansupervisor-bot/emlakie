@@ -6,6 +6,7 @@ import { useSearchParams } from 'next/navigation';
 import ListingCard from './ListingCard';
 import SaveSearchModal from './SaveSearchModal';
 import { Listing } from '@/lib/types';
+import { pointInPolygon } from '@/lib/geo';
 
 const MapView = dynamic(() => import('./MapView'), { ssr: false });
 
@@ -25,6 +26,22 @@ export default function RentalsClient({ listings, total, usingSampleData, headin
   const [view, setView] = useState<'list' | 'map' | 'split'>('split');
   const [showSaveModal, setShowSaveModal] = useState(false);
   const [alertBanner, setAlertBanner] = useState<string | null>(null);
+  const [drawMode, setDrawMode] = useState(false);
+  const [polygon, setPolygon] = useState<[number, number][] | null>(null);
+
+  const filteredListings = polygon
+    ? listings.filter((l) => l.lat != null && l.lng != null && pointInPolygon([l.lat!, l.lng!], polygon))
+    : listings;
+
+  const handlePolygonChange = (pts: [number, number][] | null) => {
+    setPolygon(pts);
+    if (pts) setDrawMode(false);
+  };
+
+  const clearPolygon = () => {
+    setPolygon(null);
+    setDrawMode(false);
+  };
   const cardRefs = useRef<Map<string, HTMLDivElement>>(new Map());
   const searchParams = useSearchParams();
 
@@ -57,7 +74,7 @@ export default function RentalsClient({ listings, total, usingSampleData, headin
         <div>
           <h1 className="text-xl font-extrabold text-gray-900">{heading}</h1>
           <p className="text-sm text-gray-500">
-            {total} {total === 1 ? 'home' : 'homes'} available
+            {polygon ? `${filteredListings.length} of ${total}` : total} {total === 1 ? 'home' : 'homes'} {polygon ? 'in selected area' : 'available'}
           </p>
         </div>
 
@@ -78,6 +95,35 @@ export default function RentalsClient({ listings, total, usingSampleData, headin
               </button>
             ))}
           </div>
+        )}
+
+        {/* Draw area button — only in map/split view */}
+        {hasMappable && (view === 'map' || view === 'split') && (
+          polygon ? (
+            <button
+              onClick={clearPolygon}
+              className="hidden items-center gap-1.5 rounded-xl border border-red-400 px-3 py-1.5 text-xs font-semibold text-red-600 hover:bg-red-50 transition sm:flex"
+            >
+              <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+              Clear area ({filteredListings.length} homes)
+            </button>
+          ) : (
+            <button
+              onClick={() => setDrawMode((d) => !d)}
+              className={`hidden items-center gap-1.5 rounded-xl border px-3 py-1.5 text-xs font-semibold transition sm:flex ${
+                drawMode
+                  ? 'border-green-600 bg-green-600 text-white'
+                  : 'border-gray-300 text-gray-600 hover:bg-gray-50'
+              }`}
+            >
+              <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15.232 5.232l3.536 3.536M9 13l6.536-6.536a2 2 0 012.828 2.828L11.828 15.828a2 2 0 01-1.414.586H9v-2a2 2 0 01.586-1.414z" />
+              </svg>
+              {drawMode ? 'Drawing…' : 'Draw area'}
+            </button>
+          )
         )}
 
         {/* Save Search button */}
@@ -146,7 +192,7 @@ export default function RentalsClient({ listings, total, usingSampleData, headin
                   : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'
               }`}
             >
-              {listings.map((listing) => (
+              {filteredListings.map((listing) => (
                 <div
                   key={listing.id}
                   ref={(el) => {
@@ -180,6 +226,8 @@ export default function RentalsClient({ listings, total, usingSampleData, headin
               listings={listings}
               activeId={activeId}
               onMarkerClick={handleMarkerClick}
+              drawMode={drawMode}
+              onPolygonChange={handlePolygonChange}
             />
           </div>
         )}

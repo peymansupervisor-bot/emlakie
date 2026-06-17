@@ -38,9 +38,12 @@ export default function RentalsClient({ listings, total, usingSampleData, headin
     if (pts) setDrawMode(false);
   };
 
+  const [clearSignal, setClearSignal] = useState(0);
+
   const clearPolygon = () => {
     setPolygon(null);
     setDrawMode(false);
+    setClearSignal((n) => n + 1);
   };
   const cardRefs = useRef<Map<string, HTMLDivElement>>(new Map());
   const searchParams = useSearchParams();
@@ -228,6 +231,7 @@ export default function RentalsClient({ listings, total, usingSampleData, headin
               onMarkerClick={handleMarkerClick}
               drawMode={drawMode}
               onPolygonChange={handlePolygonChange}
+              clearSignal={clearSignal}
             />
           </div>
         )}

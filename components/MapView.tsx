@@ -10,9 +10,10 @@ interface Props {
   onMarkerClick: (id: string) => void;
   drawMode?: boolean;
   onPolygonChange?: (points: [number, number][] | null) => void;
+  clearSignal?: number;
 }
 
-export default function MapView({ listings, activeId, onMarkerClick, drawMode = false, onPolygonChange }: Props) {
+export default function MapView({ listings, activeId, onMarkerClick, drawMode = false, onPolygonChange, clearSignal }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<any>(null);
   const markersRef = useRef<Map<string, any>>(new Map());
@@ -48,6 +49,13 @@ export default function MapView({ listings, activeId, onMarkerClick, drawMode = 
     drawRef.current = { points: [], polyline: null, polygon: null, dots: [], closeCircle: null };
   }, []);
 
+  // Clear polygon when user clicks "Clear area"
+  useEffect(() => {
+    if (clearSignal === undefined || clearSignal === 0) return;
+    clearDraw();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [clearSignal]);
+
   // Freehand draw — mousedown+drag+mouseup like Redfin
   useEffect(() => {
     if (!mapRef.current) return;
@@ -56,14 +64,20 @@ export default function MapView({ listings, activeId, onMarkerClick, drawMode = 
 
     if (!drawMode) {
       container.style.cursor = '';
-      clearDraw();
-      onPolygonChange?.(null);
+      // Only clear if no completed polygon exists yet
+      if (!drawRef.current.polygon) {
+        clearDraw();
+        onPolygonChange?.(null);
+      }
       return;
     }
 
     container.style.cursor = 'crosshair';
-    clearDraw();
-    onPolygonChange?.(null);
+    // Only clear previous drawing if starting fresh (no polygon set from outside)
+    if (!drawRef.current.polygon) {
+      clearDraw();
+      onPolygonChange?.(null);
+    }
 
     let drawing = false;
 
@@ -110,13 +124,13 @@ export default function MapView({ listings, activeId, onMarkerClick, drawMode = 
     };
 
     container.addEventListener('mousedown', onMouseDown);
-    container.addEventListener('mousemove', onMouseMove);
-    container.addEventListener('mouseup', onMouseUp);
+    window.addEventListener('mousemove', onMouseMove);
+    window.addEventListener('mouseup', onMouseUp);
 
     return () => {
       container.removeEventListener('mousedown', onMouseDown);
-      container.removeEventListener('mousemove', onMouseMove);
-      container.removeEventListener('mouseup', onMouseUp);
+      window.removeEventListener('mousemove', onMouseMove);
+      window.removeEventListener('mouseup', onMouseUp);
       container.style.cursor = '';
       map.dragging.enable();
     };

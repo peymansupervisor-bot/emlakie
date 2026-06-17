@@ -20,6 +20,8 @@ function rowToListing(row: Record<string, unknown>): Listing {
     city: row.city as string,
     state: row.state as string,
     zip: row.zip as string | undefined,
+    lat: row.lat != null ? Number(row.lat) : undefined,
+    lng: row.lng != null ? Number(row.lng) : undefined,
     price: Number(row.price),
     bedrooms: Number(row.bedrooms),
     bathrooms: Number(row.bathrooms),

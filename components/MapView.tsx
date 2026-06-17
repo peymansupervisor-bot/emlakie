@@ -40,94 +40,85 @@ export default function MapView({ listings, activeId, onMarkerClick, drawMode = 
     });
   }, []);
 
-  const clearDraw = useCallback((L: any, map: any) => {
+  const clearDraw = useCallback(() => {
     const d = drawRef.current;
     d.polyline?.remove();
     d.polygon?.remove();
-    d.closeCircle?.remove();
     d.dots.forEach((dot) => dot.remove());
     drawRef.current = { points: [], polyline: null, polygon: null, dots: [], closeCircle: null };
   }, []);
 
-  // Handle draw mode clicks
+  // Freehand draw — mousedown+drag+mouseup like Redfin
   useEffect(() => {
     if (!mapRef.current) return;
     const { map, L } = mapRef.current;
+    const container = map.getContainer() as HTMLElement;
 
     if (!drawMode) {
-      map.getContainer().style.cursor = '';
-      clearDraw(L, map);
+      container.style.cursor = '';
+      clearDraw();
       onPolygonChange?.(null);
       return;
     }
 
-    map.getContainer().style.cursor = 'crosshair';
-    clearDraw(L, map);
+    container.style.cursor = 'crosshair';
+    clearDraw();
     onPolygonChange?.(null);
 
-    const onClick = (e: any) => {
-      const d = drawRef.current;
-      const pt: [number, number] = [e.latlng.lat, e.latlng.lng];
+    let drawing = false;
 
-      // Check if clicking near start point to close polygon (≥3 points)
-      if (d.points.length >= 3) {
-        const start = d.points[0];
-        const dist = map.distance([start[0], start[1]], [pt[0], pt[1]]);
-        if (dist < 30) {
-          // Close polygon
-          d.polyline?.remove();
-          d.closeCircle?.remove();
-          const poly = L.polygon(d.points, {
-            color: '#16a34a',
-            fillColor: '#16a34a',
-            fillOpacity: 0.1,
-            weight: 2,
-          }).addTo(map);
-          drawRef.current.polygon = poly;
-          onPolygonChange?.([...d.points]);
-          map.off('click', onClick);
-          map.getContainer().style.cursor = '';
-          return;
-        }
-      }
-
-      d.points.push(pt);
-
-      // Draw dot at each point
-      const dot = L.circleMarker(pt, {
-        radius: 4,
-        color: '#16a34a',
-        fillColor: '#16a34a',
-        fillOpacity: 1,
-        weight: 2,
-      }).addTo(map);
-      d.dots.push(dot);
-
-      // Update polyline
-      d.polyline?.remove();
-      if (d.points.length > 1) {
-        d.polyline = L.polyline(d.points, { color: '#16a34a', weight: 2, dashArray: '6 4' }).addTo(map);
-        drawRef.current.polyline = d.polyline;
-      }
-
-      // Show close-circle near start when ≥3 points
-      d.closeCircle?.remove();
-      if (d.points.length >= 3) {
-        d.closeCircle = L.circleMarker(d.points[0], {
-          radius: 8,
-          color: '#16a34a',
-          fillColor: '#fff',
-          fillOpacity: 1,
-          weight: 2,
-        }).addTo(map);
-        drawRef.current.closeCircle = d.closeCircle;
-      }
+    const toLatLng = (e: MouseEvent): [number, number] => {
+      const rect = container.getBoundingClientRect();
+      const point = L.point(e.clientX - rect.left, e.clientY - rect.top);
+      const ll = map.containerPointToLatLng(point);
+      return [ll.lat, ll.lng];
     };
 
-    map.on('click', onClick);
+    const onMouseDown = (e: MouseEvent) => {
+      if (e.button !== 0) return;
+      drawing = true;
+      map.dragging.disable();
+      clearDraw();
+      const pt = toLatLng(e);
+      drawRef.current.points = [pt];
+      drawRef.current.polyline = L.polyline([pt], {
+        color: '#16a34a', weight: 2.5, dashArray: '6 3',
+      }).addTo(map);
+    };
+
+    const onMouseMove = (e: MouseEvent) => {
+      if (!drawing) return;
+      const pt = toLatLng(e);
+      drawRef.current.points.push(pt);
+      drawRef.current.polyline?.addLatLng(pt);
+    };
+
+    const onMouseUp = () => {
+      if (!drawing) return;
+      drawing = false;
+      map.dragging.enable();
+      const pts = drawRef.current.points;
+      if (pts.length < 3) { clearDraw(); return; }
+      // Simplify: keep every Nth point to avoid too many vertices
+      const step = Math.max(1, Math.floor(pts.length / 80));
+      const simplified = pts.filter((_, i) => i % step === 0);
+      drawRef.current.polyline?.remove();
+      drawRef.current.polygon = L.polygon(simplified, {
+        color: '#16a34a', fillColor: '#16a34a', fillOpacity: 0.12, weight: 2.5,
+      }).addTo(map);
+      onPolygonChange?.(simplified);
+    };
+
+    container.addEventListener('mousedown', onMouseDown);
+    container.addEventListener('mousemove', onMouseMove);
+    container.addEventListener('mouseup', onMouseUp);
+
     return () => {
-      map.off('click', onClick);
-      map.getContainer().style.cursor = '';
+      container.removeEventListener('mousedown', onMouseDown);
+      container.removeEventListener('mousemove', onMouseMove);
+      container.removeEventListener('mouseup', onMouseUp);
+      container.style.cursor = '';
+      map.dragging.enable();
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [drawMode]);
@@ -201,7 +192,7 @@ export default function MapView({ listings, activeId, onMarkerClick, drawMode = 
       <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
       {drawMode && (
         <div className="absolute left-1/2 top-3 z-[1000] -translate-x-1/2 rounded-full bg-green-600 px-4 py-1.5 text-xs font-semibold text-white shadow-lg pointer-events-none">
-          Click to draw · Click start point to finish
+          Hold & drag to draw your search area
         </div>
       )}
       <div ref={containerRef} className="relative h-full w-full" />

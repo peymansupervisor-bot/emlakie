@@ -85,13 +85,18 @@ export default function SupportChat() {
               </div>
             )}
             <div
-              className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed whitespace-pre-line ${
+              className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${
                 msg.role === 'user'
                   ? 'rounded-br-sm bg-green-600 text-white'
                   : 'rounded-bl-sm bg-gray-100 text-gray-800'
               }`}
             >
-              {msg.text}
+              {msg.text.split('\n').map((line, i) => {
+                const formatted = line
+                  .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+                  .replace(/\*(.+?)\*/g, '<em>$1</em>');
+                return <p key={i} className={i > 0 ? 'mt-1' : ''} dangerouslySetInnerHTML={{ __html: formatted }} />;
+              })}
             </div>
           </div>
         ))}

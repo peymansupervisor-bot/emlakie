@@ -64,7 +64,7 @@ export default function RentalsClient({ listings, total, usingSampleData, headin
   const hasMappable = listings.some((l) => l.lat != null && l.lng != null);
 
   return (
-    <div className="flex h-[calc(100vh-64px)] flex-col overflow-hidden">
+    <div className="flex flex-col overflow-hidden sm:h-[calc(100vh-64px)]">
       {/* ── Alert banner ── */}
       {alertBanner && (
         <div className="flex items-center justify-between bg-green-600 px-4 py-2.5 text-sm font-medium text-white">
@@ -183,7 +183,7 @@ export default function RentalsClient({ listings, total, usingSampleData, headin
       </div>
 
       {/* ── Body ── */}
-      <div className="flex flex-1 overflow-hidden">
+      <div className="flex flex-1 overflow-hidden sm:min-h-0">
 
         {/* Listings panel */}
         <div
@@ -193,7 +193,7 @@ export default function RentalsClient({ listings, total, usingSampleData, headin
               : view === 'split'
               ? 'w-full sm:w-1/2'
               : 'w-full'
-          }`}
+          } min-h-[300px] sm:min-h-0`}
         >
           {usingSampleData && (
             <div className="mx-4 mt-4 rounded-lg border border-brand-200 bg-brand-50 px-4 py-3 text-sm text-brand-800">
@@ -236,6 +236,7 @@ export default function RentalsClient({ listings, total, usingSampleData, headin
         {/* Map panel */}
         {hasMappable && (
           <div
+            style={{ isolation: 'isolate' }}
             className={`transition-all duration-300 ${
               view === 'list'
                 ? 'hidden'

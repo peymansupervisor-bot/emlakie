@@ -161,11 +161,11 @@ export default function Filters() {
         {amenityOpen && (
           <div
             style={{ position: 'fixed', top: dropdownPos.top, right: dropdownPos.right }}
-            className="z-[9999] min-w-[200px] rounded-xl border border-gray-200 bg-white p-3 shadow-lg"
+            className="z-[9999] min-w-[340px] rounded-xl border border-gray-200 bg-white p-3 shadow-lg"
           >
-            <div className="grid grid-cols-1 gap-1">
+            <div className="grid grid-cols-2 gap-1 max-h-64 overflow-y-auto">
               {AMENITY_OPTIONS.map((a) => (
-                <label key={a} className="flex cursor-pointer items-center gap-2.5 rounded-lg px-2 py-1.5 text-sm text-gray-700 hover:bg-gray-50">
+                <label key={a} className="flex cursor-pointer items-center gap-2 rounded-lg px-2 py-1.5 text-sm text-gray-700 hover:bg-gray-50 whitespace-nowrap">
                   <input
                     type="checkbox"
                     checked={selectedAmenities.includes(a)}

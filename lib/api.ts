@@ -48,6 +48,10 @@ function filterSamples(filters: ListingFilters): Listing[] {
     if (filters.maxPrice && l.price > +filters.maxPrice) return false;
     if (filters.bedrooms && l.bedrooms !== +filters.bedrooms) return false;
     if (filters.propertyType && l.property_type !== filters.propertyType) return false;
+    if (filters.amenities) {
+      const needed = filters.amenities.split(',').map((a) => a.trim());
+      if (!needed.every((a) => l.amenities?.includes(a))) return false;
+    }
     return true;
   });
 }
@@ -65,6 +69,9 @@ export async function getListings(filters: ListingFilters = {}): Promise<Listing
     if (filters.maxPrice) query = query.lte('price', Number(filters.maxPrice));
     if (filters.bedrooms) query = query.eq('bedrooms', Number(filters.bedrooms));
     if (filters.propertyType) query = query.eq('property_type', filters.propertyType);
+    if (filters.amenities) {
+      filters.amenities.split(',').forEach((a) => { query = query.contains('amenities', [a.trim()]); });
+    }
 
     const page = Number(filters.page ?? 1);
     const pageSize = 20;

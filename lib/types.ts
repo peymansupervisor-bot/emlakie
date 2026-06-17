@@ -31,6 +31,7 @@ export interface ListingFilters {
   maxPrice?: string;
   bedrooms?: string;
   propertyType?: string;
+  amenities?: string;
   page?: string;
 }
 

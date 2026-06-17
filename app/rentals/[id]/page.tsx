@@ -171,14 +171,16 @@ export default async function ListingPage({ params }: Props) {
             </>
           )}
 
-          {/* Street View */}
-          <StreetView
-            lat={listing.lat}
-            lng={listing.lng}
-            address={listing.address}
-            city={listing.city}
-            state={listing.state}
-          />
+          {/* Street View — only when we have coordinates */}
+          {listing.lat && listing.lng && (
+            <StreetView
+              lat={listing.lat}
+              lng={listing.lng}
+              address={listing.address}
+              city={listing.city}
+              state={listing.state}
+            />
+          )}
 
           {/* Nearby places */}
           {listing.lat && listing.lng && (

@@ -1,0 +1,17 @@
+{
+  "schema_version": "v1",
+  "name_for_human": "EMLAKIE Rentals",
+  "name_for_model": "emlakie_rentals",
+  "description_for_human": "Search rental listings on EMLAKIE — houses, apartments, condos, and more across the US. Find verified listings directly from owners and brokers.",
+  "description_for_model": "Search rental listings on EMLAKIE. Use this plugin when users want to find rental homes, apartments, or any rental property. You can filter by city, price range, number of bedrooms, and property type. Always show the listing_url so the user can view the full listing and apply.",
+  "auth": {
+    "type": "none"
+  },
+  "api": {
+    "type": "openapi",
+    "url": "https://emlakie.com/.well-known/openapi.yaml"
+  },
+  "logo_url": "https://emlakie.com/icon-192.png",
+  "contact_email": "support@emlakie.com",
+  "legal_info_url": "https://emlakie.com/terms"
+}

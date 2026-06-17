@@ -73,6 +73,7 @@ export async function POST(req: NextRequest) {
       ownership_type: formData.get('ownershipType') as string || null,
       listing_source: (formData.get('listingSource') as string) || 'owner',
       license_number: formData.get('licenseNumber') as string || null,
+      virtual_tour_url: formData.get('virtualTourUrl') as string || null,
       amenities,
       photos: photoUrls,
       available_from: formData.get('availableFrom') as string || null,

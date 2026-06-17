@@ -1,0 +1,98 @@
+openapi: 3.0.1
+info:
+  title: EMLAKIE Rental Search
+  description: Search rental listings on EMLAKIE — verified homes, apartments, condos, and more across the US.
+  version: 1.0.0
+servers:
+  - url: https://emlakie.com/api
+paths:
+  /gpt/search:
+    get:
+      operationId: searchListings
+      summary: Search rental listings
+      description: Returns rental listings matching the given filters. Use city or zip code to narrow by location, and filters for price, bedrooms, and property type.
+      parameters:
+        - name: city
+          in: query
+          description: City name or zip code to search in (e.g. "Bakersfield" or "93301")
+          required: false
+          schema:
+            type: string
+        - name: min_price
+          in: query
+          description: Minimum monthly rent in USD
+          required: false
+          schema:
+            type: integer
+        - name: max_price
+          in: query
+          description: Maximum monthly rent in USD
+          required: false
+          schema:
+            type: integer
+        - name: bedrooms
+          in: query
+          description: Minimum number of bedrooms (e.g. 2 for 2+ bedrooms)
+          required: false
+          schema:
+            type: integer
+        - name: property_type
+          in: query
+          description: Type of property (apartment, house, condo, studio, townhouse, room)
+          required: false
+          schema:
+            type: string
+        - name: limit
+          in: query
+          description: Max results to return (default 10, max 20)
+          required: false
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of matching rental listings
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  total:
+                    type: integer
+                    description: Total number of matching listings
+                  results:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        title:
+                          type: string
+                        address:
+                          type: string
+                        price_per_month:
+                          type: integer
+                        bedrooms:
+                          type: number
+                        bathrooms:
+                          type: number
+                        sqft:
+                          type: number
+                        property_type:
+                          type: string
+                        amenities:
+                          type: array
+                          items:
+                            type: string
+                        available_from:
+                          type: string
+                          nullable: true
+                        virtual_tour:
+                          type: string
+                          nullable: true
+                        listing_url:
+                          type: string
+                          description: Direct link to view and apply for this listing on EMLAKIE
+                        photo:
+                          type: string
+                          nullable: true

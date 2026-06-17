@@ -45,6 +45,7 @@ interface FormData {
   amenities: string[];
   isBroker: boolean | null;
   licenseNumber: string;
+  virtualTourUrl: string;
 }
 
 const empty: FormData = {
@@ -55,6 +56,7 @@ const empty: FormData = {
   title: '', description: '', amenities: [],
   isBroker: null,
   licenseNumber: '',
+  virtualTourUrl: '',
 };
 
 const inputCls = 'w-full rounded-xl border border-gray-300 px-4 py-3 text-sm outline-none focus:border-brand-600 focus:ring-0';
@@ -269,6 +271,7 @@ export default function NewPropertyPage() {
       fd.append('listingSource', form.isBroker ? 'broker' : 'owner');
       if (form.isBroker && form.licenseNumber.trim()) fd.append('licenseNumber', form.licenseNumber.trim());
       if (form.ownershipType) fd.append('ownershipType', form.ownershipType);
+      if (form.virtualTourUrl.trim()) fd.append('virtualTourUrl', form.virtualTourUrl.trim());
       photos.forEach((f) => fd.append('photos', f));
       await createListing(fd);
       router.push('/landlord?created=1');
@@ -531,6 +534,12 @@ export default function NewPropertyPage() {
                 </ul>
               </div>
             )}
+          </div>
+          <div>
+            <label className={labelCls}>Virtual tour URL <span className="text-gray-400 font-normal">(optional)</span></label>
+            <input className={inputCls} type="url" placeholder="https://my.matterport.com/show/?m=... or YouTube link"
+              value={form.virtualTourUrl} onChange={(e) => set('virtualTourUrl', e.target.value)} />
+            <p className="mt-1 text-xs text-gray-500">Paste a Matterport 3D tour or YouTube walkthrough link. Renters can view it directly on your listing.</p>
           </div>
           <div>
             <label className={labelCls}>Amenities</label>

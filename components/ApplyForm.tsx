@@ -15,6 +15,7 @@ export default function ApplyForm({ listingId, listingPrice }: Props) {
   const [error, setError] = useState('');
 
   const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [income, setIncome] = useState('');
   const [moveIn, setMoveIn] = useState('');
@@ -39,6 +40,7 @@ export default function ApplyForm({ listingId, listingPrice }: Props) {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             tenantName: name,
+            tenantEmail: email || undefined,
             tenantPhone: phone,
             income: parseFloat(income),
             moveIn: moveIn || undefined,
@@ -75,7 +77,7 @@ export default function ApplyForm({ listingId, listingPrice }: Props) {
           </svg>
         </div>
         <h3 className="text-base font-bold text-gray-900">Inquiry Sent!</h3>
-        <p className="mt-1 text-sm text-gray-500">The landlord will review your message and reach out directly.</p>
+        <p className="mt-1 text-sm text-gray-500">The landlord will review your message and reach out directly.{email ? ' A confirmation has been sent to your email.' : ''}</p>
       </div>
     );
   }
@@ -99,6 +101,19 @@ export default function ApplyForm({ listingId, listingPrice }: Props) {
             placeholder="Jane Smith"
             required
             aria-required="true"
+            className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+          />
+        </div>
+
+        {/* Email */}
+        <div>
+          <label htmlFor="apply-email" className="block text-xs font-semibold text-gray-600 mb-1">Email <span className="text-gray-400 font-normal">(get instant confirmation)</span></label>
+          <input
+            id="apply-email"
+            type="email"
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+            placeholder="you@example.com"
             className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
           />
         </div>

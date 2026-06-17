@@ -171,6 +171,43 @@ export default async function ListingPage({ params }: Props) {
             </>
           )}
 
+          {/* Virtual tour embed */}
+          {listing.virtual_tour_url && (() => {
+            const url = listing.virtual_tour_url!;
+            const ytMatch = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/))([A-Za-z0-9_-]{11})/);
+            const mpMatch = url.includes('matterport.com');
+            if (ytMatch) {
+              return (
+                <div className="mt-8">
+                  <h2 className="text-xl font-bold text-gray-900 mb-3">Virtual Tour</h2>
+                  <div className="relative w-full overflow-hidden rounded-2xl" style={{ paddingBottom: '56.25%' }}>
+                    <iframe className="absolute inset-0 h-full w-full" src={`https://www.youtube.com/embed/${ytMatch[1]}`}
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen />
+                  </div>
+                </div>
+              );
+            }
+            if (mpMatch) {
+              return (
+                <div className="mt-8">
+                  <h2 className="text-xl font-bold text-gray-900 mb-3">3D Virtual Tour</h2>
+                  <div className="relative w-full overflow-hidden rounded-2xl" style={{ paddingBottom: '56.25%' }}>
+                    <iframe className="absolute inset-0 h-full w-full" src={url} allowFullScreen />
+                  </div>
+                </div>
+              );
+            }
+            return (
+              <div className="mt-8">
+                <h2 className="text-xl font-bold text-gray-900 mb-3">Virtual Tour</h2>
+                <a href={url} target="_blank" rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 rounded-xl border border-brand-600 px-5 py-3 text-sm font-semibold text-brand-600 hover:bg-brand-50 transition">
+                  🎥 View Virtual Tour
+                </a>
+              </div>
+            );
+          })()}
+
           {/* Street View — only when we have coordinates */}
           {listing.lat && listing.lng && (
             <StreetView

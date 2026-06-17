@@ -35,11 +35,10 @@ export const metadata: Metadata = {
     images: ['/logo.png'],
   },
   icons: {
-    shortcut: '/favicon.ico',
     icon: [
+      { url: '/favicon-32x32.png', type: 'image/png', sizes: '32x32' },
       { url: '/favicon.svg', type: 'image/svg+xml' },
-      { url: '/favicon.ico', type: 'image/x-icon' },
-      { url: '/icon-192.png', sizes: '192x192', type: 'image/png' },
+      { url: '/favicon.ico', sizes: 'any', type: 'image/x-icon' },
     ],
     apple: '/apple-touch-icon.png',
   },

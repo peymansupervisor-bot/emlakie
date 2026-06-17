@@ -45,9 +45,12 @@ export default function Navbar() {
         </div>
 
         {/* Mobile */}
-        <div className="flex items-center gap-4 md:hidden">
+        <div className="flex items-center gap-3 md:hidden">
           <Link href="/rentals" className="text-sm font-semibold text-gray-700">
-            For Tenants
+            Tenants
+          </Link>
+          <Link href="/landlord" className="text-sm font-semibold text-gray-700">
+            Landlords
           </Link>
           <Link
             href="/app"

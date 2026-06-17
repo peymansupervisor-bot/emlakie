@@ -28,7 +28,8 @@ export interface Listing {
 }
 
 export interface ListingFilters {
-  city?: string;
+  q?: string;       // general search: city, zip, address, state, neighborhood
+  city?: string;    // legacy / filter bar
   zip?: string;
   minPrice?: string;
   maxPrice?: string;

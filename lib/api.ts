@@ -40,8 +40,17 @@ function rowToListing(row: Record<string, unknown>): Listing {
 
 const isZip = (v: string) => /^\d{5}$/.test(v.trim());
 
+function matchesQ(l: Listing, q: string): boolean {
+  const term = q.trim().toLowerCase();
+  if (!term) return true;
+  if (isZip(term)) return l.zip === term;
+  const haystack = [l.address, l.city, l.state, l.zip ?? ''].join(' ').toLowerCase();
+  return haystack.includes(term);
+}
+
 function filterSamples(filters: ListingFilters): Listing[] {
   return sampleListings.filter((l) => {
+    if (filters.q && !matchesQ(l, filters.q)) return false;
     if (filters.zip && l.zip !== filters.zip) return false;
     if (filters.city) {
       if (isZip(filters.city)) { if (l.zip !== filters.city.trim()) return false; }
@@ -63,6 +72,17 @@ export async function getListings(filters: ListingFilters = {}): Promise<Listing
   try {
     const sb = supabaseAdmin();
     let query = sb.from('listings').select('*', { count: 'exact' }).eq('status', 'active');
+    if (filters.q) {
+      const q = filters.q.trim();
+      if (isZip(q)) {
+        query = query.eq('zip', q);
+      } else {
+        // Search city, address, and state — OR them with Supabase's or()
+        query = query.or(
+          `city.ilike.%${q}%,address.ilike.%${q}%,state.ilike.%${q}%`
+        );
+      }
+    }
     if (filters.city) {
       if (isZip(filters.city)) query = query.eq('zip', filters.city.trim());
       else query = query.ilike('city', `%${filters.city}%`);

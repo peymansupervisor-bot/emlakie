@@ -5,12 +5,12 @@ import { useState } from 'react';
 
 export default function SearchBar({ large = false }: { large?: boolean }) {
   const router = useRouter();
-  const [city, setCity] = useState('');
+  const [q, setQ] = useState('');
 
   function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     const params = new URLSearchParams();
-    if (city.trim()) params.set('city', city.trim());
+    if (q.trim()) params.set('q', q.trim());
     router.push(`/rentals${params.size ? `?${params}` : ''}`);
   }
 
@@ -23,14 +23,14 @@ export default function SearchBar({ large = false }: { large?: boolean }) {
         large ? 'max-w-2xl' : 'max-w-md'
       }`}
     >
-      <label htmlFor="search-city" className="sr-only">Search by city</label>
+      <label htmlFor="search-q" className="sr-only">Search rentals</label>
       <input
-        id="search-city"
+        id="search-q"
         type="search"
-        value={city}
-        onChange={(e) => setCity(e.target.value)}
-        placeholder="Enter a city — e.g. Austin, Chicago"
-        aria-label="Search by city"
+        value={q}
+        onChange={(e) => setQ(e.target.value)}
+        placeholder="City, ZIP, address, or neighborhood"
+        aria-label="Search by city, ZIP, address, or neighborhood"
         className={`min-w-0 flex-1 px-5 text-gray-900 placeholder-gray-400 outline-none ${
           large ? 'py-4 text-lg' : 'py-3 text-base'
         }`}

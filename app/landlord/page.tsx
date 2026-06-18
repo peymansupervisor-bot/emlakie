@@ -2,9 +2,9 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { getMyListings } from '@/lib/landlord/client';
+import { getMyListings, updateListing } from '@/lib/landlord/client';
 import { LandlordListing } from '@/lib/landlord/types';
 import { formatPrice, formatPropertyType } from '@/lib/format';
 
@@ -32,6 +32,80 @@ const statusPill: Record<string, { label: string; cls: string }> = {
   draft: { label: 'Draft', cls: 'bg-gray-200 text-gray-700' },
 };
 
+function PriceEditor({ listing, onSaved }: { listing: LandlordListing; onSaved: (id: string, price: number) => void }) {
+  const [open, setOpen] = useState(false);
+  const [value, setValue] = useState(String(listing.price ?? ''));
+  const [saving, setSaving] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  function openEditor(e: React.MouseEvent) {
+    e.preventDefault();
+    e.stopPropagation();
+    setValue(String(listing.price ?? ''));
+    setOpen(true);
+    setTimeout(() => inputRef.current?.select(), 30);
+  }
+
+  async function save(e: React.FormEvent) {
+    e.preventDefault();
+    const num = parseInt(value.replace(/\D/g, ''), 10);
+    if (!num || num === listing.price) { setOpen(false); return; }
+    setSaving(true);
+    try {
+      await updateListing(listing.id, { price: num });
+      onSaved(listing.id, num);
+      setOpen(false);
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  return (
+    <span className="relative inline-flex items-center gap-1.5">
+      <span className="font-semibold text-gray-900">{formatPrice(listing.price)}</span>
+      <button
+        onClick={openEditor}
+        aria-label="Edit price"
+        className="rounded p-0.5 text-gray-400 opacity-0 transition hover:text-brand-600 group-hover/row:opacity-100 focus:opacity-100"
+      >
+        <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} aria-hidden="true">
+          <path strokeLinecap="round" strokeLinejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Z" />
+        </svg>
+      </button>
+
+      {open && (
+        <>
+          <span className="fixed inset-0 z-10" onClick={() => setOpen(false)} aria-hidden="true" />
+          <form
+            onSubmit={save}
+            onClick={(e) => e.stopPropagation()}
+            className="absolute left-0 top-full z-20 mt-1 flex items-center gap-1.5 rounded-xl border border-gray-200 bg-white p-2 shadow-lg"
+          >
+            <span className="pl-1 text-sm text-gray-500">$</span>
+            <input
+              ref={inputRef}
+              type="text"
+              inputMode="numeric"
+              value={value}
+              onChange={(e) => setValue(e.target.value)}
+              onKeyDown={(e) => e.key === 'Escape' && setOpen(false)}
+              className="w-24 rounded-lg border border-gray-300 px-2 py-1 text-sm font-semibold text-gray-900 outline-none focus:border-brand-600 focus:ring-1 focus:ring-brand-600"
+            />
+            <span className="text-xs text-gray-400">/mo</span>
+            <button
+              type="submit"
+              disabled={saving}
+              className="rounded-lg bg-brand-600 px-2.5 py-1 text-xs font-semibold text-white hover:bg-brand-700 disabled:opacity-50"
+            >
+              {saving ? '…' : 'Save'}
+            </button>
+          </form>
+        </>
+      )}
+    </span>
+  );
+}
+
 export default function PropertiesPage() {
   const searchParams = useSearchParams();
   const justCreated = searchParams.get('created') === '1';
@@ -39,6 +113,10 @@ export default function PropertiesPage() {
   const [error, setError] = useState('');
   const [tab, setTab] = useState<Tab>('all');
   const [search, setSearch] = useState('');
+
+  function handlePriceSaved(id: string, price: number) {
+    setListings((prev) => prev?.map((l) => l.id === id ? { ...l, price } : l) ?? null);
+  }
 
   useEffect(() => {
     getMyListings()
@@ -196,7 +274,7 @@ export default function PropertiesPage() {
               {visible.map((listing) => {
                 const pill = statusPill[listing.status] ?? statusPill.draft;
                 return (
-                  <tr key={listing.id} className="bg-white transition hover:bg-gray-50">
+                  <tr key={listing.id} className="group/row bg-white transition hover:bg-gray-50">
                     <td className="px-4 py-3">
                       <Link href={`/landlord/properties/${listing.id}`} className="flex items-center gap-3">
                         <span className="relative block h-12 w-16 shrink-0 overflow-hidden rounded-lg bg-gray-100">
@@ -212,8 +290,8 @@ export default function PropertiesPage() {
                         </span>
                       </Link>
                     </td>
-                    <td className="hidden px-4 py-3 font-semibold text-gray-900 sm:table-cell">
-                      {formatPrice(listing.price)}
+                    <td className="hidden px-4 py-3 sm:table-cell">
+                      <PriceEditor listing={listing} onSaved={handlePriceSaved} />
                     </td>
                     <td className="hidden px-4 py-3 text-gray-600 md:table-cell">
                       {listing.view_count ?? 0}

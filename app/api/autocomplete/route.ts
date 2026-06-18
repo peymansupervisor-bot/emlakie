@@ -46,7 +46,7 @@ export async function GET(req: NextRequest) {
       .from('listings')
       .select('address, city, state, slug, id, status')
       .ilike('address', `%${q}%`)
-      .in('status', ['active', 'inactive'])
+      .in('status', ['active', 'inactive', 'expired'])
       .order('address')
       .limit(12);
 

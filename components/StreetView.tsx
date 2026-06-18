@@ -14,6 +14,7 @@ export default function StreetView({ lat, lng, address, city, state }: Props) {
   const [error, setError] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const [heading, setHeading] = useState<number | null>(null);
+  const [headingReady, setHeadingReady] = useState(!lat || !lng);
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 
@@ -22,7 +23,8 @@ export default function StreetView({ lat, lng, address, city, state }: Props) {
     fetch(`/api/streetview-heading?lat=${lat}&lng=${lng}`)
       .then(r => r.json())
       .then(d => setHeading(d.heading ?? null))
-      .catch(() => {});
+      .catch(() => {})
+      .finally(() => setHeadingReady(true));
   }, [lat, lng]);
 
   if (!apiKey) return null;
@@ -30,17 +32,7 @@ export default function StreetView({ lat, lng, address, city, state }: Props) {
   const location = lat && lng ? `${lat},${lng}` : [address, city, state].filter(Boolean).join(', ');
   if (!location) return null;
 
-  // Wait until we have the heading before rendering (avoids showing wrong direction briefly)
-  if (lat && lng && heading === null) return (
-    <div className="mt-10">
-      <h2 className="text-xl font-bold text-gray-900">Street View</h2>
-      <div className="relative mt-3 aspect-[16/7] overflow-hidden rounded-2xl bg-gray-100 flex items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-gray-200 border-t-green-600" />
-      </div>
-    </div>
-  );
-
-  const headingParam = heading !== null ? `&heading=${heading}` : '';
+  const headingParam = headingReady && heading !== null ? `&heading=${heading}` : '';
   const src = `https://www.google.com/maps/embed/v1/streetview?key=${apiKey}&location=${encodeURIComponent(location)}${headingParam}&pitch=0&fov=90`;
 
   function handleLoad() {

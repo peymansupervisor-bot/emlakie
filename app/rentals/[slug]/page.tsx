@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
+
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 import Gallery from '@/components/Gallery';
 import { getListing, getListings } from '@/lib/api';
 import { formatBaths, formatBeds, formatPrice, formatPropertyType, formatSqft } from '@/lib/format';
@@ -12,13 +14,14 @@ import NearbyPlaces from '@/components/NearbyPlaces';
 import StreetView from '@/components/StreetView';
 
 interface Props {
-  params: Promise<{ id: string }>;
+  params: Promise<{ slug: string }>;
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { id } = await params;
-  const listing = await getListing(id);
+  const { slug } = await params;
+  const listing = await getListing(slug);
   if (!listing) return { title: 'Listing not found' };
+  const canonicalSlug = listing.slug ?? listing.id;
   const statusLabel = listing.status === 'rented' ? ' [Rented]' : listing.status === 'expired' ? ' [Expired]' : '';
   const shortDesc = listing.description
     ? listing.description.length > 155
@@ -28,7 +31,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: `${listing.title}${statusLabel} — ${formatPrice(listing.price)}/mo`,
     description: shortDesc,
-    alternates: { canonical: `https://emlakie.com/rentals/${id}` },
+    alternates: { canonical: `https://emlakie.com/rentals/${canonicalSlug}` },
     openGraph: {
       title: `${listing.title} — ${formatPrice(listing.price)}/mo`,
       description: shortDesc ?? '',
@@ -45,9 +48,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function ListingPage({ params }: Props) {
-  const { id } = await params;
-  const listing = await getListing(id);
+  const { slug } = await params;
+  const listing = await getListing(slug);
   if (!listing) notFound();
+
+  // If accessed via UUID and listing has a slug, redirect permanently
+  if (UUID_RE.test(slug) && listing.slug) {
+    redirect(`/rentals/${listing.slug}`);
+  }
 
   const isRented = listing.status === 'rented';
   const isExpired = listing.status === 'expired';
@@ -74,7 +82,7 @@ export default async function ListingPage({ params }: Props) {
     '@type': 'RealEstateListing',
     name: listing.title,
     description: listing.description ?? '',
-    url: `https://emlakie.com/rentals/${listing.id}`,
+    url: `https://emlakie.com/rentals/${listing.slug ?? listing.id}`,
     image: listing.photos?.[0] ?? 'https://emlakie.com/logo.png',
     offers: {
       '@type': 'Offer',

@@ -25,6 +25,7 @@ export interface Listing {
   listing_source?: 'owner' | 'broker' | 'mls';
   license_number?: string | null;
   virtual_tour_url?: string | null;
+  slug?: string | null;
 }
 
 export interface ListingFilters {

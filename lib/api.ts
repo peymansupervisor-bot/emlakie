@@ -35,6 +35,7 @@ function rowToListing(row: Record<string, unknown>): Listing {
     listing_source: (row.listing_source as Listing['listing_source']) ?? 'owner',
     license_number: row.license_number as string | null | undefined,
     virtual_tour_url: row.virtual_tour_url as string | null | undefined,
+    slug: row.slug as string | null | undefined,
   };
 }
 
@@ -191,20 +192,27 @@ export async function getListingsByCity(citySlug: string): Promise<{ listings: L
   return { ...result, city: match.city, state: match.state };
 }
 
-export async function getListing(id: string): Promise<Listing | null> {
-  if (id.startsWith('sample-')) {
-    return sampleListings.find((l) => l.id === id) ?? null;
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+export async function getListing(idOrSlug: string): Promise<Listing | null> {
+  if (idOrSlug.startsWith('sample-')) {
+    return sampleListings.find((l) => l.id === idOrSlug) ?? null;
   }
 
   try {
     const sb = supabaseAdmin();
-    // Fetch all statuses except deactivated — rented/expired stay visible for SEO
-    const { data, error } = await sb
+    const isUUID = UUID_RE.test(idOrSlug);
+    const query = sb
       .from('listings')
       .select('*')
-      .eq('id', id)
-      .in('status', ['active', 'rented', 'expired'])
-      .single();
+      .in('status', ['active', 'rented', 'expired']);
+
+    const { data, error } = await (isUUID
+      ? query.eq('id', idOrSlug)
+      : query.eq('slug', idOrSlug)
+    ).single();
+
+    const id = isUUID ? idOrSlug : data?.id;
 
     if (error || !data) return null;
 

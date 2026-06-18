@@ -1,10 +1,18 @@
 import type { MetadataRoute } from 'next';
-import { getAllZips, getAllCities } from '@/lib/api';
+import { getAllZips, getAllCities, getListings } from '@/lib/api';
 import { posts } from '@/lib/blog';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = 'https://emlakie.com';
-  const [zips, cities] = await Promise.all([getAllZips(), getAllCities()]);
+  const [zips, cities, { listings }] = await Promise.all([getAllZips(), getAllCities(), getListings()]);
+
+  const listingPages: MetadataRoute.Sitemap = listings
+    .filter(l => l.status === 'active' && (l.slug || l.id))
+    .map(l => ({
+      url: `${base}/rentals/${l.slug ?? l.id}`,
+      changeFrequency: 'weekly' as const,
+      priority: 0.9,
+    }));
 
   const zipPages: MetadataRoute.Sitemap = zips.map(({ zip }) => ({
     url: `${base}/homes/${zip}`,
@@ -27,6 +35,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${base}/rentals/furnished`, changeFrequency: 'weekly', priority: 0.8 },
     { url: `${base}/rentals/short-term`, changeFrequency: 'weekly', priority: 0.8 },
     { url: `${base}/rentals/section-8`, changeFrequency: 'weekly', priority: 0.8 },
+    ...listingPages,
     ...blogPages,
     ...cities.map(c => ({
       url: `${base}/rentals/city/${c.slug}`,

@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import Anthropic from '@anthropic-ai/sdk';
 import { tools, runTool, ToolName } from '@/lib/support-tools';
 
-const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
 const SYSTEM = `You are the EMLAKIE technical support assistant. EMLAKIE is a rental listing platform at emlakie.com where landlords post rental listings and tenants browse and send inquiries.
 
@@ -37,6 +36,7 @@ Guidelines:
 - Never speculate about the company, its owners, or any individuals`;
 
 export async function POST(req: NextRequest) {
+  const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
   const { message, email } = await req.json();
 
   if (!message?.trim()) {

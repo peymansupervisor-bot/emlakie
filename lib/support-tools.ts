@@ -8,7 +8,7 @@ function sb() {
   );
 }
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+function resendClient() { return new Resend(process.env.RESEND_API_KEY); }
 
 export type ToolResult = string;
 
@@ -190,7 +190,7 @@ export async function runTool(name: ToolName, input: Record<string, unknown>): P
         .single();
       if (!data) return `No unverified saved search found for ${input.email}.`;
       const verifyUrl = `https://emlakie.com/api/saved-searches/verify?token=${data.verify_token}`;
-      await resend.emails.send({
+      await resendClient().emails.send({
         from: 'EMLAKIE Alerts <alerts@emlakie.com>',
         to: input.email as string,
         subject: `Confirm your rental alert: ${data.label}`,

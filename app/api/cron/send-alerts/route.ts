@@ -2,8 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { Resend } from 'resend';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 function supabase() {
   return createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -75,6 +73,7 @@ export async function GET(req: NextRequest) {
       `;
     }).join('');
 
+    const resend = new Resend(process.env.RESEND_API_KEY);
     await resend.emails.send({
       from: 'EMLAKIE Alerts <alerts@emlakie.com>',
       to: search.email,

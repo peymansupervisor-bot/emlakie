@@ -90,6 +90,40 @@ export default async function PropertyPage({ searchParams }: Props) {
         </div>
 
 
+        {/* Emlakie Rent Estimate banner */}
+        <div className="mb-6 rounded-2xl bg-brand-600 px-8 py-6 text-white shadow-lg">
+          <p className="text-sm font-semibold text-brand-100 uppercase tracking-widest mb-1">Est. Monthly Rent</p>
+          {areaEValue && areaEValue.comparablesCount > 0 ? (
+            <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
+              <div>
+                <p className="text-5xl font-extrabold tracking-tight">
+                  ${areaEValue.medianRent?.toLocaleString()}
+                  <span className="ml-2 text-xl font-normal text-brand-200">/mo</span>
+                </p>
+                {areaEValue.byBedrooms.length > 1 && (
+                  <div className="mt-3 flex flex-wrap gap-3">
+                    {areaEValue.byBedrooms.map(row => (
+                      <span key={row.bedrooms} className="rounded-full bg-brand-500 px-3 py-1 text-xs font-semibold">
+                        {row.label}: ${row.median.toLocaleString()}/mo
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
+              <p className="text-xs text-brand-200 sm:text-right sm:max-w-[200px]">
+                Based on {areaEValue.comparablesCount} active {city} listing{areaEValue.comparablesCount !== 1 ? 's' : ''} on EMLAKIE
+              </p>
+            </div>
+          ) : (
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+              <p className="text-2xl font-bold text-brand-100">Coming soon for {city}</p>
+              <p className="text-xs text-brand-200 sm:text-right sm:max-w-[220px]">
+                List your property on EMLAKIE to help build accurate rent estimates for this area.
+              </p>
+            </div>
+          )}
+        </div>
+
         {/* Map + info grid */}
         <div className="grid gap-6 lg:grid-cols-2 mb-6">
           {/* Map */}

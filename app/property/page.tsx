@@ -4,8 +4,6 @@ import { getAreaEValue } from '@/lib/e-value';
 import { getPropertyData } from '@/lib/zllw';
 import Link from 'next/link';
 import ListingCard from '@/components/ListingCard';
-import Navbar from '@/components/Navbar';
-import Footer from '@/components/Footer';
 import StreetView from '@/components/StreetView';
 import { redirect } from 'next/navigation';
 import type { Metadata } from 'next';
@@ -26,14 +24,10 @@ export default async function PropertyPage({ searchParams }: Props) {
 
   if (!rawAddress) {
     return (
-      <>
-        <Navbar />
-        <main className="mx-auto max-w-3xl px-4 py-20 text-center">
-          <p className="text-gray-500">No address provided.</p>
-          <Link href="/rentals" className="mt-4 inline-block text-brand-600 font-semibold hover:underline">Browse all rentals →</Link>
-        </main>
-        <Footer />
-      </>
+      <main className="mx-auto max-w-3xl px-4 py-20 text-center">
+        <p className="text-gray-500">No address provided.</p>
+        <Link href="/rentals" className="mt-4 inline-block text-brand-600 font-semibold hover:underline">Browse all rentals →</Link>
+      </main>
     );
   }
 
@@ -43,10 +37,30 @@ export default async function PropertyPage({ searchParams }: Props) {
     getPropertyData(rawAddress),
   ]);
 
+  // Normalize street name abbreviations so "Fountain Avenue" matches "Fountain Ave"
+  function normalizeStreet(s: string): string {
+    return s.toLowerCase()
+      .replace(/\bavenue\b/g, 'ave').replace(/\bstreet\b/g, 'st').replace(/\bboulevard\b/g, 'blvd')
+      .replace(/\bdrive\b/g, 'dr').replace(/\broad\b/g, 'rd').replace(/\blane\b/g, 'ln')
+      .replace(/\bcourt\b/g, 'ct').replace(/\bplace\b/g, 'pl').replace(/\bterrace\b/g, 'ter')
+      .replace(/\bway\b/g, 'wy').replace(/[^a-z0-9]+/g, ' ').trim();
+  }
+
+  const houseNumber = geo?.address?.house_number ?? '';
+  const road = geo?.address?.road ?? '';
+  const normalizedRoad = road ? normalizeStreet(road) : '';
+
   // If an active listing exists at this address, redirect to it — one canonical page
-  const activeMatch = listings.find(
-    (l) => l.status === 'active' && l.address?.toLowerCase().includes((geo?.address?.road ?? '').toLowerCase()) && geo?.address?.road
-  );
+  const activeMatch = listings.find((l) => {
+    if (l.status !== 'active' || !l.address) return false;
+    const norm = normalizeStreet(l.address);
+    if (houseNumber && !norm.includes(houseNumber.toLowerCase())) return false;
+    if (normalizedRoad) {
+      const roadWords = normalizedRoad.split(' ').filter(Boolean);
+      return roadWords.every((w) => norm.includes(w));
+    }
+    return false;
+  });
   if (activeMatch) {
     redirect(`/rentals/${activeMatch.slug ?? activeMatch.id}`);
   }
@@ -74,14 +88,15 @@ export default async function PropertyPage({ searchParams }: Props) {
     ? `https://www.openstreetmap.org/export/embed.html?bbox=${lng - 0.004},${lat - 0.003},${lng + 0.004},${lat + 0.003}&layer=mapnik&marker=${lat},${lng}`
     : null;
 
-  const matchingListings = listings.filter((l) =>
-    l.address?.toLowerCase().includes((addr?.road ?? '').toLowerCase()) && addr?.road
-  );
+  const matchingListings = listings.filter((l) => {
+    if (!l.address || !normalizedRoad) return false;
+    const norm = normalizeStreet(l.address);
+    const roadWords = normalizedRoad.split(' ').filter(Boolean);
+    return roadWords.every((w) => norm.includes(w));
+  });
 
   return (
-    <>
-      <Navbar />
-      <main className="mx-auto max-w-4xl px-4 py-10 sm:px-6">
+    <main className="mx-auto max-w-4xl px-4 py-10 sm:px-6">
 
         {/* Breadcrumb */}
         <nav className="mb-6 flex items-center gap-2 text-sm text-gray-400">
@@ -351,8 +366,6 @@ export default async function PropertyPage({ searchParams }: Props) {
           </section>
         )}
 
-      </main>
-      <Footer />
-    </>
+    </main>
   );
 }

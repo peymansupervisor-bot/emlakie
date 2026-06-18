@@ -124,19 +124,31 @@ export async function calculateEValue(listing: {
 }): Promise<EValueResult> {
   const sb = supabase()
 
-  // Pull active listings in the same city with same bedroom count
-  // Widen to ±1 bedroom if needed
-  let { data: comps } = await sb
+  // Try exact bedroom match first; widen to ±1 only if fewer than 3 results
+  let { data: exactComps } = await sb
     .from('listings')
     .select('monthly_rent, living_area_sqft, bedrooms, property_type')
     .eq('city', listing.city)
     .eq('status', 'active')
     .neq('id', listing.id)
-    .gte('bedrooms', listing.bedrooms - 1)
-    .lte('bedrooms', listing.bedrooms + 1)
+    .eq('bedrooms', listing.bedrooms)
     .limit(50)
 
-  comps = comps ?? []
+  exactComps = exactComps ?? []
+
+  let comps = exactComps
+  if (exactComps.length < 3) {
+    const { data: wideComps } = await sb
+      .from('listings')
+      .select('monthly_rent, living_area_sqft, bedrooms, property_type')
+      .eq('city', listing.city)
+      .eq('status', 'active')
+      .neq('id', listing.id)
+      .gte('bedrooms', listing.bedrooms - 1)
+      .lte('bedrooms', listing.bedrooms + 1)
+      .limit(50)
+    comps = wideComps ?? []
+  }
 
   // Prefer same property type if we have enough
   const sameType = comps.filter((c) => c.property_type === listing.property_type)

@@ -89,19 +89,6 @@ export default async function PropertyPage({ searchParams }: Props) {
           </p>
         </div>
 
-        {/* Rent Zestimate — hero banner (full width) */}
-        {propData?.rentZestimate && (
-          <div className="mb-6 rounded-2xl bg-brand-600 px-8 py-6 text-white shadow-lg flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div>
-              <p className="text-sm font-semibold text-brand-100 uppercase tracking-widest">Est. Monthly Rent</p>
-              <p className="mt-1 text-5xl font-extrabold tracking-tight">
-                ${propData.rentZestimate.toLocaleString()}
-                <span className="ml-2 text-xl font-normal text-brand-200">/mo</span>
-              </p>
-            </div>
-            <p className="text-xs text-brand-200 sm:text-right sm:max-w-[180px]">Rental estimate powered by Zillow Rent Zestimate®</p>
-          </div>
-        )}
 
         {/* Map + info grid */}
         <div className="grid gap-6 lg:grid-cols-2 mb-6">

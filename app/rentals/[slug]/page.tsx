@@ -4,6 +4,7 @@ import { notFound, redirect } from 'next/navigation';
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 import Gallery from '@/components/Gallery';
+import MapEmbed from '@/components/MapEmbed';
 import { getListing, getListings } from '@/lib/api';
 import { formatBaths, formatBeds, formatPrice, formatPropertyType, formatSqft } from '@/lib/format';
 import ListingCard from '@/components/ListingCard';
@@ -221,14 +222,9 @@ export default async function ListingPage({ params }: Props) {
           {listing.lat && listing.lng && (
             <div className="mt-8">
               <h2 className="text-xl font-bold text-gray-900 mb-3">Location</h2>
-              <div className="overflow-hidden rounded-2xl border border-gray-200 shadow-sm">
-                <iframe
-                  src={`https://www.openstreetmap.org/export/embed.html?bbox=${listing.lng - 0.004},${listing.lat - 0.003},${listing.lng + 0.004},${listing.lat + 0.003}&layer=mapnik&marker=${listing.lat},${listing.lng}`}
-                  title="Property location"
-                  className="h-64 w-full border-0"
-                  loading="lazy"
-                />
-              </div>
+              <MapEmbed
+                src={`https://www.openstreetmap.org/export/embed.html?bbox=${listing.lng - 0.004},${listing.lat - 0.003},${listing.lng + 0.004},${listing.lat + 0.003}&layer=mapnik&marker=${listing.lat},${listing.lng}`}
+              />
             </div>
           )}
 

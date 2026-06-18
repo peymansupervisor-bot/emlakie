@@ -5,6 +5,7 @@ import { getPropertyData } from '@/lib/zllw';
 import Link from 'next/link';
 import ListingCard from '@/components/ListingCard';
 import StreetView from '@/components/StreetView';
+import MapEmbed from '@/components/MapEmbed';
 import { redirect } from 'next/navigation';
 import type { Metadata } from 'next';
 
@@ -160,17 +161,7 @@ export default async function PropertyPage({ searchParams }: Props) {
           {/* Map */}
           <div className="flex flex-col gap-4">
             {mapSrc ? (
-              <div className="overflow-hidden rounded-2xl border border-gray-200 shadow-sm">
-                <iframe
-                  src={mapSrc}
-                  title="Property location"
-                  className="h-72 w-full border-0"
-                  loading="lazy"
-                />
-                <div className="border-t border-gray-100 bg-gray-50 px-3 py-2 text-xs text-gray-400">
-                  Map data © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer" className="hover:text-brand-600">OpenStreetMap</a> contributors
-                </div>
-              </div>
+              <MapEmbed src={mapSrc} />
             ) : (
               <div className="flex h-72 items-center justify-center rounded-2xl bg-gray-100 text-gray-400 text-sm">
                 Map not available

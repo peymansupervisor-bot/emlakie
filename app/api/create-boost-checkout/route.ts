@@ -11,26 +11,29 @@ const PLANS: Record<string, { label: string; price: number; days: number }> = {
 };
 
 export async function POST(req: NextRequest) {
+  const token = req.headers.get('authorization')?.replace('Bearer ', '')
+  if (!token) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
-  const { listingId, planId, userId } = await req.json();
+  const { listingId, planId } = await req.json();
 
   const plan = PLANS[planId];
-  if (!plan || !listingId || !userId) {
+  if (!plan || !listingId) {
     return NextResponse.json({ error: 'Invalid request' }, { status: 400 });
   }
 
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_KEY!,
-  );
+  const { createSupabaseWithToken } = await import('@/lib/supabase-server')
+  const supabase = createSupabaseWithToken(token)
+  const { data: { user }, error: authErr } = await supabase.auth.getUser()
+  if (authErr || !user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const { data: listing } = await supabase
     .from('listings')
-    .select('id, title, address, owner_id')
+    .select('id, title, address, landlord_id')
     .eq('id', listingId)
     .single();
 
-  if (!listing || listing.owner_id !== userId) {
+  if (!listing || listing.landlord_id !== user.id) {
     return NextResponse.json({ error: 'Listing not found or unauthorized' }, { status: 403 });
   }
 
@@ -56,7 +59,7 @@ export async function POST(req: NextRequest) {
       listing_id: listingId,
       plan_id: planId,
       days: plan.days,
-      user_id: userId,
+      user_id: user.id,
     },
     success_url: `${origin}/landlord/payments/success?session_id={CHECKOUT_SESSION_ID}`,
     cancel_url:  `${origin}/landlord/payments`,

@@ -43,6 +43,13 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Message required' }, { status: 400 });
   }
 
+  if (typeof message !== 'string' || message.length > 2000) {
+    return NextResponse.json({ error: 'Message too long.' }, { status: 400 });
+  }
+  if (email !== undefined && (typeof email !== 'string' || email.length > 200)) {
+    return NextResponse.json({ error: 'Invalid email.' }, { status: 400 });
+  }
+
   const userMessage = email
     ? `User email: ${email}\n\nUser message: ${message}`
     : message;

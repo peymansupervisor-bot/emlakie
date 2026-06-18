@@ -145,12 +145,18 @@ export async function runTool(name: ToolName, input: Record<string, unknown>): P
     }
 
     case 'update_listing': {
+      const ALLOWED_FIELDS = ['status', 'monthly_rent', 'available_from', 'description', 'title'];
+      const raw = input.fields as Record<string, unknown>;
+      const safeFields = Object.fromEntries(
+        Object.entries(raw).filter(([k]) => ALLOWED_FIELDS.includes(k))
+      );
+      if (Object.keys(safeFields).length === 0) return 'No valid fields to update.';
       const { error } = await db
         .from('listings')
-        .update(input.fields as Record<string, unknown>)
+        .update(safeFields)
         .eq('id', input.listing_id);
       if (error) return `Failed to update listing: ${error.message}`;
-      return `Successfully updated listing ${input.listing_id} with fields: ${JSON.stringify(input.fields)}`;
+      return `Successfully updated listing ${input.listing_id} with fields: ${JSON.stringify(safeFields)}`;
     }
 
     case 'lookup_tenant_inquiries': {

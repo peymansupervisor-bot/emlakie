@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { getMyListings, getCurrentUserId } from '@/lib/landlord/client';
+import { getMyListings, getToken } from '@/lib/landlord/client';
 import { LandlordListing } from '@/lib/landlord/types';
 import { formatPrice } from '@/lib/format';
 
@@ -39,14 +39,11 @@ export default function BoostPage() {
   const [selected, setSelected] = useState<string>('');
   const [plan, setPlan] = useState(BOOST_OPTIONS[1].id);
   const [loading, setLoading] = useState(false);
-  const [userId, setUserId] = useState<string>('');
-
   useEffect(() => {
     getMyListings().then((data) => {
       setListings(data);
       if (data.length > 0) setSelected(data[0].id);
     }).catch(() => {});
-    getCurrentUserId().then(setUserId).catch(() => {});
   }, []);
 
   async function handleAdminBoost() {
@@ -68,13 +65,15 @@ export default function BoostPage() {
   }
 
   async function handleBoost() {
-    if (!selected || !userId) return;
+    if (!selected) return;
     setLoading(true);
     try {
+      const token = await getToken();
+      if (!token) { alert('Please sign in first.'); setLoading(false); return; }
       const res = await fetch('/api/create-boost-checkout', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ listingId: selected, planId: plan, userId }),
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify({ listingId: selected, planId: plan }),
       });
       const { url, error } = await res.json();
       if (error) { alert(error); setLoading(false); return; }

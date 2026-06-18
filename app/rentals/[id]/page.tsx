@@ -53,21 +53,18 @@ export default async function ListingPage({ params }: Props) {
   const isExpired = listing.status === 'expired';
   const isUnavailable = isRented || isExpired;
 
-  // E-Value + similar listings — only for inactive listings
   const [eValue, { listings: similar }] = await Promise.all([
-    isUnavailable
-      ? calculateEValue({
-          id: listing.id,
-          city: listing.city,
-          state: listing.state,
-          bedrooms: listing.bedrooms,
-          bathrooms: listing.bathrooms,
-          sqft: listing.sqft,
-          property_type: listing.property_type,
-          ownership_type: listing.ownership_type,
-          price: listing.price,
-        })
-      : Promise.resolve(null),
+    calculateEValue({
+      id: listing.id,
+      city: listing.city,
+      state: listing.state,
+      bedrooms: listing.bedrooms,
+      bathrooms: listing.bathrooms,
+      sqft: listing.sqft,
+      property_type: listing.property_type,
+      ownership_type: listing.ownership_type,
+      price: listing.price,
+    }),
     getListings({ city: listing.city }),
   ]);
   const similarActive = similar.filter((l) => l.id !== listing.id && l.status === 'active').slice(0, 3);
@@ -209,13 +206,31 @@ export default async function ListingPage({ params }: Props) {
           })()}
 
 
+          {/* Map */}
+          {listing.lat && listing.lng && (
+            <div className="mt-8">
+              <h2 className="text-xl font-bold text-gray-900 mb-3">Location</h2>
+              <div className="overflow-hidden rounded-2xl border border-gray-200 shadow-sm">
+                <iframe
+                  src={`https://www.openstreetmap.org/export/embed.html?bbox=${listing.lng - 0.004},${listing.lat - 0.003},${listing.lng + 0.004},${listing.lat + 0.003}&layer=mapnik&marker=${listing.lat},${listing.lng}`}
+                  title="Property location"
+                  className="h-64 w-full border-0"
+                  loading="lazy"
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Street View */}
+          <StreetView lat={listing.lat ?? undefined} lng={listing.lng ?? undefined} address={listing.address} city={listing.city} state={listing.state} />
+
           {/* Nearby places */}
           {listing.lat && listing.lng && (
             <NearbyPlaces lat={listing.lat} lng={listing.lng} />
           )}
 
-          {/* E-Value — only shown on inactive listings */}
-          {isUnavailable && eValue && <EValue ev={eValue} />}
+          {/* E-Value */}
+          {eValue && <EValue ev={eValue} />}
         </div>
 
         {/* Contact / status card */}

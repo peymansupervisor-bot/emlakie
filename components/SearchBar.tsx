@@ -47,10 +47,10 @@ export default function SearchBar({ large = false }: { large?: boolean }) {
     return () => document.removeEventListener('mousedown', handleClick);
   }, []);
 
-  function navigate(val: string) {
+  function navigate(val: string, type?: 'city' | 'address') {
     setOpen(false);
     setQ(val);
-    if (isAddressQuery(val)) {
+    if (type === 'address' || isAddressQuery(val)) {
       router.push(`/property?address=${encodeURIComponent(val)}`);
     } else {
       router.push(`/rentals?q=${encodeURIComponent(val)}`);
@@ -59,9 +59,10 @@ export default function SearchBar({ large = false }: { large?: boolean }) {
 
   function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    const val = (activeIdx >= 0 ? suggestions[activeIdx]?.value : q).trim();
+    const active = activeIdx >= 0 ? suggestions[activeIdx] : null;
+    const val = (active?.value ?? q).trim();
     if (!val) { router.push('/rentals'); return; }
-    navigate(val);
+    navigate(val, active?.type);
   }
 
   function onKeyDown(e: React.KeyboardEvent) {
@@ -140,7 +141,7 @@ export default function SearchBar({ large = false }: { large?: boolean }) {
               key={i}
               role="option"
               aria-selected={i === activeIdx}
-              onMouseDown={() => navigate(s.value)}
+              onMouseDown={() => navigate(s.value, s.type)}
               onMouseEnter={() => setActiveIdx(i)}
               className={`flex cursor-pointer items-center gap-3 px-4 py-3 text-sm transition-colors ${
                 i === activeIdx ? 'bg-brand-50' : 'hover:bg-gray-50'

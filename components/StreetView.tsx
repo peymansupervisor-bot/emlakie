@@ -80,7 +80,7 @@ export default function StreetView({ lat, lng, address, city, state }: Props) {
         )}
       </div>
       <p className="mt-2 text-xs text-gray-400">
-        Street View shows the public-facing street at this address. The interior of the property and any unit-specific details are not visible here.
+        Street View imagery is captured by Google from the roadway and may show the building directly across the street rather than the listed property. Use it to explore the neighborhood and street environment.
       </p>
     </div>
   );

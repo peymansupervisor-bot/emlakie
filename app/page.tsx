@@ -7,6 +7,8 @@ import ListingCard from '@/components/ListingCard';
 import AppBadges from '@/components/AppBadges';
 import { getListings } from '@/lib/api';
 
+export const revalidate = 60;
+
 export const metadata: Metadata = {
   alternates: { canonical: 'https://emlakie.com' },
 };

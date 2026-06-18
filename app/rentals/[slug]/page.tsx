@@ -135,7 +135,7 @@ export default async function ListingPage({ params }: Props) {
         {/* Main column */}
         <div className="flex-1">
           <div className="flex flex-wrap items-center gap-3">
-            <h1 className="text-3xl font-extrabold text-gray-900">{formatPrice(listing.price)}<span className="text-base font-medium text-gray-500">/mo</span></h1>
+            <h1 className="text-3xl font-extrabold text-gray-900">{formatPrice(listing.price)}</h1>
             {isRented && (
               <span className="rounded-full bg-blue-100 px-3 py-1 text-sm font-bold text-blue-800">Rented</span>
             )}
@@ -159,7 +159,7 @@ export default async function ListingPage({ params }: Props) {
           <h2 className="mt-8 text-xl font-bold text-gray-900">{listing.title}</h2>
           {listing.description && (
             <p className="mt-3 whitespace-pre-line leading-relaxed text-gray-700">
-              {listing.description}
+              {listing.description.replace(/\s*Copyright\s+The\s+MLS\.?.*$/i, '').trim()}
             </p>
           )}
 

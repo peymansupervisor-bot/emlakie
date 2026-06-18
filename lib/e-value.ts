@@ -128,7 +128,7 @@ export async function calculateEValue(listing: {
   // Widen to ±1 bedroom if needed
   let { data: comps } = await sb
     .from('listings')
-    .select('price, sqft, bedrooms, property_type')
+    .select('monthly_rent, living_area_sqft, bedrooms, property_type')
     .eq('city', listing.city)
     .eq('status', 'active')
     .neq('id', listing.id)
@@ -142,14 +142,14 @@ export async function calculateEValue(listing: {
   const sameType = comps.filter((c) => c.property_type === listing.property_type)
   const workingSet = sameType.length >= 3 ? sameType : comps
 
-  let prices = workingSet.map((c) => Number(c.price)).filter((p) => p > 0)
+  let prices = workingSet.map((c) => Number(c.monthly_rent)).filter((p) => p > 0)
 
   // If we have sqft data, apply a sqft adjustment
   if (listing.sqft && listing.sqft > 0) {
-    const sqftComps = workingSet.filter((c) => c.sqft && Number(c.sqft) > 0)
+    const sqftComps = workingSet.filter((c) => c.living_area_sqft && Number(c.living_area_sqft) > 0)
     if (sqftComps.length >= 3) {
       // Price per sqft adjustment
-      const pricePerSqft = sqftComps.map((c) => Number(c.price) / Number(c.sqft))
+      const pricePerSqft = sqftComps.map((c) => Number(c.monthly_rent) / Number(c.living_area_sqft))
       const medianPPSF = median(pricePerSqft)
       const sqftEstimate = medianPPSF * listing.sqft
       // Blend: 60% sqft-adjusted, 40% raw median

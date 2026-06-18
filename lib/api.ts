@@ -22,10 +22,10 @@ function rowToListing(row: Record<string, unknown>): Listing {
     zip: row.zip as string | undefined,
     lat: row.lat != null ? Number(row.lat) : undefined,
     lng: row.lng != null ? Number(row.lng) : undefined,
-    price: Number(row.price),
+    price: Number(row.monthly_rent ?? row.price),
     bedrooms: Number(row.bedrooms),
     bathrooms: Number(row.bathrooms),
-    sqft: Number(row.sqft),
+    sqft: Number(row.living_area_sqft ?? row.sqft),
     property_type: row.property_type as Listing['property_type'],
     amenities: (row.amenities as string[]) ?? [],
     photos: (row.photos as string[]) ?? [],
@@ -89,8 +89,8 @@ export async function getListings(filters: ListingFilters = {}): Promise<Listing
       else query = query.ilike('city', `%${filters.city}%`);
     }
     if (filters.zip) query = query.eq('zip', filters.zip);
-    if (filters.minPrice) query = query.gte('price', Number(filters.minPrice));
-    if (filters.maxPrice) query = query.lte('price', Number(filters.maxPrice));
+    if (filters.minPrice) query = query.gte('monthly_rent', Number(filters.minPrice));
+    if (filters.maxPrice) query = query.lte('monthly_rent', Number(filters.maxPrice));
     if (filters.bedrooms) query = query.eq('bedrooms', Number(filters.bedrooms));
     if (filters.propertyType) query = query.eq('property_type', filters.propertyType);
     if (filters.amenities) {

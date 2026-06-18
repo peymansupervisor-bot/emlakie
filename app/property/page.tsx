@@ -42,7 +42,17 @@ export default async function PropertyPage({ searchParams }: Props) {
 
   const zip = addr?.postcode ?? '';
   const neighborhood = addr?.neighbourhood ?? addr?.suburb ?? '';
-  const street = [addr?.house_number, addr?.road].filter(Boolean).join(' ');
+  const baseStreet = [addr?.house_number, addr?.road].filter(Boolean).join(' ');
+  // Preserve unit number from the original query — Nominatim drops it
+  // Look in the first comma-segment (the street part) for a trailing unit token
+  const streetSegment = rawAddress.split(',')[0].trim();
+  const unitMatch = streetSegment.match(/\s+(?:apt\.?|unit|#|suite\s+)?(\w+)\s*$/i);
+  const candidateUnit = unitMatch?.[1] ?? '';
+  // Only use it if it's not the house number itself and not part of the road name
+  const isUnit = candidateUnit &&
+    candidateUnit !== addr?.house_number &&
+    !(addr?.road ?? '').toLowerCase().includes(candidateUnit.toLowerCase());
+  const street = isUnit ? `${baseStreet}, Unit ${candidateUnit}` : baseStreet;
   const fullAddress = geo?.display_name ?? rawAddress;
   const lat = geo ? parseFloat(geo.lat) : (propData?.latitude ?? null);
   const lng = geo ? parseFloat(geo.lon) : (propData?.longitude ?? null);

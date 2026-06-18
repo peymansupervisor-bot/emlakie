@@ -12,8 +12,8 @@ function supabase() {
 export async function GET(req: NextRequest) {
   // Vercel sends Authorization: Bearer <CRON_SECRET> on scheduled invocations
   const authHeader = req.headers.get('authorization');
-  const secret = authHeader?.replace('Bearer ', '') ?? req.nextUrl.searchParams.get('secret');
-  if (secret !== process.env.CRON_SECRET) {
+  const secret = authHeader?.replace('Bearer ', '');
+  if (!secret || secret !== process.env.CRON_SECRET) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 

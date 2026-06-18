@@ -64,10 +64,15 @@ export async function POST(req: NextRequest) {
   const formData = await req.formData()
   const photoFiles = formData.getAll('photos') as File[]
 
+  const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/heic'];
+  const MAX_SIZE = 10 * 1024 * 1024; // 10MB
+
   // Upload photos to Supabase Storage
   const photoUrls: string[] = []
   for (const file of photoFiles) {
-    const ext = file.name.split('.').pop() ?? 'jpg'
+    if (!ALLOWED_TYPES.includes(file.type)) continue;
+    if (file.size > MAX_SIZE) continue;
+    const ext = { 'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp', 'image/heic': 'heic' }[file.type] ?? 'jpg';
     const path = `${user.id}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
     const buffer = Buffer.from(await file.arrayBuffer())
 

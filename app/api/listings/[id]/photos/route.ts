@@ -18,9 +18,14 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   const formData = await req.formData()
   const files = formData.getAll('photos') as File[]
 
+  const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/heic'];
+  const MAX_SIZE = 10 * 1024 * 1024; // 10MB
+
   const newUrls: string[] = []
   for (const file of files) {
-    const ext = file.name.split('.').pop() ?? 'jpg'
+    if (!ALLOWED_TYPES.includes(file.type)) continue;
+    if (file.size > MAX_SIZE) continue;
+    const ext = { 'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp', 'image/heic': 'heic' }[file.type] ?? 'jpg';
     const path = `${user.id}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
     const buffer = Buffer.from(await file.arrayBuffer())
     const { error: uploadErr } = await supabase.storage
@@ -54,10 +59,18 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   const { urls } = await req.json()
   if (!Array.isArray(urls) || urls.length === 0) return NextResponse.json({ error: 'urls required' }, { status: 400 })
 
+  // Only allow URLs from our own Supabase storage
+  const supabaseHost = new URL(process.env.NEXT_PUBLIC_SUPABASE_URL!).hostname;
+  const validUrls = urls.filter((u: unknown) => {
+    if (typeof u !== 'string') return false;
+    try { return new URL(u).hostname === supabaseHost; } catch { return false; }
+  });
+  if (validUrls.length === 0) return NextResponse.json({ error: 'Invalid photo URLs' }, { status: 400 })
+
   const { data: listing } = await supabase.from('listings').select('photos').eq('id', id).eq('landlord_id', user.id).single()
   if (!listing) return NextResponse.json({ error: 'Not found' }, { status: 404 })
 
-  const updatedPhotos = [...((listing.photos as string[]) ?? []), ...urls]
+  const updatedPhotos = [...((listing.photos as string[]) ?? []), ...validUrls]
   const { error } = await supabase.from('listings').update({ photos: updatedPhotos }).eq('id', id).eq('landlord_id', user.id)
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
 

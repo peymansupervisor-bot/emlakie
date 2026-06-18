@@ -42,8 +42,8 @@ export default function AccessibilityPage() {
             disabilities including visual, auditory, physical, speech, cognitive, and neurological disabilities.
           </p>
           <p className="mt-2">
-            Our site is audited using automated testing tools and manual review across all primary pages:
-            homepage, rental listings, and the landlord property submission form.
+            We are working toward full conformance. Some pages and components are partially conformant, meaning
+            some aspects do not yet fully meet the guidelines. Known gaps are listed under Known Limitations below.
           </p>
         </section>
 
@@ -52,16 +52,12 @@ export default function AccessibilityPage() {
           <p className="mt-2">EMLAKIE takes the following measures to ensure accessibility:</p>
           <ul className="mt-3 list-disc space-y-2 pl-6">
             <li>Skip-to-main-content link available on all pages</li>
-            <li>All pages include a descriptive <code className="rounded bg-gray-100 px-1 text-sm">lang=&quot;en&quot;</code> attribute</li>
-            <li>All form inputs have explicit labels</li>
+            <li>All pages include a <code className="rounded bg-gray-100 px-1 text-sm">lang=&quot;en&quot;</code> attribute on the root element</li>
             <li>Keyboard navigation supported throughout the site</li>
-            <li>All decorative images are marked <code className="rounded bg-gray-100 px-1 text-sm">aria-hidden=&quot;true&quot;</code></li>
-            <li>All meaningful images have descriptive alt text</li>
-            <li>Interactive controls have accessible names via <code className="rounded bg-gray-100 px-1 text-sm">aria-label</code></li>
+            <li>Interactive controls in the photo gallery and navigation have accessible names via <code className="rounded bg-gray-100 px-1 text-sm">aria-label</code></li>
+            <li>Decorative images use empty alt text (<code className="rounded bg-gray-100 px-1 text-sm">alt=&quot;&quot;</code>) so screen readers skip them</li>
             <li>Color contrast meets or exceeds 4.5:1 for body text and 3:1 for large text</li>
-            <li>ARIA roles follow the WAI-ARIA 1.2 specification</li>
-            <li>Correct heading hierarchy (h1 → h2 → h3) maintained on all pages</li>
-            <li>Error messages associated with form fields and announced to screen readers</li>
+            <li>Correct heading hierarchy (h1 → h2 → h3) maintained on primary pages</li>
           </ul>
         </section>
 
@@ -73,13 +69,24 @@ export default function AccessibilityPage() {
           </p>
           <ul className="mt-3 list-disc space-y-2 pl-6">
             <li>
+              <strong>Listing photo alt text:</strong> Property thumbnail images in the landlord dashboard currently
+              use empty alt text. We are working to generate descriptive alt text from listing data (address and
+              property type).
+            </li>
+            <li>
+              <strong>Form error announcements:</strong> Inline form error messages are visible on screen but are
+              not yet programmatically associated with their fields via <code className="rounded bg-gray-100 px-1 text-sm">aria-describedby</code> or announced
+              via <code className="rounded bg-gray-100 px-1 text-sm">aria-live</code>. Screen reader users may not be notified of errors automatically.
+            </li>
+            <li>
               <strong>User-uploaded content:</strong> Photos and descriptions submitted by landlords may not always
               meet accessibility standards. We encourage landlords to provide meaningful descriptions for any images
               they upload.
             </li>
             <li>
-              <strong>Third-party integrations:</strong> Some third-party services integrated into our platform may
-              have limited accessibility support under their own implementations.
+              <strong>Third-party integrations:</strong> Some third-party services integrated into our platform
+              (including Google Maps and the AI support chatbot) may have limited accessibility support under their
+              own implementations.
             </li>
           </ul>
         </section>

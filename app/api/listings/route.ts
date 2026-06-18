@@ -61,16 +61,26 @@ export async function POST(req: NextRequest) {
   const state = formData.get('state') as string
   const zip = formData.get('zip') as string || null
 
-  // Generate unique slug from address
+  // Generate slug from address — reuse the same slug if this address was listed before,
+  // so Google keeps its SEO ranking for the URL across relists of the same property.
   const baseSlug = generateListingSlug(address, city, state, zip ?? undefined)
-  const { data: existing } = await supabase
+  const { data: priorAtAddress } = await supabase
     .from('listings')
     .select('slug')
-    .like('slug', `${baseSlug}%`)
-  const takenSlugs = new Set((existing ?? []).map((r: { slug: string }) => r.slug))
+    .eq('slug', baseSlug)
+    .limit(1)
+    .single()
   let slug = baseSlug
-  let counter = 2
-  while (takenSlugs.has(slug)) slug = `${baseSlug}-${counter++}`
+  if (!priorAtAddress) {
+    // No prior listing at this address — check for accidental slug collisions on different addresses
+    const { data: collisions } = await supabase
+      .from('listings')
+      .select('slug')
+      .like('slug', `${baseSlug}%`)
+    const takenSlugs = new Set((collisions ?? []).map((r: { slug: string }) => r.slug))
+    let counter = 2
+    while (takenSlugs.has(slug)) slug = `${baseSlug}-${counter++}`
+  }
 
   const { data, error } = await supabase
     .from('listings')

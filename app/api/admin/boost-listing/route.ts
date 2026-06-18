@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
     .update({ boosted_until: boostedUntil.toISOString() })
     .eq('id', listingId);
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  if (error) return NextResponse.json({ error: 'Something went wrong' }, { status: 500 });
 
   return NextResponse.json({ ok: true, boosted_until: boostedUntil.toISOString() });
 }

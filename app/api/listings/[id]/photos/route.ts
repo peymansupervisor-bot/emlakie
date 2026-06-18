@@ -41,7 +41,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   const updatedPhotos = [...existingPhotos, ...newUrls]
 
   const { error } = await supabase.from('listings').update({ photos: updatedPhotos }).eq('id', id).eq('landlord_id', user.id)
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+  if (error) return NextResponse.json({ error: 'Something went wrong' }, { status: 500 })
 
   return NextResponse.json({ photos: updatedPhotos })
 }
@@ -72,7 +72,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
 
   const updatedPhotos = [...((listing.photos as string[]) ?? []), ...validUrls]
   const { error } = await supabase.from('listings').update({ photos: updatedPhotos }).eq('id', id).eq('landlord_id', user.id)
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+  if (error) return NextResponse.json({ error: 'Something went wrong' }, { status: 500 })
 
   return NextResponse.json({ photos: updatedPhotos })
 }
@@ -94,7 +94,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
   if (!listing) return NextResponse.json({ error: 'Not found' }, { status: 404 })
 
   const { error } = await supabase.from('listings').update({ photos }).eq('id', id).eq('landlord_id', user.id)
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+  if (error) return NextResponse.json({ error: 'Something went wrong' }, { status: 500 })
 
   return NextResponse.json({ photos })
 }
@@ -117,7 +117,7 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
 
   const updatedPhotos = ((listing.photos as string[]) ?? []).filter((p) => p !== photoUrl)
   const { error } = await supabase.from('listings').update({ photos: updatedPhotos }).eq('id', id).eq('landlord_id', user.id)
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+  if (error) return NextResponse.json({ error: 'Something went wrong' }, { status: 500 })
 
   // Also delete from storage if it's our own bucket
   try {

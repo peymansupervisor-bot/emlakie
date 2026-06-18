@@ -18,7 +18,7 @@ export async function GET(req: NextRequest) {
     .eq('landlord_id', user.id)
     .order('created_at', { ascending: false })
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+  if (error) return NextResponse.json({ error: 'Something went wrong' }, { status: 500 })
 
   const mapped = (data ?? []).map((row: Record<string, unknown>) => ({
     id: row.id,
@@ -145,6 +145,6 @@ export async function POST(req: NextRequest) {
     .select()
     .single()
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+  if (error) return NextResponse.json({ error: 'Something went wrong' }, { status: 500 })
   return NextResponse.json(data, { status: 201 })
 }

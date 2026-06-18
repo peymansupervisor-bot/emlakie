@@ -29,7 +29,7 @@ export async function GET(req: NextRequest) {
     .in('listing_id', listingIds)
     .order('created_at', { ascending: false });
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  if (error) return NextResponse.json({ error: 'Something went wrong' }, { status: 500 });
 
   const mapped = (data ?? []).map((a) => ({
     ...a,

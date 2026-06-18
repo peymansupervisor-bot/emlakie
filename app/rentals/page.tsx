@@ -26,10 +26,6 @@ export default async function RentalsPage({
 }: {
   searchParams: ListingFilters;
 }) {
-  // If q looks like a street address, send to property lookup page
-  if (searchParams.q && isAddressQuery(searchParams.q)) {
-    redirect(`/property?address=${encodeURIComponent(searchParams.q)}`);
-  }
 
   const { listings, total, usingSampleData } = await getListings(searchParams);
 

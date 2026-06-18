@@ -56,8 +56,6 @@ export default function SearchBar({ large = false }: { large?: boolean }) {
       router.push(`/rentals/${s.slug}`);
     } else if (s?.type === 'city') {
       router.push(`/rentals?q=${encodeURIComponent(val)}`);
-    } else if (s?.type === 'address' || isAddressQuery(val)) {
-      router.push(`/property?address=${encodeURIComponent(val)}`);
     } else {
       router.push(`/rentals?q=${encodeURIComponent(val)}`);
     }

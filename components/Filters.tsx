@@ -60,15 +60,13 @@ export default function Filters() {
         onKeyDown={(e) => {
           if (e.key === 'Enter') {
             const val = (e.target as HTMLInputElement).value.trim();
-            if (isAddressQuery(val)) { router.push(`/property?address=${encodeURIComponent(val)}`); }
-            else setFilter('city', val);
+            setFilter('city', val);
           }
         }}
         onBlur={(e) => {
           const val = e.target.value.trim();
           if (val !== (searchParams.get('city') ?? '')) {
-            if (isAddressQuery(val)) { router.push(`/property?address=${encodeURIComponent(val)}`); }
-            else setFilter('city', val);
+            setFilter('city', val);
           }
         }}
         placeholder="City or ZIP"

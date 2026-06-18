@@ -44,10 +44,11 @@ export async function GET(req: NextRequest) {
   if (q.length >= 3 && /\d/.test(q)) {
     const { data: addrRows } = await sb
       .from('listings')
-      .select('address, city, state, slug, id')
+      .select('address, city, state, slug, id, status')
       .ilike('address', `%${q}%`)
-      .eq('status', 'active')
-      .limit(6);
+      .in('status', ['active', 'inactive'])
+      .order('address')
+      .limit(12);
 
     listingAddresses = (addrRows ?? [])
       .filter((r) => r.address)

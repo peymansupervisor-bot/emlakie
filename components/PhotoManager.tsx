@@ -12,6 +12,7 @@ interface Props {
 export default function PhotoManager({ listingId, initialPhotos }: Props) {
   const [photos, setPhotos] = useState<string[]>(initialPhotos);
   const [uploading, setUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState('');
   const [deletingUrl, setDeletingUrl] = useState<string | null>(null);
   const [msg, setMsg] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
@@ -21,23 +22,34 @@ export default function PhotoManager({ listingId, initialPhotos }: Props) {
     if (!files.length) return;
     setUploading(true);
     setMsg(null);
+    let succeeded = 0;
+    let lastPhotos = photos;
     try {
       const token = await getToken();
-      const fd = new FormData();
-      files.forEach((f) => fd.append('photos', f));
-      const res = await fetch(`/api/listings/${listingId}/photos`, {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${token}` },
-        body: fd,
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error);
-      setPhotos(data.photos);
-      setMsg(`${files.length} photo${files.length > 1 ? 's' : ''} uploaded.`);
+      for (let i = 0; i < files.length; i++) {
+        setUploadProgress(`Uploading ${i + 1} of ${files.length}…`);
+        const fd = new FormData();
+        fd.append('photos', files[i]);
+        const res = await fetch(`/api/listings/${listingId}/photos`, {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${token}` },
+          body: fd,
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error);
+        lastPhotos = data.photos;
+        setPhotos(data.photos);
+        succeeded++;
+      }
+      setMsg(`${succeeded} photo${succeeded > 1 ? 's' : ''} uploaded.`);
     } catch (err: unknown) {
-      setMsg((err as Error).message ?? 'Upload failed.');
+      setPhotos(lastPhotos);
+      setMsg(succeeded > 0
+        ? `${succeeded} of ${files.length} uploaded — ${(err as Error).message}`
+        : ((err as Error).message ?? 'Upload failed.'));
     } finally {
       setUploading(false);
+      setUploadProgress('');
       if (fileRef.current) fileRef.current.value = '';
     }
   }
@@ -68,7 +80,7 @@ export default function PhotoManager({ listingId, initialPhotos }: Props) {
       <div className="flex items-center justify-between mb-4">
         <h2 className="font-bold text-gray-900">Photos</h2>
         <label className={`cursor-pointer rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-700 ${uploading ? 'opacity-60 pointer-events-none' : ''}`}>
-          {uploading ? 'Uploading…' : '+ Add photos'}
+          {uploading ? (uploadProgress || 'Uploading…') : '+ Add photos'}
           <input
             ref={fileRef}
             type="file"

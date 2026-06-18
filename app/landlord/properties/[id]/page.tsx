@@ -291,7 +291,7 @@ export default function PropertyDashboardPage() {
               <p className="mt-2 text-sm text-gray-600">Amenities: {listing.amenities.join(', ')}</p>
             )}
             <Link
-              href={`/rentals/${listing.id}`}
+              href={`/rentals/${listing.slug ?? listing.id}`}
               className="mt-4 inline-block text-sm font-semibold text-brand-600 hover:text-brand-700"
             >
               View public listing →

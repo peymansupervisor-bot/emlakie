@@ -19,7 +19,36 @@ export async function GET(req: NextRequest) {
     .order('created_at', { ascending: false })
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
-  return NextResponse.json(data)
+
+  const mapped = (data ?? []).map((row: Record<string, unknown>) => ({
+    id: row.id,
+    title: row.title,
+    description: row.description,
+    address: row.address,
+    city: row.city,
+    state: row.state,
+    zip: row.zip,
+    lat: row.lat != null ? Number(row.lat) : undefined,
+    lng: row.lng != null ? Number(row.lng) : undefined,
+    price: Number(row.monthly_rent ?? row.price ?? 0),
+    bedrooms: Number(row.bedrooms),
+    bathrooms: Number(row.bathrooms),
+    sqft: Number(row.living_area_sqft ?? row.sqft ?? 0),
+    property_type: row.property_type,
+    ownership_type: row.ownership_type,
+    amenities: (row.amenities as string[]) ?? [],
+    photos: (row.photos as string[]) ?? [],
+    status: row.status,
+    availableFrom: row.available_from,
+    view_count: Number(row.view_count ?? 0),
+    applicant_count: Number(row.applicant_count ?? 0),
+    listing_source: row.listing_source ?? 'owner',
+    license_number: row.license_number,
+    virtual_tour_url: row.virtual_tour_url,
+    slug: row.slug,
+    expiresAt: row.expires_at,
+  }))
+  return NextResponse.json(mapped)
 }
 
 // POST /api/listings — create a new listing with photos

@@ -159,7 +159,7 @@ export default async function ListingPage({ params }: Props) {
 
           {listing.description && (
             <div className="mt-8 rounded-2xl border border-gray-100 bg-gray-50 px-6 py-5">
-              <h2 className="text-lg font-bold text-gray-900">About this home</h2>
+              <h2 className="text-lg font-bold text-gray-900">Home highlights</h2>
               <p className="mt-3 whitespace-pre-line text-[15px] leading-7 text-gray-600">
                 {listing.description.replace(/\s*Copyright\s+The\s+MLS\.?.*$/i, '').trim()}
               </p>

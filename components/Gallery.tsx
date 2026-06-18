@@ -12,16 +12,24 @@ export default function Gallery({ photos, title }: Props) {
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const thumbsRef = useRef<HTMLDivElement>(null);
 
   const prev = useCallback(() => setActiveIndex((i) => (i - 1 + photos.length) % photos.length), [photos.length]);
   const next = useCallback(() => setActiveIndex((i) => (i + 1) % photos.length), [photos.length]);
 
+  // Scroll active thumbnail into view
   useEffect(() => {
-    if (!lightboxOpen) return;
+    const container = thumbsRef.current;
+    if (!container) return;
+    const active = container.children[activeIndex] as HTMLElement | undefined;
+    active?.scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'smooth' });
+  }, [activeIndex]);
+
+  useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if (e.key === 'ArrowLeft') prev();
       if (e.key === 'ArrowRight') next();
-      if (e.key === 'Escape') setLightboxOpen(false);
+      if (e.key === 'Escape' && lightboxOpen) setLightboxOpen(false);
     };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
@@ -43,71 +51,94 @@ export default function Gallery({ photos, title }: Props) {
     );
   }
 
-  const openAt = (i: number) => { setActiveIndex(i); setLightboxOpen(true); };
-
   return (
     <>
-      {/* ── Photo grid ── */}
-      <div className="grid h-[420px] grid-cols-4 grid-rows-2 gap-1.5 overflow-hidden rounded-2xl sm:h-[480px]">
-        {/* Hero — spans 2 cols and 2 rows */}
-        <button
-          onClick={() => openAt(0)}
-          className="relative col-span-2 row-span-2 overflow-hidden"
-          aria-label="Open photo gallery"
-        >
+      {/* ── Main carousel ── */}
+      <div className="overflow-hidden rounded-xl">
+        {/* Main image */}
+        <div className="relative aspect-[16/9] w-full bg-gray-100">
           <Image
-            src={photos[0]}
-            alt={`${title} — photo 1`}
+            src={photos[activeIndex]}
+            alt={`${title} — photo ${activeIndex + 1}`}
             fill
             priority
-            sizes="(max-width: 768px) 100vw, 50vw"
-            className="object-cover transition duration-300 hover:scale-[1.02]"
+            sizes="(max-width: 768px) 100vw, 60vw"
+            className="object-cover"
           />
-        </button>
 
-        {/* 4 smaller tiles */}
-        {[1, 2, 3, 4].map((i) => (
-          <button
-            key={i}
-            onClick={() => openAt(i)}
-            disabled={!photos[i]}
-            className="relative overflow-hidden bg-gray-100"
-            aria-label={photos[i] ? `View photo ${i + 1}` : undefined}
-          >
-            {photos[i] ? (
-              <>
-                <Image
-                  src={photos[i]}
-                  alt={`${title} — photo ${i + 1}`}
-                  fill
-                  sizes="25vw"
-                  className="object-cover transition duration-300 hover:scale-[1.02]"
-                />
-                {/* "See all" overlay on last tile */}
-                {i === 4 && photos.length > 5 && (
-                  <div className="absolute inset-0 flex items-center justify-center bg-black/50">
-                    <span className="text-lg font-bold text-white">+{photos.length - 5} more</span>
-                  </div>
-                )}
-              </>
-            ) : (
-              <div className="h-full w-full bg-gray-100" />
+          {/* Prev arrow */}
+          {photos.length > 1 && (
+            <button
+              onClick={prev}
+              className="absolute left-3 top-1/2 -translate-y-1/2 flex h-9 w-9 items-center justify-center rounded-full bg-black/50 text-white hover:bg-black/70 transition"
+              aria-label="Previous photo"
+            >
+              <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+          )}
+
+          {/* Next arrow */}
+          {photos.length > 1 && (
+            <button
+              onClick={next}
+              className="absolute right-3 top-1/2 -translate-y-1/2 flex h-9 w-9 items-center justify-center rounded-full bg-black/50 text-white hover:bg-black/70 transition"
+              aria-label="Next photo"
+            >
+              <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+          )}
+
+          {/* Bottom overlays */}
+          <div className="absolute bottom-0 left-0 right-0 flex items-end justify-between px-3 py-2">
+            <button
+              onClick={() => setLightboxOpen(true)}
+              className="rounded bg-black/50 px-2 py-1 text-xs text-white hover:bg-black/70 transition"
+            >
+              Click to enlarge
+            </button>
+            {photos.length > 1 && (
+              <span className="rounded bg-black/50 px-2 py-1 text-xs text-white">
+                {activeIndex + 1} / {photos.length}
+              </span>
             )}
-          </button>
-        ))}
-
+          </div>
         </div>
 
-      {/* "See all photos" button below grid */}
+        {/* Thumbnail strip */}
+        {photos.length > 1 && (
+          <div
+            ref={thumbsRef}
+            className="flex gap-1.5 overflow-x-auto bg-gray-50 p-2 scrollbar-hide"
+          >
+            {photos.map((photo, i) => (
+              <button
+                key={photo}
+                onClick={() => setActiveIndex(i)}
+                className={`relative h-16 w-24 shrink-0 overflow-hidden rounded transition ${
+                  i === activeIndex
+                    ? 'ring-2 ring-green-600 ring-offset-1'
+                    : 'opacity-70 hover:opacity-100'
+                }`}
+                aria-label={`Go to photo ${i + 1}`}
+              >
+                <Image src={photo} alt={`Thumbnail ${i + 1}`} fill sizes="96px" className="object-cover" />
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* View full screen link */}
       {photos.length > 1 && (
         <button
-          onClick={() => openAt(0)}
-          className="mt-2 flex items-center gap-1.5 self-end rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-xs font-semibold text-gray-700 shadow-sm hover:bg-gray-50 transition"
+          onClick={() => setLightboxOpen(true)}
+          className="mt-1 text-xs text-gray-500 underline hover:text-gray-700 transition"
         >
-          <svg className="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor">
-            <path fillRule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clipRule="evenodd" />
-          </svg>
-          See all {photos.length} photos
+          View full screen
         </button>
       )}
 
@@ -156,7 +187,6 @@ export default function Gallery({ photos, title }: Props) {
               />
             </div>
 
-            {/* Prev arrow */}
             {photos.length > 1 && (
               <button
                 onClick={prev}
@@ -169,7 +199,6 @@ export default function Gallery({ photos, title }: Props) {
               </button>
             )}
 
-            {/* Next arrow */}
             {photos.length > 1 && (
               <button
                 onClick={next}

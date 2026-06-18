@@ -30,7 +30,9 @@ export default function StreetView({ lat, lng, address, city, state }: Props) {
 
   if (!apiKey) return null;
 
-  const location = lat && lng ? `${lat},${lng}` : [address, city, state].filter(Boolean).join(', ');
+  // Strip unit designators (#A, Apt 2, Unit 103, etc.) — Google Street View is street-level
+  const streetAddress = address?.replace(/\s*(#|apt\.?|unit|suite|ste\.?)\s*\S+/gi, '').trim();
+  const location = lat && lng ? `${lat},${lng}` : [streetAddress, city, state].filter(Boolean).join(', ');
   if (!location) return null;
 
   const headingParam = headingReady && heading !== null ? `&heading=${heading}` : '';

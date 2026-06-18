@@ -19,10 +19,32 @@ function mapPropertyType(type: string, subType: string): string {
   return 'house';
 }
 
+// Allowed photo hostnames for ListHub imports (SSRF protection)
+const ALLOWED_PHOTO_HOSTS = [
+  'cdn.listhub.com',
+  'photos.listhub.com',
+  'media.listhub.com',
+  'images.listhub.com',
+  'ssl.cdn-redfin.com',
+  'photos.zillowstatic.com',
+];
+
+function isAllowedPhotoUrl(url: string): boolean {
+  try {
+    const { hostname, protocol } = new URL(url);
+    if (protocol !== 'https:') return false;
+    return ALLOWED_PHOTO_HOSTS.some((h) => hostname === h || hostname.endsWith(`.${h}`));
+  } catch {
+    return false;
+  }
+}
+
 // POST /api/listhub/import — import a single ListHub listing into Emlakie
 export async function POST(req: NextRequest) {
-  const authHeader = req.headers.get('authorization');
-  if (!authHeader) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  const secret = req.headers.get('x-import-secret');
+  if (!secret || secret !== process.env.LISTHUB_IMPORT_SECRET) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
 
   const body = await req.json();
   const listing = body.listing;
@@ -36,6 +58,7 @@ export async function POST(req: NextRequest) {
   const photoUrls: string[] = [];
 
   for (const media of sorted.slice(0, 30)) {
+    if (!isAllowedPhotoUrl(media.MediaURL)) continue;
     try {
       const imgRes = await fetch(media.MediaURL, { signal: AbortSignal.timeout(8000) });
       if (!imgRes.ok) continue;

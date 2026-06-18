@@ -50,6 +50,7 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({ listings: data.value ?? [] });
   } catch (err) {
-    return NextResponse.json({ error: String(err) }, { status: 500 });
+    console.error('[listhub] fetch error:', err);
+    return NextResponse.json({ error: 'Failed to fetch listings' }, { status: 500 });
   }
 }

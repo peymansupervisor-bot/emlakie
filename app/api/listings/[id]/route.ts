@@ -13,9 +13,23 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
 
   const body = await req.json()
 
-  // Map frontend field names to DB column names
+  // Only allow safe, landlord-editable fields — prevents boosted_until/landlord_id/slug injection
+  const ALLOWED = new Set(['title', 'description', 'monthly_rent', 'available_from', 'amenities',
+    'status', 'virtual_tour_url', 'ownership_type', 'bedrooms', 'bathrooms',
+    'living_area_sqft', 'property_type', 'address', 'city', 'state', 'zip'])
+  const ALLOWED_STATUS = new Set(['active', 'inactive', 'lease_in_progress', 'coming_soon', 'rented'])
+
   const { price, ...rest } = body as { price?: number; [key: string]: unknown }
-  const dbPayload = { ...rest, ...(price !== undefined ? { monthly_rent: price } : {}) }
+  const raw = { ...rest, ...(price !== undefined ? { monthly_rent: price } : {}) }
+  const dbPayload: Record<string, unknown> = {}
+  for (const [k, v] of Object.entries(raw)) {
+    if (!ALLOWED.has(k)) continue
+    if (k === 'status' && typeof v === 'string' && !ALLOWED_STATUS.has(v)) continue
+    dbPayload[k] = v
+  }
+  if (Object.keys(dbPayload).length === 0) {
+    return NextResponse.json({ error: 'No valid fields to update' }, { status: 400 })
+  }
 
   const { data, error } = await supabase
     .from('listings')

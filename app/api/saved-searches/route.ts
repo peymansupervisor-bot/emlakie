@@ -9,6 +9,11 @@ function supabase() {
   );
 }
 
+function escapeHtml(s: string): string {
+  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;').replace(/'/g, '&#x27;');
+}
+
 function buildLabel(filters: Record<string, string>): string {
   const parts: string[] = [];
   if (filters.bedrooms) parts.push(filters.bedrooms === '0' ? 'Studio' : `${filters.bedrooms}BR`);
@@ -29,6 +34,7 @@ export async function POST(req: NextRequest) {
 
   const sb = supabase();
   const label = buildLabel(filters ?? {});
+  const safeLabel = escapeHtml(label);
 
   // Check for existing unverified duplicate
   const { data: existing } = await sb
@@ -57,12 +63,12 @@ export async function POST(req: NextRequest) {
   await resend.emails.send({
     from: 'EMLAKIE Alerts <alerts@emlakie.com>',
     to: email,
-    subject: `Confirm your rental alert: ${label}`,
+    subject: `Confirm your rental alert: ${safeLabel}`,
     html: `
       <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;max-width:520px;margin:0 auto;padding:32px 16px">
         <p style="font-size:22px;font-weight:900;color:#16a34a;margin:0 0 24px">EMLAKIE</p>
         <h1 style="font-size:20px;font-weight:800;color:#111827;margin:0 0 8px">Confirm your alert</h1>
-        <p style="font-size:15px;color:#374151;margin:0 0 8px">You're one click away from getting notified when new homes matching <strong>${label}</strong> are listed.</p>
+        <p style="font-size:15px;color:#374151;margin:0 0 8px">You're one click away from getting notified when new homes matching <strong>${safeLabel}</strong> are listed.</p>
         <a href="${verifyUrl}" style="display:inline-block;margin:24px 0;background:#16a34a;color:#fff;text-decoration:none;font-size:15px;font-weight:700;padding:14px 32px;border-radius:10px">
           Confirm Alert
         </a>

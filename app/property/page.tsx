@@ -123,7 +123,7 @@ export default async function PropertyPage({ searchParams }: Props) {
             {/* E-VALUE™ — hero card */}
             {propData?.rentZestimate && (
               <div className="rounded-2xl bg-brand-600 p-6 text-white shadow-lg">
-                <p className="text-sm font-medium text-brand-100 uppercase tracking-wide">E-VALUE™ — Est. Monthly Rent</p>
+                <p className="text-sm font-medium text-brand-100 uppercase tracking-wide">E-rent Value™ — Est. Monthly Rent</p>
                 <p className="mt-1 text-5xl font-extrabold tracking-tight">
                   ${propData.rentZestimate.toLocaleString()}
                   <span className="ml-1 text-xl font-normal text-brand-200">/mo</span>
@@ -177,7 +177,7 @@ export default async function PropertyPage({ searchParams }: Props) {
             {areaEValue && (areaEValue.medianRent || areaEValue.byBedrooms.length > 0) && (
               <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
                 <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-base font-bold text-gray-900">E-VALUE™</h2>
+                  <h2 className="text-base font-bold text-gray-900">E-rent Value™</h2>
                   <span className="rounded-full bg-brand-50 px-2.5 py-0.5 text-xs font-semibold text-brand-700">
                     {city}
                   </span>
@@ -241,7 +241,7 @@ export default async function PropertyPage({ searchParams }: Props) {
                   )}
                   {propData.zestimate && (
                     <div className="flex justify-between">
-                      <dt className="font-bold text-brand-700 uppercase tracking-wide text-xs">E-VALUE™</dt>
+                      <dt className="font-bold text-brand-700 uppercase tracking-wide text-xs">E-sale Value™</dt>
                       <dd className="text-lg font-extrabold text-brand-700">${propData.zestimate.toLocaleString()}</dd>
                     </div>
                   )}

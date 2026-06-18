@@ -15,7 +15,7 @@ const PROPERTY_TYPES = [
   { value: 'room',      label: 'Room' },
 ];
 
-// Studio ownership choices — determines E-Value sale eligibility
+// Studio ownership choices — determines E-sale Value™ eligibility
 const STUDIO_OWNERSHIP = [
   { value: 'apartment', label: 'Apartment unit (part of a multi-unit building, rental only)' },
   { value: 'condo',     label: 'Condominium (has its own deed, can be sold)' },
@@ -435,14 +435,14 @@ export default function NewPropertyPage() {
             </select>
           </div>
 
-          {/* Studio ownership clarification — required for accurate E-Value */}
+          {/* Studio ownership clarification — required for accurate E-sale Value™ */}
           {form.propertyType === 'studio' && (
             <div className="rounded-xl border border-amber-200 bg-amber-50 p-4">
               <label className="block text-sm font-semibold text-amber-900 mb-2">
                 Is this studio an apartment or a condominium? *
               </label>
               <p className="text-xs text-amber-700 mb-3">
-                This helps EMLAKIE accurately show the E-Value sale estimate. Studios in apartment
+                This helps EMLAKIE accurately show the E-sale Value™ estimate. Studios in apartment
                 buildings cannot be sold individually — only condominiums can.
               </p>
               <div className="space-y-2">

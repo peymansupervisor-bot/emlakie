@@ -51,7 +51,7 @@ export default function EValue({ ev }: { ev: EValueResult }) {
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <div className="flex items-center gap-2">
-            <span className="text-2xl font-extrabold text-gray-900">E-Value</span>
+            <span className="text-2xl font-extrabold text-gray-900">E-rent Value™ &amp; E-sale Value™</span>
             <span className="rounded-full bg-brand-600 px-2.5 py-0.5 text-xs font-bold text-white tracking-wide">
               by EMLAKIE
             </span>
@@ -69,7 +69,7 @@ export default function EValue({ ev }: { ev: EValueResult }) {
       {/* E-Rent + E-Sale value cards */}
       <div className={`mt-6 grid gap-4 ${ev.showSale ? 'grid-cols-2' : 'grid-cols-1 max-w-xs'}`}>
         <div className="rounded-xl bg-brand-50 border border-brand-100 p-4">
-          <p className="text-xs font-bold uppercase tracking-wide text-brand-700">E-Rent</p>
+          <p className="text-xs font-bold uppercase tracking-wide text-brand-700">E-rent Value™</p>
           <p className="mt-1 text-3xl font-extrabold text-gray-900">{fmt(ev.eRent)}</p>
           <p className="mt-0.5 text-sm text-gray-500">estimated / month</p>
           <p className="mt-2 text-xs text-gray-400">
@@ -79,7 +79,7 @@ export default function EValue({ ev }: { ev: EValueResult }) {
 
         {ev.showSale && ev.eSale !== null && (
           <div className="rounded-xl bg-gray-50 border border-gray-200 p-4">
-            <p className="text-xs font-bold uppercase tracking-wide text-gray-600">E-Sale</p>
+            <p className="text-xs font-bold uppercase tracking-wide text-gray-600">E-sale Value™</p>
             <p className="mt-1 text-3xl font-extrabold text-gray-900">{fmt(ev.eSale)}</p>
             <p className="mt-0.5 text-sm text-gray-500">estimated sale value</p>
             <p className="mt-2 text-xs text-gray-400">
@@ -175,7 +175,7 @@ export default function EValue({ ev }: { ev: EValueResult }) {
 
       {/* Disclaimer */}
       <p className="mt-4 text-xs text-gray-400 leading-relaxed">
-        E-Value is EMLAKIE&apos;s automated estimate based on active comparable listings and is not a
+        E-rent Value™ and E-sale Value™ are EMLAKIE&apos;s automated estimates based on active comparable listings and are not a
         licensed appraisal. Actual rental and sale values may vary. Consult a licensed real estate
         professional for a precise valuation.
       </p>

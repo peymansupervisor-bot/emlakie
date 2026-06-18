@@ -208,7 +208,7 @@ export default function PropertyDashboardPage() {
           <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl">
             <h2 className="text-lg font-extrabold text-gray-900">Mark as Rented</h2>
             <p className="mt-1 text-sm text-gray-500">
-              This data helps EMLAKIE provide accurate E-Value estimates and supports licensed
+              This data helps EMLAKIE provide accurate E-rent Value™ and E-sale Value™ estimates and supports licensed
               appraisers who use our comparable rental data.
             </p>
 

@@ -10,8 +10,11 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Section 8 Rentals — Housing Choice Voucher Accepted',
     description: 'Find landlords who accept Section 8 Housing Choice Vouchers. Browse rental homes that welcome HCV tenants — no broker fees.',
+    type: 'website',
+    url: 'https://emlakie.com/rentals/section-8',
     images: [{ url: '/logo.png', width: 512, height: 512, alt: 'EMLAKIE' }],
   },
+  twitter: { card: 'summary_large_image', images: ['/logo.png'] },
 };
 
 const schema = {

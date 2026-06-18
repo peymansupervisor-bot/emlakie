@@ -10,8 +10,11 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Short-Term Rentals — Monthly & Flexible Lease Apartments',
     description: 'Find short-term and month-to-month rentals. Flexible leases for relocations, travel nurses, remote workers, and anyone who needs housing without a long commitment.',
+    type: 'website',
+    url: 'https://emlakie.com/rentals/short-term',
     images: [{ url: '/logo.png', width: 512, height: 512, alt: 'EMLAKIE' }],
   },
+  twitter: { card: 'summary_large_image', images: ['/logo.png'] },
 };
 
 const schema = {

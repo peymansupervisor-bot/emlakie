@@ -23,11 +23,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       title: post.title,
       description: post.description,
       type: 'article',
+      url: `https://emlakie.com/blog/${slug}`,
       publishedTime: post.date,
       images: [{ url: '/logo.png', width: 512, height: 512, alt: 'EMLAKIE' }],
     },
     twitter: {
       card: 'summary_large_image',
+      title: post.title,
+      description: post.description,
       images: ['/logo.png'],
     },
   };

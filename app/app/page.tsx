@@ -6,6 +6,15 @@ export const metadata: Metadata = {
   title: 'Get the EMLAKIE App',
   description:
     'Search rentals, chat with landlords, and apply in minutes. EMLAKIE is coming soon to the App Store and Google Play.',
+  alternates: { canonical: 'https://emlakie.com/app' },
+  openGraph: {
+    title: 'Get the EMLAKIE App',
+    description: 'Search rentals, chat with landlords, and apply in minutes. EMLAKIE is coming soon to the App Store and Google Play.',
+    type: 'website',
+    url: 'https://emlakie.com/app',
+    images: [{ url: '/logo.png', width: 512, height: 512, alt: 'EMLAKIE' }],
+  },
+  twitter: { card: 'summary_large_image', images: ['/logo.png'] },
 };
 
 export default function AppPage() {

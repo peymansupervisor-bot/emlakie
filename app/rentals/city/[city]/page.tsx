@@ -31,8 +31,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       title: `Homes for Rent in ${label}`,
       description: `Find your next home in ${label}. Search rentals by price, bedrooms, and property type on EMLAKIE.`,
       type: 'website',
+      url: `https://emlakie.com/rentals/city/${slug}`,
       images: [{ url: '/logo.png', width: 512, height: 512, alt: 'EMLAKIE' }],
     },
+    twitter: { card: 'summary_large_image', images: ['/logo.png'] },
   };
 }
 

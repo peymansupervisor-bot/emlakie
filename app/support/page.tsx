@@ -4,6 +4,15 @@ import SupportChat from '@/components/SupportChat';
 export const metadata: Metadata = {
   title: 'Support | EMLAKIE',
   description: 'Get help with your EMLAKIE account. Our AI support agent can diagnose and fix issues instantly.',
+  alternates: { canonical: 'https://emlakie.com/support' },
+  openGraph: {
+    title: 'Support | EMLAKIE',
+    description: 'Get help with your EMLAKIE account. Our AI support agent can diagnose and fix issues instantly.',
+    type: 'website',
+    url: 'https://emlakie.com/support',
+    images: [{ url: '/logo.png', width: 512, height: 512, alt: 'EMLAKIE' }],
+  },
+  twitter: { card: 'summary_large_image', images: ['/logo.png'] },
 };
 
 export default function SupportPage() {

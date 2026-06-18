@@ -10,8 +10,11 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Pet-Friendly Rentals — Apartments & Houses That Allow Pets',
     description: 'Find pet-friendly apartments, houses, and condos for rent. Browse listings from landlords who welcome dogs, cats, and other pets — no broker fees.',
+    type: 'website',
+    url: 'https://emlakie.com/rentals/pet-friendly',
     images: [{ url: '/logo.png', width: 512, height: 512, alt: 'EMLAKIE' }],
   },
+  twitter: { card: 'summary_large_image', images: ['/logo.png'] },
 };
 
 const schema = {

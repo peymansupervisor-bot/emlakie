@@ -10,8 +10,11 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Furnished Rentals — Move-In Ready Apartments & Houses',
     description: 'Browse furnished apartments and houses for rent. Move in with just your suitcase — ideal for relocations, travel nurses, and short-term stays.',
+    type: 'website',
+    url: 'https://emlakie.com/rentals/furnished',
     images: [{ url: '/logo.png', width: 512, height: 512, alt: 'EMLAKIE' }],
   },
+  twitter: { card: 'summary_large_image', images: ['/logo.png'] },
 };
 
 const schema = {

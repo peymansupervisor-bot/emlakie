@@ -20,6 +20,9 @@ export interface Application {
   tenant_phone?: string;
   message: string;
   income: number;
+  credit_score?: number | null;
+  move_in?: string | null;
+  source?: string | null;
   ai_match_score?: number;
   ai_summary?: string;
   status: 'pending' | 'approved' | 'rejected' | 'withdrawn';

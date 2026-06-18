@@ -41,6 +41,29 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   return NextResponse.json({ photos: updatedPhotos })
 }
 
+// PATCH /api/listings/[id]/photos — append already-uploaded URLs to listing (client uploads directly to storage)
+export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
+  const token = req.headers.get('authorization')?.replace('Bearer ', '')
+  if (!token) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
+  const supabase = createSupabaseWithToken(token)
+  const { data: { user }, error: authErr } = await supabase.auth.getUser()
+  if (authErr || !user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
+  const { urls } = await req.json()
+  if (!Array.isArray(urls) || urls.length === 0) return NextResponse.json({ error: 'urls required' }, { status: 400 })
+
+  const { data: listing } = await supabase.from('listings').select('photos').eq('id', id).eq('landlord_id', user.id).single()
+  if (!listing) return NextResponse.json({ error: 'Not found' }, { status: 404 })
+
+  const updatedPhotos = [...((listing.photos as string[]) ?? []), ...urls]
+  const { error } = await supabase.from('listings').update({ photos: updatedPhotos }).eq('id', id).eq('landlord_id', user.id)
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+
+  return NextResponse.json({ photos: updatedPhotos })
+}
+
 // DELETE /api/listings/[id]/photos — remove a specific photo URL from listing
 export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params

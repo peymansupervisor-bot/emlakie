@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import { useRef, useState } from 'react';
 import { getToken } from '@/lib/landlord/client';
+import { supabase } from '@/lib/supabase';
 
 interface Props {
   listingId: string;
@@ -22,30 +23,38 @@ export default function PhotoManager({ listingId, initialPhotos }: Props) {
     if (!files.length) return;
     setUploading(true);
     setMsg(null);
-    let succeeded = 0;
-    let lastPhotos = photos;
+    const newUrls: string[] = [];
     try {
-      const token = await getToken();
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('Not signed in');
+
       for (let i = 0; i < files.length; i++) {
         setUploadProgress(`Uploading ${i + 1} of ${files.length}…`);
-        const fd = new FormData();
-        fd.append('photos', files[i]);
-        const res = await fetch(`/api/listings/${listingId}/photos`, {
-          method: 'POST',
-          headers: { Authorization: `Bearer ${token}` },
-          body: fd,
-        });
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error);
-        lastPhotos = data.photos;
-        setPhotos(data.photos);
-        succeeded++;
+        const file = files[i];
+        const ext = file.name.split('.').pop() ?? 'jpg';
+        const path = `${user.id}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+        const { error: uploadErr } = await supabase.storage
+          .from('listing-photos')
+          .upload(path, file, { contentType: file.type, upsert: false });
+        if (uploadErr) throw new Error(uploadErr.message);
+        const { data: { publicUrl } } = supabase.storage.from('listing-photos').getPublicUrl(path);
+        newUrls.push(publicUrl);
       }
-      setMsg(`${succeeded} photo${succeeded > 1 ? 's' : ''} uploaded.`);
+
+      // Append all new URLs to the listing in one API call
+      const token = await getToken();
+      const res = await fetch(`/api/listings/${listingId}/photos`, {
+        method: 'PATCH',
+        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ urls: newUrls }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+      setPhotos(data.photos);
+      setMsg(`${files.length} photo${files.length > 1 ? 's' : ''} uploaded.`);
     } catch (err: unknown) {
-      setPhotos(lastPhotos);
-      setMsg(succeeded > 0
-        ? `${succeeded} of ${files.length} uploaded — ${(err as Error).message}`
+      setMsg(newUrls.length > 0
+        ? `${newUrls.length} of ${files.length} uploaded — ${(err as Error).message}`
         : ((err as Error).message ?? 'Upload failed.'));
     } finally {
       setUploading(false);

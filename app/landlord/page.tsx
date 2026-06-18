@@ -92,7 +92,16 @@ export default function PropertiesPage() {
             { label: 'Total views', value: totalViews, filter: null },
             { label: 'Total applicants', value: totalApplicants, filter: null },
           ].map((s) => (
-            s.filter ? (
+            s.label === 'Total applicants' ? (
+              <Link
+                key={s.label}
+                href="/landlord/leads"
+                className="rounded-2xl border border-gray-200 bg-white p-4 shadow-card text-left transition hover:border-brand-400 hover:shadow-card-hover"
+              >
+                <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">{s.label}</p>
+                <p className="mt-1 text-2xl font-extrabold text-gray-900">{s.value}</p>
+              </Link>
+            ) : s.filter ? (
               <button
                 key={s.label}
                 onClick={() => { setTab(s.filter!); window.scrollTo({ top: 200, behavior: 'smooth' }); }}

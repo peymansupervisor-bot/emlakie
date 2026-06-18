@@ -29,20 +29,26 @@ export async function getPropertyData(address: string): Promise<ZllwPropertyData
   if (!key) return null;
 
   try {
-    const [propRes, rentRes] = await Promise.all([
-      fetch(
-        `https://zllw-working-api.p.rapidapi.com/pro/byaddress?propertyaddress=${encodeURIComponent(address)}`,
-        { headers: HEADERS(key), next: { revalidate: 86400 } }
-      ),
-      fetch(
-        `https://zllw-working-api.p.rapidapi.com/graph_charts?byaddress=${encodeURIComponent(address)}&which=rent_zestimate_history&recent_first=True`,
-        { headers: HEADERS(key), next: { revalidate: 86400 } }
-      ),
-    ]);
-
-    const [propData, rentData] = await Promise.all([propRes.json(), rentRes.json()]);
+    const propRes = await fetch(
+      `https://zllw-working-api.p.rapidapi.com/pro/byaddress?propertyaddress=${encodeURIComponent(address)}`,
+      { headers: HEADERS(key), next: { revalidate: 86400 } }
+    );
+    const propData = await propRes.json();
     const pd = propData?.propertyDetails;
     if (!pd) return null;
+
+    // Build a clean address from the API response for the rent call (avoids Nominatim verbosity)
+    const cleanAddress = [
+      pd.address?.streetAddress ?? pd.streetAddress,
+      pd.address?.city ?? pd.city,
+      `${pd.address?.state ?? pd.state} ${pd.address?.zipcode ?? pd.zipcode}`,
+    ].filter(Boolean).join(', ');
+
+    const rentRes = await fetch(
+      `https://zllw-working-api.p.rapidapi.com/graph_charts?byaddress=${encodeURIComponent(cleanAddress)}&which=rent_zestimate_history&recent_first=True`,
+      { headers: HEADERS(key), next: { revalidate: 86400 } }
+    );
+    const rentData = await rentRes.json();
 
     const rentPoints: { x: number; y: number }[] = rentData?.DataPoints?.homeValueChartData?.[0]?.points ?? [];
     const rentZestimate = rentPoints.length > 0 ? rentPoints[0].y : null;

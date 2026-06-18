@@ -4,7 +4,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { isDemo, isSignedIn, signOut } from '@/lib/landlord/client';
+import { getProfile, isDemo, isSignedIn, signOut } from '@/lib/landlord/client';
+import { LandlordProfile } from '@/lib/landlord/types';
 
 const TABS = [
   { href: '/landlord', exact: true, label: 'My Listings' },
@@ -20,6 +21,7 @@ export default function LandlordLayout({ children }: { children: React.ReactNode
   const isLogin   = pathname === '/landlord/login';
   const [ready, setReady] = useState(false);
   const [demo,  setDemo]  = useState(false);
+  const [profile, setProfile] = useState<LandlordProfile | null>(null);
 
   useEffect(() => {
     async function check() {
@@ -29,6 +31,7 @@ export default function LandlordLayout({ children }: { children: React.ReactNode
         return;
       }
       setDemo(isDemo());
+      getProfile().then(setProfile);
       setReady(true);
     }
     check();
@@ -58,7 +61,12 @@ export default function LandlordLayout({ children }: { children: React.ReactNode
           <div className="flex items-center justify-between py-4">
             <div>
               <p className="text-xs font-semibold uppercase tracking-widest text-green-200">Landlord Portal</p>
-              <p className="text-xl font-extrabold leading-tight">Welcome back</p>
+              <p className="text-xl font-extrabold leading-tight">
+                {profile?.display_name ? `Welcome, ${profile.display_name.split(' ')[0]}` : 'Welcome back'}
+              </p>
+              {profile?.account_id && (
+                <p className="text-xs text-green-300 mt-0.5">Account {profile.account_id}</p>
+              )}
             </div>
             <div className="flex items-center gap-3">
               <Link

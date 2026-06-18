@@ -7,6 +7,12 @@ export interface LandlordUser {
   role?: 'tenant' | 'landlord';
 }
 
+export interface LandlordProfile {
+  display_name?: string | null;
+  email?: string | null;
+  account_id?: string | null;
+}
+
 export interface Application {
   id: string;
   listing_id: string;

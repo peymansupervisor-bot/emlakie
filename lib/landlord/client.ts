@@ -1,7 +1,7 @@
 'use client';
 
 import { supabase } from '@/lib/supabase';
-import { Application, Conversation, LandlordListing, LandlordUser } from './types';
+import { Application, Conversation, LandlordListing, LandlordProfile, LandlordUser } from './types';
 import { demoApplications, demoConversations, demoListings } from './demo-data';
 
 const DEMO_KEY = 'emlakie_demo';
@@ -29,6 +29,18 @@ export async function getToken(): Promise<string | null> {
 export async function signOut() {
   if (typeof window !== 'undefined') localStorage.removeItem(DEMO_KEY);
   await supabase.auth.signOut();
+}
+
+export async function getProfile(): Promise<LandlordProfile | null> {
+  if (isDemo()) return { display_name: 'Demo User', account_id: 'EML-000' };
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return null;
+  const { data } = await supabase
+    .from('profiles')
+    .select('display_name, email, account_id')
+    .eq('id', user.id)
+    .single();
+  return data ?? null;
 }
 
 export async function sendOtp(phone: string): Promise<void> {

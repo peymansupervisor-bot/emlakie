@@ -4,6 +4,8 @@ import { getAreaEValue } from '@/lib/e-value';
 import { getPropertyData } from '@/lib/zllw';
 import Link from 'next/link';
 import ListingCard from '@/components/ListingCard';
+import Navbar from '@/components/Navbar';
+import Footer from '@/components/Footer';
 import StreetView from '@/components/StreetView';
 import type { Metadata } from 'next';
 
@@ -23,10 +25,14 @@ export default async function PropertyPage({ searchParams }: Props) {
 
   if (!rawAddress) {
     return (
-      <main className="mx-auto max-w-3xl px-4 py-20 text-center">
-        <p className="text-gray-500">No address provided.</p>
-        <Link href="/rentals" className="mt-4 inline-block text-brand-600 font-semibold hover:underline">Browse all rentals →</Link>
-      </main>
+      <>
+        <Navbar />
+        <main className="mx-auto max-w-3xl px-4 py-20 text-center">
+          <p className="text-gray-500">No address provided.</p>
+          <Link href="/rentals" className="mt-4 inline-block text-brand-600 font-semibold hover:underline">Browse all rentals →</Link>
+        </main>
+        <Footer />
+      </>
     );
   }
 
@@ -43,22 +49,18 @@ export default async function PropertyPage({ searchParams }: Props) {
 
   const zip = addr?.postcode ?? '';
   const neighborhood = addr?.neighbourhood ?? addr?.suburb ?? '';
+
+  // Preserve unit number — Nominatim drops it, so parse from rawAddress
   const baseStreet = [addr?.house_number, addr?.road].filter(Boolean).join(' ');
-  // Preserve unit number from the original query — Nominatim drops it
-  // Look in the first comma-segment (the street part) for a trailing unit token
   const streetSegment = rawAddress.split(',')[0].trim();
   const unitMatch = streetSegment.match(/\s+(?:apt\.?|unit|#|suite\s+)?(\w+)\s*$/i);
   const candidateUnit = unitMatch?.[1] ?? '';
-  // Only use it if it's not the house number itself and not part of the road name
-  const isUnit = candidateUnit &&
-    candidateUnit !== addr?.house_number &&
-    !(addr?.road ?? '').toLowerCase().includes(candidateUnit.toLowerCase());
+  const isUnit = candidateUnit && candidateUnit !== addr?.house_number && !(addr?.road ?? '').toLowerCase().includes(candidateUnit.toLowerCase());
   const street = isUnit ? `${baseStreet}, Unit ${candidateUnit}` : baseStreet;
-  const fullAddress = geo?.display_name ?? rawAddress;
-  const lat = geo ? parseFloat(geo.lat) : (propData?.latitude ?? null);
-  const lng = geo ? parseFloat(geo.lon) : (propData?.longitude ?? null);
 
-  // OSM static embed bbox (±0.003 degrees around the point)
+  const lat = geo ? parseFloat(geo.lat) : null;
+  const lng = geo ? parseFloat(geo.lon) : null;
+
   const mapSrc = lat && lng
     ? `https://www.openstreetmap.org/export/embed.html?bbox=${lng - 0.004},${lat - 0.003},${lng + 0.004},${lat + 0.003}&layer=mapnik&marker=${lat},${lng}`
     : null;
@@ -68,7 +70,9 @@ export default async function PropertyPage({ searchParams }: Props) {
   );
 
   return (
-    <main className="mx-auto max-w-4xl px-4 py-10 sm:px-6">
+    <>
+      <Navbar />
+      <main className="mx-auto max-w-4xl px-4 py-10 sm:px-6">
 
         {/* Breadcrumb */}
         <nav className="mb-6 flex items-center gap-2 text-sm text-gray-400">
@@ -80,7 +84,7 @@ export default async function PropertyPage({ searchParams }: Props) {
         </nav>
 
         {/* Header */}
-        <div className="mb-6">
+        <div className="mb-8">
           <h1 className="text-2xl font-extrabold text-gray-900 sm:text-3xl">
             {street || rawAddress}
           </h1>
@@ -89,51 +93,15 @@ export default async function PropertyPage({ searchParams }: Props) {
           </p>
         </div>
 
-
-        {/* Emlakie Rent Estimate banner */}
-        <div className="mb-6 rounded-2xl bg-brand-600 px-8 py-6 text-white shadow-lg">
-          <p className="text-sm font-semibold text-brand-100 uppercase tracking-widest mb-1">Est. Monthly Rent</p>
-          {areaEValue && areaEValue.comparablesCount > 0 ? (
-            <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
-              <div>
-                <p className="text-5xl font-extrabold tracking-tight">
-                  ${areaEValue.medianRent?.toLocaleString()}
-                  <span className="ml-2 text-xl font-normal text-brand-200">/mo</span>
-                </p>
-                {areaEValue.byBedrooms.length > 1 && (
-                  <div className="mt-3 flex flex-wrap gap-3">
-                    {areaEValue.byBedrooms.map(row => (
-                      <span key={row.bedrooms} className="rounded-full bg-brand-500 px-3 py-1 text-xs font-semibold">
-                        {row.label}: ${row.median.toLocaleString()}/mo
-                      </span>
-                    ))}
-                  </div>
-                )}
-              </div>
-              <p className="text-xs text-brand-200 sm:text-right sm:max-w-[200px]">
-                Based on {areaEValue.comparablesCount} active {city} listing{areaEValue.comparablesCount !== 1 ? 's' : ''} on EMLAKIE
-              </p>
-            </div>
-          ) : (
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-              <p className="text-2xl font-bold text-brand-100">Coming soon for {city}</p>
-              <p className="text-xs text-brand-200 sm:text-right sm:max-w-[220px]">
-                List your property on EMLAKIE to help build accurate rent estimates for this area.
-              </p>
-            </div>
-          )}
-        </div>
-
-        {/* Map + info grid */}
-        <div className="grid gap-6 lg:grid-cols-2 mb-6">
+        <div className="grid gap-8 lg:grid-cols-2">
           {/* Map */}
-          <div>
+          <div className="flex flex-col gap-4">
             {mapSrc ? (
-              <div className="overflow-hidden rounded-2xl border border-gray-200 shadow-sm h-full">
+              <div className="overflow-hidden rounded-2xl border border-gray-200 shadow-sm">
                 <iframe
                   src={mapSrc}
                   title="Property location"
-                  className="h-72 w-full border-0 lg:h-full lg:min-h-[280px]"
+                  className="h-72 w-full border-0"
                   loading="lazy"
                 />
                 <div className="border-t border-gray-100 bg-gray-50 px-3 py-2 text-xs text-gray-400">
@@ -145,14 +113,27 @@ export default async function PropertyPage({ searchParams }: Props) {
                 Map not available
               </div>
             )}
+
+            {/* Street View */}
+            <StreetView lat={lat ?? undefined} lng={lng ?? undefined} address={street} city={city} state={state} />
           </div>
 
-          {/* Info cards */}
+          {/* Property details */}
           <div className="flex flex-col gap-4">
-            {/* Property Info */}
-            <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
-              <h2 className="mb-3 text-sm font-bold text-gray-900 uppercase tracking-wide">Property Info</h2>
-              <dl className="space-y-2 text-sm">
+            {/* E-VALUE™ — hero card */}
+            {propData?.rentZestimate && (
+              <div className="rounded-2xl bg-brand-600 p-6 text-white shadow-lg">
+                <p className="text-sm font-medium text-brand-100 uppercase tracking-wide">E-VALUE™ — Est. Monthly Rent</p>
+                <p className="mt-1 text-5xl font-extrabold tracking-tight">
+                  ${propData.rentZestimate.toLocaleString()}
+                  <span className="ml-1 text-xl font-normal text-brand-200">/mo</span>
+                </p>
+              </div>
+            )}
+
+            <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+              <h2 className="mb-4 text-base font-bold text-gray-900">Property Info</h2>
+              <dl className="space-y-3 text-sm">
                 {street && (
                   <div className="flex justify-between">
                     <dt className="text-gray-500">Address</dt>
@@ -162,7 +143,7 @@ export default async function PropertyPage({ searchParams }: Props) {
                 {neighborhood && (
                   <div className="flex justify-between">
                     <dt className="text-gray-500">Neighborhood</dt>
-                    <dd className="font-medium text-gray-900 text-right">{neighborhood}</dd>
+                    <dd className="font-medium text-gray-900">{neighborhood}</dd>
                   </div>
                 )}
                 {city && (
@@ -171,20 +152,69 @@ export default async function PropertyPage({ searchParams }: Props) {
                     <dd className="font-medium text-gray-900">{city}</dd>
                   </div>
                 )}
+                {state && (
+                  <div className="flex justify-between">
+                    <dt className="text-gray-500">State</dt>
+                    <dd className="font-medium text-gray-900">{state}</dd>
+                  </div>
+                )}
                 {zip && (
                   <div className="flex justify-between">
-                    <dt className="text-gray-500">ZIP</dt>
+                    <dt className="text-gray-500">ZIP Code</dt>
                     <dd className="font-medium text-gray-900">{zip}</dd>
+                  </div>
+                )}
+                {lat && lng && (
+                  <div className="flex justify-between">
+                    <dt className="text-gray-500">Coordinates</dt>
+                    <dd className="font-medium text-gray-900 text-right text-xs">{lat.toFixed(5)}, {lng.toFixed(5)}</dd>
                   </div>
                 )}
               </dl>
             </div>
 
-            {/* Property Details from ZLLW */}
+            {/* E-Value area estimate */}
+            {areaEValue && (areaEValue.medianRent || areaEValue.byBedrooms.length > 0) && (
+              <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-base font-bold text-gray-900">E-VALUE™</h2>
+                  <span className="rounded-full bg-brand-50 px-2.5 py-0.5 text-xs font-semibold text-brand-700">
+                    {city}
+                  </span>
+                </div>
+                <p className="text-xs text-gray-400 mb-4">Estimated rent based on {areaEValue.comparablesCount} active {city} listings on EMLAKIE</p>
+
+                {areaEValue.byBedrooms.length > 0 ? (
+                  <div className="space-y-2">
+                    {areaEValue.byBedrooms.map((row) => (
+                      <div key={row.bedrooms} className="flex items-center gap-3">
+                        <span className="w-16 text-sm text-gray-500 shrink-0">{row.label}</span>
+                        <div className="flex-1 h-2 rounded-full bg-gray-100 overflow-hidden">
+                          <div
+                            className="h-full rounded-full bg-brand-500"
+                            style={{ width: `${Math.min(100, (row.median / (areaEValue.medianRent! * 1.5)) * 100)}%` }}
+                          />
+                        </div>
+                        <span className="text-sm font-bold text-gray-900 w-24 text-right">
+                          ${row.median.toLocaleString()}<span className="text-xs font-normal text-gray-400">/mo</span>
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                ) : areaEValue.medianRent ? (
+                  <div className="text-center py-2">
+                    <p className="text-3xl font-extrabold text-brand-600">${areaEValue.medianRent.toLocaleString()}<span className="text-base font-normal text-gray-400">/mo</span></p>
+                    <p className="text-xs text-gray-400 mt-1">Median rent estimate</p>
+                  </div>
+                ) : null}
+              </div>
+            )}
+
+            {/* Property details from ZLLW */}
             {propData && (propData.yearBuilt || propData.livingArea || propData.homeType || propData.zestimate) && (
-              <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
-                <h2 className="mb-3 text-sm font-bold text-gray-900 uppercase tracking-wide">Property Details</h2>
-                <dl className="space-y-2 text-sm">
+              <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+                <h2 className="mb-4 text-base font-bold text-gray-900">Property Details</h2>
+                <dl className="space-y-3 text-sm">
                   {propData.homeType && (
                     <div className="flex justify-between">
                       <dt className="text-gray-500">Type</dt>
@@ -210,7 +240,7 @@ export default async function PropertyPage({ searchParams }: Props) {
                     </div>
                   )}
                   {propData.zestimate && (
-                    <div className="flex justify-between items-center mt-3 pt-3 border-t border-gray-100">
+                    <div className="flex justify-between">
                       <dt className="font-bold text-brand-700 uppercase tracking-wide text-xs">E-VALUE™</dt>
                       <dd className="text-lg font-extrabold text-brand-700">${propData.zestimate.toLocaleString()}</dd>
                     </div>
@@ -218,32 +248,24 @@ export default async function PropertyPage({ searchParams }: Props) {
                 </dl>
               </div>
             )}
-          </div>
-        </div>
 
-        {/* CTA row */}
-        <div className="mb-6">
-          {/* Own this property CTA */}
-          <div className="rounded-2xl border border-brand-200 bg-brand-50 p-5 flex flex-col justify-between">
-            <div>
+            {/* List this property CTA */}
+            <div className="rounded-2xl border border-brand-200 bg-brand-50 p-6">
               <h3 className="font-bold text-brand-800">Own this property?</h3>
               <p className="mt-1 text-sm text-brand-700">List it for free on EMLAKIE and reach thousands of renters directly — no commissions.</p>
+              <Link
+                href={`/landlord?address=${encodeURIComponent(rawAddress)}`}
+                className="mt-4 inline-block rounded-xl bg-brand-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-brand-700 transition"
+              >
+                List this property free →
+              </Link>
             </div>
-            <Link
-              href={`/landlord?address=${encodeURIComponent(rawAddress)}`}
-              className="mt-4 inline-block rounded-xl bg-brand-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-brand-700 transition text-center"
-            >
-              List this property free →
-            </Link>
           </div>
         </div>
 
-        {/* Street View */}
-        <StreetView lat={lat ?? undefined} lng={lng ?? undefined} address={street} city={city} state={state} />
-
         {/* Price history */}
-        {propData && (
-          <section className="mb-6">
+        {propData && propData.priceHistory.length > 0 && (
+          <section className="mt-10">
             <h2 className="mb-4 text-xl font-bold text-gray-900">Sales &amp; Price History</h2>
             <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
               <table className="w-full text-sm">
@@ -257,7 +279,7 @@ export default async function PropertyPage({ searchParams }: Props) {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
-                  {propData.priceHistory.length > 0 ? propData.priceHistory.map((evt, i) => (
+                  {propData.priceHistory.map((evt, i) => (
                     <tr key={i} className="hover:bg-gray-50 transition-colors">
                       <td className="px-4 py-3 text-gray-600">{evt.date}</td>
                       <td className="px-4 py-3">
@@ -278,13 +300,7 @@ export default async function PropertyPage({ searchParams }: Props) {
                       </td>
                       <td className="hidden sm:table-cell px-4 py-3 text-gray-400 text-xs">{evt.source}</td>
                     </tr>
-                  )) : (
-                    <tr>
-                      <td colSpan={5} className="px-4 py-6 text-center text-sm text-gray-400">
-                        No sales history available for this property.
-                      </td>
-                    </tr>
-                  )}
+                  ))}
                 </tbody>
               </table>
             </div>
@@ -326,6 +342,8 @@ export default async function PropertyPage({ searchParams }: Props) {
           </section>
         )}
 
-    </main>
+      </main>
+      <Footer />
+    </>
   );
 }

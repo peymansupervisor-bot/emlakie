@@ -33,7 +33,7 @@ export default function Gallery({ photos, title }: Props) {
 
   if (photos.length === 0) {
     return (
-      <div className="flex aspect-[16/7] items-center justify-center rounded-2xl bg-gray-100 text-gray-400">
+      <div className="flex aspect-[16/7] items-center justify-center rounded-2xl bg-gray-100 text-gray-500">
         <svg viewBox="0 0 32 32" className="h-16 w-16 fill-current opacity-30">
           <path d="M3 7a2 2 0 0 1 2-2h22a2 2 0 0 1 2 2v18a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7zm2 0v11.586l4.293-4.293a1 1 0 0 1 1.414 0L14 17.586l5.293-5.293a1 1 0 0 1 1.414 0L27 18.586V7H5zm22 14.414-6.293-6.293L14 20.414l-4.293-4.293L5 20.707V25h22v-3.586z" />
         </svg>

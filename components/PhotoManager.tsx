@@ -86,7 +86,7 @@ export default function PhotoManager({ listingId, initialPhotos }: Props) {
       )}
 
       {photos.length === 0 ? (
-        <p className="py-8 text-center text-sm text-gray-400">No photos yet. Add clean, watermark-free photos.</p>
+        <p className="py-8 text-center text-sm text-gray-500">No photos yet. Add clean, watermark-free photos.</p>
       ) : (
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
           {photos.map((url, i) => (

@@ -110,7 +110,7 @@ export default async function Section8Page() {
         <Link href="/rentals" className="inline-block rounded-xl bg-brand-600 px-8 py-3 font-semibold text-white transition hover:bg-brand-700">
           Browse all rentals
         </Link>
-        <p className="mt-3 text-xs text-gray-400">Message landlords directly to confirm voucher acceptance before applying.</p>
+        <p className="mt-3 text-xs text-gray-500">Message landlords directly to confirm voucher acceptance before applying.</p>
       </div>
     </div>
   );

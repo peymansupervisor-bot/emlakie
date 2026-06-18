@@ -38,7 +38,7 @@ export default function LandlordLayout({ children }: { children: React.ReactNode
   }, [isLogin, pathname, router]);
 
   if (isLogin) return <>{children}</>;
-  if (!ready)  return <div className="py-24 text-center text-gray-400">Loading…</div>;
+  if (!ready)  return <div className="py-24 text-center text-gray-500">Loading…</div>;
 
   function isActive(tab: typeof TABS[0]) {
     return tab.exact ? pathname === tab.href : pathname.startsWith(tab.href);

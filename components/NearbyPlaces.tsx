@@ -114,7 +114,7 @@ export default async function NearbyPlaces({ lat, lng }: { lat: number; lng: num
                 {cat.places.map((p, i) => (
                   <li key={i} className="flex items-center justify-between text-sm text-gray-600">
                     <span className="truncate pr-2">{p.name}</span>
-                    <span className="shrink-0 text-xs text-gray-400">{metersToMiles(p.distance)} mi</span>
+                    <span className="shrink-0 text-xs text-gray-500">{metersToMiles(p.distance)} mi</span>
                   </li>
                 ))}
               </ul>

@@ -43,7 +43,7 @@ export default function ResetPasswordPage() {
             className={`${inputClass} pr-12`}
           />
           <button type="button" onClick={() => setShowPassword((v) => !v)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-600"
             tabIndex={-1} aria-label={showPassword ? 'Hide password' : 'Show password'}>
             {showPassword ? (
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">

@@ -107,7 +107,7 @@ export default function ApplyForm({ listingId, listingPrice }: Props) {
 
         {/* Email */}
         <div>
-          <label htmlFor="apply-email" className="block text-xs font-semibold text-gray-600 mb-1">Email <span className="text-gray-400 font-normal">(get instant confirmation)</span></label>
+          <label htmlFor="apply-email" className="block text-xs font-semibold text-gray-600 mb-1">Email <span className="text-gray-500 font-normal">(get instant confirmation)</span></label>
           <input
             id="apply-email"
             type="email"
@@ -148,7 +148,7 @@ export default function ApplyForm({ listingId, listingPrice }: Props) {
             className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
           />
           {incomeRatio && (
-            <p className="mt-1 text-xs text-gray-400">
+            <p className="mt-1 text-xs text-gray-500">
               Income-to-rent ratio: <span className={`font-semibold ${parseFloat(incomeRatio) >= 3 ? 'text-green-600' : 'text-amber-600'}`}>{incomeRatio}×</span>
               {parseFloat(incomeRatio) < 3 && ' (most landlords require 3×)'}
             </p>
@@ -210,7 +210,7 @@ export default function ApplyForm({ listingId, listingPrice }: Props) {
       >
         {loading ? 'Sending…' : 'Send Inquiry'}
       </button>
-      <p className="mt-2 text-center text-xs text-gray-400">No account needed</p>
+      <p className="mt-2 text-center text-xs text-gray-500">No account needed</p>
     </form>
   );
 }

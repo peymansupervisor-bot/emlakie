@@ -11,7 +11,7 @@ import { formatPrice, formatPropertyType } from '@/lib/format';
 type Tab = 'all' | 'forRent' | 'offMarket';
 
 function expiryText(iso?: string | null): { text: string; cls: string } {
-  if (!iso) return { text: '—', cls: 'text-gray-400' };
+  if (!iso) return { text: '—', cls: 'text-gray-500' };
   const days = Math.ceil((new Date(iso).getTime() - Date.now()) / 86400000);
   if (days < 0) return { text: 'Expired', cls: 'font-semibold text-red-600' };
   if (days <= 7) return { text: `${days}d left`, cls: 'font-semibold text-amber-600' };
@@ -22,7 +22,7 @@ const leaseLabel: Record<string, { label: string; cls: string }> = {
   active: { label: 'Seeking tenant', cls: 'text-brand-700' },
   rented: { label: 'Leased', cls: 'text-blue-700' },
   paused: { label: 'Paused', cls: 'text-amber-700' },
-  draft: { label: '—', cls: 'text-gray-400' },
+  draft: { label: '—', cls: 'text-gray-500' },
 };
 
 const statusPill: Record<string, { label: string; cls: string }> = {
@@ -50,7 +50,7 @@ export default function PropertiesPage() {
     return <p className="rounded-lg bg-red-50 px-4 py-3 text-red-700">{error}</p>;
   }
   if (!listings) {
-    return <p className="py-16 text-center text-gray-400">Loading properties…</p>;
+    return <p className="py-16 text-center text-gray-500">Loading properties…</p>;
   }
 
   const forRent = listings.filter((l) => l.status === 'active');
@@ -205,7 +205,7 @@ export default function PropertiesPage() {
                           {listing.applicant_count} new{listing.applicant_count === 1 ? '' : ''}
                         </Link>
                       ) : (
-                        <span className="text-gray-400">—</span>
+                        <span className="text-gray-500">—</span>
                       )}
                     </td>
                     <td className="hidden px-4 py-3 lg:table-cell">

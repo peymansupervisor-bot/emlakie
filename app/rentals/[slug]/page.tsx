@@ -302,7 +302,7 @@ export default async function ListingPage({ params }: Props) {
                     <td className="hidden sm:table-cell px-4 py-3 text-right text-gray-500">
                       {evt.pricePerSquareFoot ? `$${evt.pricePerSquareFoot}` : '—'}
                     </td>
-                    <td className="hidden sm:table-cell px-4 py-3 text-gray-400 text-xs">{evt.source}</td>
+                    <td className="hidden sm:table-cell px-4 py-3 text-gray-500 text-xs">{evt.source}</td>
                   </tr>
                 ))}
               </tbody>

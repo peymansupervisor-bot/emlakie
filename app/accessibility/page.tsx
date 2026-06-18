@@ -134,7 +134,7 @@ export default function AccessibilityPage() {
           </p>
         </section>
 
-        <p className="border-t border-gray-200 pt-6 text-sm text-gray-400">© 2026 EMLAKIE LLC · All rights reserved.</p>
+        <p className="border-t border-gray-200 pt-6 text-sm text-gray-500">© 2026 EMLAKIE LLC · All rights reserved.</p>
       </div>
     </div>
   );

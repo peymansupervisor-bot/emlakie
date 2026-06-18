@@ -221,7 +221,7 @@ export default function MapView({ listings, activeId, onMarkerClick, drawMode = 
   }, [activeId, listings, buildIcon]);
 
   if (mappable.length === 0) {
-    return <div className="flex h-full items-center justify-center bg-gray-50 text-sm text-gray-400">No listings with location data to display</div>;
+    return <div className="flex h-full items-center justify-center bg-gray-50 text-sm text-gray-500">No listings with location data to display</div>;
   }
 
   return (

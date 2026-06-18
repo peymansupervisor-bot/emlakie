@@ -121,7 +121,7 @@ export default function SupportChat() {
       {/* Suggestion chips — only shown before user sends first message */}
       {messages.length === 1 && (
         <div className="border-t border-gray-100 px-4 py-3">
-          <p className="mb-2 text-xs font-medium text-gray-400">Common questions</p>
+          <p className="mb-2 text-xs font-medium text-gray-500">Common questions</p>
           <div className="flex flex-wrap gap-2">
             {SUGGESTIONS.map((s) => (
               <button
@@ -163,7 +163,7 @@ export default function SupportChat() {
             </svg>
           </button>
         </form>
-        <p className="mt-2 text-center text-xs text-gray-400">
+        <p className="mt-2 text-center text-xs text-gray-500">
           Press Enter to send · Shift+Enter for new line
         </p>
       </div>

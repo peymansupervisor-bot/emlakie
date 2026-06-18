@@ -136,7 +136,7 @@ function AddressField({ onSelect, onType, id }: {
               onMouseDown={() => handleSelect(s)}
               className="cursor-pointer px-4 py-2.5 text-sm text-gray-700 hover:bg-green-50 hover:text-green-800 first:rounded-t-xl last:rounded-b-xl">
               <span className="font-medium">{s.address}</span>
-              <span className="ml-2 text-xs text-gray-400">{s.city}{s.state ? `, ${s.state}` : ''}{s.zip ? ` ${s.zip}` : ''}</span>
+              <span className="ml-2 text-xs text-gray-500">{s.city}{s.state ? `, ${s.state}` : ''}{s.zip ? ` ${s.zip}` : ''}</span>
             </li>
           ))}
         </ul>
@@ -305,11 +305,11 @@ export default function NewPropertyPage() {
           return (
             <div key={label} className="flex items-center gap-2">
               <div className={`flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold transition ${
-                done ? 'bg-brand-600 text-white' : active ? 'border-2 border-brand-600 text-brand-700' : 'border border-gray-300 text-gray-400'
+                done ? 'bg-brand-600 text-white' : active ? 'border-2 border-brand-600 text-brand-700' : 'border border-gray-300 text-gray-500'
               }`}>
                 {done ? '✓' : n}
               </div>
-              <span className={`hidden text-xs font-semibold sm:block ${active ? 'text-brand-700' : 'text-gray-400'}`}>
+              <span className={`hidden text-xs font-semibold sm:block ${active ? 'text-brand-700' : 'text-gray-500'}`}>
                 {label}
               </span>
               {i < steps.length - 1 && <div className="h-px w-6 bg-gray-200" />}
@@ -522,7 +522,7 @@ export default function NewPropertyPage() {
             />
             <div className="mt-1 flex items-center justify-between">
               <p className="text-xs text-gray-500">{form.description.length} / 30 min characters</p>
-              {filterChecking && <p className="text-xs text-gray-400">Checking content…</p>}
+              {filterChecking && <p className="text-xs text-gray-500">Checking content…</p>}
             </div>
             {filterWarnings.length > 0 && (
               <div className="mt-3 rounded-xl border border-red-200 bg-red-50 p-4">
@@ -540,7 +540,7 @@ export default function NewPropertyPage() {
             )}
           </div>
           <div>
-            <label className={labelCls}>Virtual tour URL <span className="text-gray-400 font-normal">(optional)</span></label>
+            <label className={labelCls}>Virtual tour URL <span className="text-gray-500 font-normal">(optional)</span></label>
             <input className={inputCls} type="url" placeholder="https://my.matterport.com/show/?m=... or YouTube link"
               value={form.virtualTourUrl} onChange={(e) => set('virtualTourUrl', e.target.value)} />
             <p className="mt-1 text-xs text-gray-500">Paste a Matterport 3D tour or YouTube walkthrough link. Renters can view it directly on your listing.</p>

@@ -66,7 +66,7 @@ export default function SaveSearchModal({ label, filters, onClose }: Props) {
               </div>
               <button
                 onClick={onClose}
-                className="ml-4 text-gray-400 hover:text-gray-600 transition"
+                className="ml-4 text-gray-500 hover:text-gray-600 transition"
                 aria-label="Close"
               >
                 <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">

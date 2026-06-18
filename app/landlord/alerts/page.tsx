@@ -49,7 +49,7 @@ export default function AlertsPage() {
               <p className={`text-sm ${alert.read ? 'text-gray-700' : 'font-semibold text-gray-900'}`}>
                 {alert.message}
               </p>
-              <p className="mt-0.5 text-xs text-gray-400">{alert.time}</p>
+              <p className="mt-0.5 text-xs text-gray-500">{alert.time}</p>
             </div>
             {!alert.read && <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-brand-600" />}
           </div>

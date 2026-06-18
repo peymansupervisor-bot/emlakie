@@ -99,7 +99,7 @@ export default async function ShortTermPage() {
         <Link href="/rentals" className="inline-block rounded-xl bg-brand-600 px-8 py-3 font-semibold text-white transition hover:bg-brand-700">
           Browse all rentals
         </Link>
-        <p className="mt-3 text-xs text-gray-400">Contact landlords directly to ask about flexible lease terms.</p>
+        <p className="mt-3 text-xs text-gray-500">Contact landlords directly to ask about flexible lease terms.</p>
       </div>
     </div>
   );

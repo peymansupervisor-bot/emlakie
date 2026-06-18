@@ -120,7 +120,7 @@ export default async function BlogPostPage({ params }: Props) {
                   {p.category}
                 </span>
                 <p className="mt-2 font-semibold text-gray-900 group-hover:text-brand-700 leading-snug text-sm">{p.title}</p>
-                <p className="mt-1 text-xs text-gray-400">{formatDate(p.date)}</p>
+                <p className="mt-1 text-xs text-gray-500">{formatDate(p.date)}</p>
               </Link>
             ))}
           </div>

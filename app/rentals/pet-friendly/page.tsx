@@ -98,7 +98,7 @@ export default async function PetFriendlyPage() {
         <Link href="/rentals" className="inline-block rounded-xl bg-brand-600 px-8 py-3 font-semibold text-white transition hover:bg-brand-700">
           Browse all rentals
         </Link>
-        <p className="mt-3 text-xs text-gray-400">Use the search filters to find pet-friendly homes in your city.</p>
+        <p className="mt-3 text-xs text-gray-500">Use the search filters to find pet-friendly homes in your city.</p>
       </div>
     </div>
   );

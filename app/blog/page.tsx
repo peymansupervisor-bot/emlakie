@@ -72,7 +72,7 @@ export default function BlogPage() {
               <h3 className="mt-3 flex-1 text-sm font-bold text-gray-900 group-hover:text-brand-700 leading-snug">
                 {post.title}
               </h3>
-              <p className="mt-1 text-xs text-gray-400">{formatDate(post.date)} · {post.readTime} min read</p>
+              <p className="mt-1 text-xs text-gray-500">{formatDate(post.date)} · {post.readTime} min read</p>
             </Link>
           ))}
         </div>
@@ -93,7 +93,7 @@ export default function BlogPage() {
                   {post.title}
                 </h3>
                 <p className="mt-2 text-xs text-gray-500 line-clamp-2">{post.description}</p>
-                <p className="mt-3 text-xs text-gray-400">{formatDate(post.date)} · {post.readTime} min read</p>
+                <p className="mt-3 text-xs text-gray-500">{formatDate(post.date)} · {post.readTime} min read</p>
               </Link>
             ))}
           </div>

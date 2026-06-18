@@ -22,7 +22,7 @@ export default function MessagesPage() {
   }, []);
 
   if (!conversations) {
-    return <p className="py-16 text-center text-gray-400">Loading messages…</p>;
+    return <p className="py-16 text-center text-gray-500">Loading messages…</p>;
   }
 
   return (
@@ -53,7 +53,7 @@ export default function MessagesPage() {
               <div className="min-w-0 flex-1">
                 <div className="flex items-center justify-between gap-2">
                   <p className="font-semibold text-gray-900">{c.tenant_name ?? 'Renter'}</p>
-                  <span className="shrink-0 text-xs text-gray-400">{timeAgo(c.last_message_at)}</span>
+                  <span className="shrink-0 text-xs text-gray-500">{timeAgo(c.last_message_at)}</span>
                 </div>
                 {c.listing_title && (
                   <p className="text-xs font-medium text-brand-600">{c.listing_title}</p>

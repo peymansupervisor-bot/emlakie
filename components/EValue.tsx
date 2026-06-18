@@ -72,7 +72,7 @@ export default function EValue({ ev }: { ev: EValueResult }) {
           <p className="text-xs font-bold uppercase tracking-wide text-brand-700">E-rent Value™</p>
           <p className="mt-1 text-3xl font-extrabold text-gray-900">{fmt(ev.eRent)}</p>
           <p className="mt-0.5 text-sm text-gray-500">estimated / month</p>
-          <p className="mt-2 text-xs text-gray-400">
+          <p className="mt-2 text-xs text-gray-500">
             Range: {fmt(ev.priceRange.min)} – {fmt(ev.priceRange.max)}/mo
           </p>
         </div>
@@ -82,7 +82,7 @@ export default function EValue({ ev }: { ev: EValueResult }) {
             <p className="text-xs font-bold uppercase tracking-wide text-gray-600">E-sale Value™</p>
             <p className="mt-1 text-3xl font-extrabold text-gray-900">{fmt(ev.eSale)}</p>
             <p className="mt-0.5 text-sm text-gray-500">estimated sale value</p>
-            <p className="mt-2 text-xs text-gray-400">
+            <p className="mt-2 text-xs text-gray-500">
               {ev.capRate}% cap rate · income approach
             </p>
           </div>
@@ -144,9 +144,9 @@ export default function EValue({ ev }: { ev: EValueResult }) {
 
           {/* Bar axis labels */}
           <div className="mt-12 flex justify-between text-[11px] font-semibold">
-            <span className="text-red-600">← Below Market<br/><span className="font-normal text-gray-400">{fmt(Math.round(ev.eRent * BAR_MIN))}</span></span>
-            <span className="text-center text-brand-700">Fair Value<br/><span className="font-normal text-gray-400">{fmt(ev.eRent)}</span></span>
-            <span className="text-right text-red-600">Above Market →<br/><span className="font-normal text-gray-400">{fmt(Math.round(ev.eRent * BAR_MAX))}</span></span>
+            <span className="text-red-600">← Below Market<br/><span className="font-normal text-gray-500">{fmt(Math.round(ev.eRent * BAR_MIN))}</span></span>
+            <span className="text-center text-brand-700">Fair Value<br/><span className="font-normal text-gray-500">{fmt(ev.eRent)}</span></span>
+            <span className="text-right text-red-600">Above Market →<br/><span className="font-normal text-gray-500">{fmt(Math.round(ev.eRent * BAR_MAX))}</span></span>
           </div>
 
           {/* Market shift summary */}
@@ -164,7 +164,7 @@ export default function EValue({ ev }: { ev: EValueResult }) {
 
       {/* Appraiser note */}
       <div className="mt-6 rounded-xl border border-gray-100 bg-gray-50 px-4 py-3 flex items-start gap-3">
-        <svg className="mt-0.5 h-4 w-4 shrink-0 text-gray-400" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
+        <svg className="mt-0.5 h-4 w-4 shrink-0 text-gray-500" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
         </svg>
         <p className="text-xs text-gray-500 leading-relaxed">
@@ -174,7 +174,7 @@ export default function EValue({ ev }: { ev: EValueResult }) {
       </div>
 
       {/* Disclaimer */}
-      <p className="mt-4 text-xs text-gray-400 leading-relaxed">
+      <p className="mt-4 text-xs text-gray-500 leading-relaxed">
         E-rent Value™ and E-sale Value™ are EMLAKIE&apos;s automated estimates based on active comparable listings and are not a
         licensed appraisal. Actual rental and sale values may vary. Consult a licensed real estate
         professional for a precise valuation.

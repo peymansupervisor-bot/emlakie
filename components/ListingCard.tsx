@@ -21,7 +21,7 @@ export default function ListingCard({ listing }: { listing: Listing }) {
             className="object-cover transition duration-300 group-hover:scale-105"
           />
         ) : (
-          <div className="flex h-full items-center justify-center text-gray-400">
+          <div className="flex h-full items-center justify-center text-gray-500">
             <svg viewBox="0 0 32 32" className="h-12 w-12 fill-current opacity-40" aria-hidden="true">
               <path d="M16 3 3 14h4v13h8v-8h2v8h8V14h4L16 3z" />
             </svg>
@@ -69,7 +69,7 @@ export default function ListingCard({ listing }: { listing: Listing }) {
             </Link>
           )}
           {listing.dom != null && (
-            <span className="text-xs text-gray-400">
+            <span className="text-xs text-gray-500">
               {listing.dom === 0 ? 'Listed today' : `${listing.dom} days on market`}
             </span>
           )}

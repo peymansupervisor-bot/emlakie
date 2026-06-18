@@ -81,7 +81,7 @@ export default function StreetView({ lat, lng, address, city, state }: Props) {
           </div>
         )}
       </div>
-      <p className="mt-2 text-xs text-gray-400">
+      <p className="mt-2 text-xs text-gray-500">
         Street View imagery is captured by Google from the roadway and may show the building directly across the street rather than the listed property. Use it to explore the neighborhood and street environment.
       </p>
     </div>

@@ -139,7 +139,7 @@ export default async function PropertyPage({ searchParams }: Props) {
     <main className="mx-auto max-w-4xl px-4 py-10 sm:px-6">
 
         {/* Breadcrumb */}
-        <nav className="mb-6 flex items-center gap-2 text-sm text-gray-400">
+        <nav className="mb-6 flex items-center gap-2 text-sm text-gray-500">
           <Link href="/" className="hover:text-brand-600">Home</Link>
           <span>/</span>
           <Link href="/rentals" className="hover:text-brand-600">Rentals</Link>
@@ -163,7 +163,7 @@ export default async function PropertyPage({ searchParams }: Props) {
             {mapSrc ? (
               <MapEmbed src={mapSrc} />
             ) : (
-              <div className="flex h-72 items-center justify-center rounded-2xl bg-gray-100 text-gray-400 text-sm">
+              <div className="flex h-72 items-center justify-center rounded-2xl bg-gray-100 text-gray-500 text-sm">
                 Map not available
               </div>
             )}
@@ -236,7 +236,7 @@ export default async function PropertyPage({ searchParams }: Props) {
                     {city}
                   </span>
                 </div>
-                <p className="text-xs text-gray-400 mb-4">Estimated rent based on {areaEValue.comparablesCount} active {city} listings on EMLAKIE</p>
+                <p className="text-xs text-gray-500 mb-4">Estimated rent based on {areaEValue.comparablesCount} active {city} listings on EMLAKIE</p>
 
                 {areaEValue.byBedrooms.length > 0 ? (
                   <div className="space-y-2">
@@ -250,15 +250,15 @@ export default async function PropertyPage({ searchParams }: Props) {
                           />
                         </div>
                         <span className="text-sm font-bold text-gray-900 w-24 text-right">
-                          ${row.median.toLocaleString()}<span className="text-xs font-normal text-gray-400">/mo</span>
+                          ${row.median.toLocaleString()}<span className="text-xs font-normal text-gray-500">/mo</span>
                         </span>
                       </div>
                     ))}
                   </div>
                 ) : areaEValue.medianRent ? (
                   <div className="text-center py-2">
-                    <p className="text-3xl font-extrabold text-brand-600">${areaEValue.medianRent.toLocaleString()}<span className="text-base font-normal text-gray-400">/mo</span></p>
-                    <p className="text-xs text-gray-400 mt-1">Median rent estimate</p>
+                    <p className="text-3xl font-extrabold text-brand-600">${areaEValue.medianRent.toLocaleString()}<span className="text-base font-normal text-gray-500">/mo</span></p>
+                    <p className="text-xs text-gray-500 mt-1">Median rent estimate</p>
                   </div>
                 ) : null}
               </div>
@@ -352,7 +352,7 @@ export default async function PropertyPage({ searchParams }: Props) {
                       <td className="hidden sm:table-cell px-4 py-3 text-right text-gray-500">
                         {evt.pricePerSquareFoot ? `$${evt.pricePerSquareFoot}` : '—'}
                       </td>
-                      <td className="hidden sm:table-cell px-4 py-3 text-gray-400 text-xs">{evt.source}</td>
+                      <td className="hidden sm:table-cell px-4 py-3 text-gray-500 text-xs">{evt.source}</td>
                     </tr>
                   ))}
                 </tbody>

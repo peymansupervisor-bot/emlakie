@@ -123,7 +123,7 @@ export default function BoostPage() {
       <div className="mb-6 rounded-2xl border border-gray-200 bg-white p-6">
         <h2 className="mb-4 text-sm font-bold uppercase tracking-wider text-gray-500">Select a listing to boost</h2>
         {listings.length === 0 ? (
-          <div className="text-center py-6 text-gray-400">
+          <div className="text-center py-6 text-gray-500">
             <p className="mb-3">No active listings yet.</p>
             <Link href="/landlord/properties/new" className="text-sm font-semibold text-green-600 underline">
               Add your first listing →
@@ -210,7 +210,7 @@ export default function BoostPage() {
           >
             {loading ? 'Redirecting to checkout…' : `Boost Now — $${selectedPlan.price}`}
           </button>
-          <p className="mt-3 text-center text-xs text-gray-400">
+          <p className="mt-3 text-center text-xs text-gray-500">
             Secure checkout · No subscription · Cancel anytime
           </p>
           {ADMIN_BYPASS_SECRET && (

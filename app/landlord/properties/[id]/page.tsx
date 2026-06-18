@@ -117,7 +117,7 @@ export default function PropertyDashboardPage() {
   }, [id]);
 
   if (listing === undefined) {
-    return <p className="py-16 text-center text-gray-400">Loading property…</p>;
+    return <p className="py-16 text-center text-gray-500">Loading property…</p>;
   }
   if (listing === null) {
     return (
@@ -216,7 +216,7 @@ export default function PropertyDashboardPage() {
             <div className="mt-5 space-y-4">
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-1">
-                  Final rent amount <span className="font-normal text-gray-400">(what the tenant actually pays)</span>
+                  Final rent amount <span className="font-normal text-gray-500">(what the tenant actually pays)</span>
                 </label>
                 <div className="relative">
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 font-semibold">$</span>
@@ -228,7 +228,7 @@ export default function PropertyDashboardPage() {
                     placeholder={listing?.price ? String(listing.price) : '0'}
                   />
                 </div>
-                <p className="mt-1 text-xs text-gray-400">
+                <p className="mt-1 text-xs text-gray-500">
                   Pre-filled with your asking price. Update if tenant negotiated a different rate.
                 </p>
               </div>

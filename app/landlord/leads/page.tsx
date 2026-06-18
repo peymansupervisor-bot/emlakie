@@ -49,7 +49,7 @@ export default function LeadsPage() {
     }).catch(() => setLeads([]));
   }, []);
 
-  if (!leads) return <p className="py-16 text-center text-gray-400">Loading leads…</p>;
+  if (!leads) return <p className="py-16 text-center text-gray-500">Loading leads…</p>;
 
   const filtered = leads.filter((l) => {
     if (filterListing && l.listing_id !== filterListing) return false;

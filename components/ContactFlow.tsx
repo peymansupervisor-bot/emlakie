@@ -199,7 +199,7 @@ function EmailForm({ subject: initialSubject }: { subject?: string }) {
         className="w-full rounded-xl bg-brand-600 py-3 text-sm font-semibold text-white transition hover:bg-brand-700 disabled:opacity-60">
         {loading ? 'Sending…' : 'Send Message'}
       </button>
-      <p className="text-center text-xs text-gray-400">Or email us directly at <a href="mailto:support@emlakie.com" className="text-brand-600 hover:underline">support@emlakie.com</a></p>
+      <p className="text-center text-xs text-gray-500">Or email us directly at <a href="mailto:support@emlakie.com" className="text-brand-600 hover:underline">support@emlakie.com</a></p>
     </form>
   );
 }
@@ -215,7 +215,7 @@ export default function ContactFlow() {
 
   /* Breadcrumb */
   const breadcrumb = (
-    <nav aria-label="Breadcrumb" className="mb-6 flex items-center gap-2 text-sm text-gray-400">
+    <nav aria-label="Breadcrumb" className="mb-6 flex items-center gap-2 text-sm text-gray-500">
       <button onClick={reset} className={`font-medium transition ${!role ? 'text-gray-900 cursor-default' : 'hover:text-brand-600'}`}
         aria-current={!role ? 'page' : undefined}>
         Contact
@@ -309,7 +309,7 @@ export default function ContactFlow() {
           <EmailForm subject={topic.formSubject} />
         </div>
       ) : (
-        <p className="mt-6 text-center text-sm text-gray-400">
+        <p className="mt-6 text-center text-sm text-gray-500">
           Still stuck?{' '}
           <button onClick={() => setTopic(null)} className="font-semibold text-brand-600 hover:underline">
             Browse other topics

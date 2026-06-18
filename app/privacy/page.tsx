@@ -80,9 +80,15 @@ export default function PrivacyPage() {
           </ul>
           <h3 className="mt-4 font-semibold text-gray-800">Information from third parties</h3>
           <ul className="mt-2 list-disc space-y-2 pl-5">
-            <li><strong>Address data:</strong> We use OpenStreetMap (Nominatim) to provide address autocomplete suggestions when you list a property.</li>
+            <li><strong>Address data:</strong> We use OpenStreetMap (Nominatim) and Google Maps to provide address autocomplete and street-view imagery when you browse or list a property.</li>
             <li><strong>Authentication:</strong> User authentication is handled through Supabase. Please review Supabase&apos;s privacy policy for details on how authentication data is handled.</li>
             <li><strong>Payments:</strong> Payment processing is handled by Stripe. We do not store your full card details. Stripe&apos;s privacy policy governs their handling of payment data.</li>
+            <li><strong>MLS listings:</strong> We import publicly available rental listings from ListHub, a licensed MLS data aggregator. These listings may include property details submitted by third-party listing agents.</li>
+          </ul>
+          <h3 className="mt-4 font-semibold text-gray-800">AI-generated data</h3>
+          <ul className="mt-2 list-disc space-y-2 pl-5">
+            <li><strong>Application match scores:</strong> When a tenant submits a rental application, information from the application (such as stated income, move-in date, and message) may be processed by an AI model (powered by Anthropic) to generate a compatibility score and summary for the landlord. No sensitive financial documents are shared with Anthropic; only the information you voluntarily enter into the application form.</li>
+            <li><strong>Support chatbot:</strong> Our in-site support assistant is powered by Anthropic&apos;s Claude AI. Messages you send to the support assistant, including any email address you provide, may be processed by Anthropic to generate a response. Please do not share sensitive personal or financial information in the chat.</li>
           </ul>
         </section>
 
@@ -118,8 +124,11 @@ export default function PrivacyPage() {
             <li>Supabase — database, authentication, and file storage</li>
             <li>Stripe — payment processing</li>
             <li>Vercel — website hosting and deployment</li>
-            <li>OpenStreetMap / Nominatim — address lookup</li>
             <li>Resend — transactional email delivery</li>
+            <li>OpenStreetMap / Nominatim — address autocomplete</li>
+            <li>Google Maps — street-view imagery for property pages</li>
+            <li>Anthropic — AI-powered support chatbot and rental application match scoring</li>
+            <li>ListHub — MLS rental listing data aggregation</li>
           </ul>
           <p className="mt-2">These providers are only permitted to use your information to provide services to us.</p>
           <h3 className="mt-4 font-semibold text-gray-800">Legal and safety reasons</h3>
@@ -238,6 +247,9 @@ export default function PrivacyPage() {
             <li>Vercel — hosting and analytics</li>
             <li>Stripe — payment processing</li>
             <li>Resend — transactional email</li>
+            <li>Google Maps — street-view imagery</li>
+            <li>Anthropic — AI support chatbot and application scoring</li>
+            <li>ListHub — MLS listing data</li>
           </ul>
         </section>
 

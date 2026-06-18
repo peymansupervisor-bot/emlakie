@@ -7,8 +7,9 @@ import { useEffect, useState } from 'react';
 import { deactivateListing, extendListing, getApplications, getMyListing, markRented } from '@/lib/landlord/client';
 import { Application, LandlordListing } from '@/lib/landlord/types';
 import { formatBaths, formatBeds, formatPrice, formatSqft } from '@/lib/format';
+import PhotoManager from '@/components/PhotoManager';
 
-type Tab = 'overview' | 'applications';
+type Tab = 'overview' | 'applications' | 'photos';
 
 const LEASE_TERMS = [
   { value: 'month_to_month', label: 'Month-to-month' },
@@ -182,7 +183,7 @@ export default function PropertyDashboardPage() {
 
       {/* Tabs */}
       <div className="mt-6 border-b border-gray-200">
-        {(['overview', 'applications'] as Tab[]).map((t) => (
+        {(['overview', 'photos', 'applications'] as Tab[]).map((t) => (
           <button
             key={t}
             onClick={() => setTab(t)}
@@ -266,7 +267,11 @@ export default function PropertyDashboardPage() {
         </div>
       )}
 
-      {tab === 'overview' ? (
+      {tab === 'photos' ? (
+        <div className="mt-8">
+          <PhotoManager listingId={listing.id} initialPhotos={listing.photos ?? []} />
+        </div>
+      ) : tab === 'overview' ? (
         <div className="mt-8 grid gap-6 sm:grid-cols-3">
           {[
             { label: 'Views', value: listing.view_count ?? 0 },

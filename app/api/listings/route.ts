@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createSupabaseWithToken } from '@/lib/supabase-server'
 import { createClient } from '@supabase/supabase-js'
+import { generateListingSlug } from '@/lib/format'
 
 // GET /api/listings — returns the landlord's own listings
 export async function GET(req: NextRequest) {
@@ -55,16 +56,33 @@ export async function POST(req: NextRequest) {
 
   const amenities = JSON.parse(formData.get('amenities') as string ?? '[]')
 
+  const address = formData.get('address') as string
+  const city = formData.get('city') as string
+  const state = formData.get('state') as string
+  const zip = formData.get('zip') as string || null
+
+  // Generate unique slug from address
+  const baseSlug = generateListingSlug(address, city, state, zip ?? undefined)
+  const { data: existing } = await supabase
+    .from('listings')
+    .select('slug')
+    .like('slug', `${baseSlug}%`)
+  const takenSlugs = new Set((existing ?? []).map((r: { slug: string }) => r.slug))
+  let slug = baseSlug
+  let counter = 2
+  while (takenSlugs.has(slug)) slug = `${baseSlug}-${counter++}`
+
   const { data, error } = await supabase
     .from('listings')
     .insert({
       landlord_id: user.id,
+      slug,
       title: formData.get('title') as string,
       description: formData.get('description') as string,
-      address: formData.get('address') as string,
-      city: formData.get('city') as string,
-      state: formData.get('state') as string,
-      zip: formData.get('zip') as string || null,
+      address,
+      city,
+      state,
+      zip,
       price: Number(formData.get('price')),
       bedrooms: Number(formData.get('bedrooms')),
       bathrooms: Number(formData.get('bathrooms')),

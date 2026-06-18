@@ -1,3 +1,11 @@
+export function generateListingSlug(address: string, city: string, state?: string, zip?: string): string {
+  const parts = [address, city, state, zip].filter(Boolean).join(' ');
+  return parts
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
 export function formatPrice(price: number): string {
   if (!price || isNaN(price)) return 'Contact for price';
   return `$${price.toLocaleString('en-US')}/mo`;

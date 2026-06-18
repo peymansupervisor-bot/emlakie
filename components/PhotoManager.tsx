@@ -15,6 +15,7 @@ export default function PhotoManager({ listingId, initialPhotos }: Props) {
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState('');
   const [deletingUrl, setDeletingUrl] = useState<string | null>(null);
+  const [settingCoverUrl, setSettingCoverUrl] = useState<string | null>(null);
   const [msg, setMsg] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
@@ -60,6 +61,28 @@ export default function PhotoManager({ listingId, initialPhotos }: Props) {
       setUploading(false);
       setUploadProgress('');
       if (fileRef.current) fileRef.current.value = '';
+    }
+  }
+
+  async function handleSetCover(url: string) {
+    setSettingCoverUrl(url);
+    setMsg(null);
+    try {
+      const token = await getToken();
+      const reordered = [url, ...photos.filter((p) => p !== url)];
+      const res = await fetch(`/api/listings/${listingId}/photos`, {
+        method: 'PUT',
+        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ photos: reordered }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+      setPhotos(data.photos);
+      setMsg('Cover photo updated.');
+    } catch (err: unknown) {
+      setMsg((err as Error).message ?? 'Failed to update cover.');
+    } finally {
+      setSettingCoverUrl(null);
     }
   }
 
@@ -131,8 +154,17 @@ export default function PhotoManager({ listingId, initialPhotos }: Props) {
                   </svg>
                 )}
               </button>
-              {i === 0 && (
+              {i === 0 ? (
                 <span className="absolute bottom-2 left-2 rounded bg-black/60 px-1.5 py-0.5 text-[10px] font-semibold text-white">Cover</span>
+              ) : (
+                <button
+                  onClick={() => handleSetCover(url)}
+                  disabled={settingCoverUrl === url}
+                  aria-label="Set as cover"
+                  className="absolute bottom-2 left-2 rounded bg-white/90 px-1.5 py-0.5 text-[10px] font-semibold text-gray-700 opacity-0 shadow transition hover:bg-brand-600 hover:text-white group-hover:opacity-100 disabled:opacity-50"
+                >
+                  {settingCoverUrl === url ? '…' : 'Set cover'}
+                </button>
               )}
             </div>
           ))}

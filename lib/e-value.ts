@@ -168,30 +168,19 @@ export async function calculateEValue(listing: {
     }
   }
 
-  // With fewer than 3 comparables the listing's own asking price is the strongest
-  // market signal — weight it heavily so the estimate stays anchored to reality
-  let eRent: number
-  if (listing.price > 0 && prices.length < 3) {
-    if (prices.length === 0) {
-      eRent = roundToNearest(listing.price * 1.03, 25)
-    } else {
-      // Blend: listing price 70%, comparable 30%
-      const compMedian = median(prices)
-      eRent = roundToNearest(listing.price * 0.7 + compMedian * 0.3, 25)
-    }
-  } else {
-    eRent = prices.length > 0
-      ? roundToNearest(median(prices), 25)
-      : roundToNearest(listing.price * 1.03, 25)
-  }
+  const eRent = prices.length >= 3
+    ? roundToNearest(median(prices), 25)
+    : listing.price > 0
+      ? roundToNearest(listing.price, 25)   // use asking price directly — not enough market data
+      : 0
 
   const sellable = canSellIndividually(listing.property_type, listing.ownership_type)
   const eSale = sellable
     ? roundToNearest((eRent * 12) / CAP_RATE, 1000)
     : null
 
-  const priceMin = prices.length > 0 ? Math.min(...prices) : eRent * 0.9
-  const priceMax = prices.length > 0 ? Math.max(...prices) : eRent * 1.1
+  const priceMin = prices.length >= 3 ? Math.min(...prices) : eRent * 0.93
+  const priceMax = prices.length >= 3 ? Math.max(...prices) : eRent * 1.07
 
   const confidence: EValueResult['confidence'] =
     prices.length >= 10 ? 'high' :

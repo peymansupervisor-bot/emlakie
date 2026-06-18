@@ -5,9 +5,10 @@ import { useState, useEffect, useRef } from 'react';
 import { isAddressQuery } from '@/lib/address-utils';
 
 interface Suggestion {
-  type: 'city' | 'address';
+  type: 'city' | 'address' | 'listing';
   label: string;
   value: string;
+  slug?: string | null;
 }
 
 export default function SearchBar({ large = false }: { large?: boolean }) {
@@ -47,10 +48,15 @@ export default function SearchBar({ large = false }: { large?: boolean }) {
     return () => document.removeEventListener('mousedown', handleClick);
   }, []);
 
-  function navigate(val: string, type?: 'city' | 'address') {
+  function navigate(s?: Suggestion, rawVal?: string) {
     setOpen(false);
+    const val = (s?.value ?? rawVal ?? '').trim();
     setQ(val);
-    if (type === 'address' || isAddressQuery(val)) {
+    if (s?.type === 'listing' && s.slug) {
+      router.push(`/rentals/${s.slug}`);
+    } else if (s?.type === 'city') {
+      router.push(`/rentals?q=${encodeURIComponent(val)}`);
+    } else if (s?.type === 'address' || isAddressQuery(val)) {
       router.push(`/property?address=${encodeURIComponent(val)}`);
     } else {
       router.push(`/rentals?q=${encodeURIComponent(val)}`);
@@ -59,10 +65,10 @@ export default function SearchBar({ large = false }: { large?: boolean }) {
 
   function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    const active = activeIdx >= 0 ? suggestions[activeIdx] : null;
+    const active = activeIdx >= 0 ? suggestions[activeIdx] : undefined;
     const val = (active?.value ?? q).trim();
     if (!val) { router.push('/rentals'); return; }
-    navigate(val, active?.type);
+    navigate(active, val);
   }
 
   function onKeyDown(e: React.KeyboardEvent) {
@@ -141,7 +147,7 @@ export default function SearchBar({ large = false }: { large?: boolean }) {
               key={i}
               role="option"
               aria-selected={i === activeIdx}
-              onMouseDown={() => navigate(s.value, s.type)}
+              onMouseDown={() => navigate(s)}
               onMouseEnter={() => setActiveIdx(i)}
               className={`flex cursor-pointer items-center gap-3 px-4 py-3 text-sm transition-colors ${
                 i === activeIdx ? 'bg-brand-50' : 'hover:bg-gray-50'
@@ -158,7 +164,11 @@ export default function SearchBar({ large = false }: { large?: boolean }) {
                 </svg>
               )}
               <span className="truncate text-gray-800">{s.label}</span>
-              <span className="ml-auto shrink-0 text-xs text-gray-400">{s.type === 'city' ? 'City' : 'Address'}</span>
+              <span className={`ml-auto shrink-0 text-xs font-medium px-1.5 py-0.5 rounded ${
+                s.type === 'listing' ? 'bg-brand-50 text-brand-700' : 'text-gray-400'
+              }`}>
+                {s.type === 'city' ? 'City' : s.type === 'listing' ? 'Rental' : 'Address'}
+              </span>
             </li>
           ))}
         </ul>

@@ -65,6 +65,45 @@ export default async function PropertyPage({ searchParams }: Props) {
     redirect(`/rentals/${activeMatch.slug ?? activeMatch.id}`);
   }
 
+  // Find all active listings at this building address (multi-unit building)
+  const buildingUnits = listings.filter((l) => {
+    if (!l.address) return false;
+    const norm = normalizeStreet(l.address);
+    if (houseNumber && !norm.includes(houseNumber.toLowerCase())) return false;
+    if (normalizedRoad) {
+      const roadWords = normalizedRoad.split(' ').filter(Boolean);
+      return roadWords.every((w) => norm.includes(w));
+    }
+    return false;
+  });
+
+  // If we found units at this building, show a unit picker — no building-level page
+  if (buildingUnits.length > 0) {
+    return (
+      <main className="mx-auto max-w-2xl px-4 py-16 sm:px-6">
+        <Link href="/rentals" className="text-sm font-semibold text-brand-600 hover:text-brand-700">← Back to search</Link>
+        <h1 className="mt-6 text-2xl font-extrabold text-gray-900">Select a unit</h1>
+        <p className="mt-2 text-gray-500">
+          {rawAddress.split(',')[0].trim()} has {buildingUnits.length} available unit{buildingUnits.length > 1 ? 's' : ''}.
+          Choose one to view the listing.
+        </p>
+        <ul className="mt-6 divide-y divide-gray-100 rounded-2xl border border-gray-200 bg-white shadow-sm overflow-hidden">
+          {buildingUnits.map((l) => (
+            <li key={l.id}>
+              <Link
+                href={`/rentals/${l.slug ?? l.id}`}
+                className="flex items-center justify-between px-5 py-4 hover:bg-brand-50 transition-colors"
+              >
+                <span className="font-semibold text-gray-900">{l.address}</span>
+                <span className="text-sm font-bold text-brand-600">${l.price.toLocaleString()}/mo</span>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </main>
+    );
+  }
+
   const addr = geo?.address;
   const city = addr?.city ?? addr?.town ?? addr?.village ?? '';
   const state = addr?.state ?? '';

@@ -12,6 +12,7 @@ import { calculateEValue } from '@/lib/e-value';
 import ApplyForm from '@/components/ApplyForm';
 import NearbyPlaces from '@/components/NearbyPlaces';
 import StreetView from '@/components/StreetView';
+import { getPropertyData } from '@/lib/zllw';
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -61,7 +62,8 @@ export default async function ListingPage({ params }: Props) {
   const isExpired = listing.status === 'expired';
   const isUnavailable = isRented || isExpired;
 
-  const [eValue, { listings: similar }] = await Promise.all([
+  const fullAddress = [listing.address, listing.city, listing.state, listing.zip].filter(Boolean).join(', ');
+  const [eValue, { listings: similar }, propData] = await Promise.all([
     calculateEValue({
       id: listing.id,
       city: listing.city,
@@ -74,6 +76,7 @@ export default async function ListingPage({ params }: Props) {
       price: listing.price,
     }),
     getListings({ city: listing.city }),
+    getPropertyData(fullAddress),
   ]);
   const similarActive = similar.filter((l) => l.id !== listing.id && l.status === 'active').slice(0, 3);
 
@@ -269,6 +272,50 @@ export default async function ListingPage({ params }: Props) {
           </div>
         </aside>
       </div>
+
+      {/* Sales & Price History */}
+      {propData && propData.priceHistory.length > 0 && (
+        <section className="mt-12">
+          <h2 className="mb-4 text-xl font-bold text-gray-900">Sales &amp; Price History</h2>
+          <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-gray-100 bg-gray-50 text-xs text-gray-500">
+                  <th className="px-4 py-3 text-left font-semibold">Date</th>
+                  <th className="px-4 py-3 text-left font-semibold">Event</th>
+                  <th className="px-4 py-3 text-right font-semibold">Price</th>
+                  <th className="hidden sm:table-cell px-4 py-3 text-right font-semibold">$/sqft</th>
+                  <th className="hidden sm:table-cell px-4 py-3 text-left font-semibold">Source</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-100">
+                {propData.priceHistory.map((evt, i) => (
+                  <tr key={i} className="hover:bg-gray-50 transition-colors">
+                    <td className="px-4 py-3 text-gray-600">{evt.date}</td>
+                    <td className="px-4 py-3">
+                      <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${
+                        evt.event === 'Sold' ? 'bg-green-100 text-green-700' :
+                        evt.event === 'Listed for sale' ? 'bg-blue-100 text-blue-700' :
+                        evt.event === 'Price change' ? 'bg-yellow-100 text-yellow-700' :
+                        'bg-gray-100 text-gray-600'
+                      }`}>
+                        {evt.event}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3 text-right font-semibold text-gray-900">
+                      {evt.price ? `$${evt.price.toLocaleString()}` : '—'}
+                    </td>
+                    <td className="hidden sm:table-cell px-4 py-3 text-right text-gray-500">
+                      {evt.pricePerSquareFoot ? `$${evt.pricePerSquareFoot}` : '—'}
+                    </td>
+                    <td className="hidden sm:table-cell px-4 py-3 text-gray-400 text-xs">{evt.source}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      )}
 
       {/* Similar active listings — shown on rented/expired pages for SEO + conversion */}
       {isUnavailable && similarActive.length > 0 && (

@@ -7,6 +7,7 @@ import ListingCard from '@/components/ListingCard';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import StreetView from '@/components/StreetView';
+import { redirect } from 'next/navigation';
 import type { Metadata } from 'next';
 
 interface Props {
@@ -41,6 +42,14 @@ export default async function PropertyPage({ searchParams }: Props) {
     getListings({ q: rawAddress }),
     getPropertyData(rawAddress),
   ]);
+
+  // If an active listing exists at this address, redirect to it — one canonical page
+  const activeMatch = listings.find(
+    (l) => l.status === 'active' && l.address?.toLowerCase().includes((geo?.address?.road ?? '').toLowerCase()) && geo?.address?.road
+  );
+  if (activeMatch) {
+    redirect(`/rentals/${activeMatch.slug ?? activeMatch.id}`);
+  }
 
   const addr = geo?.address;
   const city = addr?.city ?? addr?.town ?? addr?.village ?? '';

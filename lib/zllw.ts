@@ -37,15 +37,10 @@ export async function getPropertyData(address: string): Promise<ZllwPropertyData
     const pd = propData?.propertyDetails;
     if (!pd) return null;
 
-    // Build a clean address from the API response for the rent call (avoids Nominatim verbosity)
-    const cleanAddress = [
-      pd.address?.streetAddress ?? pd.streetAddress,
-      pd.address?.city ?? pd.city,
-      `${pd.address?.state ?? pd.state} ${pd.address?.zipcode ?? pd.zipcode}`,
-    ].filter(Boolean).join(', ');
-
+    // Use zpid (Zillow Property ID) for the rent call — unambiguous, works for any address
+    const zpid = pd.zpid;
     const rentRes = await fetch(
-      `https://zllw-working-api.p.rapidapi.com/graph_charts?byaddress=${encodeURIComponent(cleanAddress)}&which=rent_zestimate_history&recent_first=True`,
+      `https://zllw-working-api.p.rapidapi.com/graph_charts?byzpid=${zpid}&which=rent_zestimate_history&recent_first=True`,
       { headers: HEADERS(key), next: { revalidate: 86400 } }
     );
     const rentData = await rentRes.json();

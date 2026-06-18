@@ -94,7 +94,7 @@ export default function LoginPage() {
                   />
                 </div>
               </div>
-              {error && <p className="text-red-500 text-sm">{error}</p>}
+              {error && <p role="alert" className="text-red-500 text-sm">{error}</p>}
               <button
                 type="submit"
                 disabled={loading}
@@ -112,8 +112,9 @@ export default function LoginPage() {
             </p>
             <form onSubmit={handleVerifyCode} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Verification code</label>
+                <label htmlFor="verification-code" className="block text-sm font-medium text-gray-700 mb-1">Verification code</label>
                 <input
+                  id="verification-code"
                   type="text"
                   inputMode="numeric"
                   value={code}
@@ -124,7 +125,7 @@ export default function LoginPage() {
                   autoFocus
                 />
               </div>
-              {error && <p className="text-red-500 text-sm">{error}</p>}
+              {error && <p role="alert" className="text-red-500 text-sm">{error}</p>}
               <button
                 type="submit"
                 disabled={loading}

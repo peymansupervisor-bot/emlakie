@@ -88,9 +88,9 @@ export default function LeadsPage() {
       </div>
 
       <div className="mt-6 flex flex-wrap items-center gap-3">
-        <div className="flex gap-2">
+        <div role="tablist" aria-label="Filter leads" className="flex gap-2">
           {filters.map((f) => (
-            <button key={f.id} onClick={() => setFilter(f.id)}
+            <button key={f.id} role="tab" aria-selected={filter === f.id} onClick={() => setFilter(f.id)}
               className={`rounded-full border px-4 py-1.5 text-sm font-semibold transition ${
                 filter === f.id
                   ? 'border-brand-600 bg-brand-50 text-brand-700'
@@ -101,10 +101,11 @@ export default function LeadsPage() {
           ))}
         </div>
         <div className="relative flex-1 min-w-[200px]">
-          <svg viewBox="0 0 24 24" className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 stroke-gray-400" fill="none" strokeWidth="2">
+          <label htmlFor="leads-search" className="sr-only">Search leads</label>
+          <svg viewBox="0 0 24 24" className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 stroke-gray-400" fill="none" strokeWidth="2" aria-hidden="true">
             <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
           </svg>
-          <input type="text" placeholder="Search by name or address"
+          <input id="leads-search" type="text" placeholder="Search by name or address"
             value={search} onChange={(e) => setSearch(e.target.value)}
             className="w-full rounded-xl border border-gray-300 py-1.5 pl-9 pr-4 text-sm outline-none focus:border-brand-600 focus:ring-1 focus:ring-brand-600" />
         </div>

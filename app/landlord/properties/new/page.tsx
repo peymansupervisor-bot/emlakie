@@ -64,9 +64,10 @@ const labelCls = 'block text-sm font-semibold text-gray-700 mb-1';
 
 type NominatimSuggestion = { display: string; address: string; city: string; state: string; zip: string };
 
-function AddressField({ onSelect, onType }: {
+function AddressField({ onSelect, onType, id }: {
   onSelect: (address: string, city: string, state: string, zip: string) => void;
   onType: (address: string) => void;
+  id?: string;
 }) {
   const [value, setValue] = useState('');
   const [suggestions, setSuggestions] = useState<NominatimSuggestion[]>([]);
@@ -119,6 +120,7 @@ function AddressField({ onSelect, onType }: {
   return (
     <div className="relative">
       <input
+        id={id}
         className={inputCls}
         placeholder="123 Main St"
         value={value}
@@ -318,7 +320,7 @@ export default function NewPropertyPage() {
 
       {/* Error */}
       {error && (
-        <p className="mt-4 rounded-xl bg-red-50 px-4 py-3 text-sm font-medium text-red-700">{error}</p>
+        <p role="alert" className="mt-4 rounded-xl bg-red-50 px-4 py-3 text-sm font-medium text-red-700">{error}</p>
       )}
 
       {/* Step 1: Property details */}
@@ -397,8 +399,9 @@ export default function NewPropertyPage() {
           </div>
 
           <div>
-            <label className={labelCls}>Street address *</label>
+            <label htmlFor="new-address" className={labelCls}>Street address *</label>
             <AddressField
+              id="new-address"
               onSelect={(address, city, state, zip) =>
                 setForm((f) => ({ ...f, address, city, state, zip }))
               }
@@ -407,24 +410,24 @@ export default function NewPropertyPage() {
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className={labelCls}>City *</label>
-              <input className={inputCls} placeholder="Austin" value={form.city}
+              <label htmlFor="new-city" className={labelCls}>City *</label>
+              <input id="new-city" className={inputCls} placeholder="Austin" value={form.city}
                 onChange={(e) => set('city', e.target.value)} />
             </div>
             <div>
-              <label className={labelCls}>State *</label>
-              <input className={inputCls} placeholder="TX" maxLength={2}
+              <label htmlFor="new-state" className={labelCls}>State *</label>
+              <input id="new-state" className={inputCls} placeholder="TX" maxLength={2}
                 value={form.state} onChange={(e) => set('state', e.target.value.toUpperCase())} />
             </div>
           </div>
           <div>
-            <label className={labelCls}>ZIP code</label>
-            <input className={inputCls} placeholder="78745" maxLength={5} value={form.zip}
+            <label htmlFor="new-zip" className={labelCls}>ZIP code</label>
+            <input id="new-zip" className={inputCls} placeholder="78745" maxLength={5} value={form.zip}
               onChange={(e) => set('zip', e.target.value)} />
           </div>
           <div>
-            <label className={labelCls}>Property type</label>
-            <select className={inputCls} value={form.propertyType}
+            <label htmlFor="new-property-type" className={labelCls}>Property type</label>
+            <select id="new-property-type" className={inputCls} value={form.propertyType}
               onChange={(e) => set('propertyType', e.target.value)}>
               {PROPERTY_TYPES.map((t) => (
                 <option key={t.value} value={t.value}>{t.label}</option>
@@ -461,8 +464,8 @@ export default function NewPropertyPage() {
           )}
           <div className="grid grid-cols-3 gap-4">
             <div>
-              <label className={labelCls}>Bedrooms</label>
-              <select className={inputCls} value={form.bedrooms}
+              <label htmlFor="new-bedrooms" className={labelCls}>Bedrooms</label>
+              <select id="new-bedrooms" className={inputCls} value={form.bedrooms}
                 onChange={(e) => set('bedrooms', e.target.value)}>
                 {['0','1','2','3','4','5','6'].map((n) => (
                   <option key={n} value={n}>{n === '0' ? 'Studio' : n}</option>
@@ -470,8 +473,8 @@ export default function NewPropertyPage() {
               </select>
             </div>
             <div>
-              <label className={labelCls}>Bathrooms</label>
-              <select className={inputCls} value={form.bathrooms}
+              <label htmlFor="new-bathrooms" className={labelCls}>Bathrooms</label>
+              <select id="new-bathrooms" className={inputCls} value={form.bathrooms}
                 onChange={(e) => set('bathrooms', e.target.value)}>
                 {['1','1.5','2','2.5','3','4'].map((n) => (
                   <option key={n} value={n}>{n}</option>
@@ -479,20 +482,20 @@ export default function NewPropertyPage() {
               </select>
             </div>
             <div>
-              <label className={labelCls}>Sq ft</label>
-              <input className={inputCls} type="number" placeholder="900" value={form.sqft}
+              <label htmlFor="new-sqft" className={labelCls}>Sq ft</label>
+              <input id="new-sqft" className={inputCls} type="number" placeholder="900" value={form.sqft}
                 onChange={(e) => set('sqft', e.target.value)} />
             </div>
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className={labelCls}>Monthly rent ($) *</label>
-              <input className={inputCls} type="number" placeholder="1500" value={form.price}
+              <label htmlFor="new-price" className={labelCls}>Monthly rent ($) *</label>
+              <input id="new-price" className={inputCls} type="number" placeholder="1500" value={form.price}
                 onChange={(e) => set('price', e.target.value)} />
             </div>
             <div>
-              <label className={labelCls}>Available from</label>
-              <input className={inputCls} type="date" value={form.availableFrom}
+              <label htmlFor="new-available-from" className={labelCls}>Available from</label>
+              <input id="new-available-from" className={inputCls} type="date" value={form.availableFrom}
                 onChange={(e) => set('availableFrom', e.target.value)} />
             </div>
           </div>
@@ -503,14 +506,15 @@ export default function NewPropertyPage() {
       {step === 2 && (
         <div className="mt-8 space-y-5">
           <div>
-            <label className={labelCls}>Listing title *</label>
-            <input className={inputCls} placeholder="Bright 2BR in downtown Austin with parking"
+            <label htmlFor="new-title" className={labelCls}>Listing title *</label>
+            <input id="new-title" className={inputCls} placeholder="Bright 2BR in downtown Austin with parking"
               value={form.title} onChange={(e) => set('title', e.target.value)} />
             <p className="mt-1 text-xs text-gray-500">Make it specific — renters search by keywords.</p>
           </div>
           <div>
-            <label className={labelCls}>Description *</label>
+            <label htmlFor="new-description" className={labelCls}>Description *</label>
             <textarea
+              id="new-description"
               className={`${inputCls} min-h-[160px] resize-y ${filterWarnings.length > 0 ? 'border-red-400 focus:border-red-500 focus:ring-red-400' : ''}`}
               placeholder="Describe the home, neighborhood, nearby transit, any house rules, etc."
               value={form.description}
@@ -571,7 +575,7 @@ export default function NewPropertyPage() {
             onDragOver={(e) => e.preventDefault()}
             onDrop={(e) => { e.preventDefault(); addPhotos(e.dataTransfer.files); }}
             className="flex w-full flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-gray-300 py-10 text-gray-500 transition hover:border-brand-400 hover:bg-brand-50">
-            <svg viewBox="0 0 24 24" className="h-10 w-10 stroke-gray-400" fill="none" strokeWidth="1.5">
+            <svg viewBox="0 0 24 24" className="h-10 w-10 stroke-gray-400" fill="none" strokeWidth="1.5" aria-hidden="true">
               <path strokeLinecap="round" strokeLinejoin="round"
                 d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
             </svg>
@@ -594,8 +598,9 @@ export default function NewPropertyPage() {
                     </span>
                   )}
                   <button onClick={() => removePhoto(i)}
+                    aria-label={`Remove photo ${i + 1}`}
                     className="absolute right-1 top-1 flex h-6 w-6 items-center justify-center rounded-full bg-black/60 text-white opacity-0 transition group-hover:opacity-100">
-                    ×
+                    <span aria-hidden="true">×</span>
                   </button>
                 </div>
               ))}

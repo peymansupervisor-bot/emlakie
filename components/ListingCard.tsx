@@ -42,11 +42,6 @@ export default function ListingCard({ listing }: { listing: Listing }) {
             Broker Listed
           </span>
         )}
-        {!listing.isSample && listing.listing_source === 'mls' && (
-          <span className="absolute left-3 top-3 rounded-md bg-gray-600/90 px-2 py-1 text-xs font-semibold text-white">
-            MLS
-          </span>
-        )}
         <span className="absolute right-3 top-3 rounded-md bg-white/90 px-2 py-1 text-xs font-semibold text-gray-700">
           {formatPropertyType(listing.property_type)}
         </span>

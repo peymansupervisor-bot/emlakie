@@ -21,7 +21,7 @@ function expiryText(iso?: string | null): { text: string; cls: string } {
 const leaseLabel: Record<string, { label: string; cls: string }> = {
   active: { label: 'Seeking tenant', cls: 'text-brand-700' },
   rented: { label: 'Leased', cls: 'text-blue-700' },
-  pending: { label: 'Lease in progress', cls: 'text-amber-700' },
+  lease_in_progress: { label: 'Lease in progress', cls: 'text-amber-700' },
   coming_soon: { label: 'Coming soon', cls: 'text-purple-700' },
   draft: { label: '—', cls: 'text-gray-500' },
 };
@@ -29,7 +29,7 @@ const leaseLabel: Record<string, { label: string; cls: string }> = {
 const statusPill: Record<string, { label: string; cls: string }> = {
   active: { label: 'Listed for rent', cls: 'bg-brand-100 text-brand-800' },
   rented: { label: 'Rented', cls: 'bg-blue-100 text-blue-800' },
-  pending: { label: 'Lease in progress', cls: 'bg-amber-100 text-amber-800' },
+  lease_in_progress: { label: 'Lease in progress', cls: 'bg-amber-100 text-amber-800' },
   coming_soon: { label: 'Coming soon', cls: 'bg-purple-100 text-purple-800' },
   draft: { label: 'Draft', cls: 'bg-gray-200 text-gray-700' },
 };
@@ -165,7 +165,7 @@ export default function PropertiesPage() {
   const totalApplicants = listings?.reduce((s, l) => s + (l.applicant_count ?? 0), 0) ?? 0;
   const activeCount = listings?.filter((l) => l.status === 'active').length ?? 0;
   const comingSoonCount = listings?.filter((l) => l.status === 'coming_soon').length ?? 0;
-  const pendingCount = listings?.filter((l) => l.status === 'pending').length ?? 0;
+  const lease_in_progressCount = listings?.filter((l) => l.status === 'lease_in_progress').length ?? 0;
 
   return (
     <div>
@@ -181,7 +181,7 @@ export default function PropertiesPage() {
           {[
             { label: 'Active listings', value: activeCount, filter: 'forRent' as Tab },
             { label: 'Coming soon', value: comingSoonCount, filter: null },
-            { label: 'Lease in progress', value: pendingCount, filter: null },
+            { label: 'Lease in progress', value: lease_in_progressCount, filter: null },
             { label: 'Total applicants', value: totalApplicants, filter: null },
           ].map((s) => (
             s.label === 'Total applicants' ? (

@@ -54,7 +54,7 @@ export const demoListings: LandlordListing[] = [
     property_type: 'townhouse',
     amenities: ['Attached Garage', 'Community Pool'],
     photos: ['https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=800&q=80'],
-    status: 'pending',
+    status: 'lease_in_progress',
     view_count: 127,
     applicant_count: 1,
     isSample: true,
@@ -71,7 +71,7 @@ export const demoApplications: Application[] = [
     income: 7200,
     ai_match_score: 92,
     ai_summary: 'Strong applicant: income 3x rent, stable employment, no pets, flexible move-in.',
-    status: 'pending',
+    status: 'lease_in_progress',
     created_at: '2026-06-09T18:24:00Z',
   },
   {
@@ -82,7 +82,7 @@ export const demoApplications: Application[] = [
     income: 5100,
     ai_match_score: 78,
     ai_summary: 'Good fit: income above 2x rent, has a pet (listing allows pets).',
-    status: 'pending',
+    status: 'lease_in_progress',
     created_at: '2026-06-08T22:10:00Z',
   },
   {

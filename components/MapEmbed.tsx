@@ -15,7 +15,7 @@ export default function MapEmbed({ src, title = 'Property location' }: Props) {
       <iframe
         src={src}
         title={title}
-        className="h-full w-full border-0"
+        className={`h-full w-full border-0 ${active ? '' : 'pointer-events-none'}`}
         loading="lazy"
       />
       {!active && (

@@ -13,6 +13,7 @@ interface Props {
 export default function StreetView({ lat, lng, address, city, state }: Props) {
   const [error, setError] = useState(false);
   const [loaded, setLoaded] = useState(false);
+  const [active, setActive] = useState(false);
   const [heading, setHeading] = useState<number | null>(null);
   const [headingReady, setHeadingReady] = useState(!lat || !lng);
   const iframeRef = useRef<HTMLIFrameElement>(null);
@@ -60,13 +61,23 @@ export default function StreetView({ lat, lng, address, city, state }: Props) {
           ref={iframeRef}
           src={src}
           title="Street View"
-          className={`h-full w-full border-0 transition-opacity duration-500 ${loaded ? 'opacity-100' : 'opacity-0'}`}
+          className={`h-full w-full border-0 transition-opacity duration-500 ${loaded ? 'opacity-100' : 'opacity-0'} ${active ? '' : 'pointer-events-none'}`}
           allowFullScreen
           loading="lazy"
           referrerPolicy="no-referrer-when-downgrade"
           onLoad={handleLoad}
           onError={() => setError(true)}
         />
+        {!active && loaded && (
+          <div
+            className="absolute inset-0 flex cursor-pointer items-end justify-center pb-4"
+            onClick={() => setActive(true)}
+          >
+            <span className="rounded-full bg-black/60 px-4 py-1.5 text-xs font-semibold text-white backdrop-blur-sm">
+              Click to interact with Street View
+            </span>
+          </div>
+        )}
       </div>
     </div>
   );

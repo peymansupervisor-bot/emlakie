@@ -69,20 +69,6 @@ export default function Footer() {
             </p>
           </div>
 
-          {/* MLS / ListHub data disclaimer */}
-          <div>
-            <p className="font-semibold text-gray-600">MLS &amp; Third-Party Listing Data</p>
-            <p className="mt-1">
-              Certain listings displayed on this site (labeled <strong>MLS</strong>) are sourced from Multiple
-              Listing Services (MLS) and third-party aggregators including ListHub. This data is provided for
-              consumers&apos; personal, non-commercial use only and may not be used for any purpose other than
-              to identify prospective rental properties. Such data is deemed reliable but not guaranteed.
-              Listing data is updated regularly but may not reflect the most current availability. The listing
-              broker&apos;s offer of cooperation is made only to participants of the MLS where the listing is
-              filed. EMLAKIE LLC is not a licensed real estate broker or agent and does not represent any party
-              in a transaction.
-            </p>
-          </div>
 
           {/* Third-party content */}
           <div>

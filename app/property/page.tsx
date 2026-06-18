@@ -178,9 +178,9 @@ export default async function PropertyPage({ searchParams }: Props) {
                     </div>
                   )}
                   {propData.zestimate && (
-                    <div className="flex justify-between">
-                      <dt className="text-gray-500">E-VALUE™</dt>
-                      <dd className="font-bold text-brand-700">${propData.zestimate.toLocaleString()}</dd>
+                    <div className="flex justify-between items-center mt-3 pt-3 border-t border-gray-100">
+                      <dt className="font-bold text-brand-700 uppercase tracking-wide text-xs">E-VALUE™</dt>
+                      <dd className="text-lg font-extrabold text-brand-700">${propData.zestimate.toLocaleString()}</dd>
                     </div>
                   )}
                 </dl>

@@ -157,11 +157,13 @@ export default async function ListingPage({ params }: Props) {
             {listing.state ? `, ${listing.state}` : ''} {listing.zip ?? ''}
           </p>
 
-          <h2 className="mt-8 text-xl font-bold text-gray-900">{listing.title}</h2>
           {listing.description && (
-            <p className="mt-3 whitespace-pre-line leading-relaxed text-gray-700">
-              {listing.description.replace(/\s*Copyright\s+The\s+MLS\.?.*$/i, '').trim()}
-            </p>
+            <div className="mt-8 rounded-2xl border border-gray-100 bg-gray-50 px-6 py-5">
+              <h2 className="text-lg font-bold text-gray-900">About this home</h2>
+              <p className="mt-3 whitespace-pre-line text-[15px] leading-7 text-gray-600">
+                {listing.description.replace(/\s*Copyright\s+The\s+MLS\.?.*$/i, '').trim()}
+              </p>
+            </div>
           )}
 
           {listing.amenities?.length > 0 && (

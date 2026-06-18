@@ -13,9 +13,13 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
 
   const body = await req.json()
 
+  // Map frontend field names to DB column names
+  const { price, ...rest } = body as { price?: number; [key: string]: unknown }
+  const dbPayload = { ...rest, ...(price !== undefined ? { monthly_rent: price } : {}) }
+
   const { data, error } = await supabase
     .from('listings')
-    .update(body)
+    .update(dbPayload)
     .eq('id', id)
     .eq('landlord_id', user.id)
     .select()

@@ -16,6 +16,8 @@ export interface ZllwPropertyData {
   listPriceLow: number | null;
   priceHistory: ZllwPriceEvent[];
   zpid: number | null;
+  latitude: number | null;
+  longitude: number | null;
 }
 
 const HEADERS = (key: string) => ({
@@ -62,6 +64,8 @@ export async function getPropertyData(address: string): Promise<ZllwPropertyData
       listPriceLow: pd.listPriceLow ?? null,
       priceHistory: raw.slice(0, 10),
       zpid: pd.zpid ?? null,
+      latitude: pd.latitude ?? null,
+      longitude: pd.longitude ?? null,
     };
   } catch {
     return null;

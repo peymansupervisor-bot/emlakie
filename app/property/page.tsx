@@ -44,8 +44,8 @@ export default async function PropertyPage({ searchParams }: Props) {
   const neighborhood = addr?.neighbourhood ?? addr?.suburb ?? '';
   const street = [addr?.house_number, addr?.road].filter(Boolean).join(' ');
   const fullAddress = geo?.display_name ?? rawAddress;
-  const lat = geo ? parseFloat(geo.lat) : null;
-  const lng = geo ? parseFloat(geo.lon) : null;
+  const lat = geo ? parseFloat(geo.lat) : (propData?.latitude ?? null);
+  const lng = geo ? parseFloat(geo.lon) : (propData?.longitude ?? null);
 
   // OSM static embed bbox (±0.003 degrees around the point)
   const mapSrc = lat && lng

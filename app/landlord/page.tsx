@@ -87,15 +87,26 @@ export default function PropertiesPage() {
       {listings && listings.length > 0 && (
         <div className="mb-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
           {[
-            { label: 'Active listings', value: activeCount },
-            { label: 'Total listings', value: listings.length },
-            { label: 'Total views', value: totalViews },
-            { label: 'Total applicants', value: totalApplicants },
+            { label: 'Active listings', value: activeCount, filter: 'forRent' as Tab },
+            { label: 'Total listings', value: listings.length, filter: 'all' as Tab },
+            { label: 'Total views', value: totalViews, filter: null },
+            { label: 'Total applicants', value: totalApplicants, filter: null },
           ].map((s) => (
-            <div key={s.label} className="rounded-2xl border border-gray-200 bg-white p-4 shadow-card">
-              <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">{s.label}</p>
-              <p className="mt-1 text-2xl font-extrabold text-gray-900">{s.value}</p>
-            </div>
+            s.filter ? (
+              <button
+                key={s.label}
+                onClick={() => { setTab(s.filter!); window.scrollTo({ top: 200, behavior: 'smooth' }); }}
+                className={`rounded-2xl border p-4 shadow-card text-left transition hover:border-brand-400 hover:shadow-card-hover ${tab === s.filter ? 'border-brand-500 bg-brand-50' : 'border-gray-200 bg-white'}`}
+              >
+                <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">{s.label}</p>
+                <p className="mt-1 text-2xl font-extrabold text-gray-900">{s.value}</p>
+              </button>
+            ) : (
+              <div key={s.label} className="rounded-2xl border border-gray-200 bg-white p-4 shadow-card">
+                <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">{s.label}</p>
+                <p className="mt-1 text-2xl font-extrabold text-gray-900">{s.value}</p>
+              </div>
+            )
           ))}
         </div>
       )}

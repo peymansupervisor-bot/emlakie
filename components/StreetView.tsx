@@ -24,7 +24,7 @@ export default function StreetView({ lat, lng, address, city, state }: Props) {
 
   if (!location) return null;
 
-  const src = `https://www.google.com/maps/embed/v1/streetview?key=${apiKey}&location=${encodeURIComponent(location)}&heading=0&pitch=0&fov=90`;
+  const src = `https://www.google.com/maps/embed/v1/streetview?key=${apiKey}&location=${encodeURIComponent(location)}&pitch=0&fov=90`;
 
   function handleLoad() {
     // Google returns a 200 with an error page when the API key is unauthorized.

@@ -136,12 +136,15 @@ export default function Filters() {
             : 'border-gray-300 bg-white text-gray-700 hover:border-gray-400'
         }`}
       >
-        🏠 Owner Direct
+        <span aria-hidden="true">🏠</span> Owner Direct
       </button>
 
       {/* Amenities dropdown */}
       <div className="relative" ref={amenityRef}>
         <button
+          aria-haspopup="listbox"
+          aria-expanded={amenityOpen}
+          aria-controls="amenity-listbox"
           onClick={(e) => {
             const r = (e.currentTarget as HTMLButtonElement).getBoundingClientRect();
             setDropdownPos({ top: r.bottom + 6, right: window.innerWidth - r.right });
@@ -166,6 +169,10 @@ export default function Filters() {
 
         {amenityOpen && (
           <div
+            id="amenity-listbox"
+            role="listbox"
+            aria-label="Select amenities"
+            aria-multiselectable="true"
             style={{ position: 'fixed', top: dropdownPos.top, right: dropdownPos.right }}
             className="z-[9999] min-w-[340px] rounded-xl border border-gray-200 bg-white p-3 shadow-lg"
           >

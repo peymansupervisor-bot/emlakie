@@ -135,7 +135,7 @@ export default function LandlordLoginPage() {
       {/* LOGIN */}
       {step === 'login' && (
         <>
-          <h1 className="text-3xl font-extrabold text-gray-900">Landlord Sign In to Manage Your Listings</h1>
+          <h2 className="text-3xl font-extrabold text-gray-900">Sign in to your account</h2>
           {message && <p className="mt-4 rounded-lg bg-green-50 px-4 py-3 text-sm text-green-700">{message}</p>}
           <form onSubmit={onLogin} className="mt-8 space-y-4">
             <input id="login-email" type="email" value={email} onChange={(e) => setEmail(e.target.value)}
@@ -163,7 +163,7 @@ export default function LandlordLoginPage() {
       {/* SIGN UP */}
       {step === 'signup' && (
         <>
-          <h1 className="text-3xl font-extrabold text-gray-900">Create account</h1>
+          <h2 className="text-3xl font-extrabold text-gray-900">Create account</h2>
           <p className="mt-2 text-gray-500">List your rentals on Emlakie for free.</p>
           <form onSubmit={onSignup} className="mt-8 space-y-4">
             <input id="signup-email" type="email" value={email} onChange={(e) => setEmail(e.target.value)}
@@ -185,7 +185,7 @@ export default function LandlordLoginPage() {
       {/* FORGOT PASSWORD */}
       {step === 'forgot' && (
         <>
-          <h1 className="text-3xl font-extrabold text-gray-900">Reset password</h1>
+          <h2 className="text-3xl font-extrabold text-gray-900">Reset password</h2>
           <p className="mt-2 text-gray-500">Enter your email and we'll send you a reset link.</p>
           <form onSubmit={onForgot} className="mt-8 space-y-4">
             <input id="forgot-email" type="email" value={email} onChange={(e) => setEmail(e.target.value)}
@@ -206,7 +206,7 @@ export default function LandlordLoginPage() {
       {step === 'forgot-sent' && (
         <>
           <div className="flex h-16 w-16 items-center justify-center rounded-full bg-green-100 text-3xl">✉️</div>
-          <h1 className="mt-4 text-3xl font-extrabold text-gray-900">Check your email</h1>
+          <h2 className="mt-4 text-3xl font-extrabold text-gray-900">Check your email</h2>
           <p className="mt-2 text-gray-500">
             We sent a password reset link to <strong>{email}</strong>. Click the link to set a new password.
           </p>

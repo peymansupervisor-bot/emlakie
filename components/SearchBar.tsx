@@ -104,6 +104,8 @@ export default function SearchBar({ large = false }: { large?: boolean }) {
           aria-label="Search by city, ZIP, address, or neighborhood"
           aria-autocomplete="list"
           aria-expanded={open}
+          aria-controls="search-suggestions"
+          aria-activedescendant={activeIdx >= 0 ? `suggestion-${activeIdx}` : undefined}
           className={`min-w-0 flex-1 px-5 text-gray-900 placeholder-gray-400 outline-none ${
             large ? 'py-4 text-lg' : 'py-3 text-base'
           }`}
@@ -137,12 +139,15 @@ export default function SearchBar({ large = false }: { large?: boolean }) {
 
       {open && suggestions.length > 0 && (
         <ul
+          id="search-suggestions"
           role="listbox"
+          aria-label="Search suggestions"
           className="absolute left-0 right-0 top-full z-50 mt-1 overflow-hidden rounded-xl border border-gray-200 bg-white shadow-lg"
         >
           {suggestions.map((s, i) => (
             <li
               key={i}
+              id={`suggestion-${i}`}
               role="option"
               aria-selected={i === activeIdx}
               onMouseDown={() => navigate(s)}

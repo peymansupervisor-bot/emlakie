@@ -69,7 +69,7 @@ export default function RentalsClient({ listings, total, usingSampleData, headin
       {alertBanner && (
         <div className="flex items-center justify-between bg-green-600 px-4 py-2.5 text-sm font-medium text-white">
           <span>{alertBanner}</span>
-          <button onClick={() => setAlertBanner(null)} className="ml-4 text-white/80 hover:text-white">✕</button>
+          <button onClick={() => setAlertBanner(null)} aria-label="Dismiss alert" className="ml-4 text-white/80 hover:text-white" aria-hidden="false"><span aria-hidden="true">✕</span></button>
         </div>
       )}
 
@@ -89,13 +89,15 @@ export default function RentalsClient({ listings, total, usingSampleData, headin
               <button
                 key={v}
                 onClick={() => setView(v)}
+                aria-label={`${v === 'split' ? 'Split' : v === 'list' ? 'List' : 'Map'} view`}
+                aria-pressed={view === v}
                 className={`rounded-md px-3 py-1.5 text-xs font-semibold capitalize transition ${
                   view === v
                     ? 'bg-white text-gray-900 shadow-sm'
                     : 'text-gray-500 hover:text-gray-700'
                 }`}
               >
-                {v === 'split' ? '⊞ Split' : v === 'list' ? '☰ List' : '⊙ Map'}
+                <span aria-hidden="true">{v === 'split' ? '⊞ Split' : v === 'list' ? '☰ List' : '⊙ Map'}</span>
               </button>
             ))}
           </div>
@@ -164,19 +166,23 @@ export default function RentalsClient({ listings, total, usingSampleData, headin
           <div className="flex items-center gap-1 rounded-lg border border-gray-200 bg-gray-50 p-1 sm:hidden">
             <button
               onClick={() => setView('list')}
+              aria-label="List view"
+              aria-pressed={view === 'list'}
               className={`rounded-md px-3 py-1.5 text-xs font-semibold transition ${
                 view === 'list' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500'
               }`}
             >
-              ☰ List
+              <span aria-hidden="true">☰ List</span>
             </button>
             <button
               onClick={() => setView('map')}
+              aria-label="Map view"
+              aria-pressed={view === 'map'}
               className={`rounded-md px-3 py-1.5 text-xs font-semibold transition ${
                 view === 'map' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500'
               }`}
             >
-              ⊙ Map
+              <span aria-hidden="true">⊙ Map</span>
             </button>
           </div>
         )}

@@ -540,14 +540,14 @@ export default function NewPropertyPage() {
             )}
           </div>
           <div>
-            <label className={labelCls}>Virtual tour URL <span className="text-gray-500 font-normal">(optional)</span></label>
-            <input className={inputCls} type="url" placeholder="https://my.matterport.com/show/?m=... or YouTube link"
+            <label htmlFor="new-virtual-tour" className={labelCls}>Virtual tour URL <span className="text-gray-500 font-normal">(optional)</span></label>
+            <input id="new-virtual-tour" className={inputCls} type="url" placeholder="https://my.matterport.com/show/?m=... or YouTube link"
               value={form.virtualTourUrl} onChange={(e) => set('virtualTourUrl', e.target.value)} />
             <p className="mt-1 text-xs text-gray-500">Paste a Matterport 3D tour or YouTube walkthrough link. Renters can view it directly on your listing.</p>
           </div>
           <div>
-            <label className={labelCls}>Amenities</label>
-            <div className="flex flex-wrap gap-2">
+            <p className={labelCls} id="amenities-label">Amenities</p>
+            <div className="flex flex-wrap gap-2" role="group" aria-labelledby="amenities-label">
               {AMENITIES_LIST.map((a) => (
                 <button key={a} type="button" onClick={() => toggleAmenity(a)}
                   className={`rounded-full border px-3 py-1.5 text-sm font-medium transition ${

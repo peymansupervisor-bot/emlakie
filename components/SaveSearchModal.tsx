@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 interface Props {
   label: string;
@@ -12,6 +12,9 @@ export default function SaveSearchModal({ label, filters, onClose }: Props) {
   const [email, setEmail] = useState('');
   const [status, setStatus] = useState<'idle' | 'loading' | 'done' | 'error'>('idle');
   const [errorMsg, setErrorMsg] = useState('');
+  const emailRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => { emailRef.current?.focus(); }, []);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -34,7 +37,12 @@ export default function SaveSearchModal({ label, filters, onClose }: Props) {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="save-search-title"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
+    >
       <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl">
         {status === 'done' ? (
           <div className="text-center py-4">
@@ -43,7 +51,7 @@ export default function SaveSearchModal({ label, filters, onClose }: Props) {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
               </svg>
             </div>
-            <h2 className="text-lg font-bold text-gray-900">Check your email</h2>
+            <h2 id="save-search-title" className="text-lg font-bold text-gray-900">Check your email</h2>
             <p className="mt-2 text-sm text-gray-500">
               We sent a confirmation link to <strong>{email}</strong>. Click it to activate your alert.
             </p>
@@ -58,7 +66,7 @@ export default function SaveSearchModal({ label, filters, onClose }: Props) {
           <>
             <div className="flex items-start justify-between mb-4">
               <div>
-                <h2 className="text-lg font-bold text-gray-900">Save this search</h2>
+                <h2 id="save-search-title" className="text-lg font-bold text-gray-900">Save this search</h2>
                 <p className="mt-1 text-sm text-gray-500">
                   Get emailed when new homes match{' '}
                   <span className="font-medium text-gray-800">{label}</span>.
@@ -76,10 +84,14 @@ export default function SaveSearchModal({ label, filters, onClose }: Props) {
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-3">
+              <label htmlFor="save-search-email" className="sr-only">Email address</label>
               <input
+                ref={emailRef}
+                id="save-search-email"
                 type="email"
                 required
                 placeholder="your@email.com"
+                aria-required="true"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm outline-none focus:border-green-500 focus:ring-2 focus:ring-green-100"

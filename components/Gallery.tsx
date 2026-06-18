@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 
 interface Props {
   photos: string[];
@@ -11,6 +11,7 @@ interface Props {
 export default function Gallery({ photos, title }: Props) {
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
 
   const prev = useCallback(() => setActiveIndex((i) => (i - 1 + photos.length) % photos.length), [photos.length]);
   const next = useCallback(() => setActiveIndex((i) => (i + 1) % photos.length), [photos.length]);
@@ -28,6 +29,7 @@ export default function Gallery({ photos, title }: Props) {
 
   useEffect(() => {
     document.body.style.overflow = lightboxOpen ? 'hidden' : '';
+    if (lightboxOpen) closeButtonRef.current?.focus();
     return () => { document.body.style.overflow = ''; };
   }, [lightboxOpen]);
 
@@ -50,7 +52,7 @@ export default function Gallery({ photos, title }: Props) {
         {/* Hero — spans 2 cols and 2 rows */}
         <button
           onClick={() => openAt(0)}
-          className="relative col-span-2 row-span-2 overflow-hidden focus:outline-none"
+          className="relative col-span-2 row-span-2 overflow-hidden"
           aria-label="Open photo gallery"
         >
           <Image
@@ -69,7 +71,7 @@ export default function Gallery({ photos, title }: Props) {
             key={i}
             onClick={() => openAt(i)}
             disabled={!photos[i]}
-            className="relative overflow-hidden bg-gray-100 focus:outline-none"
+            className="relative overflow-hidden bg-gray-100"
             aria-label={photos[i] ? `View photo ${i + 1}` : undefined}
           >
             {photos[i] ? (
@@ -112,6 +114,9 @@ export default function Gallery({ photos, title }: Props) {
       {/* ── Lightbox ── */}
       {lightboxOpen && (
         <div
+          role="dialog"
+          aria-modal="true"
+          aria-label={`Photo gallery — ${title}`}
           className="fixed inset-0 z-50 flex flex-col bg-black/95"
           onClick={() => setLightboxOpen(false)}
         >
@@ -124,6 +129,7 @@ export default function Gallery({ photos, title }: Props) {
               {activeIndex + 1} / {photos.length}
             </span>
             <button
+              ref={closeButtonRef}
               onClick={() => setLightboxOpen(false)}
               className="rounded-lg p-2 text-white/70 hover:bg-white/10 hover:text-white transition"
               aria-label="Close gallery"

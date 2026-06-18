@@ -1,15 +1,20 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 
 export default function CookieBanner() {
   const [visible, setVisible] = useState(false);
+  const acceptRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     const consent = localStorage.getItem('emlakie_cookie_consent');
     if (!consent) setVisible(true);
   }, []);
+
+  useEffect(() => {
+    if (visible) acceptRef.current?.focus();
+  }, [visible]);
 
   function accept() {
     localStorage.setItem('emlakie_cookie_consent', 'accepted');
@@ -62,6 +67,7 @@ export default function CookieBanner() {
             Decline
           </button>
           <button
+            ref={acceptRef}
             onClick={accept}
             className="text-sm px-5 py-2 rounded-lg font-semibold text-white transition-colors"
             style={{ background: '#16a34a' }}

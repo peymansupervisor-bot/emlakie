@@ -18,9 +18,8 @@ export default function StreetView({ lat, lng, address, city, state }: Props) {
 
   if (!apiKey) return null;
 
-  const location = lat && lng
-    ? `${lat},${lng}`
-    : [address, city, state].filter(Boolean).join(', ');
+  // Use address string (not coordinates) so Google places the camera on the street facing the building
+  const location = [address, city, state].filter(Boolean).join(', ');
 
   if (!location) return null;
 

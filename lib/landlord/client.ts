@@ -167,6 +167,11 @@ export async function markRented(
 
 // ─── Applications & messages (still demo only until backend grows) ────────────
 
+export async function getAllApplications(): Promise<(Application & { listingAddress?: string })[]> {
+  if (isDemo()) return demoApplications.map((a) => ({ ...a, listingAddress: demoListings.find((l) => l.id === a.listing_id)?.address }));
+  return api<(Application & { listingAddress?: string })[]>('/api/applications');
+}
+
 export async function getApplications(listingId: string): Promise<Application[]> {
   if (isDemo()) return demoApplications.filter((a) => a.listing_id === listingId);
   const token = await getToken();

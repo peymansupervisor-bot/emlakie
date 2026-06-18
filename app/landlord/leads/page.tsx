@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { getApplications, getMyListings, updateApplicationStatus } from '@/lib/landlord/client';
+import { getAllApplications, updateApplicationStatus } from '@/lib/landlord/client';
 import { Application, LandlordListing } from '@/lib/landlord/types';
 
 type Filter = 'all' | 'pending' | 'approved' | 'rejected';
@@ -174,16 +174,9 @@ export default function LeadsPage() {
   const [selected, setSelected] = useState<Lead | null>(null);
 
   useEffect(() => {
-    getMyListings().then(async (ls) => {
-      const allApps = await Promise.all(
-        ls.map((l) =>
-          getApplications(l.id).then((apps) =>
-            apps.map((a) => ({ ...a, listingAddress: l.address, listingId: l.id }))
-          ).catch(() => [] as Lead[])
-        )
-      );
-      setLeads(allApps.flat().sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()));
-    }).catch(() => setLeads([]));
+    getAllApplications()
+      .then((apps) => setLeads(apps.map((a) => ({ ...a, listingId: a.listing_id }))))
+      .catch(() => setLeads([]));
   }, []);
 
   async function handleStatusChange(applicationId: string, status: 'approved' | 'rejected' | 'pending') {

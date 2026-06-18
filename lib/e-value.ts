@@ -160,19 +160,30 @@ export async function calculateEValue(listing: {
   if (listing.sqft && listing.sqft > 0) {
     const sqftComps = workingSet.filter((c) => c.living_area_sqft && Number(c.living_area_sqft) > 0)
     if (sqftComps.length >= 3) {
-      // Price per sqft adjustment
       const pricePerSqft = sqftComps.map((c) => Number(c.monthly_rent) / Number(c.living_area_sqft))
       const medianPPSF = median(pricePerSqft)
       const sqftEstimate = medianPPSF * listing.sqft
-      // Blend: 60% sqft-adjusted, 40% raw median
       const rawMedian = median(prices)
       prices = [sqftEstimate * 0.6 + rawMedian * 0.4, ...prices]
     }
   }
 
-  const eRent = prices.length > 0
-    ? roundToNearest(median(prices), 25)         // round to nearest $25
-    : roundToNearest(listing.price * 1.03, 25)   // fallback: +3% market drift
+  // With fewer than 3 comparables the listing's own asking price is the strongest
+  // market signal — weight it heavily so the estimate stays anchored to reality
+  let eRent: number
+  if (listing.price > 0 && prices.length < 3) {
+    if (prices.length === 0) {
+      eRent = roundToNearest(listing.price * 1.03, 25)
+    } else {
+      // Blend: listing price 70%, comparable 30%
+      const compMedian = median(prices)
+      eRent = roundToNearest(listing.price * 0.7 + compMedian * 0.3, 25)
+    }
+  } else {
+    eRent = prices.length > 0
+      ? roundToNearest(median(prices), 25)
+      : roundToNearest(listing.price * 1.03, 25)
+  }
 
   const sellable = canSellIndividually(listing.property_type, listing.ownership_type)
   const eSale = sellable

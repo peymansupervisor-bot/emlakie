@@ -179,7 +179,7 @@ export default async function PropertyPage({ searchParams }: Props) {
                   )}
                   {propData.zestimate && (
                     <div className="flex justify-between">
-                      <dt className="text-gray-500">Est. market value</dt>
+                      <dt className="text-gray-500">E-VALUE™</dt>
                       <dd className="font-bold text-brand-700">${propData.zestimate.toLocaleString()}</dd>
                     </div>
                   )}

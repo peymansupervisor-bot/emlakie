@@ -232,7 +232,7 @@ export default async function PropertyPage({ searchParams }: Props) {
         </div>
 
         {/* Price history */}
-        {propData && propData.priceHistory.length > 0 && (
+        {propData && (
           <section className="mb-6">
             <h2 className="mb-4 text-xl font-bold text-gray-900">Sales &amp; Price History</h2>
             <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
@@ -247,7 +247,7 @@ export default async function PropertyPage({ searchParams }: Props) {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
-                  {propData.priceHistory.map((evt, i) => (
+                  {propData.priceHistory.length > 0 ? propData.priceHistory.map((evt, i) => (
                     <tr key={i} className="hover:bg-gray-50 transition-colors">
                       <td className="px-4 py-3 text-gray-600">{evt.date}</td>
                       <td className="px-4 py-3">
@@ -268,7 +268,13 @@ export default async function PropertyPage({ searchParams }: Props) {
                       </td>
                       <td className="hidden sm:table-cell px-4 py-3 text-gray-400 text-xs">{evt.source}</td>
                     </tr>
-                  ))}
+                  )) : (
+                    <tr>
+                      <td colSpan={5} className="px-4 py-6 text-center text-sm text-gray-400">
+                        No sales history available for this property.
+                      </td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
             </div>

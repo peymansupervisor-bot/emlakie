@@ -21,14 +21,16 @@ function expiryText(iso?: string | null): { text: string; cls: string } {
 const leaseLabel: Record<string, { label: string; cls: string }> = {
   active: { label: 'Seeking tenant', cls: 'text-brand-700' },
   rented: { label: 'Leased', cls: 'text-blue-700' },
-  paused: { label: 'Paused', cls: 'text-amber-700' },
+  pending: { label: 'Lease pending', cls: 'text-amber-700' },
+  coming_soon: { label: 'Coming soon', cls: 'text-purple-700' },
   draft: { label: '—', cls: 'text-gray-500' },
 };
 
 const statusPill: Record<string, { label: string; cls: string }> = {
   active: { label: 'Listed for rent', cls: 'bg-brand-100 text-brand-800' },
   rented: { label: 'Rented', cls: 'bg-blue-100 text-blue-800' },
-  paused: { label: 'Paused', cls: 'bg-amber-100 text-amber-800' },
+  pending: { label: 'Pending', cls: 'bg-amber-100 text-amber-800' },
+  coming_soon: { label: 'Coming soon', cls: 'bg-purple-100 text-purple-800' },
   draft: { label: 'Draft', cls: 'bg-gray-200 text-gray-700' },
 };
 
@@ -160,9 +162,10 @@ export default function PropertiesPage() {
     { id: 'offMarket', label: `Off market (${offMarket.length})` },
   ];
 
-  const totalViews = listings?.reduce((s, l) => s + (l.view_count ?? 0), 0) ?? 0;
   const totalApplicants = listings?.reduce((s, l) => s + (l.applicant_count ?? 0), 0) ?? 0;
   const activeCount = listings?.filter((l) => l.status === 'active').length ?? 0;
+  const comingSoonCount = listings?.filter((l) => l.status === 'coming_soon').length ?? 0;
+  const pendingCount = listings?.filter((l) => l.status === 'pending').length ?? 0;
 
   return (
     <div>
@@ -177,8 +180,8 @@ export default function PropertiesPage() {
         <div className="mb-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
           {[
             { label: 'Active listings', value: activeCount, filter: 'forRent' as Tab },
-            { label: 'Total listings', value: listings.length, filter: 'all' as Tab },
-            { label: 'Total views', value: totalViews, filter: null },
+            { label: 'Coming soon', value: comingSoonCount, filter: null },
+            { label: 'Pending', value: pendingCount, filter: null },
             { label: 'Total applicants', value: totalApplicants, filter: null },
           ].map((s) => (
             s.label === 'Total applicants' ? (

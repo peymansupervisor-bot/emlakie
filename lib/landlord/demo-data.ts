@@ -54,7 +54,7 @@ export const demoListings: LandlordListing[] = [
     property_type: 'townhouse',
     amenities: ['Attached Garage', 'Community Pool'],
     photos: ['https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=800&q=80'],
-    status: 'paused',
+    status: 'pending',
     view_count: 127,
     applicant_count: 1,
     isSample: true,

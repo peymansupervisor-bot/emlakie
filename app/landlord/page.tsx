@@ -170,7 +170,7 @@ export default function PropertiesPage() {
   return (
     <div>
       {justCreated && (
-        <div className="mb-6 rounded-xl bg-brand-50 border border-brand-200 px-5 py-4 text-brand-800 font-semibold">
+        <div role="status" aria-live="polite" className="mb-6 rounded-xl bg-brand-50 border border-brand-200 px-5 py-4 text-brand-800 font-semibold">
           ✓ Your listing was published successfully! It may take a few minutes to appear in search results.
         </div>
       )}

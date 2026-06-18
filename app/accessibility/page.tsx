@@ -51,13 +51,17 @@ export default function AccessibilityPage() {
           <h2 className="text-xl font-bold text-gray-900">Measures We Take</h2>
           <p className="mt-2">EMLAKIE takes the following measures to ensure accessibility:</p>
           <ul className="mt-3 list-disc space-y-2 pl-6">
-            <li>Skip-to-main-content link available on all pages</li>
-            <li>All pages include a <code className="rounded bg-gray-100 px-1 text-sm">lang=&quot;en&quot;</code> attribute on the root element</li>
-            <li>Keyboard navigation supported throughout the site</li>
-            <li>Interactive controls in the photo gallery and navigation have accessible names via <code className="rounded bg-gray-100 px-1 text-sm">aria-label</code></li>
+            <li>Skip-to-main-content link on all pages</li>
+            <li><code className="rounded bg-gray-100 px-1 text-sm">lang=&quot;en&quot;</code> attribute on the root element</li>
+            <li>Keyboard navigation throughout the site</li>
+            <li>Modal dialogs (photo gallery, save search, applicant drawer) trap focus and close on Escape</li>
+            <li>Status and error messages announced to screen readers via <code className="rounded bg-gray-100 px-1 text-sm">role=&quot;alert&quot;</code>, <code className="rounded bg-gray-100 px-1 text-sm">role=&quot;status&quot;</code>, and <code className="rounded bg-gray-100 px-1 text-sm">aria-live</code></li>
+            <li>All embedded map and video iframes include a descriptive <code className="rounded bg-gray-100 px-1 text-sm">title</code> attribute</li>
+            <li>Interactive controls have accessible names via <code className="rounded bg-gray-100 px-1 text-sm">aria-label</code></li>
             <li>Decorative images use empty alt text (<code className="rounded bg-gray-100 px-1 text-sm">alt=&quot;&quot;</code>) so screen readers skip them</li>
             <li>Color contrast meets or exceeds 4.5:1 for body text and 3:1 for large text</li>
             <li>Correct heading hierarchy (h1 → h2 → h3) maintained on primary pages</li>
+            <li>Tested with axe-core 4.9 automated scanning and Lighthouse accessibility audit</li>
           </ul>
         </section>
 
@@ -74,19 +78,14 @@ export default function AccessibilityPage() {
               property type).
             </li>
             <li>
-              <strong>Form error announcements:</strong> Inline form error messages are visible on screen but are
-              not yet programmatically associated with their fields via <code className="rounded bg-gray-100 px-1 text-sm">aria-describedby</code> or announced
-              via <code className="rounded bg-gray-100 px-1 text-sm">aria-live</code>. Screen reader users may not be notified of errors automatically.
-            </li>
-            <li>
               <strong>User-uploaded content:</strong> Photos and descriptions submitted by landlords may not always
               meet accessibility standards. We encourage landlords to provide meaningful descriptions for any images
               they upload.
             </li>
             <li>
               <strong>Third-party integrations:</strong> Some third-party services integrated into our platform
-              (including Google Maps and the AI support chatbot) may have limited accessibility support under their
-              own implementations.
+              (including Google Maps Street View and the AI support chatbot) may have limited accessibility support
+              under their own implementations.
             </li>
           </ul>
         </section>

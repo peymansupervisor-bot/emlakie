@@ -25,11 +25,29 @@ export default function Gallery({ photos, title }: Props) {
     active?.scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'smooth' });
   }, [activeIndex]);
 
+  const lightboxRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if (e.key === 'ArrowLeft') prev();
       if (e.key === 'ArrowRight') next();
       if (e.key === 'Escape' && lightboxOpen) setLightboxOpen(false);
+      // Focus trap: keep Tab inside the lightbox
+      if (e.key === 'Tab' && lightboxOpen && lightboxRef.current) {
+        const focusable = Array.from(
+          lightboxRef.current.querySelectorAll<HTMLElement>(
+            'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+          )
+        ).filter((el) => !el.hasAttribute('disabled'));
+        if (focusable.length === 0) { e.preventDefault(); return; }
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (e.shiftKey) {
+          if (document.activeElement === first) { e.preventDefault(); last.focus(); }
+        } else {
+          if (document.activeElement === last) { e.preventDefault(); first.focus(); }
+        }
+      }
     };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
@@ -145,6 +163,7 @@ export default function Gallery({ photos, title }: Props) {
       {/* ── Lightbox ── */}
       {lightboxOpen && (
         <div
+          ref={lightboxRef}
           role="dialog"
           aria-modal="true"
           aria-label={`Photo gallery — ${title}`}

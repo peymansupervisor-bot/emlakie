@@ -30,10 +30,28 @@ function ApplicantDrawer({ lead, onClose, onStatusChange }: {
   onStatusChange: (id: string, status: 'approved' | 'rejected') => void;
 }) {
   const closeRef = useRef<HTMLButtonElement>(null);
+  const drawerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     closeRef.current?.focus();
-    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') { onClose(); return; }
+      if (e.key === 'Tab' && drawerRef.current) {
+        const focusable = Array.from(
+          drawerRef.current.querySelectorAll<HTMLElement>(
+            'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+          )
+        ).filter((el) => !el.hasAttribute('disabled'));
+        if (focusable.length === 0) { e.preventDefault(); return; }
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (e.shiftKey) {
+          if (document.activeElement === first) { e.preventDefault(); last.focus(); }
+        } else {
+          if (document.activeElement === last) { e.preventDefault(); first.focus(); }
+        }
+      }
+    };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, [onClose]);
@@ -47,6 +65,7 @@ function ApplicantDrawer({ lead, onClose, onStatusChange }: {
 
       {/* Drawer */}
       <div
+        ref={drawerRef}
         role="dialog"
         aria-modal="true"
         aria-label={`Applicant details — ${lead.tenant_name ?? 'Applicant'}`}

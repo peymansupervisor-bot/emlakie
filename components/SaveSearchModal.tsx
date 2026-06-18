@@ -13,8 +13,33 @@ export default function SaveSearchModal({ label, filters, onClose }: Props) {
   const [status, setStatus] = useState<'idle' | 'loading' | 'done' | 'error'>('idle');
   const [errorMsg, setErrorMsg] = useState('');
   const emailRef = useRef<HTMLInputElement>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => { emailRef.current?.focus(); }, []);
+
+  // Escape to close + focus trap
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') { onClose(); return; }
+      if (e.key === 'Tab' && dialogRef.current) {
+        const focusable = Array.from(
+          dialogRef.current.querySelectorAll<HTMLElement>(
+            'button, input, [tabindex]:not([tabindex="-1"])'
+          )
+        ).filter((el) => !el.hasAttribute('disabled'));
+        if (focusable.length === 0) { e.preventDefault(); return; }
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (e.shiftKey) {
+          if (document.activeElement === first) { e.preventDefault(); last.focus(); }
+        } else {
+          if (document.activeElement === last) { e.preventDefault(); first.focus(); }
+        }
+      }
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [onClose]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -43,11 +68,11 @@ export default function SaveSearchModal({ label, filters, onClose }: Props) {
       aria-labelledby="save-search-title"
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
     >
-      <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl">
+      <div ref={dialogRef} className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl">
         {status === 'done' ? (
-          <div className="text-center py-4">
+          <div className="text-center py-4" role="status" aria-live="polite">
             <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
-              <svg className="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg className="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
               </svg>
             </div>
@@ -77,7 +102,7 @@ export default function SaveSearchModal({ label, filters, onClose }: Props) {
                 className="ml-4 text-gray-500 hover:text-gray-600 transition"
                 aria-label="Close"
               >
-                <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                   <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
                 </svg>
               </button>
@@ -97,7 +122,7 @@ export default function SaveSearchModal({ label, filters, onClose }: Props) {
                 className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm outline-none focus:border-green-500 focus:ring-2 focus:ring-green-100"
               />
               {status === 'error' && (
-                <p className="text-sm text-red-600">{errorMsg}</p>
+                <p role="alert" className="text-sm text-red-600">{errorMsg}</p>
               )}
               <button
                 type="submit"

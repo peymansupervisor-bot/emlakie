@@ -36,12 +36,14 @@ function PriceEditor({ listing, onSaved }: { listing: LandlordListing; onSaved: 
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(String(listing.price ?? ''));
   const [saving, setSaving] = useState(false);
+  const [err, setErr] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
 
   function openEditor(e: React.MouseEvent) {
     e.preventDefault();
     e.stopPropagation();
     setValue(String(listing.price ?? ''));
+    setErr('');
     setOpen(true);
     setTimeout(() => inputRef.current?.select(), 30);
   }
@@ -49,12 +51,16 @@ function PriceEditor({ listing, onSaved }: { listing: LandlordListing; onSaved: 
   async function save(e: React.FormEvent) {
     e.preventDefault();
     const num = parseInt(value.replace(/\D/g, ''), 10);
-    if (!num || num === listing.price) { setOpen(false); return; }
+    if (!num) { setErr('Enter a valid price.'); return; }
+    if (num === listing.price) { setOpen(false); return; }
     setSaving(true);
+    setErr('');
     try {
       await updateListing(listing.id, { price: num });
       onSaved(listing.id, num);
       setOpen(false);
+    } catch (e) {
+      setErr(e instanceof Error ? e.message : 'Save failed.');
     } finally {
       setSaving(false);
     }
@@ -100,6 +106,11 @@ function PriceEditor({ listing, onSaved }: { listing: LandlordListing; onSaved: 
               {saving ? '…' : 'Save'}
             </button>
           </form>
+          {err && (
+            <span className="absolute left-0 top-full mt-1 z-30 rounded bg-red-50 border border-red-200 px-2 py-1 text-xs text-red-700 whitespace-nowrap">
+              {err}
+            </span>
+          )}
         </>
       )}
     </span>

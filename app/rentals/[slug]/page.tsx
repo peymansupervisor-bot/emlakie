@@ -30,11 +30,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       : listing.description
     : undefined;
   return {
-    title: `${listing.title}${statusLabel} — ${formatPrice(listing.price)}/mo`,
+    title: `${listing.title}${statusLabel} — ${formatPrice(listing.price)}`,
     description: shortDesc,
     alternates: { canonical: `https://emlakie.com/rentals/${canonicalSlug}` },
     openGraph: {
-      title: `${listing.title} — ${formatPrice(listing.price)}/mo`,
+      title: `${listing.title} — ${formatPrice(listing.price)}`,
       description: shortDesc ?? '',
       type: 'website',
       images: listing.photos?.[0]

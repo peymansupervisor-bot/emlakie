@@ -12,7 +12,6 @@ import EValue from '@/components/EValue';
 import { calculateEValue } from '@/lib/e-value';
 import ApplyForm from '@/components/ApplyForm';
 import NearbyPlaces from '@/components/NearbyPlaces';
-import StreetView from '@/components/StreetView';
 import { getPropertyData } from '@/lib/zllw';
 
 interface Props {
@@ -230,10 +229,7 @@ export default async function ListingPage({ params }: Props) {
             </div>
           )}
 
-          {/* Street View */}
-          <StreetView lat={listing.lat ?? undefined} lng={listing.lng ?? undefined} address={listing.address} city={listing.city} state={listing.state} />
-
-          {/* Nearby places */}
+{/* Nearby places */}
           {listing.lat && listing.lng && (
             <NearbyPlaces lat={listing.lat} lng={listing.lng} />
           )}

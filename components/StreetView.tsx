@@ -79,6 +79,9 @@ export default function StreetView({ lat, lng, address, city, state }: Props) {
           </div>
         )}
       </div>
+      <p className="mt-2 text-xs text-gray-400">
+        Street View shows the public-facing street at this address. The interior of the property and any unit-specific details are not visible here.
+      </p>
     </div>
   );
 }

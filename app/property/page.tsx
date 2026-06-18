@@ -4,6 +4,7 @@ import { getAreaEValue } from '@/lib/e-value';
 import { getPropertyData } from '@/lib/zllw';
 import Link from 'next/link';
 import ListingCard from '@/components/ListingCard';
+import StreetView from '@/components/StreetView';
 import type { Metadata } from 'next';
 
 interface Props {
@@ -215,6 +216,9 @@ export default async function PropertyPage({ searchParams }: Props) {
             </Link>
           </div>
         </div>
+
+        {/* Street View */}
+        <StreetView lat={lat ?? undefined} lng={lng ?? undefined} address={street} city={city} state={state} />
 
         {/* Price history */}
         {propData && (

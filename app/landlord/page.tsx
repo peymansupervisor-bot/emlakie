@@ -102,12 +102,20 @@ export default function PropertiesPage() {
 
       <div className="flex flex-wrap items-center justify-between gap-4">
         <h1 className="text-3xl font-extrabold text-gray-900">Properties</h1>
-        <Link
-          href="/landlord/properties/new"
-          className="rounded-xl bg-brand-600 px-5 py-2.5 font-semibold text-white transition hover:bg-brand-700"
-        >
-          + Add a property
-        </Link>
+        <div className="flex gap-3">
+          <Link
+            href="/landlord/properties/import"
+            className="rounded-xl border border-brand-600 px-5 py-2.5 font-semibold text-brand-600 transition hover:bg-brand-50"
+          >
+            Import from MLS
+          </Link>
+          <Link
+            href="/landlord/properties/new"
+            className="rounded-xl bg-brand-600 px-5 py-2.5 font-semibold text-white transition hover:bg-brand-700"
+          >
+            + Add a property
+          </Link>
+        </div>
       </div>
 
       <div className="mt-6 flex flex-wrap items-center gap-3">

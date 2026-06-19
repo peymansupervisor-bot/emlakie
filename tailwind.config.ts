@@ -32,9 +32,14 @@ const config: Config = {
           '0%, 100%': { boxShadow: '0 0 0 0 rgba(22,163,74,0.55)' },
           '50%': { boxShadow: '0 0 0 6px rgba(22,163,74,0)' },
         },
+        marquee: {
+          '0%': { transform: 'translateX(0%)' },
+          '100%': { transform: 'translateX(-50%)' },
+        },
       },
       animation: {
         'glow-pulse': 'glow-pulse 2s ease-in-out infinite',
+        marquee: 'marquee 40s linear infinite',
       },
     },
   },

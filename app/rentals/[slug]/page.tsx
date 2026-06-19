@@ -222,22 +222,15 @@ export default async function ListingPage({ params }: Props) {
           })()}
 
 
-          {/* Map */}
-          {(listing.lat && listing.lng) ? (
-            <div className="mt-8">
-              <h2 className="text-xl font-bold text-gray-900 mb-3">Location</h2>
-              <MapEmbed
-                src={`https://www.openstreetmap.org/export/embed.html?bbox=${listing.lng - 0.005},${listing.lat - 0.004},${listing.lng + 0.005},${listing.lat + 0.004}&layer=mapnik&marker=${listing.lat},${listing.lng}`}
-              />
-            </div>
-          ) : listing.address ? (
+          {/* Map — use address query so the pin is always accurate */}
+          {listing.address && (
             <div className="mt-8">
               <h2 className="text-xl font-bold text-gray-900 mb-3">Location</h2>
               <MapEmbed
                 src={`https://maps.google.com/maps?q=${encodeURIComponent(fullAddress)}&output=embed`}
               />
             </div>
-          ) : null}
+          )}
 
 {/* Nearby places */}
           {listing.lat && listing.lng && (

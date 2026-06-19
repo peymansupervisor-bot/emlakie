@@ -2,7 +2,8 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import ListingCard from '@/components/ListingCard';
-import { getListings } from '@/lib/api';
+import SeoLinkGrid from '@/components/SeoLinkGrid';
+import { getListings, getTrendingCities } from '@/lib/api';
 import { lookupZip } from '@/lib/zips';
 import { formatPrice } from '@/lib/format';
 
@@ -68,7 +69,10 @@ export default async function ZipPage({ params }: Props) {
   const { city, state } = info;
   const label = `${city}, ${state}`;
 
-  const { listings, total } = await getListings({ zip: params.zip });
+  const [{ listings, total }, trendingCities] = await Promise.all([
+    getListings({ zip: params.zip }),
+    getTrendingCities(8),
+  ]);
 
   const hasListings = listings.length > 0;
   const prices = listings.map((l) => l.price);
@@ -206,6 +210,8 @@ export default async function ZipPage({ params }: Props) {
           {hasListings ? 'Apply in the App' : 'Get Notified'}
         </Link>
       </section>
+
+      <SeoLinkGrid trendingCities={trendingCities} />
     </div>
   );
 }

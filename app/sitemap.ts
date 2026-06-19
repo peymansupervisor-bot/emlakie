@@ -1,6 +1,7 @@
 import type { MetadataRoute } from 'next';
 import { getAllZips, getAllCities, getListings } from '@/lib/api';
 import { posts } from '@/lib/blog';
+import { US_STATES } from '@/lib/states';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = 'https://emlakie.com';
@@ -40,6 +41,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${base}/rentals/section-8`, changeFrequency: 'weekly', priority: 0.8 },
     ...listingPages,
     ...blogPages,
+    ...US_STATES.map(s => ({
+      url: `${base}/rentals/state/${s.slug}`,
+      changeFrequency: 'daily' as const,
+      priority: 0.88,
+    })),
     ...cities.map(c => ({
       url: `${base}/rentals/city/${c.slug}`,
       changeFrequency: 'daily' as const,

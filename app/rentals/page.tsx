@@ -3,7 +3,8 @@ import { redirect } from 'next/navigation';
 import type { Metadata } from 'next';
 import Filters from '@/components/Filters';
 import RentalsClient from '@/components/RentalsClient';
-import { getListings, getAllMappableListings } from '@/lib/api';
+import SeoLinkGrid from '@/components/SeoLinkGrid';
+import { getListings, getAllMappableListings, getTrendingCities } from '@/lib/api';
 import { ListingFilters } from '@/lib/types';
 import { isAddressQuery } from '@/lib/address-utils';
 
@@ -35,9 +36,10 @@ export default async function RentalsPage({
   searchParams: ListingFilters;
 }) {
 
-  const [{ listings, total, usingSampleData }, allMapListings] = await Promise.all([
+  const [{ listings, total, usingSampleData }, allMapListings, trendingCities] = await Promise.all([
     getListings(searchParams),
     getAllMappableListings(),
+    getTrendingCities(8),
   ]);
 
   const searchTerm = searchParams.q || searchParams.city;
@@ -67,6 +69,13 @@ export default async function RentalsPage({
           searchLabel={heading}
         />
       </Suspense>
+
+      {/* SEO link grid — only shown when no active search filters */}
+      {!searchParams.q && !searchParams.city && !searchParams.zip && (
+        <div className="mx-auto max-w-7xl px-4 pb-16 sm:px-6">
+          <SeoLinkGrid trendingCities={trendingCities} />
+        </div>
+      )}
     </div>
   );
 }

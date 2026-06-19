@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createSupabaseWithToken } from '@/lib/supabase-server'
+import { createSupabaseAdmin, createSupabaseWithToken } from '@/lib/supabase-server'
 import { generateListingSlug } from '@/lib/format'
 
 // PUT /api/listings/[id] — update status, title, price, etc.
@@ -83,15 +83,26 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
   const token = req.headers.get('authorization')?.replace('Bearer ', '')
   if (!token) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
+  // Verify ownership with user-scoped client
   const supabase = createSupabaseWithToken(token)
   const { data: { user }, error: authErr } = await supabase.auth.getUser()
   if (authErr || !user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const { error } = await supabase
+  const { data: listing } = await supabase
+    .from('listings')
+    .select('id, landlord_id')
+    .eq('id', id)
+    .eq('landlord_id', user.id)
+    .single()
+
+  if (!listing) return NextResponse.json({ error: 'Listing not found or not yours' }, { status: 404 })
+
+  // Use admin client to bypass RLS for the delete
+  const admin = createSupabaseAdmin()
+  const { error } = await admin
     .from('listings')
     .delete()
     .eq('id', id)
-    .eq('landlord_id', user.id)
 
   if (error) {
     console.error('[DELETE /api/listings/:id]', error.message)

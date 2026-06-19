@@ -10,6 +10,8 @@ import StatsStrip from '@/components/StatsStrip';
 import TrendingCities from '@/components/TrendingCities';
 import RecentListings from '@/components/RecentListings';
 import LandlordCTACard from '@/components/LandlordCTACard';
+import MarketPulse from '@/components/MarketPulse';
+import BlogTeaser from '@/components/BlogTeaser';
 import { getListings } from '@/lib/api';
 
 export const revalidate = 60;
@@ -137,6 +139,9 @@ export default async function HomePage() {
         </div>
       </div>
 
+      {/* Market pulse */}
+      <MarketPulse />
+
       {/* Featured listings */}
       <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6">
         <div className="flex items-end justify-between">
@@ -211,6 +216,9 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* Blog teaser */}
+      <BlogTeaser />
 
       {/* App promo */}
       <section className="mx-auto max-w-7xl px-4 py-10 sm:py-16 sm:px-6">

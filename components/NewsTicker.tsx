@@ -1,15 +1,15 @@
 const FALLBACK_HEADLINES = [
-  { title: 'Mortgage rates dip for third straight week, boosting homebuyer demand', link: 'https://www.inman.com' },
-  { title: 'Rental vacancy rates hit 5-year low as demand outpaces supply in major metros', link: 'https://www.inman.com' },
-  { title: "Single-family rentals see record rent growth in Sun Belt cities", link: 'https://www.inman.com' },
-  { title: 'Fed signals potential rate cut, giving housing market a lift', link: 'https://www.inman.com' },
-  { title: 'Multifamily construction permits surge 12% year-over-year', link: 'https://www.inman.com' },
-  { title: 'Renters spend average of 30% of income on housing — experts weigh in', link: 'https://www.inman.com' },
-  { title: 'New inventory of affordable rentals jumps in Midwest markets', link: 'https://www.inman.com' },
-  { title: "Short-term rental market stabilizes after post-pandemic boom", link: 'https://www.inman.com' },
+  { title: 'Mortgage rates dip for third straight week, boosting homebuyer demand' },
+  { title: 'Rental vacancy rates hit 5-year low as demand outpaces supply in major metros' },
+  { title: 'Single-family rentals see record rent growth in Sun Belt cities' },
+  { title: 'Fed signals potential rate cut, giving housing market a lift' },
+  { title: 'Multifamily construction permits surge 12% year-over-year' },
+  { title: 'Renters spend average of 30% of income on housing — experts weigh in' },
+  { title: 'New inventory of affordable rentals jumps in Midwest markets' },
+  { title: 'Short-term rental market stabilizes after post-pandemic boom' },
 ];
 
-interface Headline { title: string; link: string }
+interface Headline { title: string }
 
 async function fetchHeadlines(): Promise<Headline[]> {
   try {
@@ -19,8 +19,8 @@ async function fetchHeadlines(): Promise<Headline[]> {
     });
     if (!res.ok) return FALLBACK_HEADLINES;
     const xml = await res.text();
-    const matches = Array.from(xml.matchAll(/<item>[\s\S]*?<title><!\[CDATA\[(.*?)\]\]><\/title>[\s\S]*?<link>(.*?)<\/link>[\s\S]*?<\/item>/g));
-    const items: Headline[] = matches.slice(0, 10).map(m => ({ title: m[1].trim(), link: m[2].trim() }));
+    const matches = Array.from(xml.matchAll(/<item>[\s\S]*?<title><!\[CDATA\[(.*?)\]\]><\/title>[\s\S]*?<\/item>/g));
+    const items: Headline[] = matches.slice(0, 10).map(m => ({ title: m[1].trim() }));
     return items.length >= 4 ? items : FALLBACK_HEADLINES;
   } catch {
     return FALLBACK_HEADLINES;
@@ -44,16 +44,13 @@ export default async function NewsTicker() {
             style={{ width: 'max-content' }}
           >
             {items.map((h, i) => (
-              <a
+              <span
                 key={i}
-                href={h.link}
-                target="_blank"
-                rel="nofollow noopener noreferrer"
-                className="inline-flex items-center gap-2 px-6 text-sm font-medium text-green-50 hover:text-white transition-colors"
+                className="inline-flex items-center gap-2 px-6 text-sm font-medium text-green-50"
               >
                 <span className="text-green-300 select-none" aria-hidden="true">●</span>
                 {h.title}
-              </a>
+              </span>
             ))}
           </div>
         </div>

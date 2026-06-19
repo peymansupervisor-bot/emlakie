@@ -42,6 +42,11 @@ export default function ListingCard({ listing }: { listing: Listing }) {
             Broker Listed
           </span>
         )}
+        {!listing.isSample && listing.dom != null && listing.dom <= 6 && (
+          <span className="absolute bottom-3 left-3 rounded-md bg-green-500 px-2 py-1 text-xs font-bold text-white">
+            New
+          </span>
+        )}
         <span className="absolute right-3 top-3 rounded-md bg-white/90 px-2 py-1 text-xs font-semibold text-gray-700">
           {formatPropertyType(listing.property_type)}
         </span>

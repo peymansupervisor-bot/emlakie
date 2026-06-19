@@ -294,6 +294,63 @@ export async function getStats(): Promise<{ listings: number; cities: number; la
   }
 }
 
+export interface MarketPulse {
+  label: string;
+  bedrooms: number;
+  avgRent: number;
+  count: number;
+}
+
+const PULSE_BEDS = [
+  { label: 'Studio', bedrooms: 0 },
+  { label: '1 BR', bedrooms: 1 },
+  { label: '2 BR', bedrooms: 2 },
+  { label: '3 BR', bedrooms: 3 },
+];
+
+export async function getMarketPulse(): Promise<MarketPulse[]> {
+  const build = (map: Map<number, { total: number; count: number }>) =>
+    PULSE_BEDS.map(({ label, bedrooms }) => {
+      const e = map.get(bedrooms);
+      return { label, bedrooms, avgRent: e ? Math.round(e.total / e.count) : 0, count: e?.count ?? 0 };
+    }).filter(p => p.count > 0);
+
+  try {
+    const sb = supabaseAdmin();
+    const { data } = await sb
+      .from('listings')
+      .select('bedrooms, monthly_rent')
+      .eq('status', 'active')
+      .not('monthly_rent', 'is', null)
+      .limit(500);
+
+    if (!data || data.length === 0) throw new Error('no data');
+
+    const map = new Map<number, { total: number; count: number }>();
+    for (const row of data) {
+      const bed = Number(row.bedrooms);
+      const rent = Number(row.monthly_rent);
+      if (!isFinite(bed) || !isFinite(rent) || rent <= 0) continue;
+      const key = bed <= 0 ? 0 : bed >= 3 ? 3 : bed;
+      const e = map.get(key) ?? { total: 0, count: 0 };
+      e.total += rent;
+      e.count += 1;
+      map.set(key, e);
+    }
+    return build(map);
+  } catch {
+    const map = new Map<number, { total: number; count: number }>();
+    for (const l of sampleListings) {
+      const key = l.bedrooms <= 0 ? 0 : l.bedrooms >= 3 ? 3 : l.bedrooms;
+      const e = map.get(key) ?? { total: 0, count: 0 };
+      e.total += l.price;
+      e.count += 1;
+      map.set(key, e);
+    }
+    return build(map);
+  }
+}
+
 export async function getListingsByCity(citySlug: string): Promise<{ listings: Listing[]; total: number; city: string; state: string; usingSampleData: boolean } | null> {
   const cities = await getAllCities();
   const match = cities.find(c => c.slug === citySlug);

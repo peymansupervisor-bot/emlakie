@@ -90,6 +90,7 @@ export async function verifyOtp(phone: string, token: string): Promise<void> {
 }
 
 export async function signInWithOAuth(provider: 'google' | 'facebook' | 'apple'): Promise<void> {
+  if (typeof window !== 'undefined') localStorage.removeItem(DEMO_KEY);
   const { error } = await supabase.auth.signInWithOAuth({
     provider,
     options: { redirectTo: `${window.location.origin}/landlord` },
@@ -98,6 +99,7 @@ export async function signInWithOAuth(provider: 'google' | 'facebook' | 'apple')
 }
 
 export async function signInWithPassword(email: string, password: string): Promise<void> {
+  if (typeof window !== 'undefined') localStorage.removeItem(DEMO_KEY);
   const { error } = await supabase.auth.signInWithPassword({ email, password });
   if (error) throw new Error(error.message);
 }

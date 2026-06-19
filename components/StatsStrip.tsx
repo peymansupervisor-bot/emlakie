@@ -16,8 +16,8 @@ export default async function StatsStrip() {
   ];
 
   return (
-    <div className="mt-8 w-full max-w-2xl mx-auto">
-      <div className="flex items-center justify-center gap-1 mb-4">
+    <div className="mt-5 w-full max-w-2xl mx-auto">
+      <div className="flex items-center justify-center gap-1 mb-2">
         <span className="relative flex h-2 w-2 mr-1">
           <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-400 opacity-75" />
           <span className="relative inline-flex rounded-full h-2 w-2 bg-brand-500" />

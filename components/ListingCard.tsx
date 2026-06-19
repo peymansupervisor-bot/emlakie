@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { Listing } from '@/lib/types';
 import { formatBaths, formatBeds, formatPrice, formatPropertyType, formatSqft } from '@/lib/format';
 
-export default function ListingCard({ listing }: { listing: Listing }) {
+export default function ListingCard({ listing, priority = false }: { listing: Listing; priority?: boolean }) {
   const photo = listing.photos?.[0];
 
   return (
@@ -18,6 +18,7 @@ export default function ListingCard({ listing }: { listing: Listing }) {
             alt={`${formatBeds(listing.bedrooms)}, ${formatBaths(listing.bathrooms)} ${formatPropertyType(listing.property_type)} at ${listing.address}, ${listing.city}`}
             fill
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            priority={priority}
             className="object-cover transition duration-300 group-hover:scale-105"
           />
         ) : (

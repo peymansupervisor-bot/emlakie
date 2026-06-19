@@ -154,8 +154,8 @@ export default async function HomePage() {
           </Link>
         </div>
         <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {featured.map((listing) => (
-            <ListingCard key={listing.id} listing={listing} />
+          {featured.map((listing, i) => (
+            <ListingCard key={listing.id} listing={listing} priority={i < 3} />
           ))}
         </div>
       </section>
@@ -236,7 +236,7 @@ export default async function HomePage() {
             </div>
           </div>
           <div className="hidden h-64 w-64 overflow-hidden rounded-full lg:flex">
-            <Image src="/logo.png" alt="Emlakie" width={256} height={256} className="h-full w-full object-cover" />
+            <Image src="/logo.png" alt="Emlakie" width={256} height={256} sizes="256px" className="h-full w-full object-cover" />
           </div>
         </div>
       </section>

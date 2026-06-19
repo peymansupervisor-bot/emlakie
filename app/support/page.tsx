@@ -10,9 +10,14 @@ export const metadata: Metadata = {
     description: 'Get help with your EMLAKIE account. Our AI support agent can diagnose and fix issues instantly.',
     type: 'website',
     url: 'https://emlakie.com/support',
-    images: [{ url: '/logo.png', width: 512, height: 512, alt: 'EMLAKIE' }],
+    images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: 'EMLAKIE' }],
   },
-  twitter: { card: 'summary_large_image', images: ['/logo.png'] },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Support | EMLAKIE',
+    description: 'Get help with your EMLAKIE account. Our AI support agent can diagnose and fix issues instantly.',
+    images: ['/opengraph-image'],
+  },
 };
 
 export default function SupportPage() {

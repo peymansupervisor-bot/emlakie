@@ -32,9 +32,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description: `Find your next home in ${label}. Search rentals by price, bedrooms, and property type on EMLAKIE.`,
       type: 'website',
       url: `https://emlakie.com/rentals/city/${slug}`,
-      images: [{ url: '/logo.png', width: 512, height: 512, alt: 'EMLAKIE' }],
+      images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: `Homes for Rent in ${label}` }],
     },
-    twitter: { card: 'summary_large_image', images: ['/logo.png'] },
+    twitter: {
+      card: 'summary_large_image',
+      title: `Homes for Rent in ${label}`,
+      description: `Find your next home in ${label}. Search rentals by price, bedrooms, and property type on EMLAKIE.`,
+      images: ['/opengraph-image'],
+    },
   };
 }
 

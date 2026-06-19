@@ -15,6 +15,7 @@ export default function robots(): MetadataRoute.Robots {
           '/landlord/messages',
           '/landlord/alerts',
           '/landlord/payments',
+          '/landlord/payments/success',
           '/landlord/reset-password',
         ],
       },

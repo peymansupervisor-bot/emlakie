@@ -10,9 +10,14 @@ export const metadata: Metadata = {
     description: 'Get help with EMLAKIE — for renters, landlords, and general inquiries.',
     type: 'website',
     url: 'https://emlakie.com/contact',
-    images: [{ url: '/logo.png', width: 512, height: 512, alt: 'EMLAKIE' }],
+    images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: 'EMLAKIE' }],
   },
-  twitter: { card: 'summary_large_image', images: ['/logo.png'] },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Contact Us | EMLAKIE',
+    description: 'Get help with EMLAKIE — for renters, landlords, and general inquiries.',
+    images: ['/opengraph-image'],
+  },
 };
 
 export default function ContactPage() {

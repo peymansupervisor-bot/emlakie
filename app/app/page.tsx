@@ -12,9 +12,14 @@ export const metadata: Metadata = {
     description: 'Search rentals, chat with landlords, and apply in minutes. EMLAKIE is coming soon to the App Store and Google Play.',
     type: 'website',
     url: 'https://emlakie.com/app',
-    images: [{ url: '/logo.png', width: 512, height: 512, alt: 'EMLAKIE' }],
+    images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: 'EMLAKIE' }],
   },
-  twitter: { card: 'summary_large_image', images: ['/logo.png'] },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Get the EMLAKIE App',
+    description: 'Search rentals, chat with landlords, and apply in minutes. EMLAKIE is coming soon to the App Store and Google Play.',
+    images: ['/opengraph-image'],
+  },
 };
 
 export default function AppPage() {

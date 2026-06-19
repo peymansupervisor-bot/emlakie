@@ -14,7 +14,9 @@ export default function StreetViewExplorer({ address, apiKey, lat, lng }: Props)
   const [imgFailed, setImgFailed] = useState(false);
 
   // Prefer coordinates — avoids wrong-parcel geocoding ambiguity
-  const location = lat && lng ? `${lat},${lng}` : encodeURIComponent(address);
+  // Strip unit numbers (#N, Apt N, Unit N) from address fallback — Street View embed rejects them
+  const streetAddress = address.replace(/\s*(#|apt\.?|unit)\s*[\w-]+/gi, '').trim();
+  const location = lat && lng ? `${lat},${lng}` : encodeURIComponent(streetAddress);
   const staticSrc = `https://maps.googleapis.com/maps/api/streetview?size=800x300&location=${location}&fov=90&pitch=0&key=${apiKey}`;
   const embedSrc = `https://www.google.com/maps/embed/v1/streetview?location=${location}&key=${apiKey}&fov=90`;
 

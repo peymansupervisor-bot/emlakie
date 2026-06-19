@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { getMyListing, updateListing } from '@/lib/landlord/client';
+import { deleteListing, getMyListing, updateListing } from '@/lib/landlord/client';
 import { LandlordListing } from '@/lib/landlord/types';
 import AddressField from '@/components/AddressField';
 
@@ -52,6 +52,7 @@ export default function EditListingPage() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const [saved, setSaved] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
 
   useEffect(() => {
     getMyListing(id).then((l) => {
@@ -311,6 +312,43 @@ export default function EditListingPage() {
           className="rounded-xl border border-gray-300 px-5 py-3 text-sm font-semibold text-gray-600 transition hover:border-gray-400">
           Cancel
         </Link>
+        {!confirmDelete ? (
+          <button
+            type="button"
+            onClick={() => setConfirmDelete(true)}
+            disabled={busy}
+            className="rounded-xl border border-red-300 px-5 py-3 text-sm font-semibold text-red-600 transition hover:bg-red-50 disabled:opacity-60">
+            Delete listing
+          </button>
+        ) : (
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-medium text-red-700">Are you sure?</span>
+            <button
+              type="button"
+              onClick={async () => {
+                setBusy(true);
+                try {
+                  await deleteListing(id);
+                  router.push('/landlord');
+                } catch (e) {
+                  setError(e instanceof Error ? e.message : 'Could not delete listing.');
+                  setConfirmDelete(false);
+                } finally {
+                  setBusy(false);
+                }
+              }}
+              disabled={busy}
+              className="rounded-xl bg-red-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-red-700 disabled:opacity-60">
+              {busy ? 'Deleting…' : 'Yes, delete'}
+            </button>
+            <button
+              type="button"
+              onClick={() => setConfirmDelete(false)}
+              className="rounded-xl border border-gray-300 px-4 py-3 text-sm font-semibold text-gray-600 transition hover:border-gray-400">
+              No
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

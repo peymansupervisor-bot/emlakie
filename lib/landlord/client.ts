@@ -143,6 +143,11 @@ export async function extendListing(id: string): Promise<LandlordListing> {
   return api<LandlordListing>(`/api/listings/${id}/extend`, { method: 'POST' });
 }
 
+export async function deleteListing(id: string): Promise<void> {
+  if (isDemo()) throw new Error('Demo mode: sign in with your phone to delete listings.');
+  await api(`/api/listings/${id}`, { method: 'DELETE' });
+}
+
 export async function deactivateListing(id: string): Promise<void> {
   if (isDemo()) throw new Error('Demo mode: sign in with your phone to deactivate listings.');
   await api(`/api/listings/${id}/deactivate`, { method: 'POST' });

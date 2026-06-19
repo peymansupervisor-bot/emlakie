@@ -165,6 +165,10 @@ export default function PropertyDashboardPage() {
             <p className="mt-2 text-sm font-semibold text-brand-700">{actionMsg}</p>
           )}
           <div className="mt-3 flex flex-wrap gap-2">
+            <Link href={`/landlord/properties/${id}/edit`}
+              className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 transition hover:border-brand-400 hover:text-brand-700">
+              Edit listing
+            </Link>
             <button onClick={handleExtend} disabled={actionBusy}
               className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-700 disabled:opacity-60">
               Extend 45 days

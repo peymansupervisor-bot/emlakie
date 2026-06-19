@@ -30,14 +30,13 @@ export default function CookieBanner() {
 
   return (
     <div
-      role="dialog"
-      aria-label="Cookie consent"
-      aria-modal="true"
-      aria-live="polite"
       className="fixed bottom-0 left-0 right-0 z-50 p-4 md:p-6"
       style={{ pointerEvents: 'none' }}
     >
       <div
+        role="dialog"
+        aria-label="Cookie consent"
+        aria-modal="true"
         className="max-w-3xl mx-auto rounded-2xl shadow-2xl flex flex-col sm:flex-row items-start sm:items-center gap-4 px-6 py-5"
         style={{
           background: '#fff',

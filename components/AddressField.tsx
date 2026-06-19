@@ -80,15 +80,21 @@ export default function AddressField({
         placeholder="123 Main St"
         value={value}
         autoComplete="off"
+        role="combobox"
+        aria-autocomplete="list"
+        aria-expanded={open}
+        aria-controls="address-suggestions"
         onChange={handleChange}
         onBlur={() => setTimeout(() => setOpen(false), 150)}
         onFocus={() => { if (suggestions.length) setOpen(true); }}
       />
       {open && suggestions.length > 0 && (
-        <ul className="absolute z-50 mt-1 w-full rounded-xl border border-gray-200 bg-white shadow-lg">
+        <ul id="address-suggestions" role="listbox" className="absolute z-50 mt-1 w-full rounded-xl border border-gray-200 bg-white shadow-lg">
           {suggestions.map((s, i) => (
             <li
               key={i}
+              role="option"
+              aria-selected={false}
               onMouseDown={() => handleSelect(s)}
               className="cursor-pointer px-4 py-2.5 text-sm text-gray-700 hover:bg-green-50 hover:text-green-800 first:rounded-t-xl last:rounded-b-xl"
             >

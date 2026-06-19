@@ -149,6 +149,7 @@ export default function SupportChat() {
               if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); }
             }}
             placeholder="Describe your issue…"
+            aria-label="Chat message"
             rows={2}
             className="min-w-0 flex-1 resize-none rounded-xl border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-green-500 focus:ring-2 focus:ring-green-100"
           />

@@ -369,6 +369,7 @@ export default function NewPropertyPage() {
                         const num = form.licenseNumber.split(' ').slice(1).join(' ');
                         set('licenseNumber', `${e.target.value} ${num}`.trim());
                       }}
+                      aria-label="License state"
                       className="w-20 shrink-0 rounded-lg border border-blue-200 bg-white px-2 py-2 text-sm text-gray-800 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-200"
                     >
                       <option value="">State</option>
@@ -384,6 +385,7 @@ export default function NewPropertyPage() {
                         set('licenseNumber', `${state} ${e.target.value.toUpperCase()}`.trim());
                       }}
                       placeholder="01234567"
+                      aria-label="License number"
                       className="flex-1 rounded-lg border border-blue-200 bg-white px-3 py-2 text-sm text-gray-800 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-200 placeholder-gray-400"
                     />
                   </div>
@@ -591,7 +593,7 @@ export default function NewPropertyPage() {
               {previews.map((src, i) => (
                 <div key={i} className="group relative aspect-square overflow-hidden rounded-xl bg-gray-100">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={src} alt="" className="h-full w-full object-cover" />
+                  <img src={src} alt={`Property photo ${i + 1}`} className="h-full w-full object-cover" />
                   {i === 0 && (
                     <span className="absolute left-1 top-1 rounded-full bg-brand-600 px-2 py-0.5 text-xs font-bold text-white">
                       Cover
@@ -646,7 +648,7 @@ export default function NewPropertyPage() {
               {previews.map((src, i) => (
                 <div key={i} className="relative h-20 w-28 shrink-0 overflow-hidden rounded-lg">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={src} alt="" className="h-full w-full object-cover" />
+                  <img src={src} alt={`Property photo ${i + 1}`} className="h-full w-full object-cover" />
                 </div>
               ))}
             </div>

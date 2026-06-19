@@ -141,6 +141,11 @@ function ScoreBar({ label, icon, score }: { label: string; icon: React.ReactNode
       </div>
       <div className="h-2.5 w-full overflow-hidden rounded-full bg-gray-100">
         <div
+          role="progressbar"
+          aria-valuenow={score}
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-label={`${label}: ${score} out of 100`}
           className={`h-full rounded-full transition-all ${scoreColor(score)}`}
           style={{ width: `${score}%` }}
         />
@@ -162,7 +167,7 @@ export default async function NeighborhoodScores({ lat, lng }: { lat: number; ln
           label="Walkability"
           score={scores.walk}
           icon={
-            <svg viewBox="0 0 24 24" className="h-4 w-4 stroke-brand-600" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg viewBox="0 0 24 24" className="h-4 w-4 stroke-brand-600" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
               <path d="M13 4a1 1 0 1 0 2 0 1 1 0 0 0-2 0" />
               <path d="m9 20 2-6 2 3 3-4" />
               <path d="m7 14 2-4 3 2 2-4" />
@@ -173,7 +178,7 @@ export default async function NeighborhoodScores({ lat, lng }: { lat: number; ln
           label="Public Transit"
           score={scores.transit}
           icon={
-            <svg viewBox="0 0 24 24" className="h-4 w-4 stroke-brand-600" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg viewBox="0 0 24 24" className="h-4 w-4 stroke-brand-600" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
               <rect x="3" y="6" width="18" height="13" rx="2" />
               <path d="M3 11h18M8 6V4M16 6V4" />
               <circle cx="8" cy="16" r="1" fill="currentColor" />
@@ -185,7 +190,7 @@ export default async function NeighborhoodScores({ lat, lng }: { lat: number; ln
           label="Bikeability"
           score={scores.bike}
           icon={
-            <svg viewBox="0 0 24 24" className="h-4 w-4 stroke-brand-600" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg viewBox="0 0 24 24" className="h-4 w-4 stroke-brand-600" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
               <circle cx="5.5" cy="17.5" r="3.5" />
               <circle cx="18.5" cy="17.5" r="3.5" />
               <path d="M15 6a1 1 0 1 0 2 0 1 1 0 0 0-2 0" />

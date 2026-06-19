@@ -29,7 +29,11 @@ export default function StreetViewExplorer({ address, apiKey, lat, lng }: Props)
       <div
         className="relative w-full overflow-hidden rounded-2xl border border-gray-200 shadow-sm cursor-pointer group transition-all duration-500"
         style={{ height: expanded ? '420px' : '160px' }}
+        role={!expanded ? 'button' : undefined}
+        tabIndex={!expanded ? 0 : undefined}
+        aria-label={!expanded ? 'Explore Street View' : undefined}
         onClick={() => { if (!expanded) setExpanded(true); }}
+        onKeyDown={(e) => { if (!expanded && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); setExpanded(true); } }}
       >
         {/* Static preview image */}
         {!imgFailed && !expanded && (
@@ -45,7 +49,7 @@ export default function StreetViewExplorer({ address, apiKey, lat, lng }: Props)
         {/* Fallback placeholder when static image fails */}
         {showPlaceholder && (
           <div className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-gray-800 to-gray-900">
-            <svg viewBox="0 0 24 24" className="h-10 w-10 text-white/40 mb-2" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+            <svg viewBox="0 0 24 24" className="h-10 w-10 text-white/40 mb-2" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
               <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
               <polyline points="9 22 9 12 15 12 15 22" />
             </svg>
@@ -71,8 +75,8 @@ export default function StreetViewExplorer({ address, apiKey, lat, lng }: Props)
         {/* Walk the street CTA */}
         {!expanded && (
           <div className="absolute bottom-4 left-0 right-0 flex items-center justify-center">
-            <button className="flex items-center gap-2 rounded-full bg-white px-5 py-2 text-sm font-semibold text-gray-900 shadow-lg hover:bg-gray-50 transition group-hover:scale-105">
-              <svg viewBox="0 0 24 24" className="h-4 w-4 text-brand-600" fill="none" strokeWidth="2" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round">
+            <button className="flex items-center gap-2 rounded-full bg-white px-5 py-2 text-sm font-semibold text-gray-900 shadow-lg hover:bg-gray-50 transition group-hover:scale-105" tabIndex={-1} aria-hidden="true">
+              <svg viewBox="0 0 24 24" className="h-4 w-4 text-brand-600" fill="none" strokeWidth="2" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                 <circle cx="12" cy="5" r="1.5" />
                 <path d="M9 9.5h6M10.5 9.5l-1.5 5 2 1.5 1 3M13.5 9.5l1.5 5-2 1.5" />
               </svg>

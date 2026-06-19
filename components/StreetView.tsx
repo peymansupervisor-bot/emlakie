@@ -71,14 +71,16 @@ export default function StreetView({ lat, lng, address, city, state }: Props) {
           onError={() => setError(true)}
         />
         {!active && loaded && (
-          <div
-            className="absolute inset-0 flex cursor-pointer items-end justify-center pb-4"
+          <button
+            type="button"
+            className="absolute inset-0 flex cursor-pointer items-end justify-center pb-4 w-full"
             onClick={() => setActive(true)}
+            aria-label="Activate interactive Street View"
           >
-            <span className="rounded-full bg-black/60 px-4 py-1.5 text-xs font-semibold text-white backdrop-blur-sm">
+            <span className="rounded-full bg-black/60 px-4 py-1.5 text-xs font-semibold text-white backdrop-blur-sm" aria-hidden="true">
               Click to interact with Street View
             </span>
-          </div>
+          </button>
         )}
       </div>
       <p className="mt-2 text-xs text-gray-500">

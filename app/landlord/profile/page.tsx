@@ -121,23 +121,23 @@ export default function ProfilePage() {
         <form onSubmit={handleSave} className="mt-8 space-y-5">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className={labelCls}>First name *</label>
-              <input className={inputCls} value={form.first_name}
+              <label htmlFor="profile-first-name" className={labelCls}>First name *</label>
+              <input id="profile-first-name" className={inputCls} value={form.first_name}
                 onChange={(e) => setForm((f) => ({ ...f, first_name: e.target.value }))}
                 placeholder="Jane" />
             </div>
             <div>
-              <label className={labelCls}>Last name *</label>
-              <input className={inputCls} value={form.last_name}
+              <label htmlFor="profile-last-name" className={labelCls}>Last name *</label>
+              <input id="profile-last-name" className={inputCls} value={form.last_name}
                 onChange={(e) => setForm((f) => ({ ...f, last_name: e.target.value }))}
                 placeholder="Smith" />
             </div>
           </div>
 
           <div>
-            <label className={labelCls}>Phone number *</label>
+            <label htmlFor="profile-phone" className={labelCls}>Phone number *</label>
             <div className="relative">
-              <input className={inputCls} type="tel" value={form.phone}
+              <input id="profile-phone" className={inputCls} type="tel" value={form.phone}
                 onChange={(e) => setForm((f) => ({ ...f, phone: formatPhone(e.target.value) }))}
                 placeholder="(555) 000-0000" />
               {phoneVerified && !phoneChanged && (
@@ -151,14 +151,14 @@ export default function ProfilePage() {
 
           {email && (
             <div>
-              <label className={labelCls}>Email</label>
-              <input className={`${inputCls} bg-gray-50 text-gray-500`} value={email} disabled />
+              <label htmlFor="profile-email" className={labelCls}>Email</label>
+              <input id="profile-email" className={`${inputCls} bg-gray-50 text-gray-500`} value={email} disabled />
             </div>
           )}
           {accountId && (
             <div>
-              <label className={labelCls}>Account ID</label>
-              <input className={`${inputCls} bg-gray-50 text-gray-500`} value={accountId} disabled />
+              <label htmlFor="profile-account-id" className={labelCls}>Account ID</label>
+              <input id="profile-account-id" className={`${inputCls} bg-gray-50 text-gray-500`} value={accountId} disabled />
             </div>
           )}
 
@@ -175,8 +175,9 @@ export default function ProfilePage() {
             A 6-digit verification code was sent to <strong>{form.phone}</strong>. Enter it below.
           </div>
           <div>
-            <label className={labelCls}>Verification code</label>
+            <label htmlFor="profile-otp" className={labelCls}>Verification code</label>
             <input
+              id="profile-otp"
               className={`${inputCls} tracking-widest text-center text-lg font-bold`}
               value={otp}
               onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}

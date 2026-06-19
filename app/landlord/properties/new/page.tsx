@@ -92,7 +92,7 @@ function AddressField({ onSelect, onType, id }: {
             const road = a.road ?? '';
             const street = [streetNum, road].filter(Boolean).join(' ');
             const city = a.city ?? a.town ?? a.village ?? '';
-            const state = a.state ?? '';
+            const state = a['ISO3166-2-lvl4']?.split('-')[1] ?? a.state ?? '';
             const zip = a.postcode ?? '';
             return { display: r.display_name, address: street, city, state, zip };
           })

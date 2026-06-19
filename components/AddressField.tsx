@@ -47,9 +47,9 @@ export default function AddressField({
             const a = r.address ?? {};
             const street = [a.house_number ?? '', a.road ?? ''].filter(Boolean).join(' ');
             const city = a.city ?? a.town ?? a.village ?? '';
-            const state = a.state ?? '';
+            const stateCode = a['ISO3166-2-lvl4']?.split('-')[1] ?? a.state ?? '';
             const zip = a.postcode ?? '';
-            return { display: r.display_name, address: street, city, state, zip };
+            return { display: r.display_name, address: street, city, state: stateCode, zip };
           })
           .filter((r) => r.address);
         setSuggestions(results);

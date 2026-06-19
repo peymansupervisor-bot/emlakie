@@ -81,7 +81,7 @@ export default async function HomePage() {
             {/* Center — main hero (first in DOM = first on mobile) */}
             <div className="text-center lg:order-2">
               <p className="text-xs font-semibold uppercase tracking-[0.25em] text-brand-600">
-                The Rental Platform Built for Landlords
+                Rental Properties Nationwide
               </p>
               <h1 className="mt-3 font-serif text-4xl font-bold text-gray-900 sm:text-5xl">
                 List free. Rent fast.<br className="hidden sm:block" /> Keep every dollar.

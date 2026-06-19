@@ -50,6 +50,7 @@ export default function EditListingPage() {
   useEffect(() => {
     getMyListing(id).then((l) => {
       setListing(l);
+      if (!l) return;
       setForm({
         title: l.title ?? '',
         description: l.description ?? '',

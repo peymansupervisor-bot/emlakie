@@ -94,7 +94,7 @@ export default function LoginPage() {
                   />
                 </div>
               </div>
-              {error && <p role="alert" className="text-red-500 text-sm">{error}</p>}
+              {error && <p role="alert" className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700">{error}</p>}
               <button
                 type="submit"
                 disabled={loading}
@@ -125,7 +125,7 @@ export default function LoginPage() {
                   autoFocus
                 />
               </div>
-              {error && <p role="alert" className="text-red-500 text-sm">{error}</p>}
+              {error && <p role="alert" className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700">{error}</p>}
               <button
                 type="submit"
                 disabled={loading}

@@ -130,7 +130,7 @@ export default function Filters() {
       {/* Owner-direct toggle */}
       <button
         onClick={() => setFilter('ownerDirect', ownerDirect ? '' : '1')}
-        className={`flex items-center gap-1.5 rounded-lg border px-3 py-2 text-sm font-medium outline-none transition ${
+        className={`flex items-center gap-1.5 rounded-lg border px-3 py-2 text-sm font-medium outline-none transition focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-1 ${
           ownerDirect
             ? 'border-brand-600 bg-brand-600 text-white'
             : 'border-gray-300 bg-white text-gray-700 hover:border-gray-400'
@@ -150,7 +150,7 @@ export default function Filters() {
             setDropdownPos({ top: r.bottom + 6, right: window.innerWidth - r.right });
             setAmenityOpen((o) => !o);
           }}
-          className={`flex items-center gap-1.5 rounded-lg border px-3 py-2 text-sm font-medium outline-none transition ${
+          className={`flex items-center gap-1.5 rounded-lg border px-3 py-2 text-sm font-medium outline-none transition focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-1 ${
             selectedAmenities.length > 0
               ? 'border-brand-600 bg-brand-50 text-brand-700'
               : 'border-gray-300 bg-white text-gray-700'

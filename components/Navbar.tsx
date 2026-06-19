@@ -52,17 +52,17 @@ export default function Navbar() {
         </div>
 
         {/* Mobile */}
-        <div className="flex items-center gap-2 md:hidden">
-          <Link href="/landlord" className="text-xs font-semibold text-gray-600 hover:text-brand-600">
+        <div className="flex items-center md:hidden">
+          <Link href="/landlord" className="inline-flex items-center rounded px-3 py-3 text-xs font-semibold text-gray-600 hover:text-brand-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-1">
             Landlords
           </Link>
-          <span className="text-gray-300">·</span>
-          <Link href="/rentals" className="text-xs font-semibold text-gray-600 hover:text-brand-600">
+          <span className="text-gray-300" aria-hidden="true">·</span>
+          <Link href="/rentals" className="inline-flex items-center rounded px-3 py-3 text-xs font-semibold text-gray-600 hover:text-brand-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-1">
             Tenants
           </Link>
           <Link
             href="/app"
-            className="ml-2 rounded-full bg-brand-600 px-3 py-1.5 text-xs font-bold text-white"
+            className="ml-1 inline-flex items-center rounded-full bg-brand-600 px-4 py-2.5 text-xs font-bold text-white hover:bg-brand-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-1"
           >
             APP
           </Link>

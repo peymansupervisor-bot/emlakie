@@ -8,7 +8,7 @@ export default async function RecentListings() {
 
   return (
     <div className="flex flex-col gap-3">
-      <p className="text-xs font-semibold uppercase tracking-widest text-gray-400">Just listed</p>
+      <p className="text-xs font-semibold uppercase tracking-widest text-gray-600">Just listed</p>
       {recent.map((l) => (
         <Link
           key={l.id}
@@ -35,7 +35,7 @@ export default async function RecentListings() {
           <div className="min-w-0 flex-1">
             <p className="text-sm font-bold text-gray-900">${l.price.toLocaleString()}<span className="text-xs font-medium text-gray-400">/mo</span></p>
             <p className="truncate text-xs text-gray-500">{l.city}, {l.state}</p>
-            <p className="text-xs text-gray-400">{l.bedrooms}bd · {l.bathrooms}ba</p>
+            <p className="text-xs text-gray-500">{l.bedrooms}bd · {l.bathrooms}ba</p>
           </div>
           <svg className="h-4 w-4 shrink-0 text-gray-300 transition group-hover:text-brand-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />

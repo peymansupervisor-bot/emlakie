@@ -106,7 +106,7 @@ export default function SearchBar({ large = false }: { large?: boolean }) {
           aria-expanded={open}
           aria-controls="search-suggestions"
           aria-activedescendant={activeIdx >= 0 ? `suggestion-${activeIdx}` : undefined}
-          className={`min-w-0 flex-1 px-5 text-gray-900 placeholder-gray-400 outline-none ${
+          className={`min-w-0 flex-1 px-5 text-gray-900 placeholder-gray-400 outline-none focus:ring-2 focus:ring-inset focus:ring-brand-500 ${
             large ? 'py-4 text-lg' : 'py-3 text-base'
           }`}
         />

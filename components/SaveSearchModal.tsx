@@ -122,7 +122,7 @@ export default function SaveSearchModal({ label, filters, onClose }: Props) {
                 className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm outline-none focus:border-green-500 focus:ring-2 focus:ring-green-100"
               />
               {status === 'error' && (
-                <p role="alert" className="text-sm text-red-600">{errorMsg}</p>
+                <p role="alert" className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">{errorMsg}</p>
               )}
               <button
                 type="submit"

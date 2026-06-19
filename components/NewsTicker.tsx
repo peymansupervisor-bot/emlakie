@@ -40,7 +40,7 @@ export default async function NewsTicker() {
         </span>
         <div className="relative flex-1 overflow-hidden py-2">
           <div
-            className="flex gap-0 animate-marquee whitespace-nowrap"
+            className="flex gap-0 animate-marquee motion-reduce:animate-none whitespace-nowrap"
             style={{ width: 'max-content' }}
           >
             {items.map((h, i) => (

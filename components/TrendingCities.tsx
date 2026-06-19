@@ -7,7 +7,7 @@ export default async function TrendingCities() {
 
   return (
     <div className="mt-4 w-full">
-      <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-2">Trending cities</p>
+      <p className="text-xs font-semibold uppercase tracking-widest text-gray-600 mb-2">Trending cities</p>
       {/* Horizontal scroll on mobile, wraps on sm+ */}
       <div className="-mx-4 sm:mx-0">
         <div className="flex gap-2 overflow-x-auto px-4 pb-1 sm:flex-wrap sm:justify-center sm:overflow-visible sm:px-0 sm:pb-0 [&::-webkit-scrollbar]:hidden">

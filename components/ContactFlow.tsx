@@ -194,7 +194,7 @@ function EmailForm({ subject: initialSubject }: { subject?: string }) {
           required aria-required="true"
           className="w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 resize-none" />
       </div>
-      {error && <p role="alert" className="text-xs text-red-600 font-medium">{error}</p>}
+      {error && <p role="alert" className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">{error}</p>}
       <button type="submit" disabled={loading}
         className="w-full rounded-xl bg-brand-600 py-3 text-sm font-semibold text-white transition hover:bg-brand-700 disabled:opacity-60">
         {loading ? 'Sending…' : 'Send Message'}

@@ -37,7 +37,7 @@ export default function LandlordCTACard() {
         href="/rent-estimate"
         className="mt-2 block text-center text-xs font-semibold text-brand-600 hover:text-brand-700"
       >
-        Get a market rent estimate →
+        Get your free E-rent Value™ →
       </Link>
     </div>
   );

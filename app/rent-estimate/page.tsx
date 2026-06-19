@@ -75,10 +75,10 @@ export default function RentEstimatePage() {
       <div className="text-center">
         <p className="text-xs font-semibold uppercase tracking-widest text-brand-600">Free Tool for Landlords</p>
         <h1 className="mt-2 text-4xl font-extrabold text-gray-900 sm:text-5xl">
-          What should I charge<br className="hidden sm:block" /> for rent?
+          Your free E-rent Value™
         </h1>
         <p className="mt-4 text-lg text-gray-500">
-          Get a free rent estimate based on real active listings in your city.
+          EMLAKIE&apos;s automated rent estimate based on real active listings in your city.
           Price your property right — not too high to sit vacant, not too low to leave money on the table.
         </p>
       </div>
@@ -144,7 +144,7 @@ export default function RentEstimatePage() {
 
         <button type="submit" disabled={loading}
           className="w-full rounded-xl bg-brand-600 py-3.5 font-bold text-white transition hover:bg-brand-700 disabled:opacity-60">
-          {loading ? 'Estimating…' : 'Get my free rent estimate →'}
+          {loading ? 'Calculating…' : 'Get my E-rent Value™ →'}
         </button>
         <p className="text-center text-xs text-gray-400">Free · No account needed · Based on real active listings</p>
       </form>

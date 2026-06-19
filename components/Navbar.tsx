@@ -16,7 +16,7 @@ export default function Navbar() {
             href="/rent-estimate"
             className="text-xs font-bold uppercase tracking-widest text-gray-600 transition hover:text-brand-600"
           >
-            Rent Estimate
+            E-rent Value™
           </Link>
           <Link
             href="/rentals"

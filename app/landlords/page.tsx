@@ -125,7 +125,7 @@ export default function LandlordsPage() {
             </Link>
             <Link href="/rent-estimate"
               className="rounded-xl border border-gray-200 bg-white px-8 py-4 text-base font-semibold text-gray-700 transition hover:border-brand-300 hover:text-brand-700">
-              What should I charge for rent?
+              Get your free E-rent Value™
             </Link>
           </div>
           <p className="mt-4 text-xs text-gray-400">Takes under 5 minutes · No credit card · Free forever</p>
@@ -203,12 +203,12 @@ export default function LandlordsPage() {
             Not sure what to charge?
           </h2>
           <p className="mt-3 text-green-100 sm:text-lg">
-            Our free Rent Estimator shows you what comparable units in your city are renting for —
+            Our free E-rent Value™ shows you what comparable units in your city are renting for —
             so you can price confidently, fill faster, and leave nothing on the table.
           </p>
           <Link href="/rent-estimate"
             className="mt-6 inline-block rounded-xl bg-white px-8 py-3 font-bold text-brand-700 transition hover:bg-green-50">
-            Get my free rent estimate →
+            Get your free E-rent Value™ →
           </Link>
         </div>
       </section>

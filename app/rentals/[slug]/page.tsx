@@ -14,6 +14,8 @@ import EValue from '@/components/EValue';
 import { calculateEValue } from '@/lib/e-value';
 import ApplyForm from '@/components/ApplyForm';
 import NearbyPlaces from '@/components/NearbyPlaces';
+import NeighborhoodScores from '@/components/NeighborhoodScores';
+import NearbySchools from '@/components/NearbySchools';
 import { getPropertyData } from '@/lib/zllw';
 import StreetViewExplorer from '@/components/StreetViewExplorer';
 
@@ -246,6 +248,16 @@ export default async function ListingPage({ params }: Props) {
 {/* Nearby places */}
           {listing.lat && listing.lng && (
             <NearbyPlaces lat={listing.lat} lng={listing.lng} />
+          )}
+
+          {/* Neighborhood mobility scores */}
+          {listing.lat && listing.lng && (
+            <NeighborhoodScores lat={listing.lat} lng={listing.lng} />
+          )}
+
+          {/* Nearby schools */}
+          {listing.lat && listing.lng && (
+            <NearbySchools lat={listing.lat} lng={listing.lng} />
           )}
 
           {/* E-Value */}

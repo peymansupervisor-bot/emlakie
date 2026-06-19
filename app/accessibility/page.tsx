@@ -11,9 +11,33 @@ export const metadata: Metadata = {
   },
 };
 
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  name: 'Accessibility Statement',
+  url: 'https://emlakie.com/accessibility',
+  description: 'EMLAKIE LLC is committed to ensuring our website is accessible to people with disabilities.',
+  publisher: {
+    '@type': 'Organization',
+    name: 'EMLAKIE LLC',
+    url: 'https://emlakie.com',
+    email: 'support@emlakie.com',
+  },
+  inLanguage: 'en',
+  isPartOf: {
+    '@type': 'WebSite',
+    name: 'EMLAKIE',
+    url: 'https://emlakie.com',
+  },
+};
+
 export default function AccessibilityPage() {
   return (
     <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <p className="text-xs font-semibold uppercase tracking-widest text-brand-600">Commitment</p>
       <h1 className="mt-2 text-3xl font-extrabold text-gray-900">Accessibility Statement</h1>
       <p className="mt-2 text-sm text-gray-500">Last updated: June 14, 2026</p>

@@ -12,6 +12,7 @@ export interface LandlordProfile {
   first_name?: string | null;
   last_name?: string | null;
   phone?: string | null;
+  phone_verified?: boolean;
   email?: string | null;
   account_id?: string | null;
 }

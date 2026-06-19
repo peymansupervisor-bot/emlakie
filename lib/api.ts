@@ -211,6 +211,25 @@ export async function getAllCities(): Promise<CityLocation[]> {
   }
 }
 
+export async function getStats(): Promise<{ listings: number; cities: number; landlords: number }> {
+  try {
+    const sb = supabaseAdmin();
+    const [listingsRes, citiesRes, landlordsRes] = await Promise.all([
+      sb.from('listings').select('*', { count: 'exact', head: true }).eq('status', 'active'),
+      sb.from('listings').select('city', { count: 'exact' }).eq('status', 'active').not('city', 'is', null),
+      sb.from('profiles').select('*', { count: 'exact', head: true }),
+    ]);
+    const cities = new Set((citiesRes.data ?? []).map((r: { city: string }) => (r.city as string).toLowerCase())).size;
+    return {
+      listings: listingsRes.count ?? 0,
+      cities,
+      landlords: landlordsRes.count ?? 0,
+    };
+  } catch {
+    return { listings: 0, cities: 0, landlords: 0 };
+  }
+}
+
 export async function getListingsByCity(citySlug: string): Promise<{ listings: Listing[]; total: number; city: string; state: string; usingSampleData: boolean } | null> {
   const cities = await getAllCities();
   const match = cities.find(c => c.slug === citySlug);

@@ -6,6 +6,7 @@ import SearchBar from '@/components/SearchBar';
 import ListingCard from '@/components/ListingCard';
 import AppBadges from '@/components/AppBadges';
 import NewsTicker from '@/components/NewsTicker';
+import StatsStrip from '@/components/StatsStrip';
 import { getListings } from '@/lib/api';
 
 export const revalidate = 60;
@@ -83,6 +84,7 @@ export default async function HomePage() {
         <div className="mt-6 w-full max-w-2xl mx-auto">
           <SearchBar large />
         </div>
+        <StatsStrip />
         <div className="mt-4 flex items-center justify-center gap-3">
           <Link href="/landlord/login"
             className="rounded-lg bg-brand-600 px-5 py-2.5 text-sm font-bold text-white transition hover:bg-brand-700">

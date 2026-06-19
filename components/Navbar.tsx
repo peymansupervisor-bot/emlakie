@@ -11,34 +11,34 @@ export default function Navbar() {
           </Link>
         </div>
 
-        <div className="hidden items-center gap-6 md:flex">
+        <div className="hidden items-center gap-5 md:flex">
           <Link
             href="/landlord"
-            className="text-sm font-semibold text-gray-700 hover:text-brand-600"
+            className="text-xs font-bold uppercase tracking-widest text-gray-600 transition hover:text-brand-600"
           >
             For Landlords
           </Link>
           <Link
             href="/rentals"
-            className="text-sm font-semibold text-gray-700 hover:text-brand-600"
+            className="text-xs font-bold uppercase tracking-widest text-gray-600 transition hover:text-brand-600"
           >
             For Tenants
           </Link>
           <Link
             href="/blog"
-            className="text-sm font-semibold text-gray-700 hover:text-brand-600"
+            className="text-xs font-bold uppercase tracking-widest text-gray-600 transition hover:text-brand-600"
           >
             Blog
           </Link>
           <Link
             href="/support"
-            className="text-sm font-semibold text-gray-700 hover:text-brand-600"
+            className="text-xs font-bold uppercase tracking-widest text-gray-600 transition hover:text-brand-600"
           >
             Support
           </Link>
           <Link
             href="/app"
-            className="rounded-lg border border-gray-900 px-4 py-2 text-sm font-semibold text-gray-900 transition hover:bg-gray-900 hover:text-white"
+            className="rounded-full bg-brand-600 px-5 py-2 text-xs font-bold uppercase tracking-widest text-white transition hover:bg-brand-700"
           >
             Get the App
           </Link>
@@ -46,15 +46,15 @@ export default function Navbar() {
 
         {/* Mobile */}
         <div className="flex items-center gap-3 md:hidden">
-          <Link href="/landlord" className="text-sm font-semibold text-gray-700">
+          <Link href="/landlord" className="text-xs font-bold uppercase tracking-wider text-gray-600">
             Landlords
           </Link>
-          <Link href="/rentals" className="text-sm font-semibold text-gray-700">
+          <Link href="/rentals" className="text-xs font-bold uppercase tracking-wider text-gray-600">
             Tenants
           </Link>
           <Link
             href="/app"
-            className="rounded-lg border border-gray-900 px-3 py-1.5 text-sm font-semibold text-gray-900"
+            className="rounded-full bg-brand-600 px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-white"
           >
             App
           </Link>

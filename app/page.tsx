@@ -127,7 +127,7 @@ export default async function HomePage() {
           <div className="flex items-center gap-3 shrink-0">
             <Link href="/rent-estimate"
               className="rounded-lg border border-brand-200 bg-white px-4 py-2 text-xs font-semibold text-brand-700 transition hover:bg-brand-50">
-              What&apos;s my rent worth?
+              Get a market rent estimate
             </Link>
             <Link href="/landlord/login"
               className="rounded-lg bg-brand-600 px-5 py-2 text-xs font-bold text-white transition hover:bg-brand-700">

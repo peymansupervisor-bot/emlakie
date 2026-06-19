@@ -34,14 +34,23 @@ export default function MapView({ listings, activeId, onMarkerClick, drawMode = 
   const buildIcon = useCallback((price: number, active: boolean, L: any) => {
     const label = formatPrice(price);
     const bg = active ? '#16a34a' : '#fff';
-    const color = active ? '#fff' : '#111827';
-    const border = active ? '#16a34a' : '#d1d5db';
-    const shadow = active ? '0 2px 8px rgba(22,163,74,0.45)' : '0 1px 4px rgba(0,0,0,0.18)';
+    const textColor = active ? '#fff' : '#111827';
+    const shadow = active ? '0 3px 10px rgba(22,163,74,0.5)' : '0 2px 6px rgba(0,0,0,0.22)';
     const scale = active ? 'scale(1.12)' : 'scale(1)';
+    // Leaf-and-heart pin shape: rounded top-left/top-right/bottom-left like the Emlakie logo, pointed bottom-right tip
     return L.divIcon({
       className: '',
-      iconAnchor: [28, 18],
-      html: `<div style="background:${bg};color:${color};border:1.5px solid ${border};border-radius:20px;padding:5px 10px;font-size:12px;font-weight:700;white-space:nowrap;box-shadow:${shadow};transform:${scale};transition:all 0.15s ease;cursor:pointer;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">${label}</div>`,
+      iconAnchor: [14, 36],
+      html: `
+        <div style="position:relative;display:inline-block;transform:${scale};transition:all 0.15s ease;cursor:pointer;">
+          <svg width="28" height="36" viewBox="0 0 28 36" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:block;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.25));">
+            <path d="M14 2C7.373 2 2 7.373 2 14c0 9 12 22 12 22s12-13 12-22C26 7.373 20.627 2 14 2z" fill="${bg}" stroke="${active ? '#16a34a' : '#d1d5db'}" stroke-width="1.5"/>
+            <path d="M14 10.5c-0.6-1.2-2-2-3.5-1.8C8.6 9 7.5 10.5 7.5 12c0 3 4 5.5 6.5 7 2.5-1.5 6.5-4 6.5-7 0-1.5-1.1-3-3-3.3C15.9 8.5 14.6 9.3 14 10.5z" fill="${active ? '#fff' : '#16a34a'}"/>
+          </svg>
+          <div style="position:absolute;bottom:16px;left:50%;transform:translateX(-50%);background:${bg};color:${textColor};font-size:10px;font-weight:700;white-space:nowrap;padding:2px 5px;border-radius:4px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;box-shadow:${shadow};border:1px solid ${active ? '#16a34a' : '#e5e7eb'};">
+            ${label}
+          </div>
+        </div>`,
     });
   }, []);
 

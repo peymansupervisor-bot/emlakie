@@ -134,8 +134,10 @@ export default async function ListingPage({ params }: Props) {
       <div className="mt-8 flex flex-col gap-10 lg:flex-row">
         {/* Main column */}
         <div className="flex-1">
-          <div className="flex flex-wrap items-center gap-3">
-            <h1 className="text-3xl font-extrabold text-gray-900">{formatPrice(listing.price)}</h1>
+          <h1 className="text-2xl font-extrabold text-gray-900 leading-snug">{listing.title}</h1>
+
+          <div className="mt-3 flex flex-wrap items-center gap-3">
+            <span className="text-3xl font-extrabold text-brand-700">{formatPrice(listing.price)}<span className="text-base font-semibold text-gray-500">/mo</span></span>
             {isRented && (
               <span className="rounded-full bg-blue-100 px-3 py-1 text-sm font-bold text-blue-800">Rented</span>
             )}
@@ -220,12 +222,12 @@ export default async function ListingPage({ params }: Props) {
           })()}
 
 
-          {/* Map */}
-          {listing.lat && listing.lng && (
+          {/* Map — always use address query so it stays correct after edits */}
+          {listing.address && (
             <div className="mt-8">
               <h2 className="text-xl font-bold text-gray-900 mb-3">Location</h2>
               <MapEmbed
-                src={`https://www.openstreetmap.org/export/embed.html?bbox=${listing.lng - 0.004},${listing.lat - 0.003},${listing.lng + 0.004},${listing.lat + 0.003}&layer=mapnik&marker=${listing.lat},${listing.lng}`}
+                src={`https://www.openstreetmap.org/export/embed.html?q=${encodeURIComponent(fullAddress)}&layer=mapnik`}
               />
             </div>
           )}

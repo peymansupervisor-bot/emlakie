@@ -31,6 +31,24 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
     return NextResponse.json({ error: 'No valid fields to update' }, { status: 400 })
   }
 
+  // If address changed, geocode it to keep lat/lng accurate
+  const addrChanged = ['address', 'city', 'state', 'zip'].some((k) => k in dbPayload)
+  if (addrChanged) {
+    const parts = [dbPayload.address, dbPayload.city, dbPayload.state, dbPayload.zip].filter(Boolean)
+    const q = encodeURIComponent(parts.join(', ') + ', USA')
+    try {
+      const geo = await fetch(
+        `https://nominatim.openstreetmap.org/search?q=${q}&format=json&limit=1&countrycodes=us`,
+        { headers: { 'User-Agent': 'emlakie.com/1.0' } }
+      )
+      const geoData = await geo.json()
+      if (geoData?.[0]) {
+        dbPayload.lat = parseFloat(geoData[0].lat)
+        dbPayload.lng = parseFloat(geoData[0].lon)
+      }
+    } catch { /* geocoding failure is non-fatal */ }
+  }
+
   const { error } = await supabase
     .from('listings')
     .update(dbPayload)

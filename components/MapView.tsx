@@ -43,6 +43,26 @@ export default function MapView({ listings, activeId, onMarkerClick, drawMode = 
     });
   }, []);
 
+  const syncMarkers = useCallback((map: any, L: any) => {
+    const current = mappable;
+    const currentIds = new Set(current.map((l) => l.id));
+    markersRef.current.forEach((marker, id) => {
+      if (!currentIds.has(id)) { marker.remove(); markersRef.current.delete(id); }
+    });
+    current.forEach((listing) => {
+      if (!markersRef.current.has(listing.id)) {
+        const marker = L.marker([listing.lat!, listing.lng!], { icon: buildIcon(listing.price, false, L) }).addTo(map);
+        marker.on('click', () => onMarkerClick(listing.id));
+        markersRef.current.set(listing.id, marker);
+      }
+    });
+    if (current.length > 1) {
+      const bounds = L.latLngBounds(current.map((l) => [l.lat!, l.lng!]));
+      map.fitBounds(bounds, { padding: [40, 40] });
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mappable]);
+
   const clearDraw = useCallback(() => {
     const d = drawRef.current;
     d.polyline?.remove();
@@ -184,6 +204,7 @@ export default function MapView({ listings, activeId, onMarkerClick, drawMode = 
 
       mapRef.current = { map, L };
 
+      syncMarkers(map, L);
     });
 
     return () => {
@@ -194,34 +215,11 @@ export default function MapView({ listings, activeId, onMarkerClick, drawMode = 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Add/remove markers whenever mappable listings change (e.g. allMapListings loaded)
+  // Sync markers whenever mappable listings change after map is ready
   useEffect(() => {
     if (!mapRef.current) return;
     const { map, L } = mapRef.current;
-
-    // Remove markers that are no longer in the list
-    const currentIds = new Set(mappable.map((l) => l.id));
-    markersRef.current.forEach((marker, id) => {
-      if (!currentIds.has(id)) {
-        marker.remove();
-        markersRef.current.delete(id);
-      }
-    });
-
-    // Add new markers
-    mappable.forEach((listing) => {
-      if (!markersRef.current.has(listing.id)) {
-        const marker = L.marker([listing.lat!, listing.lng!], { icon: buildIcon(listing.price, false, L) }).addTo(map);
-        marker.on('click', () => onMarkerClick(listing.id));
-        markersRef.current.set(listing.id, marker);
-      }
-    });
-
-    // Fit bounds to show all markers
-    if (mappable.length > 1) {
-      const bounds = L.latLngBounds(mappable.map((l) => [l.lat!, l.lng!]));
-      map.fitBounds(bounds, { padding: [40, 40] });
-    }
+    syncMarkers(map, L);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mappable.length]);
 

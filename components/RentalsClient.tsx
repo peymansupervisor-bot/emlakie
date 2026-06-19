@@ -217,7 +217,7 @@ export default function RentalsClient({ listings, allMapListings, total, usingSa
             <div
               className={`grid gap-4 p-4 ${
                 view === 'split'
-                  ? 'grid-cols-1'
+                  ? 'grid-cols-2'
                   : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'
               }`}
             >

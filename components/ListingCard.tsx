@@ -11,7 +11,7 @@ export default function ListingCard({ listing }: { listing: Listing }) {
       {/* Stretched link covers the whole card */}
       <Link href={`/rentals/${listing.slug ?? listing.id}`} className="absolute inset-0 z-10" aria-label={listing.title} />
 
-      <div className="relative aspect-[4/3] bg-gray-100">
+      <div className="relative aspect-[16/9] bg-gray-100">
         {photo ? (
           <Image
             src={photo}

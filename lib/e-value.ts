@@ -46,7 +46,36 @@ export interface EValueResult {
   ownershipType?: string | null
 }
 
-const CAP_RATE = 0.055   // 5.5% — standard residential cap rate
+const DEFAULT_CAP_RATE = 0.055   // 5.5% — coastal/high-demand markets
+
+// City-specific cap rates reflecting local price-to-rent ratios
+const CITY_CAP_RATES: Record<string, number> = {
+  // Inland California — higher cap rates (lower price-to-rent)
+  'bakersfield':    0.077,
+  'fresno':         0.075,
+  'stockton':       0.074,
+  'modesto':        0.073,
+  'visalia':        0.074,
+  'riverside':      0.065,
+  'san bernardino': 0.068,
+  'fontana':        0.064,
+  // Coastal California — lower cap rates (high price-to-rent)
+  'los angeles':    0.045,
+  'san francisco':  0.038,
+  'san jose':       0.040,
+  'san diego':      0.045,
+  'santa barbara':  0.042,
+  'oakland':        0.048,
+  // Other major markets
+  'phoenix':        0.060,
+  'las vegas':      0.062,
+  'seattle':        0.048,
+  'portland':       0.052,
+}
+
+function getCapRate(city: string): number {
+  return CITY_CAP_RATES[city.toLowerCase().trim()] ?? DEFAULT_CAP_RATE
+}
 
 function supabase() {
   return createClient(
@@ -174,9 +203,10 @@ export async function calculateEValue(listing: {
       ? roundToNearest(listing.price, 25)   // use asking price directly — not enough market data
       : 0
 
+  const capRate = getCapRate(listing.city)
   const sellable = canSellIndividually(listing.property_type, listing.ownership_type)
   const eSale = sellable
-    ? roundToNearest((eRent * 12) / CAP_RATE, 1000)
+    ? roundToNearest((eRent * 12) / capRate, 1000)
     : null
 
   const priceMin = prices.length >= 3 ? Math.min(...prices) : eRent * 0.93
@@ -197,7 +227,7 @@ export async function calculateEValue(listing: {
       min: roundToNearest(priceMin, 25),
       max: roundToNearest(priceMax, 25),
     },
-    capRate: CAP_RATE * 100,
+    capRate: capRate * 100,
     lastRent: listing.price,
     propertyType: listing.property_type,
     ownershipType: listing.ownership_type,

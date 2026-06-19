@@ -15,6 +15,7 @@ import { calculateEValue } from '@/lib/e-value';
 import ApplyForm from '@/components/ApplyForm';
 import NearbyPlaces from '@/components/NearbyPlaces';
 import { getPropertyData } from '@/lib/zllw';
+import StreetViewExplorer from '@/components/StreetViewExplorer';
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -232,6 +233,14 @@ export default async function ListingPage({ params }: Props) {
                 src={`https://maps.google.com/maps?q=${encodeURIComponent(fullAddress)}&output=embed`}
               />
             </div>
+          )}
+
+{/* Street View Explorer */}
+          {listing.address && process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY && (
+            <StreetViewExplorer
+              address={fullAddress}
+              apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}
+            />
           )}
 
 {/* Nearby places */}

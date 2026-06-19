@@ -242,6 +242,8 @@ export default async function ListingPage({ params }: Props) {
             <StreetViewExplorer
               address={fullAddress}
               apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}
+              lat={listing.lat}
+              lng={listing.lng}
             />
           )}
 

@@ -5,14 +5,17 @@ import { useState } from 'react';
 interface Props {
   address: string;
   apiKey: string;
+  lat?: number;
+  lng?: number;
 }
 
-export default function StreetViewExplorer({ address, apiKey }: Props) {
+export default function StreetViewExplorer({ address, apiKey, lat, lng }: Props) {
   const [expanded, setExpanded] = useState(false);
 
-  const encodedAddress = encodeURIComponent(address);
-  const staticSrc = `https://maps.googleapis.com/maps/api/streetview?size=800x200&location=${encodedAddress}&fov=90&pitch=0&key=${apiKey}`;
-  const embedSrc = `https://www.google.com/maps/embed/v1/streetview?location=${encodedAddress}&key=${apiKey}&fov=90`;
+  // Prefer coordinates — avoids wrong-parcel geocoding ambiguity (e.g. buildings with multiple parcel numbers)
+  const location = lat && lng ? `${lat},${lng}` : encodeURIComponent(address);
+  const staticSrc = `https://maps.googleapis.com/maps/api/streetview?size=800x200&location=${location}&fov=90&pitch=0&key=${apiKey}`;
+  const embedSrc = `https://www.google.com/maps/embed/v1/streetview?location=${location}&key=${apiKey}&fov=90`;
 
   return (
     <div className="mt-8">

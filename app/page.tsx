@@ -272,7 +272,7 @@ export default async function HomePage() {
           <p className="text-xs font-semibold uppercase tracking-[0.25em] text-brand-600">
             National Real Estate
           </p>
-          <h1 className="mt-3 max-w-3xl text-4xl font-extrabold text-gray-900 sm:text-5xl">
+          <h1 className="mt-3 max-w-3xl font-serif text-4xl font-bold text-gray-900 sm:text-5xl">
             Find your next home
           </h1>
           <p className="mt-3 max-w-2xl text-lg font-medium text-gray-600">
@@ -285,10 +285,10 @@ export default async function HomePage() {
       </section>
 
       {/* Featured listings */}
-      <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6">
+      <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6">
         <div className="flex items-end justify-between">
           <div>
-            <h2 className="text-2xl font-extrabold text-gray-900">Homes for rent</h2>
+            <h2 className="font-serif text-2xl font-bold text-gray-900">Homes for rent</h2>
             <p className="mt-1 text-gray-600">Fresh listings, updated daily</p>
           </div>
           <Link href="/rentals" className="text-sm font-semibold text-brand-600 hover:text-brand-700">
@@ -303,9 +303,9 @@ export default async function HomePage() {
       </section>
 
       {/* Value props */}
-      <section className="bg-gray-50 py-14">
+      <section className="py-20" style={{ backgroundColor: '#faf8f5' }}>
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
-          <h2 className="text-center text-2xl font-extrabold text-gray-900">
+          <h2 className="text-center font-serif text-2xl font-bold text-gray-900">
             Renting, without the runaround
           </h2>
           <div className="mt-10 grid gap-8 sm:grid-cols-3">
@@ -363,7 +363,7 @@ export default async function HomePage() {
       <section className="mx-auto max-w-7xl px-4 py-10 sm:py-16 sm:px-6">
         <div className="flex flex-col items-center justify-between gap-8 rounded-2xl bg-brand-600 px-6 py-10 sm:rounded-3xl sm:px-14 sm:py-14 lg:flex-row">
           <div className="max-w-xl text-center lg:text-left">
-            <h2 className="text-2xl font-extrabold text-white sm:text-3xl">
+            <h2 className="font-serif text-2xl font-bold text-white sm:text-3xl">
               Take EMLAKIE with you
             </h2>
             <p className="mt-3 text-base text-green-100 sm:text-lg">

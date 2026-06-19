@@ -38,7 +38,7 @@ export default function Navbar() {
           </Link>
           <Link
             href="/app"
-            className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-700"
+            className="rounded-lg border border-gray-900 px-4 py-2 text-sm font-semibold text-gray-900 transition hover:bg-gray-900 hover:text-white"
           >
             Get the App
           </Link>
@@ -54,7 +54,7 @@ export default function Navbar() {
           </Link>
           <Link
             href="/app"
-            className="rounded-lg bg-brand-600 px-3 py-1.5 text-sm font-semibold text-white"
+            className="rounded-lg border border-gray-900 px-3 py-1.5 text-sm font-semibold text-gray-900"
           >
             App
           </Link>

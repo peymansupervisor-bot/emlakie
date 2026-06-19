@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
+import { unstable_noStore as noStore } from 'next/cache';
 import { Listing, ListingFilters, ListingsResponse, ZipLocation } from './types';
 import { sampleListings } from './sample-data';
 
@@ -72,6 +73,7 @@ function filterSamples(filters: ListingFilters): Listing[] {
 }
 
 export async function getListings(filters: ListingFilters = {}): Promise<ListingsResponse> {
+  noStore();
   try {
     const sb = supabaseAdmin();
     let query = sb.from('listings').select('*', { count: 'exact' }).eq('status', 'active');
@@ -122,6 +124,7 @@ export async function getListings(filters: ListingFilters = {}): Promise<Listing
 }
 
 export async function getAllMappableListings(): Promise<Pick<Listing, 'id' | 'lat' | 'lng' | 'price' | 'address' | 'slug'>[]> {
+  noStore();
   try {
     const sb = supabaseAdmin();
     const { data } = await sb

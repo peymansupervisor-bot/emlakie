@@ -89,6 +89,14 @@ export async function verifyOtp(phone: string, token: string): Promise<void> {
   if (error) throw new Error(error.message);
 }
 
+export async function signInWithOAuth(provider: 'google' | 'facebook' | 'apple'): Promise<void> {
+  const { error } = await supabase.auth.signInWithOAuth({
+    provider,
+    options: { redirectTo: `${window.location.origin}/landlord` },
+  });
+  if (error) throw new Error(error.message);
+}
+
 export async function signInWithPassword(email: string, password: string): Promise<void> {
   const { error } = await supabase.auth.signInWithPassword({ email, password });
   if (error) throw new Error(error.message);

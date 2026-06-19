@@ -30,6 +30,7 @@ export default function Footer() {
             <div>
               <h3 className="font-serif text-base font-bold tracking-tight text-gray-900">Landlords</h3>
               <ul className="mt-4 space-y-3 text-sm text-gray-500">
+                <li><Link href="/rent-estimate" className="transition hover:text-brand-600">Free rent estimator</Link></li>
                 <li><Link href="/landlord/login" className="transition hover:text-brand-600">List a property</Link></li>
               </ul>
             </div>

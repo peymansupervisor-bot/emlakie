@@ -32,6 +32,10 @@ export default function EditListingPage() {
 
   const [listing, setListing] = useState<LandlordListing | null | undefined>(undefined);
   const [form, setForm] = useState({
+    address: '',
+    city: '',
+    state: '',
+    zip: '',
     title: '',
     description: '',
     price: '',
@@ -53,6 +57,10 @@ export default function EditListingPage() {
       setListing(l);
       if (!l) return;
       setForm({
+        address: l.address ?? '',
+        city: l.city ?? '',
+        state: l.state ?? '',
+        zip: l.zip ?? '',
         title: l.title ?? '',
         description: l.description ?? '',
         price: l.price ? String(l.price) : '',
@@ -82,6 +90,8 @@ export default function EditListingPage() {
   }
 
   async function handleSave() {
+    if (!form.address.trim()) { setError('Street address is required.'); return; }
+    if (!form.city.trim() || !form.state.trim() || !form.zip.trim()) { setError('City, state, and ZIP are required.'); return; }
     if (!form.title.trim()) { setError('Title is required.'); return; }
     if (!form.price || isNaN(+form.price) || +form.price < 100) { setError('Enter a valid monthly rent.'); return; }
     if (form.description.length < 30) { setError('Description must be at least 30 characters.'); return; }
@@ -89,6 +99,10 @@ export default function EditListingPage() {
     setBusy(true);
     try {
       await updateListing(id, {
+        address: form.address.trim(),
+        city: form.city.trim(),
+        state: form.state.trim(),
+        zip: form.zip.trim(),
         title: form.title,
         description: form.description,
         price: Number(form.price),
@@ -139,6 +153,30 @@ export default function EditListingPage() {
       )}
 
       <div className="mt-8 space-y-5">
+        {/* Address */}
+        <div>
+          <label className={labelCls}>Street address *</label>
+          <input className={inputCls} value={form.address} onChange={(e) => set('address', e.target.value)}
+            placeholder="14304 Culiacan Ave" />
+        </div>
+        <div className="grid grid-cols-3 gap-4">
+          <div className="col-span-1">
+            <label className={labelCls}>City *</label>
+            <input className={inputCls} value={form.city} onChange={(e) => set('city', e.target.value)}
+              placeholder="Bakersfield" />
+          </div>
+          <div>
+            <label className={labelCls}>State *</label>
+            <input className={inputCls} value={form.state} onChange={(e) => set('state', e.target.value)}
+              placeholder="CA" maxLength={2} />
+          </div>
+          <div>
+            <label className={labelCls}>ZIP *</label>
+            <input className={inputCls} value={form.zip} onChange={(e) => set('zip', e.target.value)}
+              placeholder="93312" />
+          </div>
+        </div>
+
         {/* Title */}
         <div>
           <label className={labelCls}>Listing title *</label>

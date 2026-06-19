@@ -47,6 +47,7 @@ export default function DisclaimerPage() {
             'Changes to This Disclaimer',
             'Contact Information',
             'Definition of "Direct Owner" / "Landlord" on EMLAKIE',
+            'No License to Practice Real Estate, Mortgage Lending, or Property Sales',
           ].map((item, i) => (
             <li key={i}>
               <a href={`#section-${i + 1}`} className="hover:underline">
@@ -341,6 +342,35 @@ export default function DisclaimerPage() {
             This definition is provided for clarity only and does not constitute legal advice. Users with specific
             questions about authorization, agency, or licensing requirements in their jurisdiction should consult a
             qualified attorney.
+          </p>
+        </section>
+
+        <section id="section-16">
+          <h2 className="text-xl font-bold text-gray-900">16. No License to Practice Real Estate, Mortgage Lending, or Property Sales</h2>
+          <p className="mt-2">
+            EMLAKIE LLC does <strong>not</strong> hold, and has never held, any of the following licenses or authorizations:
+          </p>
+          <ul className="mt-3 list-disc space-y-2 pl-6">
+            <li>A real estate broker license or real estate salesperson license in any state or jurisdiction</li>
+            <li>A mortgage broker, mortgage banker, or mortgage lender license of any kind</li>
+            <li>Any license, permit, or authorization to facilitate, negotiate, arrange, or consummate the purchase or sale of real property on behalf of any party</li>
+            <li>Any license to provide escrow, title, or settlement services</li>
+          </ul>
+          <p className="mt-3">
+            EMLAKIE LLC is an advertising and information platform only. It is <strong>not</strong> a licensed real
+            estate broker, real estate agent, mortgage lender, mortgage broker, escrow company, title company, or
+            property management company. EMLAKIE does not represent buyers, sellers, landlords, or tenants in any
+            real estate transaction, and no use of this platform should be construed as the provision of real
+            estate brokerage, mortgage lending, or any other licensed professional service.
+          </p>
+          <p className="mt-3">
+            No commission, fee, or compensation is charged by EMLAKIE LLC in connection with any lease, sale,
+            purchase, or transfer of real property between users of this platform. Any fees charged by EMLAKIE are
+            solely for advertising and platform access services.
+          </p>
+          <p className="mt-3">
+            Users who require licensed real estate, mortgage, escrow, or title services are solely responsible for
+            independently engaging appropriately licensed professionals in their jurisdiction.
           </p>
         </section>
 

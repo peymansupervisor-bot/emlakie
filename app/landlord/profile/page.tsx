@@ -139,7 +139,7 @@ export default function ProfilePage() {
             <div className="relative">
               <input className={inputCls} type="tel" value={form.phone}
                 onChange={(e) => setForm((f) => ({ ...f, phone: formatPhone(e.target.value) }))}
-                placeholder="(818) 300-3005" />
+                placeholder="(555) 000-0000" />
               {phoneVerified && !phoneChanged && (
                 <span className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full bg-brand-100 px-2 py-0.5 text-xs font-semibold text-brand-700">
                   ✓ Verified

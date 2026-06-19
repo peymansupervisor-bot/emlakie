@@ -137,7 +137,7 @@ export default async function ListingPage({ params }: Props) {
           <h1 className="text-2xl font-extrabold text-gray-900 leading-snug">{listing.title}</h1>
 
           <div className="mt-3 flex flex-wrap items-center gap-3">
-            <span className="text-3xl font-extrabold text-brand-700">{formatPrice(listing.price)}<span className="text-base font-semibold text-gray-500">/mo</span></span>
+            <span className="text-3xl font-extrabold text-brand-700">{formatPrice(listing.price)}</span>
             {isRented && (
               <span className="rounded-full bg-blue-100 px-3 py-1 text-sm font-bold text-blue-800">Rented</span>
             )}
@@ -222,15 +222,22 @@ export default async function ListingPage({ params }: Props) {
           })()}
 
 
-          {/* Map — always use address query so it stays correct after edits */}
-          {listing.address && (
+          {/* Map */}
+          {(listing.lat && listing.lng) ? (
             <div className="mt-8">
               <h2 className="text-xl font-bold text-gray-900 mb-3">Location</h2>
               <MapEmbed
-                src={`https://www.openstreetmap.org/export/embed.html?q=${encodeURIComponent(fullAddress)}&layer=mapnik`}
+                src={`https://www.openstreetmap.org/export/embed.html?bbox=${listing.lng - 0.005},${listing.lat - 0.004},${listing.lng + 0.005},${listing.lat + 0.004}&layer=mapnik&marker=${listing.lat},${listing.lng}`}
               />
             </div>
-          )}
+          ) : listing.address ? (
+            <div className="mt-8">
+              <h2 className="text-xl font-bold text-gray-900 mb-3">Location</h2>
+              <MapEmbed
+                src={`https://maps.google.com/maps?q=${encodeURIComponent(fullAddress)}&output=embed`}
+              />
+            </div>
+          ) : null}
 
 {/* Nearby places */}
           {listing.lat && listing.lng && (

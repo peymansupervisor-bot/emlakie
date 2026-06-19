@@ -7,6 +7,7 @@ import ListingCard from '@/components/ListingCard';
 import AppBadges from '@/components/AppBadges';
 import NewsTicker from '@/components/NewsTicker';
 import StatsStrip from '@/components/StatsStrip';
+import TrendingCities from '@/components/TrendingCities';
 import { getListings } from '@/lib/api';
 
 export const revalidate = 60;
@@ -85,7 +86,8 @@ export default async function HomePage() {
           <SearchBar large />
         </div>
         <StatsStrip />
-        <div className="mt-4 flex items-center justify-center gap-3">
+        <TrendingCities />
+        <div className="mt-6 flex items-center justify-center gap-3">
           <Link href="/landlord/login"
             className="rounded-lg bg-brand-600 px-5 py-2.5 text-sm font-bold text-white transition hover:bg-brand-700">
             List my property free →

@@ -211,6 +211,70 @@ export async function getAllCities(): Promise<CityLocation[]> {
   }
 }
 
+export interface TrendingCity {
+  city: string;
+  state: string;
+  slug: string;
+  count: number;
+  avgRent: number;
+}
+
+export async function getTrendingCities(limit = 8): Promise<TrendingCity[]> {
+  try {
+    const sb = supabaseAdmin();
+    const { data } = await sb
+      .from('listings')
+      .select('city, state, monthly_rent')
+      .eq('status', 'active')
+      .not('city', 'is', null)
+      .limit(500);
+
+    if (!data || data.length === 0) throw new Error('no data');
+
+    const map = new Map<string, { city: string; state: string; total: number; count: number }>();
+    for (const row of data) {
+      const city = (row.city as string).trim();
+      const state = ((row.state as string | null) ?? '').trim();
+      const key = `${city}|${state}`.toLowerCase();
+      const entry = map.get(key) ?? { city, state, total: 0, count: 0 };
+      entry.total += Number(row.monthly_rent ?? 0);
+      entry.count += 1;
+      map.set(key, entry);
+    }
+
+    return Array.from(map.values())
+      .sort((a, b) => b.count - a.count)
+      .slice(0, limit)
+      .map(({ city, state, total, count }) => ({
+        city,
+        state,
+        slug: city.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, ''),
+        count,
+        avgRent: Math.round(total / count),
+      }));
+  } catch {
+    // Fallback from sample data
+    const map = new Map<string, { city: string; state: string; total: number; count: number }>();
+    for (const l of sampleListings) {
+      const key = `${l.city}|${l.state ?? ''}`.toLowerCase();
+      const entry = map.get(key) ?? { city: l.city, state: l.state ?? '', total: 0, count: 0 };
+      entry.total += l.price;
+      entry.count += 1;
+      map.set(key, entry);
+    }
+    return Array.from(map.values())
+      .sort((a, b) => b.count - a.count)
+      .slice(0, limit)
+      .map(({ city, state, total, count }) => ({
+        city,
+        state,
+        slug: city.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, ''),
+        count,
+        avgRent: Math.round(total / count),
+      }));
+  }
+}
+
 export async function getStats(): Promise<{ listings: number; cities: number; landlords: number }> {
   try {
     const sb = supabaseAdmin();

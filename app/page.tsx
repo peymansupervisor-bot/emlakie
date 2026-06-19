@@ -8,6 +8,8 @@ import AppBadges from '@/components/AppBadges';
 import NewsTicker from '@/components/NewsTicker';
 import StatsStrip from '@/components/StatsStrip';
 import TrendingCities from '@/components/TrendingCities';
+import RecentListings from '@/components/RecentListings';
+import LandlordCTACard from '@/components/LandlordCTACard';
 import { getListings } from '@/lib/api';
 
 export const revalidate = 60;
@@ -72,27 +74,46 @@ export default async function HomePage() {
       <NewsTicker />
 
       {/* Hero */}
-      <section className="bg-white py-20 px-4 text-center sm:px-6">
-        <p className="text-xs font-semibold uppercase tracking-[0.25em] text-brand-600">
-          The Rental Platform Built for Landlords
-        </p>
-        <h1 className="mt-3 max-w-3xl mx-auto font-serif text-4xl font-bold text-gray-900 sm:text-5xl">
-          List free. Rent fast.<br className="hidden sm:block" /> Keep every dollar.
-        </h1>
-        <p className="mt-3 max-w-2xl mx-auto text-lg font-medium text-gray-600">
-          Landlords post for free · Renters find you directly · No broker fees ever
-        </p>
-        <div className="mt-6 w-full max-w-2xl mx-auto">
-          <SearchBar large />
-        </div>
-        <StatsStrip />
-        <TrendingCities />
-        <div className="mt-6 flex items-center justify-center gap-3">
-          <Link href="/landlord/login"
-            className="rounded-lg bg-brand-600 px-5 py-2.5 text-sm font-bold text-white transition hover:bg-brand-700">
-            List my property free →
-          </Link>
-          <span className="text-xs text-gray-400">or browse as a renter below</span>
+      <section className="bg-white py-14 px-4 sm:px-6">
+        <div className="mx-auto max-w-7xl">
+          <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-[260px_1fr_260px]">
+
+            {/* Left — recent listings */}
+            <div className="hidden lg:block">
+              <RecentListings />
+            </div>
+
+            {/* Center — main hero */}
+            <div className="text-center">
+              <p className="text-xs font-semibold uppercase tracking-[0.25em] text-brand-600">
+                The Rental Platform Built for Landlords
+              </p>
+              <h1 className="mt-3 font-serif text-4xl font-bold text-gray-900 sm:text-5xl">
+                List free. Rent fast.<br className="hidden sm:block" /> Keep every dollar.
+              </h1>
+              <p className="mt-3 text-lg font-medium text-gray-600">
+                Landlords post for free · Renters find you directly · No broker fees ever
+              </p>
+              <div className="mt-6 w-full">
+                <SearchBar large />
+              </div>
+              <StatsStrip />
+              <TrendingCities />
+              <div className="mt-6 flex items-center justify-center gap-3">
+                <Link href="/landlord/login"
+                  className="rounded-lg bg-brand-600 px-5 py-2.5 text-sm font-bold text-white transition hover:bg-brand-700">
+                  List my property free →
+                </Link>
+                <span className="text-xs text-gray-400">or browse as a renter below</span>
+              </div>
+            </div>
+
+            {/* Right — landlord CTA */}
+            <div className="hidden lg:block">
+              <LandlordCTACard />
+            </div>
+
+          </div>
         </div>
       </section>
 

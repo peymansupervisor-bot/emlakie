@@ -37,7 +37,7 @@ export default function LandlordLayout({ children }: { children: React.ReactNode
       setReady(true);
 
       // Force profile completion before accessing anything else
-      const profileIncomplete = p && !isDemo() && (!p.first_name || !p.last_name || !p.phone || !p.phone_verified);
+      const profileIncomplete = p && !isDemo() && (!p.first_name || !p.last_name || !p.phone);
       if (profileIncomplete && pathname !== '/landlord/profile') {
         router.replace('/landlord/profile');
       }
@@ -121,7 +121,7 @@ export default function LandlordLayout({ children }: { children: React.ReactNode
       </div>
 
       {/* Profile completion banner */}
-      {profile && (!profile.first_name || !profile.last_name || !profile.phone || !profile.phone_verified) && !demo && pathname !== '/landlord/profile' && (
+      {profile && (!profile.first_name || !profile.last_name || !profile.phone) && !demo && pathname !== '/landlord/profile' && (
         <div className="border-b border-amber-200 bg-amber-50 px-4 py-3">
           <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 sm:px-6">
             <p className="text-sm font-medium text-amber-800">

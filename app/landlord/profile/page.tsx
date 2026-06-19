@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { getProfile, sendPhoneVerification, updateProfile, verifyPhoneOtp } from '@/lib/landlord/client';
+import { getProfile, updateProfile } from '@/lib/landlord/client';
 
 const inputCls = 'w-full rounded-xl border border-gray-300 px-4 py-3 text-sm outline-none focus:border-brand-600 focus:ring-0';
 const labelCls = 'block text-sm font-semibold text-gray-700 mb-1';
@@ -26,8 +26,7 @@ export default function ProfilePage() {
   const [originalPhone, setOriginalPhone] = useState('');
 
   // 'info' = filling name/phone, 'otp' = entering code, 'done' = verified & saved
-  const [step, setStep] = useState<'info' | 'otp' | 'done'>('info');
-  const [otp, setOtp] = useState('');
+  const [step, setStep] = useState<'info' | 'done'>('info');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
 
@@ -53,47 +52,12 @@ export default function ProfilePage() {
     });
   }, []);
 
-  const phoneChanged = form.phone !== originalPhone;
-
-  async function handleSendCode(e: React.FormEvent) {
+  async function handleSave(e: React.FormEvent) {
     e.preventDefault();
     if (!form.first_name.trim()) { setError('First name is required.'); return; }
     if (!form.last_name.trim()) { setError('Last name is required.'); return; }
     const digits = form.phone.replace(/\D/g, '');
     if (digits.length < 10) { setError('Enter a valid 10-digit phone number.'); return; }
-    setError('');
-    setBusy(true);
-    try {
-      await sendPhoneVerification(form.phone);
-      setStep('otp');
-    } catch (e) {
-      setError(e instanceof Error ? e.message : 'Could not send verification code.');
-    } finally {
-      setBusy(false);
-    }
-  }
-
-  async function handleVerifyOtp(e: React.FormEvent) {
-    e.preventDefault();
-    if (otp.length < 6) { setError('Enter the 6-digit code.'); return; }
-    setError('');
-    setBusy(true);
-    try {
-      await verifyPhoneOtp(form.phone, otp);
-      await updateProfile({ ...form, phone_verified: true });
-      setStep('done');
-      setTimeout(() => router.push('/landlord'), 1200);
-    } catch (e) {
-      setError(e instanceof Error ? e.message : 'Invalid code. Please try again.');
-    } finally {
-      setBusy(false);
-    }
-  }
-
-  async function handleSaveWithoutPhoneChange(e: React.FormEvent) {
-    e.preventDefault();
-    if (!form.first_name.trim()) { setError('First name is required.'); return; }
-    if (!form.last_name.trim()) { setError('Last name is required.'); return; }
     setError('');
     setBusy(true);
     try {
@@ -118,7 +82,7 @@ export default function ProfilePage() {
       {step === 'done' && <p className="mt-4 rounded-xl bg-brand-50 px-4 py-3 text-sm font-semibold text-brand-700">Profile saved! Redirecting…</p>}
 
       {step === 'info' && (
-        <form onSubmit={phoneChanged || !phoneVerified ? handleSendCode : handleSaveWithoutPhoneChange} className="mt-8 space-y-5">
+        <form onSubmit={handleSave} className="mt-8 space-y-5">
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className={labelCls}>First name *</label>
@@ -146,11 +110,7 @@ export default function ProfilePage() {
                 </span>
               )}
             </div>
-            <p className="mt-1 text-xs text-gray-500">
-              {phoneChanged || !phoneVerified
-                ? 'A 6-digit verification code will be sent to this number.'
-                : 'Shared with tenants who inquire about your listings.'}
-            </p>
+            <p className="mt-1 text-xs text-gray-500">Shared with tenants who inquire about your listings.</p>
           </div>
 
           {email && (
@@ -168,31 +128,7 @@ export default function ProfilePage() {
 
           <button type="submit" disabled={busy}
             className="w-full rounded-xl bg-brand-600 py-3 font-semibold text-white transition hover:bg-brand-700 disabled:opacity-60">
-            {busy ? 'Sending code…' : (phoneChanged || !phoneVerified) ? 'Send verification code' : 'Save profile'}
-          </button>
-        </form>
-      )}
-
-      {step === 'otp' && (
-        <form onSubmit={handleVerifyOtp} className="mt-8 space-y-5">
-          <div className="rounded-xl bg-brand-50 px-4 py-4 text-sm text-brand-800">
-            A 6-digit code was sent to <strong>{form.phone}</strong>. Enter it below to verify your number.
-          </div>
-          <div>
-            <label className={labelCls}>Verification code *</label>
-            <input
-              className={`${inputCls} text-center text-2xl tracking-[0.5em] font-bold`}
-              type="text" inputMode="numeric" maxLength={6}
-              value={otp} onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
-              placeholder="000000" autoFocus />
-          </div>
-          <button type="submit" disabled={busy || otp.length < 6}
-            className="w-full rounded-xl bg-brand-600 py-3 font-semibold text-white transition hover:bg-brand-700 disabled:opacity-60">
-            {busy ? 'Verifying…' : 'Verify & save profile'}
-          </button>
-          <button type="button" onClick={() => { setStep('info'); setOtp(''); setError(''); }}
-            className="w-full text-sm text-gray-500 hover:text-gray-700">
-            ← Change phone number
+            {busy ? 'Saving…' : 'Save profile'}
           </button>
         </form>
       )}

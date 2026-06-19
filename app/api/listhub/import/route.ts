@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { geocodeAddress } from '@/lib/geocode';
 
 function supabaseAdmin() {
   return createClient(
@@ -92,13 +93,26 @@ export async function POST(req: NextRequest) {
     property_type: mapPropertyType(listing.PropertyType ?? '', listing.PropertySubType ?? ''),
     description: listing.PublicRemarks ?? '',
     photos: photoUrls,
-    latitude: listing.Latitude ?? null,
-    longitude: listing.Longitude ?? null,
+    lat: listing.Latitude ?? null,
+    lng: listing.Longitude ?? null,
     status: 'active',
     source: 'listhub',
   }, { onConflict: 'mls_number' }).select('id').single();
 
   if (error) return NextResponse.json({ error: 'Something went wrong' }, { status: 500 });
+
+  // If MLS didn't provide coordinates, geocode from address
+  if (!listing.Latitude || !listing.Longitude) {
+    const coords = await geocodeAddress(
+      listing.UnparsedAddress,
+      listing.City,
+      listing.StateOrProvince,
+      listing.PostalCode
+    );
+    if (coords) {
+      await sb.from('listings').update({ lat: coords.lat, lng: coords.lng }).eq('id', data.id);
+    }
+  }
 
   return NextResponse.json({ id: data.id, photoCount: photoUrls.length });
 }

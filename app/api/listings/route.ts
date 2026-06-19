@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createSupabaseWithToken } from '@/lib/supabase-server'
 import { createClient } from '@supabase/supabase-js'
 import { generateListingSlug } from '@/lib/format'
+import { geocodeAddress } from '@/lib/geocode'
 
 // GET /api/listings — returns the landlord's own listings
 export async function GET(req: NextRequest) {
@@ -146,5 +147,12 @@ export async function POST(req: NextRequest) {
     .single()
 
   if (error) return NextResponse.json({ error: 'Something went wrong' }, { status: 500 })
+
+  // Geocode address to lat/lng so nearby scores & schools always show
+  const coords = await geocodeAddress(address, city, state, zip)
+  if (coords) {
+    await supabase.from('listings').update({ lat: coords.lat, lng: coords.lng }).eq('id', data.id)
+  }
+
   return NextResponse.json(data, { status: 201 })
 }

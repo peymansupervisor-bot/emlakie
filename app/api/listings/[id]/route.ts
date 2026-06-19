@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createSupabaseWithToken } from '@/lib/supabase-server'
+import { generateListingSlug } from '@/lib/format'
 
 // PUT /api/listings/[id] — update status, title, price, etc.
 export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
@@ -31,11 +32,25 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
     return NextResponse.json({ error: 'No valid fields to update' }, { status: 400 })
   }
 
-  // If address changed, geocode it to keep lat/lng accurate
+  // If address changed, regenerate slug and geocode for accurate lat/lng
   const addrChanged = ['address', 'city', 'state', 'zip'].some((k) => k in dbPayload)
   if (addrChanged) {
-    const parts = [dbPayload.address, dbPayload.city, dbPayload.state, dbPayload.zip].filter(Boolean)
-    const q = encodeURIComponent(parts.join(', ') + ', USA')
+    // Fetch current row to fill in any address parts not in this payload
+    const { data: current } = await supabase
+      .from('listings')
+      .select('address, city, state, zip')
+      .eq('id', id)
+      .eq('landlord_id', user.id)
+      .single()
+
+    const addr = String(dbPayload.address ?? current?.address ?? '')
+    const city = String(dbPayload.city ?? current?.city ?? '')
+    const state = String(dbPayload.state ?? current?.state ?? '')
+    const zip = String(dbPayload.zip ?? current?.zip ?? '')
+
+    dbPayload.slug = generateListingSlug(addr, city, state, zip)
+
+    const q = encodeURIComponent([addr, city, state, zip].filter(Boolean).join(', ') + ', USA')
     try {
       const geo = await fetch(
         `https://nominatim.openstreetmap.org/search?q=${q}&format=json&limit=1&countrycodes=us`,
@@ -59,5 +74,5 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
     console.error('[PUT /api/listings/:id]', error.message, error.details)
     return NextResponse.json({ error: error.message ?? 'Something went wrong' }, { status: 500 })
   }
-  return NextResponse.json({ ok: true })
+  return NextResponse.json({ ok: true, slug: dbPayload.slug ?? null })
 }

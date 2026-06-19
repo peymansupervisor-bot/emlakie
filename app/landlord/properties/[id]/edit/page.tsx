@@ -99,7 +99,7 @@ export default function EditListingPage() {
     setError('');
     setBusy(true);
     try {
-      await updateListing(id, {
+      const result = await updateListing(id, {
         address: form.address.trim(),
         city: form.city.trim(),
         state: form.state.trim(),

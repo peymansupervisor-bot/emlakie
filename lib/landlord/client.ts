@@ -129,9 +129,9 @@ export async function createListing(formData: FormData): Promise<LandlordListing
   return data as LandlordListing;
 }
 
-export async function updateListing(id: string, payload: Record<string, unknown>): Promise<void> {
+export async function updateListing(id: string, payload: Record<string, unknown>): Promise<{ slug?: string | null }> {
   if (isDemo()) throw new Error('Demo mode: sign in with your phone to edit real listings.');
-  await api(`/api/listings/${id}`, {
+  return api<{ slug?: string | null }>(`/api/listings/${id}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload),

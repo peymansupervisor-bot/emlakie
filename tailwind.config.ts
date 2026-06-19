@@ -27,6 +27,15 @@ const config: Config = {
         card: '0 1px 3px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.06)',
         'card-hover': '0 4px 8px rgba(0,0,0,0.1), 0 12px 24px rgba(0,0,0,0.1)',
       },
+      keyframes: {
+        'glow-pulse': {
+          '0%, 100%': { boxShadow: '0 0 0 0 rgba(22,163,74,0.55)' },
+          '50%': { boxShadow: '0 0 0 6px rgba(22,163,74,0)' },
+        },
+      },
+      animation: {
+        'glow-pulse': 'glow-pulse 2s ease-in-out infinite',
+      },
     },
   },
   plugins: [require('@tailwindcss/typography')],

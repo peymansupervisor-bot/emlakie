@@ -14,9 +14,9 @@ export default function Navbar() {
         <div className="hidden items-center gap-5 md:flex">
           <Link
             href="/rent-estimate"
-            className="text-xs font-bold uppercase tracking-widest text-brand-600 transition hover:text-brand-700"
+            className="text-xs font-bold uppercase tracking-widest text-gray-600 transition hover:text-brand-600"
           >
-            Free Rent Estimate
+            Rent Estimate
           </Link>
           <Link
             href="/rentals"
@@ -36,17 +36,18 @@ export default function Navbar() {
           >
             Blog
           </Link>
-          <Link
-            href="/landlords"
-            className="rounded-full border border-brand-600 px-5 py-2 text-xs font-bold uppercase tracking-widest text-brand-600 transition hover:bg-brand-50"
-          >
-            For Landlords
-          </Link>
+          {/* Pulsing LIST FREE pill — eye-catch for landlords */}
           <Link
             href="/landlord/login"
-            className="rounded-full bg-brand-600 px-5 py-2 text-xs font-bold uppercase tracking-widest text-white transition hover:bg-brand-700"
+            className="animate-glow-pulse rounded-full bg-brand-600 px-5 py-2 text-xs font-extrabold uppercase tracking-widest text-white transition hover:bg-brand-700"
           >
-            List Free →
+            List Free
+          </Link>
+          <Link
+            href="/landlords"
+            className="rounded-full border border-gray-300 px-5 py-2 text-xs font-bold uppercase tracking-widest text-gray-600 transition hover:border-brand-600 hover:text-brand-600"
+          >
+            For Landlords
           </Link>
         </div>
 

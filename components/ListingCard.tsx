@@ -15,7 +15,7 @@ export default function ListingCard({ listing }: { listing: Listing }) {
         {photo ? (
           <Image
             src={photo}
-            alt={listing.title}
+            alt={`${formatBeds(listing.bedrooms)}, ${formatBaths(listing.bathrooms)} ${formatPropertyType(listing.property_type)} at ${listing.address}, ${listing.city}`}
             fill
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
             className="object-cover transition duration-300 group-hover:scale-105"

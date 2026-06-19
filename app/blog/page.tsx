@@ -4,13 +4,20 @@ import { posts } from '@/lib/blog';
 
 export const metadata: Metadata = {
   title: 'Rental Market Insights & Guides',
-  description: 'Average rent data, neighborhood guides, and tips for renters and landlords across the United States.',
+  description: 'Average rent data, neighborhood guides, and tips for renters and landlords across the United States. Stay informed on the rental market.',
   alternates: { canonical: 'https://emlakie.com/blog' },
   openGraph: {
     title: 'Rental Market Insights & Guides | EMLAKIE',
     description: 'Average rent data, neighborhood guides, and tips for renters and landlords across the United States.',
     type: 'website',
-    images: [{ url: '/logo.png', width: 512, height: 512, alt: 'EMLAKIE' }],
+    url: 'https://emlakie.com/blog',
+    images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: 'EMLAKIE Blog' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Rental Market Insights & Guides | EMLAKIE',
+    description: 'Average rent data, neighborhood guides, and tips for renters and landlords across the United States.',
+    images: ['/opengraph-image'],
   },
 };
 

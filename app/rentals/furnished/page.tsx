@@ -12,9 +12,9 @@ export const metadata: Metadata = {
     description: 'Browse furnished apartments and houses for rent. Move in with just your suitcase — ideal for relocations, travel nurses, and short-term stays.',
     type: 'website',
     url: 'https://emlakie.com/rentals/furnished',
-    images: [{ url: '/logo.png', width: 512, height: 512, alt: 'EMLAKIE' }],
+    images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: 'EMLAKIE Furnished Rentals' }],
   },
-  twitter: { card: 'summary_large_image', images: ['/logo.png'] },
+  twitter: { card: 'summary_large_image', title: 'Furnished Rentals — Move-In Ready Apartments & Houses', description: 'Browse furnished apartments and houses for rent. Move in with just your suitcase — ideal for relocations, travel nurses, and short-term stays.', images: ['/opengraph-image'] },
 };
 
 const schema = {
@@ -66,7 +66,7 @@ export default async function FurnishedPage() {
         ].map(item => (
           <div key={item.title} className="rounded-2xl border border-gray-100 bg-white p-5 text-center shadow-card">
             <span className="text-3xl">{item.icon}</span>
-            <h2 className="mt-3 font-bold text-gray-900">{item.title}</h2>
+            <h3 className="mt-3 font-bold text-gray-900">{item.title}</h3>
             <p className="mt-1 text-sm text-gray-500">{item.body}</p>
           </div>
         ))}

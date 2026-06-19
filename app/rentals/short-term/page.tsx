@@ -12,9 +12,9 @@ export const metadata: Metadata = {
     description: 'Find short-term and month-to-month rentals. Flexible leases for relocations, travel nurses, remote workers, and anyone who needs housing without a long commitment.',
     type: 'website',
     url: 'https://emlakie.com/rentals/short-term',
-    images: [{ url: '/logo.png', width: 512, height: 512, alt: 'EMLAKIE' }],
+    images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: 'EMLAKIE Short-Term Rentals' }],
   },
-  twitter: { card: 'summary_large_image', images: ['/logo.png'] },
+  twitter: { card: 'summary_large_image', title: 'Short-Term Rentals — Monthly & Flexible Lease Apartments', description: 'Find short-term and month-to-month rentals. Flexible leases for relocations, travel nurses, and remote workers — no broker fees.', images: ['/opengraph-image'] },
 };
 
 const schema = {
@@ -67,7 +67,7 @@ export default async function ShortTermPage() {
         ].map(item => (
           <div key={item.title} className="rounded-2xl border border-gray-100 bg-white p-5 text-center shadow-card">
             <span className="text-3xl">{item.icon}</span>
-            <h2 className="mt-3 font-bold text-gray-900 text-sm">{item.title}</h2>
+            <h3 className="mt-3 font-bold text-gray-900 text-sm">{item.title}</h3>
             <p className="mt-1 text-xs text-gray-500">{item.body}</p>
           </div>
         ))}

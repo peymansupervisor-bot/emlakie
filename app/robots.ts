@@ -7,7 +7,9 @@ export default function robots(): MetadataRoute.Robots {
         userAgent: '*',
         allow: '/',
         disallow: [
-          '/login',
+          '/landlord',
+          '/landlord/login',
+          '/landlord/profile',
           '/landlord/properties/',
           '/landlord/leads',
           '/landlord/messages',

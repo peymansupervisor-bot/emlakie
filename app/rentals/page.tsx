@@ -18,9 +18,15 @@ export const metadata: Metadata = {
     title: 'Homes & Apartments for Rent | EMLAKIE',
     description: 'Search rentals directly from landlords — no middlemen, no fees.',
     type: 'website',
-    images: [{ url: '/logo.png', width: 512, height: 512, alt: 'EMLAKIE Rentals' }],
+    url: 'https://emlakie.com/rentals',
+    images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: 'EMLAKIE Rentals' }],
   },
-  twitter: { card: 'summary_large_image', images: ['/logo.png'] },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Homes & Apartments for Rent | EMLAKIE',
+    description: 'Search rentals directly from landlords — no middlemen, no fees.',
+    images: ['/opengraph-image'],
+  },
 };
 
 export default async function RentalsPage({

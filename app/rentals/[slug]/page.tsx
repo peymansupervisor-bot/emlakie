@@ -28,27 +28,32 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const listing = await getListing(slug);
   if (!listing) return { title: 'Listing not found' };
   const canonicalSlug = listing.slug ?? listing.id;
+  const canonicalUrl = `https://emlakie.com/rentals/${canonicalSlug}`;
   const statusLabel = listing.status === 'rented' ? ' [Rented]' : listing.status === 'expired' ? ' [Expired]' : '';
-  const shortDesc = listing.description
+  const shortDesc = listing.description && listing.description.length > 20
     ? listing.description.length > 155
       ? listing.description.slice(0, 155).replace(/\s+\S*$/, '') + '…'
       : listing.description
-    : undefined;
+    : `${formatBeds(listing.bedrooms)}, ${formatBaths(listing.bathrooms)} ${formatPropertyType(listing.property_type)} for rent at ${formatPrice(listing.price)}/mo in ${listing.city}, ${listing.state}. Contact the landlord directly on EMLAKIE — no broker fees.`;
+  const ogImage = listing.photos?.[0]
+    ? [{ url: listing.photos[0], width: 1200, height: 630, alt: listing.title }]
+    : [{ url: '/opengraph-image', width: 1200, height: 630, alt: 'EMLAKIE' }];
   return {
     title: `${listing.title}${statusLabel} — ${formatPrice(listing.price)}`,
     description: shortDesc,
-    alternates: { canonical: `https://emlakie.com/rentals/${canonicalSlug}` },
+    alternates: { canonical: canonicalUrl },
     openGraph: {
       title: `${listing.title} — ${formatPrice(listing.price)}`,
-      description: shortDesc ?? '',
+      description: shortDesc,
       type: 'website',
-      images: listing.photos?.[0]
-        ? [{ url: listing.photos[0], width: 1200, height: 630, alt: listing.title }]
-        : [{ url: '/logo.png', width: 512, height: 512, alt: 'EMLAKIE' }],
+      url: canonicalUrl,
+      images: ogImage,
     },
     twitter: {
       card: 'summary_large_image',
-      images: listing.photos?.[0] ? [listing.photos[0]] : ['/logo.png'],
+      title: `${listing.title} — ${formatPrice(listing.price)}`,
+      description: shortDesc,
+      images: listing.photos?.[0] ? [listing.photos[0]] : ['/opengraph-image'],
     },
   };
 }
@@ -85,6 +90,16 @@ export default async function ListingPage({ params }: Props) {
   ]);
   const similarActive = similar.filter((l) => l.id !== listing.id && l.status === 'active').slice(0, 3);
 
+  const breadcrumbSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://emlakie.com' },
+      { '@type': 'ListItem', position: 2, name: 'Rentals', item: 'https://emlakie.com/rentals' },
+      { '@type': 'ListItem', position: 3, name: listing.title, item: `https://emlakie.com/rentals/${listing.slug ?? listing.id}` },
+    ],
+  };
+
   const listingSchema = {
     '@context': 'https://schema.org',
     '@type': 'RealEstateListing',
@@ -113,6 +128,7 @@ export default async function ListingPage({ params }: Props) {
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(listingSchema) }} />
       <Link href="/rentals" className="text-sm font-semibold text-brand-600 hover:text-brand-700">
         ← Back to search

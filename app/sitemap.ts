@@ -10,6 +10,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     .filter(l => l.status === 'active' && (l.slug || l.id))
     .map(l => ({
       url: `${base}/rentals/${l.slug ?? l.id}`,
+      lastModified: new Date(),
       changeFrequency: 'weekly' as const,
       priority: 0.9,
     }));
@@ -43,7 +44,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.85,
     })),
     ...zipPages,
-    { url: `${base}/landlord/login`, changeFrequency: 'monthly', priority: 0.7 },
+    { url: `${base}/landlords`, changeFrequency: 'monthly', priority: 0.7 },
     { url: `${base}/contact`, changeFrequency: 'monthly', priority: 0.6 },
     { url: `${base}/support`, changeFrequency: 'monthly', priority: 0.5 },
     { url: `${base}/app`, changeFrequency: 'monthly', priority: 0.6 },

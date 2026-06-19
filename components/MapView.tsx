@@ -47,9 +47,6 @@ export default function MapView({ listings, activeId, onMarkerClick, drawMode = 
             <path d="M14 2C7.373 2 2 7.373 2 14c0 9 12 22 12 22s12-13 12-22C26 7.373 20.627 2 14 2z" fill="${bg}" stroke="${active ? '#16a34a' : '#d1d5db'}" stroke-width="1.5"/>
             <path d="M14 10.5c-0.6-1.2-2-2-3.5-1.8C8.6 9 7.5 10.5 7.5 12c0 3 4 5.5 6.5 7 2.5-1.5 6.5-4 6.5-7 0-1.5-1.1-3-3-3.3C15.9 8.5 14.6 9.3 14 10.5z" fill="${active ? '#fff' : '#16a34a'}"/>
           </svg>
-          <div style="position:absolute;bottom:16px;left:50%;transform:translateX(-50%);background:${bg};color:${textColor};font-size:10px;font-weight:700;white-space:nowrap;padding:2px 5px;border-radius:4px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;box-shadow:${shadow};border:1px solid ${active ? '#16a34a' : '#e5e7eb'};">
-            ${label}
-          </div>
         </div>`,
     });
   }, []);

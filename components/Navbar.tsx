@@ -13,28 +13,22 @@ export default function Navbar() {
 
         <div className="hidden items-center gap-5 md:flex">
           <Link
-            href="/landlord"
-            className="text-xs font-bold uppercase tracking-widest text-gray-600 transition hover:text-brand-600"
-          >
-            For Landlords
-          </Link>
-          <Link
-            href="/rentals"
-            className="text-xs font-bold uppercase tracking-widest text-gray-600 transition hover:text-brand-600"
-          >
-            For Tenants
-          </Link>
-          <Link
             href="/rent-estimate"
             className="text-xs font-bold uppercase tracking-widest text-brand-600 transition hover:text-brand-700"
           >
             Free Rent Estimate
           </Link>
           <Link
+            href="/rentals"
+            className="text-xs font-bold uppercase tracking-widest text-gray-600 transition hover:text-brand-600"
+          >
+            Browse Rentals
+          </Link>
+          <Link
             href="/rent-check"
             className="text-xs font-bold uppercase tracking-widest text-gray-600 transition hover:text-brand-600"
           >
-            Rent Check ✓
+            Rent Check
           </Link>
           <Link
             href="/blog"
@@ -43,16 +37,16 @@ export default function Navbar() {
             Blog
           </Link>
           <Link
-            href="/support"
-            className="text-xs font-bold uppercase tracking-widest text-gray-600 transition hover:text-brand-600"
+            href="/landlords"
+            className="rounded-full border border-brand-600 px-5 py-2 text-xs font-bold uppercase tracking-widest text-brand-600 transition hover:bg-brand-50"
           >
-            Support
+            For Landlords
           </Link>
           <Link
-            href="/app"
+            href="/landlord/login"
             className="rounded-full bg-brand-600 px-5 py-2 text-xs font-bold uppercase tracking-widest text-white transition hover:bg-brand-700"
           >
-            Get the App
+            List Free →
           </Link>
         </div>
 

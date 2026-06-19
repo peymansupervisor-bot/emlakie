@@ -285,16 +285,23 @@ export default async function HomePage() {
         {/* Text + search overlay — positioned in the clear upper ~75% */}
         <div className="absolute inset-x-0 top-0 flex h-[55%] flex-col items-center justify-center px-4 text-center">
           <p className="text-xs font-semibold uppercase tracking-[0.25em] text-brand-600">
-            National Real Estate
+            The Rental Platform Built for Landlords
           </p>
           <h1 className="mt-3 max-w-3xl font-serif text-4xl font-bold text-gray-900 sm:text-5xl">
-            Find your next home
+            List free. Rent fast.<br className="hidden sm:block" /> Keep every dollar.
           </h1>
           <p className="mt-3 max-w-2xl text-lg font-medium text-gray-600">
-            Direct from landlord. No middleman. No fees.
+            Landlords post for free · Renters find you directly · No broker fees ever
           </p>
-          <div className="mt-8 w-full max-w-2xl">
+          <div className="mt-6 w-full max-w-2xl">
             <SearchBar large />
+          </div>
+          <div className="mt-4 flex items-center gap-3">
+            <Link href="/landlord/login"
+              className="rounded-lg bg-brand-600 px-5 py-2.5 text-sm font-bold text-white transition hover:bg-brand-700">
+              List my property free →
+            </Link>
+            <span className="text-xs text-gray-400">or browse as a renter below</span>
           </div>
         </div>
       </section>

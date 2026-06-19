@@ -19,6 +19,12 @@ export default function Navbar() {
             For Landlords
           </Link>
           <Link
+            href="/rentals"
+            className="text-sm font-semibold text-gray-700 hover:text-brand-600"
+          >
+            For Tenants
+          </Link>
+          <Link
             href="/blog"
             className="text-sm font-semibold text-gray-700 hover:text-brand-600"
           >
@@ -42,6 +48,9 @@ export default function Navbar() {
         <div className="flex items-center gap-3 md:hidden">
           <Link href="/landlord" className="text-sm font-semibold text-gray-700">
             Landlords
+          </Link>
+          <Link href="/rentals" className="text-sm font-semibold text-gray-700">
+            Tenants
           </Link>
           <Link
             href="/app"

@@ -78,13 +78,8 @@ export default async function HomePage() {
         <div className="mx-auto max-w-7xl">
           <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-[260px_1fr_260px]">
 
-            {/* Left — recent listings */}
-            <div className="hidden lg:block">
-              <RecentListings />
-            </div>
-
-            {/* Center — main hero */}
-            <div className="text-center">
+            {/* Center — main hero (first in DOM = first on mobile) */}
+            <div className="text-center lg:order-2">
               <p className="text-xs font-semibold uppercase tracking-[0.25em] text-brand-600">
                 The Rental Platform Built for Landlords
               </p>
@@ -108,8 +103,13 @@ export default async function HomePage() {
               </div>
             </div>
 
-            {/* Right — landlord CTA */}
-            <div className="hidden lg:block">
+            {/* Left — recent listings (second in DOM, lg repositions to col 1) */}
+            <div className="lg:order-1">
+              <RecentListings />
+            </div>
+
+            {/* Right — landlord CTA (third in DOM, lg repositions to col 3) */}
+            <div className="lg:order-3">
               <LandlordCTACard />
             </div>
 

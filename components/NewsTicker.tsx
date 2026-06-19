@@ -48,7 +48,7 @@ export default async function NewsTicker() {
                 key={i}
                 href={h.link}
                 target="_blank"
-                rel="noopener noreferrer"
+                rel="nofollow noopener noreferrer"
                 className="inline-flex items-center gap-2 px-6 text-sm font-medium text-green-50 hover:text-white transition-colors"
               >
                 <span className="text-green-300 select-none" aria-hidden="true">●</span>

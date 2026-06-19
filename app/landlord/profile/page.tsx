@@ -20,10 +20,19 @@ export default function ProfilePage() {
     getProfile().then((p) => {
       if (!p) return;
       let digits = (p.phone ?? '').replace(/\D/g, '');
-      if (digits.startsWith('1') && digits.length === 11) digits = digits.slice(1);
-      let phone = digits;
-      if (digits.length === 10) phone = `(${digits.slice(0,3)}) ${digits.slice(3,6)}-${digits.slice(6)}`;
-      setForm({ first_name: p.first_name ?? '', last_name: p.last_name ?? '', phone });
+      if (digits.startsWith('1') && digits.length >= 11) digits = digits.slice(1);
+      digits = digits.slice(0, 10);
+      const phone = digits.length === 10
+        ? `(${digits.slice(0,3)}) ${digits.slice(3,6)}-${digits.slice(6)}`
+        : digits;
+
+      // Split display_name into first/last if names not saved yet
+      const nameParts = (p.display_name ?? '').trim().split(' ');
+      setForm({
+        first_name: p.first_name ?? nameParts[0] ?? '',
+        last_name: p.last_name ?? nameParts.slice(1).join(' ') ?? '',
+        phone,
+      });
       setEmail(p.email ?? '');
       setAccountId(p.account_id ?? '');
     });

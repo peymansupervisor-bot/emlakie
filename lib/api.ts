@@ -7,7 +7,8 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'https://api.emlakie.com/api'
 function supabaseAdmin() {
   return createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_KEY ?? process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    process.env.SUPABASE_SERVICE_KEY ?? process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    { global: { fetch: (url, init) => fetch(url, { ...init, cache: 'no-store' }) } }
   );
 }
 

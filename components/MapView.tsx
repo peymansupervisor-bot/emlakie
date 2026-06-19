@@ -91,7 +91,7 @@ export default function MapView({ listings, activeId, onMarkerClick, drawMode = 
       ).addTo(map);
     } else {
       tileRef.current = L.tileLayer(
-        'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
+        'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
         {
           attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/">CARTO</a>',
           subdomains: 'abcd', maxZoom: 19,
@@ -204,7 +204,7 @@ export default function MapView({ listings, activeId, onMarkerClick, drawMode = 
 
       const map = L.map(containerRef.current!, { zoomControl: false }).setView(center, mappable.length > 0 ? 11 : 4);
       L.control.zoom({ position: 'bottomright' }).addTo(map);
-      tileRef.current = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+      tileRef.current = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/">CARTO</a>',
         subdomains: 'abcd',
         maxZoom: 19,

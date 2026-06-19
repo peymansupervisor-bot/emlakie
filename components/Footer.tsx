@@ -57,22 +57,6 @@ export default function Footer() {
             through this site. No content constitutes legal, financial, or professional advice.
           </p>
 
-          {/* Direct Owner / Landlord definition */}
-          <div>
-            <p className="font-semibold text-gray-600">Definition of &ldquo;Direct Owner&rdquo; / &ldquo;Landlord&rdquo; on EMLAKIE</p>
-            <p className="mt-1">
-              For the purposes of this platform, a <strong>Direct Owner</strong> (also referred to as{' '}
-              <strong>Landlord</strong> or <strong>Owner</strong>) means the person who speaks on behalf of the
-              property owner — including but not limited to a property manager, an authorized employee of the owner,
-              or any other individual who is actively promoting the property for rent, conducting showings, and
-              authorized to sign the lease. That person may or may not hold a real estate license, but critically,
-              they are <em>not</em> performing these tasks in exchange for a commission. Many rental properties are
-              owned by limited liability companies (LLCs) or other legal entities; the individual renting and
-              managing the property on the entity&rsquo;s behalf is an authorized representative of that entity.
-              EMLAKIE refers to all such individuals collectively as the &ldquo;Landlord&rdquo; or &ldquo;Owner.&rdquo;
-            </p>
-          </div>
-
           {/* Listing accuracy */}
           <div>
             <p className="font-semibold text-gray-600">Listing Accuracy</p>

@@ -31,14 +31,15 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
     return NextResponse.json({ error: 'No valid fields to update' }, { status: 400 })
   }
 
-  const { data, error } = await supabase
+  const { error } = await supabase
     .from('listings')
     .update(dbPayload)
     .eq('id', id)
     .eq('landlord_id', user.id)
-    .select()
-    .single()
 
-  if (error) return NextResponse.json({ error: 'Something went wrong' }, { status: 500 })
-  return NextResponse.json(data)
+  if (error) {
+    console.error('[PUT /api/listings/:id]', error.message, error.details)
+    return NextResponse.json({ error: error.message ?? 'Something went wrong' }, { status: 500 })
+  }
+  return NextResponse.json({ ok: true })
 }

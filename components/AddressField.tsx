@@ -21,9 +21,14 @@ export default function AddressField({
   const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
   const [open, setOpen] = useState(false);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const seededRef = useRef(false);
 
+  // Pre-fill once when the parent loads the saved value (empty → real address)
   useEffect(() => {
-    setValue(initialValue);
+    if (!seededRef.current && initialValue) {
+      setValue(initialValue);
+      seededRef.current = true;
+    }
   }, [initialValue]);
 
   function lookup(val: string) {

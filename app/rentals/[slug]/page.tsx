@@ -13,6 +13,7 @@ import ListingCard from '@/components/ListingCard';
 import EValue from '@/components/EValue';
 import { calculateEValue } from '@/lib/e-value';
 import ApplyForm from '@/components/ApplyForm';
+import VideoEmbed from '@/components/VideoEmbed';
 import NearbyPlaces from '@/components/NearbyPlaces';
 import NeighborhoodScores from '@/components/NeighborhoodScores';
 import NearbySchools from '@/components/NearbySchools';
@@ -213,11 +214,7 @@ export default async function ListingPage({ params }: Props) {
               return (
                 <div className="mt-8">
                   <h2 className="text-xl font-bold text-gray-900 mb-3">Virtual Tour</h2>
-                  <div className="relative w-full overflow-hidden rounded-2xl" style={{ paddingBottom: '56.25%' }}>
-                    <iframe className="absolute inset-0 h-full w-full" src={`https://www.youtube.com/embed/${ytMatch[1]}`}
-                      title="Virtual tour video"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen />
-                  </div>
+                  <VideoEmbed type="youtube" videoId={ytMatch[1]} title="Virtual tour video" />
                 </div>
               );
             }
@@ -225,9 +222,7 @@ export default async function ListingPage({ params }: Props) {
               return (
                 <div className="mt-8">
                   <h2 className="text-xl font-bold text-gray-900 mb-3">3D Virtual Tour</h2>
-                  <div className="relative w-full overflow-hidden rounded-2xl" style={{ paddingBottom: '56.25%' }}>
-                    <iframe className="absolute inset-0 h-full w-full" src={url} title="3D virtual tour" allowFullScreen />
-                  </div>
+                  <VideoEmbed type="matterport" src={url} title="3D virtual tour" />
                 </div>
               );
             }

@@ -5,6 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { getMyListing, updateListing } from '@/lib/landlord/client';
 import { LandlordListing } from '@/lib/landlord/types';
+import AddressField from '@/components/AddressField';
 
 const PROPERTY_TYPES = [
   { value: 'house',     label: 'House' },
@@ -156,8 +157,11 @@ export default function EditListingPage() {
         {/* Address */}
         <div>
           <label className={labelCls}>Street address *</label>
-          <input className={inputCls} value={form.address} onChange={(e) => set('address', e.target.value)}
-            placeholder="14304 Culiacan Ave" />
+          <AddressField
+            initialValue={form.address}
+            onType={(address) => setForm((f) => ({ ...f, address }))}
+            onSelect={(address, city, state, zip) => setForm((f) => ({ ...f, address, city, state, zip }))}
+          />
         </div>
         <div className="grid grid-cols-3 gap-4">
           <div className="col-span-1">

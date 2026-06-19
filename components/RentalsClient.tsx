@@ -14,6 +14,7 @@ type View = 'list' | 'map' | 'split';
 
 interface Props {
   listings: Listing[];
+  allMapListings?: Pick<Listing, 'id' | 'lat' | 'lng' | 'price' | 'address' | 'slug'>[];
   total: number;
   usingSampleData: boolean;
   heading: string;
@@ -21,7 +22,7 @@ interface Props {
   searchLabel?: string;
 }
 
-export default function RentalsClient({ listings, total, usingSampleData, heading, filters = {}, searchLabel = 'All rentals' }: Props) {
+export default function RentalsClient({ listings, allMapListings, total, usingSampleData, heading, filters = {}, searchLabel = 'All rentals' }: Props) {
   const [activeId, setActiveId] = useState<string | null>(null);
   const [view, setView] = useState<'list' | 'map' | 'split'>('split');
   const [showSaveModal, setShowSaveModal] = useState(false);
@@ -252,7 +253,7 @@ export default function RentalsClient({ listings, total, usingSampleData, headin
             }`}
           >
             <MapView
-              listings={listings}
+              listings={(allMapListings ?? listings) as Listing[]}
               activeId={activeId}
               onMarkerClick={handleMarkerClick}
               drawMode={drawMode}

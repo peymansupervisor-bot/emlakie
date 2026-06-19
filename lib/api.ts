@@ -119,6 +119,29 @@ export async function getListings(filters: ListingFilters = {}): Promise<Listing
   }
 }
 
+export async function getAllMappableListings(): Promise<Pick<Listing, 'id' | 'lat' | 'lng' | 'price' | 'address' | 'slug'>[]> {
+  try {
+    const sb = supabaseAdmin();
+    const { data } = await sb
+      .from('listings')
+      .select('id, lat, lng, monthly_rent, address, slug')
+      .eq('status', 'active')
+      .not('lat', 'is', null)
+      .not('lng', 'is', null)
+      .limit(1000);
+    return (data ?? []).map((row) => ({
+      id: row.id as string,
+      lat: Number(row.lat),
+      lng: Number(row.lng),
+      price: Number(row.monthly_rent),
+      address: row.address as string,
+      slug: row.slug as string | undefined,
+    }));
+  } catch {
+    return [];
+  }
+}
+
 export async function getAllZips(): Promise<ZipLocation[]> {
   try {
     const res = await fetch(`${API_URL}/listings/locations`, {

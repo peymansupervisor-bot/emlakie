@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation';
 import type { Metadata } from 'next';
 import Filters from '@/components/Filters';
 import RentalsClient from '@/components/RentalsClient';
-import { getListings } from '@/lib/api';
+import { getListings, getAllMappableListings } from '@/lib/api';
 import { ListingFilters } from '@/lib/types';
 import { isAddressQuery } from '@/lib/address-utils';
 
@@ -27,7 +27,10 @@ export default async function RentalsPage({
   searchParams: ListingFilters;
 }) {
 
-  const { listings, total, usingSampleData } = await getListings(searchParams);
+  const [{ listings, total, usingSampleData }, allMapListings] = await Promise.all([
+    getListings(searchParams),
+    getAllMappableListings(),
+  ]);
 
   const searchTerm = searchParams.q || searchParams.city;
   const isZipSearch = searchTerm && /^\d{5}$/.test(searchTerm.trim());
@@ -48,6 +51,7 @@ export default async function RentalsPage({
       <Suspense>
         <RentalsClient
           listings={listings}
+          allMapListings={allMapListings}
           total={total}
           usingSampleData={usingSampleData}
           heading={heading}

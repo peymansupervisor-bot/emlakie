@@ -19,7 +19,7 @@ async function fetchHeadlines(): Promise<Headline[]> {
     });
     if (!res.ok) return FALLBACK_HEADLINES;
     const xml = await res.text();
-    const matches = [...xml.matchAll(/<item>[\s\S]*?<title><!\[CDATA\[(.*?)\]\]><\/title>[\s\S]*?<link>(.*?)<\/link>[\s\S]*?<\/item>/g)];
+    const matches = Array.from(xml.matchAll(/<item>[\s\S]*?<title><!\[CDATA\[(.*?)\]\]><\/title>[\s\S]*?<link>(.*?)<\/link>[\s\S]*?<\/item>/g));
     const items: Headline[] = matches.slice(0, 10).map(m => ({ title: m[1].trim(), link: m[2].trim() }));
     return items.length >= 4 ? items : FALLBACK_HEADLINES;
   } catch {

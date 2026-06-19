@@ -7,6 +7,8 @@ import { getListings, getAllMappableListings } from '@/lib/api';
 import { ListingFilters } from '@/lib/types';
 import { isAddressQuery } from '@/lib/address-utils';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: 'Homes & Apartments for Rent',
   description:

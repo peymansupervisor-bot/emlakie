@@ -34,7 +34,7 @@ export default function ListingCard({ listing }: { listing: Listing }) {
         )}
         {!listing.isSample && listing.listing_source === 'owner' && (
           <span className="absolute left-3 top-3 rounded-md bg-brand-600/90 px-2 py-1 text-xs font-semibold text-white">
-            Owner Direct
+            By Owner
           </span>
         )}
         {!listing.isSample && listing.listing_source === 'broker' && (

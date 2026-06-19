@@ -136,7 +136,7 @@ export default function Filters() {
             : 'border-gray-300 bg-white text-gray-700 hover:border-gray-400'
         }`}
       >
-        <span aria-hidden="true">🏠</span> Owner Direct
+        <span aria-hidden="true">🏠</span> By Owner
       </button>
 
       {/* Amenities dropdown */}

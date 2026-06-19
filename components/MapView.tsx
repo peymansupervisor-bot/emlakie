@@ -28,6 +28,8 @@ export default function MapView({ listings, activeId, onMarkerClick, drawMode = 
   }>({ points: [], polyline: null, polygon: null, dots: [], closeCircle: null });
 
   const mappable = listings.filter((l) => l.lat != null && l.lng != null);
+  const mappableRef = useRef(mappable);
+  mappableRef.current = mappable;
 
   const buildIcon = useCallback((price: number, active: boolean, L: any) => {
     const label = formatPrice(price);
@@ -44,7 +46,7 @@ export default function MapView({ listings, activeId, onMarkerClick, drawMode = 
   }, []);
 
   const syncMarkers = useCallback((map: any, L: any) => {
-    const current = mappable;
+    const current = mappableRef.current;
     const currentIds = new Set(current.map((l) => l.id));
     markersRef.current.forEach((marker, id) => {
       if (!currentIds.has(id)) { marker.remove(); markersRef.current.delete(id); }
@@ -61,7 +63,7 @@ export default function MapView({ listings, activeId, onMarkerClick, drawMode = 
       map.fitBounds(bounds, { padding: [40, 40] });
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mappable]);
+  }, []);
 
   const clearDraw = useCallback(() => {
     const d = drawRef.current;

@@ -46,6 +46,7 @@ export default function DisclaimerPage() {
             'Governing Law and Dispute Resolution',
             'Changes to This Disclaimer',
             'Contact Information',
+            'Definition of "Direct Owner" / "Landlord" on EMLAKIE',
           ].map((item, i) => (
             <li key={i}>
               <a href={`#section-${i + 1}`} className="hover:underline">
@@ -308,6 +309,39 @@ export default function DisclaimerPage() {
               </a>
             </p>
           </div>
+        </section>
+
+        <section id="section-15">
+          <h2 className="text-xl font-bold text-gray-900">15. Definition of &ldquo;Direct Owner&rdquo; / &ldquo;Landlord&rdquo; on EMLAKIE</h2>
+          <p className="mt-2">
+            For the purposes of this platform, the term <strong>Direct Owner</strong> — and the terms{' '}
+            <strong>Landlord</strong> and <strong>Owner</strong> used interchangeably throughout the Services —
+            refers to the person who speaks on behalf of the property owner with authority to rent the property.
+            This includes, without limitation:
+          </p>
+          <ul className="mt-3 list-disc space-y-2 pl-6">
+            <li>The property owner themselves</li>
+            <li>A property manager authorized by the owner</li>
+            <li>An authorized employee or representative of the owner</li>
+            <li>Any other individual who is actively promoting the property for rent, conducting showings, and
+              authorized to execute or sign the lease agreement on behalf of the owner</li>
+          </ul>
+          <p className="mt-3">
+            Such a person may or may not hold a real estate license. The defining characteristic is that they are{' '}
+            <strong>not</strong> performing these specific tasks in exchange for a commission — they act in an
+            ownership or managerial capacity rather than as a commissioned sales representative.
+          </p>
+          <p className="mt-3">
+            Many rental properties are owned by limited liability companies (LLCs), corporations, trusts, or other
+            legal entities. In those cases, the individual renting and managing the property is an authorized
+            representative of that entity. EMLAKIE refers to all such individuals collectively as the
+            &ldquo;Landlord,&rdquo; &ldquo;Owner,&rdquo; or &ldquo;Direct Owner&rdquo; throughout the Services.
+          </p>
+          <p className="mt-3">
+            This definition is provided for clarity only and does not constitute legal advice. Users with specific
+            questions about authorization, agency, or licensing requirements in their jurisdiction should consult a
+            qualified attorney.
+          </p>
         </section>
 
         <p className="border-t border-gray-200 pt-6 text-sm text-gray-500">© 2026 EMLAKIE LLC · All rights reserved.</p>

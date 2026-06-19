@@ -7,6 +7,13 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'https://api.emlakie.com/api'
 function supabaseAdmin() {
   return createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_KEY ?? process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  );
+}
+
+function supabaseAdminLive() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_KEY ?? process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     { global: { fetch: (url, opts = {}) => fetch(url, { ...opts, cache: 'no-store' }) } }
   );
@@ -72,7 +79,7 @@ function filterSamples(filters: ListingFilters): Listing[] {
 
 export async function getListings(filters: ListingFilters = {}): Promise<ListingsResponse> {
   try {
-    const sb = supabaseAdmin();
+    const sb = supabaseAdminLive();
     let query = sb.from('listings').select('*', { count: 'exact' }).eq('status', 'active');
     if (filters.q) {
       const q = filters.q.trim();
@@ -122,7 +129,7 @@ export async function getListings(filters: ListingFilters = {}): Promise<Listing
 
 export async function getAllMappableListings(): Promise<Pick<Listing, 'id' | 'lat' | 'lng' | 'price' | 'address' | 'slug'>[]> {
   try {
-    const sb = supabaseAdmin();
+    const sb = supabaseAdminLive();
     const { data } = await sb
       .from('listings')
       .select('id, lat, lng, monthly_rent, address, slug')

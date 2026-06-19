@@ -2,12 +2,21 @@ import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Terms of Service | EMLAKIE',
-  description: 'Terms of Service for EMLAKIE — please read before using our platform.',
+  description: 'Read EMLAKIE\'s Terms of Service. These terms govern your use of our rental platform, listing services, tenant applications, and mobile app as a renter or landlord.',
   alternates: { canonical: 'https://emlakie.com/terms' },
+  robots: { index: true, follow: false },
   openGraph: {
     title: 'Terms of Service | EMLAKIE',
-    description: 'Terms of Service for EMLAKIE — please read before using our platform.',
-    images: [{ url: '/logo.png', width: 512, height: 512, alt: 'EMLAKIE' }],
+    description: 'Terms governing your use of the EMLAKIE rental platform as a renter or landlord.',
+    type: 'website',
+    url: 'https://emlakie.com/terms',
+    images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: 'EMLAKIE' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Terms of Service | EMLAKIE',
+    description: 'Terms governing your use of the EMLAKIE rental platform as a renter or landlord.',
+    images: ['/opengraph-image'],
   },
 };
 

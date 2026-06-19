@@ -2,12 +2,21 @@ import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Accessibility Statement | EMLAKIE',
-  description: 'EMLAKIE is committed to ensuring our website is accessible to people with disabilities.',
+  description: 'EMLAKIE is committed to WCAG 2.1 AA accessibility. Learn about our efforts to make the rental platform fully accessible to people with disabilities.',
   alternates: { canonical: 'https://emlakie.com/accessibility' },
+  robots: { index: true, follow: false },
   openGraph: {
     title: 'Accessibility Statement | EMLAKIE',
-    description: 'EMLAKIE is committed to ensuring our website is accessible to people with disabilities.',
-    images: [{ url: '/logo.png', width: 512, height: 512, alt: 'EMLAKIE' }],
+    description: 'EMLAKIE\'s commitment to WCAG 2.1 AA accessibility for all renters and landlords.',
+    type: 'website',
+    url: 'https://emlakie.com/accessibility',
+    images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: 'EMLAKIE' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Accessibility Statement | EMLAKIE',
+    description: 'EMLAKIE\'s commitment to WCAG 2.1 AA accessibility for all renters and landlords.',
+    images: ['/opengraph-image'],
   },
 };
 

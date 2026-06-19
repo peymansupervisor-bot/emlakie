@@ -3,11 +3,11 @@ import SupportChat from '@/components/SupportChat';
 
 export const metadata: Metadata = {
   title: 'Support | EMLAKIE',
-  description: 'Get help with your EMLAKIE account. Our AI support agent can diagnose and fix issues instantly.',
+  description: 'Get instant help with your EMLAKIE account. Our AI support agent can diagnose listing issues, billing questions, and account problems — available 24/7.',
   alternates: { canonical: 'https://emlakie.com/support' },
   openGraph: {
     title: 'Support | EMLAKIE',
-    description: 'Get help with your EMLAKIE account. Our AI support agent can diagnose and fix issues instantly.',
+    description: 'Get instant help with your EMLAKIE account. Our AI support agent is available 24/7 for listing, billing, and account issues.',
     type: 'website',
     url: 'https://emlakie.com/support',
     images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: 'EMLAKIE' }],
@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'Support | EMLAKIE',
-    description: 'Get help with your EMLAKIE account. Our AI support agent can diagnose and fix issues instantly.',
+    description: 'Get instant help with your EMLAKIE account. Our AI support agent is available 24/7 for listing, billing, and account issues.',
     images: ['/opengraph-image'],
   },
 };

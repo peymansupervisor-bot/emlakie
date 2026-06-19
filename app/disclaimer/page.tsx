@@ -2,12 +2,21 @@ import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Legal Disclaimer | EMLAKIE',
-  description: 'Legal disclaimer for EMLAKIE — please read before using our platform.',
+  description: 'Read the EMLAKIE legal disclaimer before using our platform. Covers listing accuracy, third-party content, liability limitations, and terms of use for renters and landlords.',
   alternates: { canonical: 'https://emlakie.com/disclaimer' },
+  robots: { index: true, follow: false },
   openGraph: {
     title: 'Legal Disclaimer | EMLAKIE',
-    description: 'Legal disclaimer for EMLAKIE — please read before using our platform.',
-    images: [{ url: '/logo.png', width: 512, height: 512, alt: 'EMLAKIE' }],
+    description: 'Read the EMLAKIE legal disclaimer before using our rental platform.',
+    type: 'website',
+    url: 'https://emlakie.com/disclaimer',
+    images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: 'EMLAKIE' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Legal Disclaimer | EMLAKIE',
+    description: 'Read the EMLAKIE legal disclaimer before using our rental platform.',
+    images: ['/opengraph-image'],
   },
 };
 

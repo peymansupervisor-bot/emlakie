@@ -299,6 +299,26 @@ export default async function HomePage() {
         </div>
       </section>
 
+      {/* Landlord CTA bar */}
+      <div className="border-b border-brand-100 bg-brand-50">
+        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-4 py-5 sm:flex-row sm:px-6">
+          <div className="text-center sm:text-left">
+            <p className="text-sm font-bold text-gray-900">Are you a landlord? <span className="text-brand-600">List your property free.</span></p>
+            <p className="mt-0.5 text-xs text-gray-500">Reach thousands of renters · No broker fees · Takes under 5 minutes</p>
+          </div>
+          <div className="flex items-center gap-3 shrink-0">
+            <Link href="/rent-estimate"
+              className="rounded-lg border border-brand-200 bg-white px-4 py-2 text-xs font-semibold text-brand-700 transition hover:bg-brand-50">
+              What&apos;s my rent worth?
+            </Link>
+            <Link href="/landlord/login"
+              className="rounded-lg bg-brand-600 px-5 py-2 text-xs font-bold text-white transition hover:bg-brand-700">
+              List for free →
+            </Link>
+          </div>
+        </div>
+      </div>
+
       {/* Featured listings */}
       <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6">
         <div className="flex items-end justify-between">

@@ -37,10 +37,22 @@ export async function getProfile(): Promise<LandlordProfile | null> {
   if (!user) return null;
   const { data } = await supabase
     .from('profiles')
-    .select('display_name, email, account_id')
+    .select('display_name, first_name, last_name, phone, email, account_id')
     .eq('id', user.id)
     .single();
   return data ?? null;
+}
+
+export async function updateProfile(payload: { first_name: string; last_name: string; phone: string }): Promise<void> {
+  if (isDemo()) throw new Error('Demo mode: sign in to update your profile.');
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Not signed in.');
+  const display_name = `${payload.first_name.trim()} ${payload.last_name.trim()}`.trim();
+  const { error } = await supabase
+    .from('profiles')
+    .update({ first_name: payload.first_name.trim(), last_name: payload.last_name.trim(), phone: payload.phone.trim(), display_name })
+    .eq('id', user.id);
+  if (error) throw new Error(error.message);
 }
 
 export async function sendOtp(phone: string): Promise<void> {

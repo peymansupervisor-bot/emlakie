@@ -13,6 +13,7 @@ const TABS = [
   { href: '/landlord/messages', label: 'Messages'       },
   { href: '/landlord/alerts',   label: 'Notifications'  },
   { href: '/landlord/payments', label: '⚡ Boost'        },
+  { href: '/landlord/profile',  label: 'Profile'        },
 ];
 
 export default function LandlordLayout({ children }: { children: React.ReactNode }) {
@@ -62,7 +63,13 @@ export default function LandlordLayout({ children }: { children: React.ReactNode
             <div>
               <p className="text-xs font-semibold uppercase tracking-widest text-green-200">Landlord Portal</p>
               <p className="text-xl font-extrabold leading-tight">
-                {profile?.display_name ? `Welcome, ${profile.display_name.split(' ')[0]}` : 'Welcome back'}
+                {profile?.first_name
+                  ? `Welcome, ${profile.first_name}`
+                  : profile?.display_name
+                    ? `Welcome, ${profile.display_name.split(' ')[0]}`
+                    : profile?.email
+                      ? `Welcome, ${profile.email.split('@')[0]}`
+                      : 'Welcome back'}
               </p>
               {profile?.account_id && (
                 <p className="text-xs text-green-300 mt-0.5">Account {profile.account_id}</p>
@@ -105,6 +112,21 @@ export default function LandlordLayout({ children }: { children: React.ReactNode
           </div>
         </div>
       </div>
+
+      {/* Profile completion banner */}
+      {profile && (!profile.first_name || !profile.last_name || !profile.phone) && !demo && pathname !== '/landlord/profile' && (
+        <div className="border-b border-amber-200 bg-amber-50 px-4 py-3">
+          <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 sm:px-6">
+            <p className="text-sm font-medium text-amber-800">
+              Complete your profile so tenants can contact you — first name, last name, and phone number are required.
+            </p>
+            <Link href="/landlord/profile"
+              className="shrink-0 rounded-lg bg-amber-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-amber-700">
+              Complete profile →
+            </Link>
+          </div>
+        </div>
+      )}
 
       {/* Page content */}
       <main className="mx-auto max-w-5xl px-4 py-8 sm:px-6">

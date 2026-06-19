@@ -9,6 +9,9 @@ export interface LandlordUser {
 
 export interface LandlordProfile {
   display_name?: string | null;
+  first_name?: string | null;
+  last_name?: string | null;
+  phone?: string | null;
   email?: string | null;
   account_id?: string | null;
 }

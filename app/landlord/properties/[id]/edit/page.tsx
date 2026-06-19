@@ -42,6 +42,7 @@ export default function EditListingPage() {
     availableFrom: '',
     virtualTourUrl: '',
     amenities: [] as string[],
+    isBroker: false as boolean,
   });
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
@@ -59,9 +60,10 @@ export default function EditListingPage() {
         bathrooms: l.bathrooms ? String(l.bathrooms) : '1',
         sqft: l.sqft ? String(l.sqft) : '',
         propertyType: l.property_type ?? 'house',
-        availableFrom: l.availableFrom ? l.availableFrom.split('T')[0] : '',
+        availableFrom: l.availableFrom ? String(l.availableFrom).split('T')[0] : '',
         virtualTourUrl: l.virtual_tour_url ?? '',
         amenities: l.amenities ?? [],
+        isBroker: l.listing_source === 'broker',
       });
     }).catch(() => setListing(null));
   }, [id]);
@@ -92,11 +94,12 @@ export default function EditListingPage() {
         price: Number(form.price),
         bedrooms: Number(form.bedrooms),
         bathrooms: Number(form.bathrooms),
-        sqft: form.sqft ? Number(form.sqft) : null,
+        living_area_sqft: form.sqft ? Number(form.sqft) : null,
         property_type: form.propertyType,
-        availableFrom: form.availableFrom || null,
+        available_from: form.availableFrom || null,
         virtual_tour_url: form.virtualTourUrl || null,
         amenities: form.amenities,
+        listing_source: form.isBroker ? 'broker' : 'owner',
       });
       setSaved(true);
       setTimeout(() => router.push(`/landlord/properties/${id}`), 800);
@@ -223,6 +226,35 @@ export default function EditListingPage() {
                 {a}
               </button>
             ))}
+          </div>
+        </div>
+
+        {/* Owner / Broker */}
+        <div>
+          <p className={labelCls}>Are you the property owner or a licensed broker/agent?</p>
+          <div className="flex gap-3">
+            <button
+              type="button"
+              onClick={() => setForm((f) => ({ ...f, isBroker: false }))}
+              className={`flex-1 rounded-xl border py-3 text-sm font-semibold transition ${
+                !form.isBroker
+                  ? 'border-brand-600 bg-brand-50 text-brand-700'
+                  : 'border-gray-300 text-gray-600 hover:border-gray-400'
+              }`}
+            >
+              Direct owner
+            </button>
+            <button
+              type="button"
+              onClick={() => setForm((f) => ({ ...f, isBroker: true }))}
+              className={`flex-1 rounded-xl border py-3 text-sm font-semibold transition ${
+                form.isBroker
+                  ? 'border-brand-600 bg-brand-50 text-brand-700'
+                  : 'border-gray-300 text-gray-600 hover:border-gray-400'
+              }`}
+            >
+              Licensed broker/agent
+            </button>
           </div>
         </div>
       </div>

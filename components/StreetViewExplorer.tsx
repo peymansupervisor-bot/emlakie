@@ -11,11 +11,14 @@ interface Props {
 
 export default function StreetViewExplorer({ address, apiKey, lat, lng }: Props) {
   const [expanded, setExpanded] = useState(false);
+  const [imgFailed, setImgFailed] = useState(false);
 
-  // Prefer coordinates — avoids wrong-parcel geocoding ambiguity (e.g. buildings with multiple parcel numbers)
+  // Prefer coordinates — avoids wrong-parcel geocoding ambiguity
   const location = lat && lng ? `${lat},${lng}` : encodeURIComponent(address);
-  const staticSrc = `https://maps.googleapis.com/maps/api/streetview?size=800x200&location=${location}&fov=90&pitch=0&key=${apiKey}`;
+  const staticSrc = `https://maps.googleapis.com/maps/api/streetview?size=800x300&location=${location}&fov=90&pitch=0&key=${apiKey}`;
   const embedSrc = `https://www.google.com/maps/embed/v1/streetview?location=${location}&key=${apiKey}&fov=90`;
+
+  const showPlaceholder = imgFailed && !expanded;
 
   return (
     <div className="mt-8">
@@ -23,20 +26,34 @@ export default function StreetViewExplorer({ address, apiKey, lat, lng }: Props)
 
       <div
         className="relative w-full overflow-hidden rounded-2xl border border-gray-200 shadow-sm cursor-pointer group transition-all duration-500"
-        style={{ height: expanded ? '420px' : '140px' }}
+        style={{ height: expanded ? '420px' : '160px' }}
         onClick={() => { if (!expanded) setExpanded(true); }}
       >
-        {/* Static preview — always rendered as background */}
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={staticSrc}
-          alt={`Street view of ${address}`}
-          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${expanded ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
-        />
+        {/* Static preview image */}
+        {!imgFailed && !expanded && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={staticSrc}
+            alt={`Street view of ${address}`}
+            className="absolute inset-0 w-full h-full object-cover"
+            onError={() => setImgFailed(true)}
+          />
+        )}
+
+        {/* Fallback placeholder when static image fails */}
+        {showPlaceholder && (
+          <div className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-gray-800 to-gray-900">
+            <svg viewBox="0 0 24 24" className="h-10 w-10 text-white/40 mb-2" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+              <polyline points="9 22 9 12 15 12 15 22" />
+            </svg>
+            <p className="text-white/60 text-sm">Click to explore street view</p>
+          </div>
+        )}
 
         {/* Gradient overlay on preview */}
         {!expanded && (
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
         )}
 
         {/* Interactive Street View iframe */}
@@ -51,7 +68,7 @@ export default function StreetViewExplorer({ address, apiKey, lat, lng }: Props)
 
         {/* Walk the street CTA */}
         {!expanded && (
-          <div className="absolute bottom-4 left-0 right-0 flex items-center justify-center gap-3">
+          <div className="absolute bottom-4 left-0 right-0 flex items-center justify-center">
             <button className="flex items-center gap-2 rounded-full bg-white px-5 py-2 text-sm font-semibold text-gray-900 shadow-lg hover:bg-gray-50 transition group-hover:scale-105">
               <svg viewBox="0 0 24 24" className="h-4 w-4 text-brand-600" fill="none" strokeWidth="2" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round">
                 <circle cx="12" cy="5" r="1.5" />

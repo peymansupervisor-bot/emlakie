@@ -31,9 +31,16 @@ export default function LandlordLayout({ children }: { children: React.ReactNode
         router.replace('/landlord/login');
         return;
       }
+      const p = await getProfile();
       setDemo(isDemo());
-      getProfile().then(setProfile);
+      setProfile(p);
       setReady(true);
+
+      // Force profile completion before accessing anything else
+      const profileIncomplete = p && !isDemo() && (!p.first_name || !p.last_name || !p.phone);
+      if (profileIncomplete && pathname !== '/landlord/profile') {
+        router.replace('/landlord/profile');
+      }
     }
     check();
   }, [isLogin, pathname, router]);

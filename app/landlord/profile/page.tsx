@@ -60,8 +60,8 @@ export default function ProfilePage() {
 
   return (
     <div className="mx-auto max-w-lg">
-      <h1 className="text-3xl font-extrabold text-gray-900">Edit profile</h1>
-      <p className="mt-1 text-sm text-gray-500">Your name and phone number are shown to interested tenants.</p>
+      <h1 className="text-3xl font-extrabold text-gray-900">Complete your profile</h1>
+      <p className="mt-1 text-sm text-gray-500">Required before you can list or manage properties. Your name and phone are shown to interested tenants.</p>
 
       {error && <p className="mt-4 rounded-xl bg-red-50 px-4 py-3 text-sm font-medium text-red-700">{error}</p>}
       {saved && <p className="mt-4 rounded-xl bg-brand-50 px-4 py-3 text-sm font-semibold text-brand-700">Saved! Redirecting…</p>}

@@ -19,6 +19,7 @@ export default function Footer() {
               <h3 className="font-serif text-base font-bold tracking-tight text-gray-900">Renters</h3>
               <ul className="mt-4 space-y-3 text-sm text-gray-500">
                 <li><Link href="/rentals" className="transition hover:text-brand-600">Browse rentals</Link></li>
+                <li><Link href="/rent-check" className="transition hover:text-brand-600">Is my rent fair?</Link></li>
                 <li><Link href="/rentals/pet-friendly" className="transition hover:text-brand-600">Pet-friendly rentals</Link></li>
                 <li><Link href="/rentals/furnished" className="transition hover:text-brand-600">Furnished rentals</Link></li>
                 <li><Link href="/rentals/short-term" className="transition hover:text-brand-600">Short-term rentals</Link></li>

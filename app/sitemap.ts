@@ -31,6 +31,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   return [
     { url: base, changeFrequency: 'daily', priority: 1 },
     { url: `${base}/rentals`, changeFrequency: 'hourly', priority: 0.9 },
+    { url: `${base}/rent-check`, changeFrequency: 'monthly', priority: 0.9 },
     { url: `${base}/blog`, changeFrequency: 'weekly', priority: 0.8 },
     { url: `${base}/rentals/pet-friendly`, changeFrequency: 'weekly', priority: 0.8 },
     { url: `${base}/rentals/furnished`, changeFrequency: 'weekly', priority: 0.8 },

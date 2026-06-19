@@ -25,6 +25,12 @@ export default function Navbar() {
             For Tenants
           </Link>
           <Link
+            href="/rent-check"
+            className="text-xs font-bold uppercase tracking-widest text-brand-600 transition hover:text-brand-700"
+          >
+            Rent Check ✓
+          </Link>
+          <Link
             href="/blog"
             className="text-xs font-bold uppercase tracking-widest text-gray-600 transition hover:text-brand-600"
           >

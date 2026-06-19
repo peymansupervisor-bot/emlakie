@@ -3,6 +3,7 @@ import { createSupabaseWithToken } from '@/lib/supabase-server'
 import { createClient } from '@supabase/supabase-js'
 import { generateListingSlug } from '@/lib/format'
 import { geocodeAddress } from '@/lib/geocode'
+import { compressImage } from '@/lib/compress-image'
 
 // GET /api/listings — returns the landlord's own listings
 export async function GET(req: NextRequest) {
@@ -66,20 +67,21 @@ export async function POST(req: NextRequest) {
   const photoFiles = formData.getAll('photos') as File[]
 
   const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/heic'];
-  const MAX_SIZE = 10 * 1024 * 1024; // 10MB
+  const MAX_SIZE = 10 * 1024 * 1024; // 10MB raw upload limit (compressed output will be far smaller)
 
   // Upload photos to Supabase Storage
   const photoUrls: string[] = []
   for (const file of photoFiles) {
     if (!ALLOWED_TYPES.includes(file.type)) continue;
     if (file.size > MAX_SIZE) continue;
-    const ext = { 'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp', 'image/heic': 'heic' }[file.type] ?? 'jpg';
+    const raw = Buffer.from(await file.arrayBuffer())
+    const { buffer, contentType } = await compressImage(raw, file.type)
+    const ext = contentType === 'image/webp' ? 'webp' : 'jpg'
     const path = `${user.id}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
-    const buffer = Buffer.from(await file.arrayBuffer())
 
     const { error: uploadErr } = await supabase.storage
       .from('listing-photos')
-      .upload(path, buffer, { contentType: file.type, upsert: false })
+      .upload(path, buffer, { contentType, upsert: false })
 
     if (!uploadErr) {
       const { data: { publicUrl } } = supabase.storage

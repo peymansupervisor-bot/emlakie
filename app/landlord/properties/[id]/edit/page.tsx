@@ -111,7 +111,7 @@ export default function EditListingPage() {
         bathrooms: Number(form.bathrooms),
         living_area_sqft: form.sqft ? Number(form.sqft) : null,
         property_type: form.propertyType,
-        available_from: form.availableFrom || null,
+        available_date: form.availableFrom || null,
         virtual_tour_url: form.virtualTourUrl || null,
         amenities: form.amenities,
         listing_source: form.isBroker ? 'broker' : 'owner',

@@ -145,7 +145,7 @@ export async function runTool(name: ToolName, input: Record<string, unknown>): P
     }
 
     case 'update_listing': {
-      const ALLOWED_FIELDS = ['status', 'monthly_rent', 'available_from', 'description', 'title'];
+      const ALLOWED_FIELDS = ['status', 'monthly_rent', 'available_date', 'description', 'title'];
       const raw = input.fields as Record<string, unknown>;
       const safeFields = Object.fromEntries(
         Object.entries(raw).filter(([k]) => ALLOWED_FIELDS.includes(k))

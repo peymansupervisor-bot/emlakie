@@ -33,7 +33,7 @@ async function geocode(address: string, city: string, state: string, zip: string
 
 export async function POST(req: Request) {
   const secret = req.headers.get('x-admin-secret');
-  if (secret !== process.env.ADMIN_SECRET) {
+  if (!secret || secret !== process.env.CRON_SECRET) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 

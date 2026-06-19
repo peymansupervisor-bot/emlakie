@@ -14,7 +14,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
   const body = await req.json()
 
   // Only allow safe, landlord-editable fields — prevents boosted_until/landlord_id/slug injection
-  const ALLOWED = new Set(['title', 'description', 'monthly_rent', 'available_from', 'amenities',
+  const ALLOWED = new Set(['title', 'description', 'monthly_rent', 'available_date', 'amenities',
     'status', 'virtual_tour_url', 'ownership_type', 'bedrooms', 'bathrooms',
     'living_area_sqft', 'property_type', 'address', 'city', 'state', 'zip', 'listing_source'])
   const ALLOWED_STATUS = new Set(['active', 'inactive', 'lease_in_progress', 'coming_soon', 'rented'])

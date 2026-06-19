@@ -39,7 +39,7 @@ export async function GET(req: NextRequest) {
     amenities: (row.amenities as string[]) ?? [],
     photos: (row.photos as string[]) ?? [],
     status: row.status,
-    availableFrom: row.available_from,
+    availableFrom: row.available_date,
     view_count: Number(row.view_count ?? 0),
     applicant_count: Number(row.applicant_count ?? 0),
     listing_source: row.listing_source ?? 'owner',
@@ -138,7 +138,7 @@ export async function POST(req: NextRequest) {
       virtual_tour_url: formData.get('virtualTourUrl') as string || null,
       amenities,
       photos: photoUrls,
-      available_from: formData.get('availableFrom') as string || null,
+      available_date: formData.get('availableFrom') as string || null,
       status: 'active',
       expires_at: new Date(Date.now() + 45 * 24 * 60 * 60 * 1000).toISOString(),
     })

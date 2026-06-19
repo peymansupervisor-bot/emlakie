@@ -31,7 +31,7 @@ function rowToListing(row: Record<string, unknown>): Listing {
     amenities: (row.amenities as string[]) ?? [],
     photos: (row.photos as string[]) ?? [],
     status: row.status as string,
-    availableFrom: row.available_from as string | undefined,
+    availableFrom: row.available_date as string | undefined,
     view_count: Number(row.view_count ?? 0),
     listing_source: (row.listing_source as Listing['listing_source']) ?? 'owner',
     license_number: row.license_number as string | null | undefined,

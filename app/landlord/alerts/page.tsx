@@ -2,12 +2,6 @@
 
 import Link from 'next/link';
 
-const SAMPLE_ALERTS = [
-  { id: 1, type: 'lead', message: 'New applicant on your Austin listing', time: '2 hours ago', read: false },
-  { id: 2, type: 'view', message: 'Your Chicago listing got 12 new views today', time: '5 hours ago', read: false },
-  { id: 3, type: 'tip', message: 'Tip: Listings with 5+ photos get 3× more leads', time: '1 day ago', read: true },
-];
-
 const iconMap: Record<string, JSX.Element> = {
   lead: (
     <path strokeLinecap="round" strokeLinejoin="round"
@@ -31,29 +25,23 @@ export default function AlertsPage() {
           <h1 className="text-3xl font-extrabold text-gray-900">Alerts</h1>
           <p className="mt-1 text-sm text-gray-500">Activity on your listings</p>
         </div>
-        <button className="text-sm font-semibold text-brand-600 hover:text-brand-700">
-          Mark all read
-        </button>
       </div>
 
-      <div className="mt-6 divide-y divide-gray-100 overflow-hidden rounded-2xl border border-gray-200">
-        {SAMPLE_ALERTS.map((alert) => (
-          <div key={alert.id} className={`flex items-start gap-4 px-5 py-4 ${alert.read ? 'bg-white' : 'bg-brand-50/40'}`}>
-            <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full ${alert.read ? 'bg-gray-100' : 'bg-brand-100'}`}>
-              <svg viewBox="0 0 24 24" className={`h-5 w-5 ${alert.read ? 'stroke-gray-500' : 'stroke-brand-600'}`}
-                fill="none" strokeWidth="1.75">
-                {iconMap[alert.type]}
-              </svg>
-            </div>
-            <div className="flex-1">
-              <p className={`text-sm ${alert.read ? 'text-gray-700' : 'font-semibold text-gray-900'}`}>
-                {alert.message}
-              </p>
-              <p className="mt-0.5 text-xs text-gray-500">{alert.time}</p>
-            </div>
-            {!alert.read && <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-brand-600" />}
-          </div>
-        ))}
+      <div className="mt-10 flex flex-col items-center justify-center rounded-2xl border border-dashed border-gray-300 py-16 text-center">
+        <div className="flex h-14 w-14 items-center justify-center rounded-full bg-gray-100">
+          <svg viewBox="0 0 24 24" className="h-7 w-7 stroke-gray-400" fill="none" strokeWidth="1.75">
+            <path strokeLinecap="round" strokeLinejoin="round"
+              d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0" />
+          </svg>
+        </div>
+        <p className="mt-4 text-base font-semibold text-gray-900">No alerts yet</p>
+        <p className="mt-1 text-sm text-gray-500">
+          Once you have an active listing, you&apos;ll see applicants,<br />views, and tips here.
+        </p>
+        <Link href="/landlord/properties/new"
+          className="mt-6 rounded-xl bg-brand-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-brand-700">
+          + Add your first listing
+        </Link>
       </div>
 
       <p className="mt-6 text-center text-sm text-gray-500">

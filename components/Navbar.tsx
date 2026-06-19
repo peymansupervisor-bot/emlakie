@@ -45,18 +45,19 @@ export default function Navbar() {
         </div>
 
         {/* Mobile */}
-        <div className="flex items-center gap-3 md:hidden">
-          <Link href="/landlord" className="text-xs font-bold uppercase tracking-wider text-gray-600">
+        <div className="flex items-center gap-2 md:hidden">
+          <Link href="/landlord" className="text-xs font-semibold text-gray-600 hover:text-brand-600">
             Landlords
           </Link>
-          <Link href="/rentals" className="text-xs font-bold uppercase tracking-wider text-gray-600">
+          <span className="text-gray-300">·</span>
+          <Link href="/rentals" className="text-xs font-semibold text-gray-600 hover:text-brand-600">
             Tenants
           </Link>
           <Link
             href="/app"
-            className="rounded-full bg-brand-600 px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-white"
+            className="ml-2 rounded-full bg-brand-600 px-3 py-1.5 text-xs font-bold text-white"
           >
-            App
+            APP
           </Link>
         </div>
       </nav>

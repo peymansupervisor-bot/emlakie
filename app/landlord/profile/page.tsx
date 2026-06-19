@@ -19,11 +19,11 @@ export default function ProfilePage() {
   useEffect(() => {
     getProfile().then((p) => {
       if (!p) return;
-      setForm({
-        first_name: p.first_name ?? '',
-        last_name: p.last_name ?? '',
-        phone: p.phone ?? '',
-      });
+      let digits = (p.phone ?? '').replace(/\D/g, '');
+      if (digits.startsWith('1') && digits.length === 11) digits = digits.slice(1);
+      let phone = digits;
+      if (digits.length === 10) phone = `(${digits.slice(0,3)}) ${digits.slice(3,6)}-${digits.slice(6)}`;
+      setForm({ first_name: p.first_name ?? '', last_name: p.last_name ?? '', phone });
       setEmail(p.email ?? '');
       setAccountId(p.account_id ?? '');
     });
@@ -77,7 +77,9 @@ export default function ProfilePage() {
           <label className={labelCls}>Phone number *</label>
           <input className={inputCls} type="tel" value={form.phone}
             onChange={(e) => {
-              const digits = e.target.value.replace(/\D/g, '').slice(0, 10);
+              let digits = e.target.value.replace(/\D/g, '');
+              if (digits.startsWith('1') && digits.length > 10) digits = digits.slice(1);
+              digits = digits.slice(0, 10);
               let formatted = digits;
               if (digits.length > 6) formatted = `(${digits.slice(0,3)}) ${digits.slice(3,6)}-${digits.slice(6)}`;
               else if (digits.length > 3) formatted = `(${digits.slice(0,3)}) ${digits.slice(3)}`;

@@ -45,14 +45,26 @@ export async function getProfile(): Promise<LandlordProfile | null> {
 
 export async function sendPhoneVerification(phone: string): Promise<void> {
   const e164 = '+1' + phone.replace(/\D/g, '');
-  const { error } = await supabase.auth.updateUser({ phone: e164 });
+  const { error } = await supabase.auth.signInWithOtp({ phone: e164, options: { shouldCreateUser: true } });
   if (error) throw new Error(error.message);
 }
 
 export async function verifyPhoneOtp(phone: string, token: string): Promise<void> {
+  // Save the current (email) session so we can restore it after the phone OTP
+  // switches to the phone-auth user.
+  const { data: { session: originalSession } } = await supabase.auth.getSession();
+
   const e164 = '+1' + phone.replace(/\D/g, '');
-  const { error } = await supabase.auth.verifyOtp({ phone: e164, token, type: 'phone_change' });
+  const { error } = await supabase.auth.verifyOtp({ phone: e164, token, type: 'sms' });
   if (error) throw new Error(error.message);
+
+  // Restore the original email session
+  if (originalSession) {
+    await supabase.auth.setSession({
+      access_token: originalSession.access_token,
+      refresh_token: originalSession.refresh_token,
+    });
+  }
 }
 
 export async function updateProfile(payload: { first_name: string; last_name: string; phone: string; phone_verified?: boolean }): Promise<void> {

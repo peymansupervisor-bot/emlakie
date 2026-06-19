@@ -144,9 +144,13 @@ export default function PropertiesPage() {
     return <p className="py-16 text-center text-gray-500">Loading properties…</p>;
   }
 
-  const forRent = listings.filter((l) => l.status === 'active');
-  const offMarket = listings.filter((l) => l.status !== 'active');
-  const byTab = tab === 'all' ? listings : tab === 'forRent' ? forRent : offMarket;
+  const collator = new Intl.Collator('en', { numeric: true, sensitivity: 'base' });
+  const sorted = [...listings].sort((a, b) =>
+    collator.compare(a.address ?? '', b.address ?? '')
+  );
+  const forRent = sorted.filter((l) => l.status === 'active');
+  const offMarket = sorted.filter((l) => l.status !== 'active');
+  const byTab = tab === 'all' ? sorted : tab === 'forRent' ? forRent : offMarket;
   const q = search.toLowerCase();
   const visible = q
     ? byTab.filter((l) =>

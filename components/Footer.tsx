@@ -14,33 +14,33 @@ export default function Footer() {
             </p>
           </div>
 
-          <nav aria-label="Footer navigation" className="grid grid-cols-2 gap-8 sm:grid-cols-3">
+          <nav aria-label="Footer navigation" className="grid grid-cols-2 gap-10 sm:grid-cols-3">
             <div>
-              <h3 className="text-sm font-bold text-gray-900">Renters</h3>
-              <ul className="mt-3 space-y-2 text-sm text-gray-600">
-                <li><Link href="/rentals" className="hover:text-brand-600">Browse rentals</Link></li>
-                <li><Link href="/rentals/pet-friendly" className="hover:text-brand-600">Pet-friendly rentals</Link></li>
-                <li><Link href="/rentals/furnished" className="hover:text-brand-600">Furnished rentals</Link></li>
-                <li><Link href="/rentals/short-term" className="hover:text-brand-600">Short-term rentals</Link></li>
-                <li><Link href="/rentals/section-8" className="hover:text-brand-600">Section 8 rentals</Link></li>
-                <li><Link href="/app" className="hover:text-brand-600">Download the app</Link></li>
+              <h3 className="font-serif text-base font-bold tracking-tight text-gray-900">Renters</h3>
+              <ul className="mt-4 space-y-3 text-sm text-gray-500">
+                <li><Link href="/rentals" className="transition hover:text-brand-600">Browse rentals</Link></li>
+                <li><Link href="/rentals/pet-friendly" className="transition hover:text-brand-600">Pet-friendly rentals</Link></li>
+                <li><Link href="/rentals/furnished" className="transition hover:text-brand-600">Furnished rentals</Link></li>
+                <li><Link href="/rentals/short-term" className="transition hover:text-brand-600">Short-term rentals</Link></li>
+                <li><Link href="/rentals/section-8" className="transition hover:text-brand-600">Section 8 rentals</Link></li>
+                <li><Link href="/app" className="transition hover:text-brand-600">Download the app</Link></li>
               </ul>
             </div>
             <div>
-              <h3 className="text-sm font-bold text-gray-900">Landlords</h3>
-              <ul className="mt-3 space-y-2 text-sm text-gray-600">
-                <li><Link href="/landlord/login" className="hover:text-brand-600">List a property</Link></li>
+              <h3 className="font-serif text-base font-bold tracking-tight text-gray-900">Landlords</h3>
+              <ul className="mt-4 space-y-3 text-sm text-gray-500">
+                <li><Link href="/landlord/login" className="transition hover:text-brand-600">List a property</Link></li>
               </ul>
             </div>
             <div>
-              <h3 className="text-sm font-bold text-gray-900">Company</h3>
-              <ul className="mt-3 space-y-2 text-sm text-gray-600">
-                <li><Link href="/blog" className="hover:text-brand-600">Blog</Link></li>
-                <li><Link href="/contact" className="hover:text-brand-600">Contact</Link></li>
-                <li><Link href="/privacy" className="hover:text-brand-600">Privacy</Link></li>
-                <li><Link href="/terms" className="hover:text-brand-600">Terms</Link></li>
-                <li><Link href="/accessibility" className="hover:text-brand-600">Accessibility</Link></li>
-                <li><Link href="/disclaimer" className="hover:text-brand-600">Disclaimer</Link></li>
+              <h3 className="font-serif text-base font-bold tracking-tight text-gray-900">Company</h3>
+              <ul className="mt-4 space-y-3 text-sm text-gray-500">
+                <li><Link href="/blog" className="transition hover:text-brand-600">Blog</Link></li>
+                <li><Link href="/contact" className="transition hover:text-brand-600">Contact</Link></li>
+                <li><Link href="/privacy" className="transition hover:text-brand-600">Privacy</Link></li>
+                <li><Link href="/terms" className="transition hover:text-brand-600">Terms</Link></li>
+                <li><Link href="/accessibility" className="transition hover:text-brand-600">Accessibility</Link></li>
+                <li><Link href="/disclaimer" className="transition hover:text-brand-600">Disclaimer</Link></li>
               </ul>
             </div>
           </nav>

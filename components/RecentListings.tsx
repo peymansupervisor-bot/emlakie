@@ -4,7 +4,7 @@ import { getListings } from '@/lib/api';
 
 export default async function RecentListings() {
   const { listings } = await getListings();
-  const recent = listings.slice(0, 3);
+  const recent = listings.slice(0, 6);
 
   return (
     <div className="flex flex-col gap-3">

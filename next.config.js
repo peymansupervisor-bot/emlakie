@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  serverExternalPackages: ['axe-core', 'jsdom'],
   productionBrowserSourceMaps: false,
   images: {
     remotePatterns: [

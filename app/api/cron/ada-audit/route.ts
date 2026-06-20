@@ -62,40 +62,27 @@ async function auditPage(path: string): Promise<{
   const html = await res.text();
 
   const { JSDOM } = await import('jsdom');
-  const axe = (await import('axe-core')).default;
+  const axeCore = await import('axe-core');
 
   const dom = new JSDOM(html, { url, runScripts: 'outside-only' });
-  const win = dom.window as unknown as Record<string, unknown>;
+  dom.window.eval(axeCore.source);
 
-  // Patch Node.js globals so axe-core can access jsdom's DOM APIs directly
-  const g = global as unknown as Record<string, unknown>;
-  const PATCH_KEYS = [
-    'window', 'document', 'navigator', 'location',
-    'Node', 'Element', 'HTMLElement', 'Text', 'Document',
-    'MutationObserver', 'getComputedStyle',
-  ];
-  const saved: Record<string, unknown> = {};
-  for (const k of PATCH_KEYS) { saved[k] = g[k]; g[k] = win[k]; }
+  const results = await (dom.window as unknown as { axe: typeof axeCore }).axe.run(
+    dom.window.document,
+    { runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21aa', 'best-practice'] } }
+  );
 
-  try {
-    const results = await axe.run(dom.window.document as unknown as Document, {
-      runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21aa', 'best-practice'] },
-    });
-
-    return {
-      violations: results.violations.map((v) => ({
-        id: v.id,
-        impact: v.impact ?? null,
-        description: v.description,
-        helpUrl: v.helpUrl,
-        nodes: v.nodes.length,
-      })),
-      passes: results.passes.length,
-      incomplete: results.incomplete.length,
-    };
-  } finally {
-    for (const k of PATCH_KEYS) { g[k] = saved[k]; }
-  }
+  return {
+    violations: results.violations.map((v) => ({
+      id: v.id,
+      impact: v.impact ?? null,
+      description: v.description,
+      helpUrl: v.helpUrl,
+      nodes: v.nodes.length,
+    })),
+    passes: results.passes.length,
+    incomplete: results.incomplete.length,
+  };
 }
 
 function sb() {

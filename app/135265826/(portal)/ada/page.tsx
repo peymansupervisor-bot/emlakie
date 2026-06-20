@@ -33,6 +33,7 @@ export default async function ADAPage() {
   const latestRun = runs[0];
   const latestRecords = latestRun?.[1] ?? [];
   const latestTotal = latestRecords.reduce((n, r) => n + r.violation_count, 0);
+  const hasIssues = latestRecords.some((r) => r.violation_count !== 0);
   const latestCritical = latestRecords.reduce((n, r) => n + r.critical_count, 0);
   const latestDate = latestRecords[0]?.scanned_at
     ? new Date(latestRecords[0].scanned_at).toLocaleString('en-US', { timeZone: 'America/Los_Angeles', dateStyle: 'medium', timeStyle: 'short' })
@@ -48,7 +49,7 @@ export default async function ADAPage() {
           </p>
         </div>
         <div className="flex items-center gap-3">
-          <RepairViolationsButton hasViolations={latestTotal > 0} />
+          <RepairViolationsButton hasViolations={hasIssues} />
           <RunADAAuditButton />
         <div className={`rounded-2xl px-5 py-3 text-center ${latestCritical > 0 ? 'bg-red-900' : latestTotal > 0 ? 'bg-yellow-900' : 'bg-green-900'}`}>
           <p className={`font-bold text-sm ${latestCritical > 0 ? 'text-red-300' : latestTotal > 0 ? 'text-yellow-300' : 'text-green-300'}`}>

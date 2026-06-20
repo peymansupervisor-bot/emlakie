@@ -97,7 +97,7 @@ export default async function HomePage() {
               </div>
               <StatsStrip />
               <TrendingCities />
-              <div className="mt-6 flex items-center justify-center gap-3">
+              <div className="mt-10 flex items-center justify-center gap-3">
                 <Link href="/landlord/login"
                   className="rounded-lg bg-brand-600 px-5 py-2.5 text-sm font-bold text-white transition hover:bg-brand-700">
                   List my property free →

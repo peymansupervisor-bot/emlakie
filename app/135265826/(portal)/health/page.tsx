@@ -1,4 +1,5 @@
 import { adminClient } from '@/lib/moderator';
+import RunHealthCheckButton from '../RunHealthCheckButton';
 
 export const dynamic = 'force-dynamic';
 
@@ -65,6 +66,7 @@ export default async function HealthPage() {
             Monitors all background services automatically once daily at 8 AM PT.
           </p>
         </div>
+        <RunHealthCheckButton />
         <div className={`rounded-2xl px-5 py-3 text-center min-w-[160px] ${
           !hasData ? 'bg-gray-800' : allOk ? 'bg-green-900/50 ring-1 ring-green-700' : downCount > 0 ? 'bg-red-900/50 ring-1 ring-red-700' : 'bg-yellow-900/50 ring-1 ring-yellow-700'
         }`}>

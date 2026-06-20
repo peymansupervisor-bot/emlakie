@@ -1,5 +1,5 @@
 import { adminClient } from '@/lib/moderator';
-import BuildingGroup from './BuildingGroup';
+import ListingsClient from './ListingsClient';
 
 export const dynamic = 'force-dynamic';
 
@@ -7,7 +7,6 @@ interface SearchParams { q?: string; status?: string; city?: string }
 
 function normalizeBuilding(address: string | null): string {
   if (!address) return 'Unknown Address';
-  // Strip unit/apt/suite/# designators to get the base building address
   return address
     .replace(/\s*(unit|apt|apartment|suite|ste|#)\s*[\w-]+\s*$/i, '')
     .trim();
@@ -19,7 +18,7 @@ export default async function AdminListingsPage({ searchParams }: { searchParams
 
   let query = sb
     .from('listings')
-    .select('id, title, address, city, state, status, monthly_rent, created_at, landlord_id, slug, photos, listing_source')
+    .select('id, title, address, city, state, status, monthly_rent, created_at, landlord_id, slug, photos, listing_source, property_group')
     .order('city', { ascending: true })
     .order('address', { ascending: true });
 
@@ -40,16 +39,16 @@ export default async function AdminListingsPage({ searchParams }: { searchParams
     flagMap[listing_id] = (flagMap[listing_id] ?? 0) + 1;
   });
 
-  // Get unique cities for filter dropdown
   const cities = Array.from(new Set((listings ?? []).map((l) => l.city).filter(Boolean))).sort();
 
-  // Group by city → building address
   type ListingRow = NonNullable<typeof listings>[0] & { flags: number };
+
+  // Group by city → building key (property_group takes priority over normalized address)
   const byCity: Record<string, Record<string, ListingRow[]>> = {};
 
   for (const l of listings ?? []) {
     const c = l.city ?? 'Unknown City';
-    const b = normalizeBuilding(l.address);
+    const b = l.property_group ?? normalizeBuilding(l.address);
     if (!byCity[c]) byCity[c] = {};
     if (!byCity[c][b]) byCity[c][b] = [];
     byCity[c][b].push({ ...l, flags: flagMap[l.id] ?? 0 });
@@ -58,9 +57,13 @@ export default async function AdminListingsPage({ searchParams }: { searchParams
   const totalListings = listings?.length ?? 0;
   const totalBuildings = Object.values(byCity).reduce((n, buildings) => n + Object.keys(buildings).length, 0);
 
+  const cityGroups = Object.entries(byCity).map(([city, buildings]) => ({
+    city,
+    buildings: Object.entries(buildings).map(([address, listings]) => ({ address, listings })),
+  }));
+
   return (
     <div>
-      {/* Header + filters */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-6">
         <div>
           <h1 className="text-xl font-extrabold text-white">All Listings</h1>
@@ -97,28 +100,7 @@ export default async function AdminListingsPage({ searchParams }: { searchParams
           No listings found.
         </div>
       ) : (
-        <div className="space-y-6">
-          {Object.entries(byCity).map(([cityName, buildings]) => (
-            <div key={cityName}>
-              {/* City header */}
-              <div className="flex items-center gap-3 mb-3">
-                <span className="text-base">📍</span>
-                <h2 className="text-base font-extrabold text-white">{cityName}</h2>
-                <span className="text-xs text-gray-500">
-                  {Object.keys(buildings).length} building{Object.keys(buildings).length !== 1 ? 's' : ''} · {Object.values(buildings).flat().length} unit{Object.values(buildings).flat().length !== 1 ? 's' : ''}
-                </span>
-                <div className="flex-1 border-t border-gray-800" />
-              </div>
-
-              {/* Buildings in this city */}
-              <div className="space-y-2">
-                {Object.entries(buildings).map(([buildingAddr, units]) => (
-                  <BuildingGroup key={buildingAddr} address={buildingAddr} listings={units} />
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
+        <ListingsClient cityGroups={cityGroups} />
       )}
     </div>
   );

@@ -16,6 +16,7 @@ interface Listing {
   slug: string | null;
   listing_source: string | null;
   flags: number;
+  property_group: string | null;
 }
 
 const statusColor: Record<string, string> = {
@@ -25,15 +26,23 @@ const statusColor: Record<string, string> = {
   suspended: 'bg-red-900 text-red-300',
 };
 
-export default function BuildingGroup({ address, listings }: { address: string; listings: Listing[] }) {
+interface Props {
+  address: string;
+  listings: Listing[];
+  selectedIds: Set<string>;
+  onToggle: (id: string) => void;
+}
+
+export default function BuildingGroup({ address, listings, selectedIds, onToggle }: Props) {
   const [open, setOpen] = useState(false);
 
   const activeCount    = listings.filter((l) => l.status === 'active').length;
   const flaggedCount   = listings.reduce((n, l) => n + l.flags, 0);
   const suspendedCount = listings.filter((l) => l.status === 'suspended').length;
+  const anySelected    = listings.some((l) => selectedIds.has(l.id));
 
   return (
-    <div className="rounded-xl border border-gray-800 overflow-hidden">
+    <div className={`rounded-xl border overflow-hidden transition ${anySelected ? 'border-green-700' : 'border-gray-800'}`}>
       {/* Building header row */}
       <button
         onClick={() => setOpen((o) => !o)}
@@ -62,6 +71,7 @@ export default function BuildingGroup({ address, listings }: { address: string; 
         <table className="w-full text-sm border-t border-gray-800">
           <thead className="bg-gray-950 text-xs text-gray-500 uppercase tracking-wider">
             <tr>
+              <th className="px-4 py-2 text-left w-8"></th>
               <th className="px-4 py-2 text-left">Unit / Title</th>
               <th className="px-4 py-2 text-left">Status</th>
               <th className="px-4 py-2 text-left">Rent</th>
@@ -72,10 +82,20 @@ export default function BuildingGroup({ address, listings }: { address: string; 
           </thead>
           <tbody className="divide-y divide-gray-800">
             {listings.map((l) => (
-              <tr key={l.id} className="hover:bg-gray-900/50 transition">
+              <tr key={l.id} className={`transition ${selectedIds.has(l.id) ? 'bg-green-950/40' : 'hover:bg-gray-900/50'}`}>
+                <td className="px-4 py-3">
+                  <input
+                    type="checkbox"
+                    checked={selectedIds.has(l.id)}
+                    onChange={() => onToggle(l.id)}
+                    onClick={(e) => e.stopPropagation()}
+                    className="h-4 w-4 rounded border-gray-600 bg-gray-800 accent-green-500 cursor-pointer"
+                    aria-label={`Select ${l.address ?? l.title}`}
+                  />
+                </td>
                 <td className="px-4 py-3">
                   <div className="font-semibold text-white line-clamp-1 max-w-xs">{l.title}</div>
-                  <div className="text-xs text-gray-500 mt-0.5">{l.listing_source ?? 'owner'}</div>
+                  <div className="text-xs text-gray-500 mt-0.5">{l.address ?? '—'} · {l.listing_source ?? 'owner'}</div>
                 </td>
                 <td className="px-4 py-3">
                   <span className={`rounded-full px-2 py-0.5 text-xs font-bold ${statusColor[l.status] ?? 'bg-gray-700 text-gray-300'}`}>

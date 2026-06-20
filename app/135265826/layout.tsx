@@ -6,14 +6,14 @@ import AdminSignOut from './AdminSignOut';
 export const metadata = { title: 'Moderator Dashboard — EMLAKIE', robots: { index: false } };
 
 const NAV = [
-  { href: '/admin', label: 'All Listings' },
-  { href: '/admin/flags', label: 'Flagged Reports' },
-  { href: '/admin/moderators', label: 'Moderators' },
+  { href: '/135265826', label: 'All Listings' },
+  { href: '/135265826/flags', label: 'Flagged Reports' },
+  { href: '/135265826/moderators', label: 'Moderators' },
 ];
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const session = await getModeratorSession();
-  if (!session) redirect('/admin/login');
+  if (!session) redirect('/135265826/login');
 
   return (
     <div className="min-h-screen bg-gray-950 text-white">

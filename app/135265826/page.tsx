@@ -95,7 +95,7 @@ export default async function AdminListingsPage({ searchParams }: { searchParams
                   </td>
                   <td className="px-4 py-3">
                     {flags > 0 ? (
-                      <Link href="/admin/flags" className="inline-flex items-center gap-1 rounded-full bg-red-900 px-2 py-0.5 text-xs font-bold text-red-300 hover:bg-red-800 transition">
+                      <Link href="/135265826/flags" className="inline-flex items-center gap-1 rounded-full bg-red-900 px-2 py-0.5 text-xs font-bold text-red-300 hover:bg-red-800 transition">
                         ⚑ {flags}
                       </Link>
                     ) : (

@@ -7,7 +7,7 @@ export default function AdminSignOut() {
   const router = useRouter();
   async function handleSignOut() {
     await supabase.auth.signOut();
-    router.replace('/admin/login');
+    router.replace('/135265826/login');
   }
   return (
     <button onClick={handleSignOut}

@@ -16,7 +16,7 @@ export default async function ModeratorsPage() {
       <h1 className="text-xl font-extrabold text-white mb-1">Moderators</h1>
       <p className="text-sm text-gray-400 mb-8">
         Moderators can view, edit, suspend, and delete any listing. They sign in at{' '}
-        <span className="text-brand-400">/admin/login</span> using their Emlakie account.
+        <span className="text-brand-400">/135265826/login</span> using their Emlakie account.
       </p>
 
       <div className="rounded-2xl border border-gray-800 overflow-hidden mb-8">

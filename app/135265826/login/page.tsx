@@ -17,7 +17,7 @@ export default function AdminLoginPage() {
     setError('');
     const { error: err } = await supabase.auth.signInWithPassword({ email, password });
     if (err) { setError(err.message); setBusy(false); return; }
-    router.replace('/admin');
+    router.replace('/135265826');
   }
 
   return (

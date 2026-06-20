@@ -2,8 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { Resend } from 'resend';
 import { randomUUID } from 'crypto';
-import axe from 'axe-core';
-import { JSDOM } from 'jsdom';
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://emlakie.com';
 const ADMIN_EMAIL = 'peymansupervisor@gmail.com';
@@ -40,17 +38,19 @@ async function auditPage(path: string): Promise<{
   if (!res.ok) throw new Error(`HTTP ${res.status} fetching ${url}`);
   const html = await res.text();
 
+  // Lazy-load heavy packages so they are not bundled at build time
+  const { JSDOM } = await import('jsdom');
+  const axeCore = await import('axe-core');
+
   const dom = new JSDOM(html, {
     url,
     runScripts: 'outside-only',
     resources: 'usable',
   });
 
-  // Inject axe-core into the JSDOM window
-  const axeSource = require('axe-core').source;
-  dom.window.eval(axeSource);
+  dom.window.eval(axeCore.source);
 
-  const results: axe.AxeResults = await (dom.window as unknown as { axe: typeof axe }).axe.run(
+  const results = await (dom.window as unknown as { axe: typeof axeCore }).axe.run(
     dom.window.document,
     {
       runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21aa', 'best-practice'] },
@@ -142,7 +142,8 @@ export async function GET(req: NextRequest) {
   }
 
   const runId = randomUUID();
-  const axeVersion: string = require('axe-core').version;
+  const axeCore = await import('axe-core');
+  const axeVersion: string = axeCore.version;
   const database = sb();
   const results: Array<{ path: string; violations: Violation[]; passes: number; incomplete: number; error?: string }> = [];
 

@@ -43,15 +43,16 @@ async function checkRekognition(): Promise<CheckResult> {
 async function checkInmanRSS(): Promise<CheckResult> {
   try {
     const res = await fetch('https://www.inman.com/feed/', {
-      signal: AbortSignal.timeout(6000),
+      headers: { 'User-Agent': 'Mozilla/5.0 (compatible; EMlakieBot/1.0; +https://emlakie.com)' },
+      signal: AbortSignal.timeout(8000),
     });
-    if (!res.ok) return { service: 'Inman RSS', status: 'down', message: `HTTP ${res.status}` };
+    if (!res.ok) return { service: 'Inman RSS', status: 'degraded', message: `HTTP ${res.status} — feed may restrict server access` };
     const text = await res.text();
     const count = (text.match(/<item>/g) ?? []).length;
     if (count < 1) return { service: 'Inman RSS', status: 'degraded', message: 'Feed returned 0 items' };
     return { service: 'Inman RSS', status: 'ok', message: `${count} items in feed` };
   } catch (e: unknown) {
-    return { service: 'Inman RSS', status: 'down', message: String(e) };
+    return { service: 'Inman RSS', status: 'degraded', message: String(e) };
   }
 }
 
@@ -124,12 +125,13 @@ async function checkRapidAPI(): Promise<CheckResult> {
   try {
     const key = process.env.RAPIDAPI_KEY;
     if (!key) return { service: 'RapidAPI (Property Data)', status: 'down', message: 'RAPIDAPI_KEY missing' };
-    const res = await fetch('https://zillow-com1.p.rapidapi.com/propertyExtendedSearch?location=Los+Angeles%2C+CA&status_type=ForRent&home_type=Houses&resultsPerPage=1', {
-      headers: { 'x-rapidapi-key': key, 'x-rapidapi-host': 'zillow-com1.p.rapidapi.com' },
+    // Ping the RapidAPI hub to verify the key is valid — lightweight, no quota cost
+    const res = await fetch('https://rapidapi.com/api/v1/user/me', {
+      headers: { 'x-rapidapi-key': key },
       signal: AbortSignal.timeout(8000),
     });
-    if (res.status === 200) return { service: 'RapidAPI (Property Data)', status: 'ok', message: 'API responding' };
-    if (res.status === 403) return { service: 'RapidAPI (Property Data)', status: 'down', message: 'API key rejected or quota exceeded' };
+    if (res.status === 200) return { service: 'RapidAPI (Property Data)', status: 'ok', message: 'API key valid' };
+    if (res.status === 401 || res.status === 403) return { service: 'RapidAPI (Property Data)', status: 'down', message: 'API key rejected or revoked' };
     if (res.status === 429) return { service: 'RapidAPI (Property Data)', status: 'degraded', message: 'Rate limit hit' };
     return { service: 'RapidAPI (Property Data)', status: 'degraded', message: `HTTP ${res.status}` };
   } catch (e: unknown) {

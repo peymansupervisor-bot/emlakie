@@ -101,5 +101,12 @@ export async function GET(req: NextRequest) {
     sent++;
   }
 
+  // Record successful run so health monitor can track it
+  await sb.from('system_health').insert({
+    service: 'Daily Alert Cron',
+    status: 'ok',
+    message: `Sent ${sent} alert email${sent !== 1 ? 's' : ''} to subscribers`,
+  });
+
   return NextResponse.json({ sent });
 }

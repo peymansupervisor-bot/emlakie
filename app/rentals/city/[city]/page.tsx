@@ -5,6 +5,7 @@ import ListingCard from '@/components/ListingCard';
 import SeoLinkGrid from '@/components/SeoLinkGrid';
 import { getAllCities, getListingsByCity, getTrendingCities } from '@/lib/api';
 import { formatPrice } from '@/lib/format';
+import { getCityContent } from '@/lib/city-content';
 
 interface Props {
   params: Promise<{ city: string }>;
@@ -23,22 +24,27 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const result = await getListingsByCity(slug);
   if (!result) return { title: 'City not found' };
 
+  const content = getCityContent(slug);
   const label = result.state ? `${result.city}, ${result.state}` : result.city;
+  const description = content
+    ? `${content.intro.slice(0, 155)}…`
+    : `Browse rental apartments, houses, and condos in ${label}. Find your next home on EMLAKIE — listed directly by landlords, no broker fees.`;
+
   return {
-    title: `Homes for Rent in ${label}`,
-    description: `Browse rental apartments, houses, and condos in ${label}. Find your next home on EMLAKIE — listed directly by landlords, no broker fees.`,
+    title: content ? content.headline : `Homes for Rent in ${label}`,
+    description,
     alternates: { canonical: `https://emlakie.com/rentals/city/${slug}` },
     openGraph: {
-      title: `Homes for Rent in ${label}`,
-      description: `Find your next home in ${label}. Search rentals by price, bedrooms, and property type on EMLAKIE.`,
+      title: content ? content.headline : `Homes for Rent in ${label}`,
+      description,
       type: 'website',
       url: `https://emlakie.com/rentals/city/${slug}`,
       images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: `Homes for Rent in ${label}` }],
     },
     twitter: {
       card: 'summary_large_image',
-      title: `Homes for Rent in ${label}`,
-      description: `Find your next home in ${label}. Search rentals by price, bedrooms, and property type on EMLAKIE.`,
+      title: content ? content.headline : `Homes for Rent in ${label}`,
+      description,
       images: ['/opengraph-image'],
     },
   };
@@ -55,6 +61,7 @@ export default async function CityPage({ params }: Props) {
   const { listings, total, city, state, usingSampleData } = result;
   const label = state ? `${city}, ${state}` : city;
   const hasListings = listings.length > 0;
+  const content = getCityContent(slug);
 
   const prices = listings.map(l => l.price);
   const avgPrice = hasListings ? Math.round(prices.reduce((a, b) => a + b, 0) / prices.length) : null;
@@ -62,12 +69,21 @@ export default async function CityPage({ params }: Props) {
   const maxPrice = hasListings ? Math.max(...prices) : null;
   const avgBeds  = hasListings ? Math.round(listings.map(l => l.bedrooms).reduce((a, b) => a + b, 0) / listings.length) : null;
 
+  const faqSchema = content?.faqs.length ? {
+    '@type': 'FAQPage',
+    mainEntity: content.faqs.map(f => ({
+      '@type': 'Question',
+      name: f.q,
+      acceptedAnswer: { '@type': 'Answer', text: f.a },
+    })),
+  } : null;
+
   const schema = {
     '@context': 'https://schema.org',
     '@graph': [
       {
         '@type': 'WebPage',
-        name: `Homes for Rent in ${label}`,
+        name: content ? content.headline : `Homes for Rent in ${label}`,
         description: `Browse rental listings in ${label} on EMLAKIE.`,
         url: `https://emlakie.com/rentals/city/${slug}`,
       },
@@ -79,6 +95,7 @@ export default async function CityPage({ params }: Props) {
           { '@type': 'ListItem', position: 3, name: label, item: `https://emlakie.com/rentals/city/${slug}` },
         ],
       },
+      ...(faqSchema ? [faqSchema] : []),
     ],
   };
 
@@ -97,7 +114,7 @@ export default async function CityPage({ params }: Props) {
 
       {/* Heading */}
       <h1 className="mt-4 text-3xl font-extrabold text-gray-900">
-        Homes for Rent in {label}
+        {content ? content.headline : `Homes for Rent in ${label}`}
       </h1>
       <p className="mt-1 text-gray-600">
         {hasListings
@@ -105,6 +122,11 @@ export default async function CityPage({ params }: Props) {
           : 'No listings yet in this city'}
         {usingSampleData && <span className="ml-2 text-xs text-amber-600">(sample data)</span>}
       </p>
+
+      {/* Neighborhood intro */}
+      {content && (
+        <p className="mt-4 max-w-3xl leading-relaxed text-gray-600">{content.intro}</p>
+      )}
 
       {/* Stats bar */}
       {hasListings && avgPrice && minPrice && maxPrice && (
@@ -123,10 +145,25 @@ export default async function CityPage({ params }: Props) {
         </div>
       )}
 
+      {/* Neighborhood highlights */}
+      {content && (
+        <section className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {content.highlights.map((h) => (
+            <div key={h.label} className="flex gap-3 rounded-xl border border-gray-100 bg-white p-4 shadow-sm">
+              <span className="text-2xl shrink-0">{h.icon}</span>
+              <div>
+                <p className="font-bold text-gray-900 text-sm">{h.label}</p>
+                <p className="mt-0.5 text-xs text-gray-500 leading-relaxed">{h.detail}</p>
+              </div>
+            </div>
+          ))}
+        </section>
+      )}
+
       {/* Listings grid */}
       {hasListings ? (
         <>
-          <div className="mt-6 flex items-center justify-between">
+          <div className="mt-10 flex items-center justify-between">
             <h2 className="text-xl font-bold text-gray-900">Available Rentals in {city}</h2>
             <Link
               href={`/rentals?city=${encodeURIComponent(city)}`}
@@ -163,8 +200,30 @@ export default async function CityPage({ params }: Props) {
         </div>
       )}
 
+      {/* Neighborhoods in this city */}
+      {content?.neighborhoods && (
+        <section className="mt-12">
+          <h2 className="text-xl font-bold text-gray-900">Neighborhoods in {city}</h2>
+          <div className="mt-3 flex flex-wrap gap-2">
+            {content.neighborhoods.map((n) => (
+              <span key={n} className="rounded-full border border-gray-200 bg-white px-4 py-1.5 text-sm text-gray-700">
+                {n}
+              </span>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* Renter tips */}
+      {content && (
+        <section className="mt-8 rounded-xl border border-brand-100 bg-brand-50 p-6">
+          <h2 className="text-lg font-bold text-gray-900">Renter Tips for {city}</h2>
+          <p className="mt-2 leading-relaxed text-gray-600 text-sm">{content.rentTips}</p>
+        </section>
+      )}
+
       {/* Market summary */}
-      <section className="mt-12 rounded-xl border border-gray-200 bg-gray-50 p-6">
+      <section className="mt-8 rounded-xl border border-gray-200 bg-gray-50 p-6">
         <h2 className="text-xl font-bold text-gray-900">Rental Market in {label}</h2>
         <p className="mt-3 leading-relaxed text-gray-600">
           {hasListings && avgPrice
@@ -180,6 +239,36 @@ export default async function CityPage({ params }: Props) {
           </Link>
         </div>
       </section>
+
+      {/* FAQ */}
+      {content?.faqs && (
+        <section className="mt-10">
+          <h2 className="text-xl font-bold text-gray-900">Frequently Asked Questions</h2>
+          <div className="mt-4 space-y-4">
+            {content.faqs.map((faq) => (
+              <div key={faq.q} className="rounded-xl border border-gray-200 bg-white p-5">
+                <h3 className="font-bold text-gray-900">{faq.q}</h3>
+                <p className="mt-1.5 text-sm leading-relaxed text-gray-600">{faq.a}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* Nearby city searches */}
+      {content?.nearbySearches && (
+        <section className="mt-10">
+          <h2 className="text-lg font-bold text-gray-900">Also search nearby</h2>
+          <div className="mt-3 flex flex-wrap gap-2">
+            {content.nearbySearches.map((s) => (
+              <Link key={s.slug} href={`/rentals/city/${s.slug}`}
+                className="rounded-full border border-gray-200 bg-white px-4 py-1.5 text-sm font-medium text-brand-600 hover:border-brand-300 hover:bg-brand-50 transition">
+                {s.label}
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* Niche links */}
       <section className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">

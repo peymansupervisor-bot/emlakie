@@ -26,7 +26,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     url: `${base}/blog/${p.slug}`,
     lastModified: new Date(p.date),
     changeFrequency: 'monthly' as const,
-    priority: 0.7,
+    priority: 0.85,
   }));
 
   return [
@@ -49,7 +49,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...cities.map(c => ({
       url: `${base}/rentals/city/${c.slug}`,
       changeFrequency: 'daily' as const,
-      priority: 0.85,
+      priority: 0.9,
     })),
     ...zipPages,
     { url: `${base}/landlords`, changeFrequency: 'monthly', priority: 0.7 },

@@ -49,6 +49,14 @@ export default async function Section8Page() {
     <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
 
+      <nav aria-label="Breadcrumb" className="mb-6 flex items-center gap-2 text-sm text-gray-500">
+        <Link href="/" className="hover:text-brand-600">Home</Link>
+        <span aria-hidden="true">/</span>
+        <Link href="/rentals" className="hover:text-brand-600">Rentals</Link>
+        <span aria-hidden="true">/</span>
+        <span className="font-medium text-gray-900" aria-current="page">Section 8 Rentals</span>
+      </nav>
+
       <div className="text-center">
         <p className="text-xs font-semibold uppercase tracking-widest text-brand-600">Rentals</p>
         <h1 className="mt-2 text-3xl font-extrabold text-gray-900 sm:text-4xl">Section 8 / Housing Voucher Rentals</h1>

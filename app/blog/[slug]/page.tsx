@@ -62,6 +62,8 @@ export default async function BlogPostPage({ params }: Props) {
         headline: post.title,
         description: post.description,
         datePublished: post.date,
+        author: { '@type': 'Organization', name: 'EMLAKIE Editorial Team', url: 'https://emlakie.com' },
+        image: { '@type': 'ImageObject', url: 'https://emlakie.com/opengraph-image', width: 1200, height: 630 },
         publisher: { '@type': 'Organization', name: 'EMLAKIE', url: 'https://emlakie.com' },
         url: `https://emlakie.com/blog/${slug}`,
       },
@@ -102,7 +104,7 @@ export default async function BlogPostPage({ params }: Props) {
       <div className="mt-12 rounded-2xl bg-brand-600 px-8 py-8 text-center">
         <h2 className="text-xl font-extrabold text-white">Find your next rental home</h2>
         <p className="mt-2 text-sm text-green-100">Browse listings posted directly by landlords — no broker fees.</p>
-        <Link href="/rentals"
+        <Link href={post.citySlug ? `/rentals/city/${post.citySlug}` : '/rentals'}
           className="mt-5 inline-block rounded-xl bg-white px-6 py-3 text-sm font-bold text-brand-700 transition hover:bg-green-50">
           Browse rentals
         </Link>

@@ -6,6 +6,7 @@ export interface Post {
   category: string;
   readTime: number; // minutes
   content: string; // HTML
+  citySlug?: string;
 }
 
 export const posts: Post[] = [
@@ -16,6 +17,7 @@ export const posts: Post[] = [
     date: '2026-06-10',
     category: 'Market Trends',
     readTime: 5,
+    citySlug: 'los-angeles',
     content: `
 <p>Los Angeles remains one of the most competitive rental markets in the United States. Whether you're moving from out of state or relocating within the city, understanding what rents look like in 2026 can save you time and help you negotiate confidently.</p>
 
@@ -44,7 +46,7 @@ export const posts: Post[] = [
   <li><strong>Look beyond the westside.</strong> Koreatown, Inglewood, and the Valley offer far better value per square foot.</li>
 </ul>
 
-<p>Browse current LA rentals on EMLAKIE to find listings posted directly by landlords — no broker fees, no middlemen.</p>
+<p><a href="/rentals/city/los-angeles">Browse current LA rentals on EMLAKIE</a> to find listings posted directly by landlords — no broker fees, no middlemen.</p>
     `.trim(),
   },
   {
@@ -54,6 +56,7 @@ export const posts: Post[] = [
     date: '2026-06-08',
     category: 'Neighborhood Guides',
     readTime: 6,
+    citySlug: 'los-angeles',
     content: `
 <p>Los Angeles is not one city — it's dozens of distinct neighborhoods, each with its own character, commute profile, and price point. Here's our breakdown of the best places to rent in LA right now.</p>
 
@@ -75,7 +78,7 @@ export const posts: Post[] = [
 <h2>Best Walkable Urban: Downtown LA (DTLA)</h2>
 <p>DTLA has reinvented itself with converted loft buildings, rooftop pools, and a growing restaurant scene. It's best suited for renters who actually work downtown. High-rises offer amenities that single-family rentals can't match. Average 1BR: $2,000–$3,000/mo.</p>
 
-<p>Ready to start your search? Browse LA rental listings on EMLAKIE — all posted directly by landlords.</p>
+<p>Ready to start your search? <a href="/rentals/city/los-angeles">Browse LA rental listings on EMLAKIE</a> — all posted directly by landlords.</p>
     `.trim(),
   },
   {
@@ -85,6 +88,7 @@ export const posts: Post[] = [
     date: '2026-06-05',
     category: 'Renter Tips',
     readTime: 4,
+    citySlug: 'los-angeles',
     content: `
 <p>Getting approved for an apartment in Los Angeles is more competitive than ever. Here's exactly what landlords look for and how to put your best foot forward.</p>
 
@@ -122,7 +126,7 @@ export const posts: Post[] = [
   <li>No lease agreement offered.</li>
 </ul>
 
-<p>On EMLAKIE, every listing is posted by a verified landlord. Apply directly from the listing page — no broker, no fees.</p>
+<p>On EMLAKIE, every listing is posted by a verified landlord. <a href="/rentals/city/los-angeles">Browse LA rentals</a> and apply directly from the listing page — no broker, no fees.</p>
     `.trim(),
   },
   {
@@ -132,6 +136,7 @@ export const posts: Post[] = [
     date: '2026-06-01',
     category: 'Landlord Tips',
     readTime: 5,
+    citySlug: 'los-angeles',
     content: `
 <p>Listing a rental property in Los Angeles doesn't have to be complicated or expensive. Here's what experienced LA landlords do to find quality tenants quickly.</p>
 
@@ -159,7 +164,7 @@ export const posts: Post[] = [
 <p>A bad tenant costs far more than a vacant month. Ask for proof of income, run a credit check, and always call previous landlord references. Look for stability — someone who's held the same job for 2+ years and has rented the same place for 2+ years is a lower risk than someone who moves frequently.</p>
 
 <h2>Use EMLAKIE to List for Free</h2>
-<p>EMLAKIE lets LA landlords post rentals directly to tenants — no broker fees, no middlemen. Tenants apply through the app or website, and you receive an email with their income, credit score, and an AI match score so you can compare applicants at a glance.</p>
+<p>EMLAKIE lets LA landlords post rentals directly to tenants — no broker fees, no middlemen. Tenants apply through the app or website, and you receive an email with their income, credit score, and an AI match score so you can compare applicants at a glance. <a href="/landlords">List your LA rental property free on EMLAKIE</a>.</p>
     `.trim(),
   },
   // ── National city articles ──────────────────────────────────────────────
@@ -170,6 +175,7 @@ export const posts: Post[] = [
     date: '2026-06-12',
     category: 'Market Trends',
     readTime: 5,
+    citySlug: 'seattle',
     content: `
 <p>Seattle's rental market has cooled from its pandemic-era peaks but remains one of the pricier markets in the country, driven by tech industry employment at Amazon, Microsoft, and a dense startup ecosystem. Here's what renters are paying in 2026.</p>
 
@@ -201,7 +207,7 @@ export const posts: Post[] = [
   <li>Parking can add $150–$250/mo — clarify before signing.</li>
 </ul>
 
-<p>Browse Seattle rentals on EMLAKIE — listed directly by landlords, no broker fees.</p>
+<p><a href="/rentals/city/seattle">Browse Seattle rentals on EMLAKIE</a> — listed directly by landlords, no broker fees.</p>
     `.trim(),
   },
   {
@@ -211,6 +217,7 @@ export const posts: Post[] = [
     date: '2026-06-11',
     category: 'Market Trends',
     readTime: 6,
+    citySlug: 'new-york',
     content: `
 <p>New York City remains the most expensive rental market in the United States, with median rents in Manhattan consistently above $4,000/month for a one-bedroom. But borough-by-borough differences are massive — here's what renters are paying across the five boroughs in 2026.</p>
 
@@ -247,7 +254,7 @@ export const posts: Post[] = [
   <li><strong>Move fast:</strong> Good units in desirable neighborhoods rent within 24–48 hours of listing.</li>
 </ul>
 
-<p>Search NYC rentals on EMLAKIE — all listed directly by landlords.</p>
+<p><a href="/rentals/city/new-york">Search NYC rentals on EMLAKIE</a> — all listed directly by landlords.</p>
     `.trim(),
   },
   {
@@ -257,6 +264,7 @@ export const posts: Post[] = [
     date: '2026-06-10',
     category: 'Market Trends',
     readTime: 5,
+    citySlug: 'chicago',
     content: `
 <p>Chicago is one of the best-kept secrets in the US rental market. It's a world-class city — lakefront access, world-class dining, excellent public transit — at a fraction of the cost of New York, LA, or San Francisco. Here's what renters are paying in 2026.</p>
 
@@ -287,7 +295,7 @@ export const posts: Post[] = [
   <li>Chicago has a robust tenant protection ordinance; security deposits must be held in interest-bearing accounts.</li>
 </ul>
 
-<p>Browse Chicago rentals on EMLAKIE — connect directly with landlords, no fees.</p>
+<p><a href="/rentals/city/chicago">Browse Chicago rentals on EMLAKIE</a> — connect directly with landlords, no fees.</p>
     `.trim(),
   },
   {
@@ -297,6 +305,7 @@ export const posts: Post[] = [
     date: '2026-06-09',
     category: 'Market Trends',
     readTime: 5,
+    citySlug: 'austin',
     content: `
 <p>Austin experienced one of the most dramatic rent spikes in US history between 2020 and 2023 — some neighborhoods saw rents rise 40% in a single year. In 2026, a wave of new apartment supply has brought prices back down to earth. Here's where things stand.</p>
 
@@ -328,7 +337,7 @@ export const posts: Post[] = [
   <li>The heat is real: cooling costs in summer can add $150–$250/mo to your budget.</li>
 </ul>
 
-<p>Find Austin rentals on EMLAKIE — no broker fees, direct from landlords.</p>
+<p><a href="/rentals/city/austin">Find Austin rentals on EMLAKIE</a> — no broker fees, direct from landlords.</p>
     `.trim(),
   },
   {
@@ -338,6 +347,7 @@ export const posts: Post[] = [
     date: '2026-06-08',
     category: 'Market Trends',
     readTime: 5,
+    citySlug: 'miami',
     content: `
 <p>Miami has transformed from a regional city into a major financial and tech hub over the past five years, drawing transplants from New York, California, and Latin America. The result: rents that have more than doubled since 2020 in some neighborhoods. Here's the 2026 picture.</p>
 
@@ -369,7 +379,7 @@ export const posts: Post[] = [
   <li>The Brightline rail now connects Miami to Fort Lauderdale and West Palm Beach — opening up more affordable markets for commuters.</li>
 </ul>
 
-<p>Browse Miami rentals on EMLAKIE — listed directly by landlords.</p>
+<p><a href="/rentals/city/miami">Browse Miami rentals on EMLAKIE</a> — listed directly by landlords.</p>
     `.trim(),
   },
   {
@@ -379,6 +389,7 @@ export const posts: Post[] = [
     date: '2026-06-07',
     category: 'Market Trends',
     readTime: 4,
+    citySlug: 'phoenix',
     content: `
 <p>Phoenix was one of the hottest rental markets in the country in 2021–2022, with rents rising over 30% in some areas. A wave of new apartment construction has since brought prices back down significantly, making it one of the best markets for renters in 2026.</p>
 
@@ -408,7 +419,7 @@ export const posts: Post[] = [
   <li>Arizona has no rent control — but the current tenant-friendly conditions make it easy to negotiate.</li>
 </ul>
 
-<p>Find Phoenix rentals on EMLAKIE — direct from landlords, no fees.</p>
+<p><a href="/rentals/city/phoenix">Find Phoenix rentals on EMLAKIE</a> — direct from landlords, no fees.</p>
     `.trim(),
   },
   {
@@ -418,6 +429,7 @@ export const posts: Post[] = [
     date: '2026-06-06',
     category: 'Market Trends',
     readTime: 5,
+    citySlug: 'denver',
     content: `
 <p>Denver has grown dramatically over the past decade, driven by the outdoor recreation lifestyle, a booming tech scene, and cannabis legalization drawing residents from across the country. Rents have risen steadily, though a recent construction surge has eased pressure slightly.</p>
 
@@ -449,7 +461,7 @@ export const posts: Post[] = [
   <li>Dog-friendly units command a premium in Denver — pet deposits are common.</li>
 </ul>
 
-<p>Browse Denver rentals on EMLAKIE — all listed directly by landlords.</p>
+<p><a href="/rentals/city/denver">Browse Denver rentals on EMLAKIE</a> — all listed directly by landlords.</p>
     `.trim(),
   },
   {
@@ -459,6 +471,7 @@ export const posts: Post[] = [
     date: '2026-06-05',
     category: 'Market Trends',
     readTime: 5,
+    citySlug: 'atlanta',
     content: `
 <p>Atlanta has emerged as one of the most important cities in the American South, driven by the film industry (it's the third-largest film production market in the world), a booming tech scene, and a steady flow of residents from higher-cost cities. Here's what renters are paying in 2026.</p>
 
@@ -490,7 +503,7 @@ export const posts: Post[] = [
   <li>Many landlords in Atlanta require renters insurance as a lease condition.</li>
 </ul>
 
-<p>Browse Atlanta rentals on EMLAKIE — connect directly with landlords.</p>
+<p><a href="/rentals/city/atlanta">Browse Atlanta rentals on EMLAKIE</a> — connect directly with landlords.</p>
     `.trim(),
   },
   {
@@ -500,6 +513,7 @@ export const posts: Post[] = [
     date: '2026-06-04',
     category: 'Market Trends',
     readTime: 4,
+    citySlug: 'houston',
     content: `
 <p>Houston's lack of zoning laws has long kept housing costs among the lowest of any major American city. Combined with no state income tax, it remains one of the most financially attractive cities for renters in the country.</p>
 
@@ -531,7 +545,7 @@ export const posts: Post[] = [
   <li>Heat and humidity are intense; cooling bills run $150–$250/mo in summer.</li>
 </ul>
 
-<p>Find Houston rentals on EMLAKIE — all listed directly by landlords, no fees.</p>
+<p><a href="/rentals/city/houston">Find Houston rentals on EMLAKIE</a> — all listed directly by landlords, no fees.</p>
     `.trim(),
   },
   {
@@ -541,6 +555,7 @@ export const posts: Post[] = [
     date: '2026-06-03',
     category: 'Market Trends',
     readTime: 4,
+    citySlug: 'las-vegas',
     content: `
 <p>Las Vegas has grown far beyond its casino and entertainment roots. With no state income tax, a lower cost of living than neighboring California, and a booming sports scene (NFL Raiders, NHL Golden Knights, NBA Aces, and Formula 1), Las Vegas is attracting permanent residents in record numbers. Here's what renters are paying in 2026.</p>
 
@@ -572,7 +587,7 @@ export const posts: Post[] = [
   <li>Many landlords require proof of income at 2.5–3× monthly rent.</li>
 </ul>
 
-<p>Browse Las Vegas rentals on EMLAKIE — posted directly by landlords, no broker fees.</p>
+<p><a href="/rentals/city/las-vegas">Browse Las Vegas rentals on EMLAKIE</a> — posted directly by landlords, no broker fees.</p>
     `.trim(),
   },
   {
@@ -582,6 +597,7 @@ export const posts: Post[] = [
     date: '2026-06-02',
     category: 'Market Trends',
     readTime: 4,
+    citySlug: 'kansas-city',
     content: `
 <p>Kansas City, Missouri consistently ranks among the most affordable large metros in the United States. With a vibrant arts scene, a world-famous BBQ culture, a booming tech and healthcare sector, and rents that are a fraction of coastal cities, KC is increasingly attracting remote workers and young professionals priced out of bigger markets.</p>
 
@@ -614,7 +630,7 @@ export const posts: Post[] = [
   <li>Tornado season runs April through June — many buildings have basement shelters.</li>
 </ul>
 
-<p>Find Kansas City rentals on EMLAKIE — listed directly by landlords, no broker fees.</p>
+<p><a href="/rentals/city/kansas-city">Find Kansas City rentals on EMLAKIE</a> — listed directly by landlords, no broker fees.</p>
     `.trim(),
   },
   {
@@ -624,6 +640,7 @@ export const posts: Post[] = [
     date: '2026-06-01',
     category: 'Market Trends',
     readTime: 4,
+    citySlug: 'omaha',
     content: `
 <p>Omaha, Nebraska doesn't make many national headlines, but it consistently ranks near the top of livability surveys — low unemployment, low cost of living, strong job market, and a surprisingly vibrant food and arts scene. For renters, it's one of the best-value cities in the country in 2026.</p>
 
@@ -656,7 +673,7 @@ export const posts: Post[] = [
   <li>Tornado risk is real from April through June; look for units with access to a basement or shelter.</li>
 </ul>
 
-<p>Browse Omaha rentals on EMLAKIE — connect directly with landlords, no middlemen.</p>
+<p><a href="/rentals/city/omaha">Browse Omaha rentals on EMLAKIE</a> — connect directly with landlords, no middlemen.</p>
     `.trim(),
   },
 ];

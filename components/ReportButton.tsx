@@ -61,13 +61,13 @@ export default function ReportButton({ listingId }: { listingId: string }) {
       <button
         onClick={openModal}
         className="inline-flex items-center gap-1.5 text-xs text-gray-400 hover:text-red-500 transition"
-        aria-label="Report this listing"
+        aria-label="Flag this listing"
       >
         <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z" />
           <line x1="4" y1="22" x2="4" y2="15" />
         </svg>
-        Report listing
+        Flag this listing
       </button>
 
       {open && (
@@ -78,7 +78,7 @@ export default function ReportButton({ listingId }: { listingId: string }) {
         >
           <div className="px-6 py-5">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-base font-bold text-gray-900">Report this listing</h2>
+              <h2 className="text-base font-bold text-gray-900">Flag this listing</h2>
               <button onClick={closeModal} aria-label="Close" className="text-gray-400 hover:text-gray-600">
                 <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -91,7 +91,7 @@ export default function ReportButton({ listingId }: { listingId: string }) {
                 <svg className="mx-auto h-10 w-10 text-brand-600 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                 </svg>
-                <p className="font-semibold text-gray-900">Report submitted</p>
+                <p className="font-semibold text-gray-900">Listing flagged</p>
                 <p className="mt-1 text-sm text-gray-500">Our team will review this listing. Thank you for helping keep Emlakie safe.</p>
                 <button onClick={closeModal} className="mt-5 rounded-xl bg-brand-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-brand-700 transition">
                   Close

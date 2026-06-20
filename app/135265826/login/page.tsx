@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { createBrowserClient } from '@supabase/ssr';
 
 export default function AdminLoginPage() {
   const [email, setEmail] = useState('');
@@ -14,16 +13,20 @@ export default function AdminLoginPage() {
     setBusy(true);
     setError('');
 
-    // Use SSR browser client so the session is stored in cookies,
-    // making it visible to the server-side layout auth check.
-    const sb = createBrowserClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    );
+    const res = await fetch('/api/admin/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
+    });
 
-    const { error: err } = await sb.auth.signInWithPassword({ email, password });
-    if (err) { setError(err.message); setBusy(false); return; }
-    // Full reload so the server-side layout reads the fresh auth cookie
+    if (!res.ok) {
+      const data = await res.json();
+      setError(data.error ?? 'Sign in failed.');
+      setBusy(false);
+      return;
+    }
+
+    // Session cookie is now set server-side — do a full reload to the portal
     window.location.href = '/135265826';
   }
 

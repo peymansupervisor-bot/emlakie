@@ -46,13 +46,15 @@ async function checkInmanRSS(): Promise<CheckResult> {
       headers: { 'User-Agent': 'Mozilla/5.0 (compatible; EMlakieBot/1.0; +https://emlakie.com)' },
       signal: AbortSignal.timeout(8000),
     });
-    if (!res.ok) return { service: 'Inman RSS', status: 'degraded', message: `HTTP ${res.status} — feed may restrict server access` };
+    // 403 means Inman is up but blocks server IPs — site uses fallback headlines so this is non-critical
+    if (res.status === 403) return { service: 'Inman RSS', status: 'degraded', message: 'Inman blocks server requests (403) — site using fallback headlines' };
+    if (!res.ok) return { service: 'Inman RSS', status: 'degraded', message: `HTTP ${res.status}` };
     const text = await res.text();
     const count = (text.match(/<item>/g) ?? []).length;
     if (count < 1) return { service: 'Inman RSS', status: 'degraded', message: 'Feed returned 0 items' };
     return { service: 'Inman RSS', status: 'ok', message: `${count} items in feed` };
   } catch (e: unknown) {
-    return { service: 'Inman RSS', status: 'degraded', message: String(e) };
+    return { service: 'Inman RSS', status: 'down', message: String(e) };
   }
 }
 
@@ -125,14 +127,15 @@ async function checkRapidAPI(): Promise<CheckResult> {
   try {
     const key = process.env.RAPIDAPI_KEY;
     if (!key) return { service: 'RapidAPI (Property Data)', status: 'down', message: 'RAPIDAPI_KEY missing' };
-    // Ping the RapidAPI hub to verify the key is valid — lightweight, no quota cost
-    const res = await fetch('https://rapidapi.com/api/v1/user/me', {
-      headers: { 'x-rapidapi-key': key },
+    // Ping the actual host used by the site (zllw-working-api) with a minimal request
+    const res = await fetch('https://zllw-working-api.p.rapidapi.com/pro/byaddress?propertyaddress=123+Main+St+Los+Angeles+CA', {
+      headers: { 'x-rapidapi-key': key, 'x-rapidapi-host': 'zllw-working-api.p.rapidapi.com' },
       signal: AbortSignal.timeout(8000),
     });
-    if (res.status === 200) return { service: 'RapidAPI (Property Data)', status: 'ok', message: 'API key valid' };
+    if (res.status === 200) return { service: 'RapidAPI (Property Data)', status: 'ok', message: 'API responding' };
     if (res.status === 401 || res.status === 403) return { service: 'RapidAPI (Property Data)', status: 'down', message: 'API key rejected or revoked' };
     if (res.status === 429) return { service: 'RapidAPI (Property Data)', status: 'degraded', message: 'Rate limit hit' };
+    if (res.status === 404) return { service: 'RapidAPI (Property Data)', status: 'ok', message: 'API reachable (no data for test address)' };
     return { service: 'RapidAPI (Property Data)', status: 'degraded', message: `HTTP ${res.status}` };
   } catch (e: unknown) {
     return { service: 'RapidAPI (Property Data)', status: 'down', message: String(e) };

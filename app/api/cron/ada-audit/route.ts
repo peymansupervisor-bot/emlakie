@@ -61,38 +61,41 @@ async function auditPage(path: string): Promise<{
   if (!res.ok) throw new Error(`HTTP ${res.status} fetching ${url}`);
   const html = await res.text();
 
-  // Lazy-load heavy packages so they are not bundled at build time
   const { JSDOM } = await import('jsdom');
-  const axeCore = await import('axe-core');
+  const axe = (await import('axe-core')).default;
 
-  const dom = new JSDOM(html, {
-    url,
-    runScripts: 'outside-only',
-    resources: 'usable',
-  });
+  const dom = new JSDOM(html, { url, runScripts: 'outside-only' });
+  const win = dom.window as unknown as Record<string, unknown>;
 
-  dom.window.eval(axeCore.source);
+  // Patch Node.js globals so axe-core can access jsdom's DOM APIs directly
+  const g = global as unknown as Record<string, unknown>;
+  const PATCH_KEYS = [
+    'window', 'document', 'navigator', 'location',
+    'Node', 'Element', 'HTMLElement', 'Text', 'Document',
+    'MutationObserver', 'getComputedStyle',
+  ];
+  const saved: Record<string, unknown> = {};
+  for (const k of PATCH_KEYS) { saved[k] = g[k]; g[k] = win[k]; }
 
-  const results = await (dom.window as unknown as { axe: typeof axeCore }).axe.run(
-    dom.window.document,
-    {
+  try {
+    const results = await axe.run(dom.window.document as unknown as Document, {
       runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21aa', 'best-practice'] },
-    }
-  );
+    });
 
-  const violations: Violation[] = results.violations.map((v) => ({
-    id: v.id,
-    impact: v.impact ?? null,
-    description: v.description,
-    helpUrl: v.helpUrl,
-    nodes: v.nodes.length,
-  }));
-
-  return {
-    violations,
-    passes: results.passes.length,
-    incomplete: results.incomplete.length,
-  };
+    return {
+      violations: results.violations.map((v) => ({
+        id: v.id,
+        impact: v.impact ?? null,
+        description: v.description,
+        helpUrl: v.helpUrl,
+        nodes: v.nodes.length,
+      })),
+      passes: results.passes.length,
+      incomplete: results.incomplete.length,
+    };
+  } finally {
+    for (const k of PATCH_KEYS) { g[k] = saved[k]; }
+  }
 }
 
 function sb() {

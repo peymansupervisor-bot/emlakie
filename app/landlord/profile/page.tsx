@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { getProfile, updateProfile } from '@/lib/landlord/client';
 
 const inputCls = 'w-full rounded-xl border border-gray-300 px-4 py-3 text-sm outline-none focus:border-brand-600 focus:ring-0';
@@ -119,6 +120,17 @@ export default function ProfilePage() {
           </button>
         </form>
       )}
+
+      <div className="mt-8 border-t border-gray-200 pt-6">
+        <h2 className="text-sm font-semibold text-gray-700">Security</h2>
+        <p className="mt-1 text-xs text-gray-500">Update the password for your account.</p>
+        <Link
+          href="/landlord/reset-password"
+          className="mt-3 inline-block rounded-xl border border-gray-300 px-4 py-2.5 text-sm font-semibold text-gray-700 transition hover:bg-gray-50"
+        >
+          Change password
+        </Link>
+      </div>
 
     </div>
   );

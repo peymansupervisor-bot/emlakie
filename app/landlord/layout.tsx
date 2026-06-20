@@ -89,6 +89,12 @@ export default function LandlordLayout({ children }: { children: React.ReactNode
               >
                 + Add Listing
               </Link>
+              <Link
+                href="/landlord/reset-password"
+                className="rounded-xl border border-green-400 px-3 py-2 text-xs font-semibold text-green-100 transition hover:bg-green-700"
+              >
+                Change Password
+              </Link>
               <button
                 onClick={() => { signOut(); router.push('/landlord/login'); }}
                 className="rounded-xl border border-green-400 px-3 py-2 text-xs font-semibold text-green-100 transition hover:bg-green-700"

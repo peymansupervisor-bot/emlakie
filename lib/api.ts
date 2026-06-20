@@ -103,21 +103,45 @@ export async function getListings(filters: ListingFilters = {}): Promise<Listing
     }
     if (filters.ownerDirect === '1') query = query.eq('listing_source', 'owner');
 
-    const page = Number(filters.page ?? 1);
-    const pageSize = 20;
-    query = query.order('created_at', { ascending: false }).range((page - 1) * pageSize, page * pageSize - 1);
-
-    const { data, count, error } = await query;
+    const { data, error } = await query.order('created_at', { ascending: false });
     if (error) throw error;
 
-    const listings = (data ?? []).map(rowToListing);
+    const now = Date.now();
+    const ranked = (data ?? [])
+      .map((row) => {
+        const photoCount = Array.isArray(row.photos) ? row.photos.length : 0;
+        const amenityCount = Array.isArray(row.amenities) ? row.amenities.length : 0;
+        const ageMs = now - new Date(row.created_at as string).getTime();
+        const ageDays = ageMs / 86_400_000;
+        const freshness = ageDays < 7 ? 50 : ageDays < 14 ? 25 : ageDays < 30 ? 10 : 0;
+        const isBoosted = row.boosted_until && new Date(row.boosted_until as string).getTime() > now;
+        const isFeatured = row.featured && row.featured_until && new Date(row.featured_until as string).getTime() > now;
+        const score =
+          (isFeatured ? 1000 : 0) +
+          (isBoosted ? 500 : 0) +
+          Math.min(photoCount, 25) * 4 +
+          (((row.description as string | null)?.length ?? 0) > 50 ? 15 : 0) +
+          (row.virtual_tour_url ? 20 : 0) +
+          Math.min((row.view_count as number | null) ?? 0, 80) * 0.5 +
+          Math.min(amenityCount, 10) * 2 +
+          freshness;
+        return { row, score };
+      })
+      .sort((a, b) => b.score - a.score);
+
+    const page = Number(filters.page ?? 1);
+    const pageSize = 20;
+    const total = ranked.length;
+    const pageRows = ranked.slice((page - 1) * pageSize, page * pageSize);
+    const listings = pageRows.map(({ row }) => rowToListing(row));
     const MIN_LISTINGS = 6;
-    if (listings.length >= MIN_LISTINGS) return { listings, total: count ?? listings.length, usingSampleData: false };
+    if (total >= MIN_LISTINGS) return { listings, total, usingSampleData: false };
     // Pad with samples when fewer than MIN_LISTINGS real listings exist
-    const realIds = new Set(listings.map((l) => l.id));
+    const allListings = ranked.map(({ row }) => rowToListing(row));
+    const realIds = new Set(allListings.map((l) => l.id));
     const samples = filterSamples(filters).filter((s) => !realIds.has(s.id));
-    const padded = [...listings, ...samples].slice(0, Math.max(listings.length, MIN_LISTINGS));
-    return { listings: padded, total: padded.length, usingSampleData: listings.length === 0 };
+    const padded = [...allListings, ...samples].slice(0, Math.max(allListings.length, MIN_LISTINGS));
+    return { listings: padded.slice((page - 1) * pageSize, page * pageSize), total: padded.length, usingSampleData: allListings.length === 0 };
   } catch {
     const listings = filterSamples(filters);
     return { listings, total: listings.length, usingSampleData: true };

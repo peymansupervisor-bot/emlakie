@@ -1,11 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { createBrowserClient } from '@supabase/ssr';
 
 export default function AdminLoginPage() {
-  const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [busy, setBusy] = useState(false);
@@ -25,7 +23,8 @@ export default function AdminLoginPage() {
 
     const { error: err } = await sb.auth.signInWithPassword({ email, password });
     if (err) { setError(err.message); setBusy(false); return; }
-    router.replace('/135265826');
+    // Full reload so the server-side layout reads the fresh auth cookie
+    window.location.href = '/135265826';
   }
 
   return (

@@ -676,8 +676,6 @@ export const posts: Post[] = [
 <p><a href="/rentals/city/omaha">Browse Omaha rentals on EMLAKIE</a> — connect directly with landlords, no middlemen.</p>
     `.trim(),
   },
-];
-
   {
     slug: 'average-rent-san-francisco-2026',
     title: 'Average Rent in San Francisco in 2026: What You\'ll Actually Pay',
@@ -927,6 +925,8 @@ export const posts: Post[] = [
 <p><a href="/rentals/city/tampa">Browse Tampa rentals on EMLAKIE</a> — connect directly with landlords, no broker fees, no commissions.</p>
     `.trim(),
   },
+];
+
 export function getPost(slug: string): Post | undefined {
   return posts.find(p => p.slug === slug);
 }

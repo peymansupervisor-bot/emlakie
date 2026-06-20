@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { Resend } from 'resend';
 import { randomUUID } from 'crypto';
+import { cureViolations } from '@/lib/ada-cure';
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://emlakie.com';
 const ADMIN_EMAIL = 'peymansupervisor@gmail.com';
@@ -197,6 +198,17 @@ export async function GET(req: NextRequest) {
   const totalCritical = withViolations.reduce((n, r) => n + r.violations.filter((v) => v.impact === 'critical').length, 0);
   const totalSerious = withViolations.reduce((n, r) => n + r.violations.filter((v) => v.impact === 'serious').length, 0);
 
+  // Auto-cure any real violations found in this run
+  let cureResult = { fixed: 0, skipped: 0, summary: [] as string[] };
+  if (withViolations.length > 0) {
+    const cureRecords = withViolations.map((r) => ({
+      page_path: r.path,
+      violations: r.violations,
+      violation_count: r.violations.length,
+    }));
+    cureResult = await cureViolations(cureRecords);
+  }
+
   if (totalCritical > 0 || totalSerious > 0) {
     await sendAlertEmail(withViolations, totalCritical);
   }
@@ -207,5 +219,6 @@ export async function GET(req: NextRequest) {
     total_violations: withViolations.reduce((n, r) => n + r.violations.length, 0),
     total_critical: totalCritical,
     axe_version: axeVersion,
+    cure: cureResult,
   });
 }

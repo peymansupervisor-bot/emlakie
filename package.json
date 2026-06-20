@@ -27,6 +27,9 @@
     "use-places-autocomplete": "^4.0.1",
     "zipcodes": "^8.0.0"
   },
+  "overrides": {
+    "html-encoding-sniffer": "3.0.0"
+  },
   "devDependencies": {
     "@types/google.maps": "^3.65.1",
     "@types/jsdom": "^28.0.3",

@@ -10,6 +10,7 @@ import StatsStrip from '@/components/StatsStrip';
 import TrendingCities from '@/components/TrendingCities';
 import RecentListings from '@/components/RecentListings';
 import LandlordCTACard from '@/components/LandlordCTACard';
+import RentEstimatorCard from '@/components/RentEstimatorCard';
 import MarketPulse from '@/components/MarketPulse';
 import BlogTeaser from '@/components/BlogTeaser';
 import { getListings } from '@/lib/api';
@@ -110,9 +111,10 @@ export default async function HomePage() {
               <RecentListings />
             </div>
 
-            {/* Right — landlord CTA (third in DOM, lg repositions to col 3) */}
+            {/* Right — landlord CTA + rent estimator (third in DOM, lg repositions to col 3) */}
             <div className="lg:order-3">
               <LandlordCTACard />
+              <RentEstimatorCard />
             </div>
 
           </div>

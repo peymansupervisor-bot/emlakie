@@ -104,6 +104,31 @@ export default async function Section8Page() {
         </p>
       </div>
 
+      {/* How the HCV process works */}
+      <div className="mt-6 space-y-4 text-sm text-gray-600 leading-relaxed">
+        <h2 className="text-xl font-extrabold text-gray-900">How the Housing Choice Voucher process works</h2>
+        <p>
+          The Section 8 Housing Choice Voucher program is administered locally by Public Housing Authorities (PHAs)
+          across the country. Landlords who participate agree to have their units inspected and to charge rent within
+          HUD-approved payment standards. In return, they receive a guaranteed portion of rent directly from the
+          government each month — reducing vacancy risk and providing a reliable income stream.
+        </p>
+        <p>
+          <strong>For renters:</strong> Once you have a voucher, you typically have 60–120 days (extendable in
+          many jurisdictions) to find a participating landlord. The unit must pass a Housing Quality Standards
+          (HQS) inspection and rent must fall within your local payment standard. Your share of the rent is
+          based on approximately 30% of your adjusted gross income — the government pays the remainder directly
+          to the landlord.
+        </p>
+        <p>
+          <strong>Finding landlords who accept vouchers:</strong> Many landlords on EMLAKIE who accept Housing
+          Choice Vouchers note it in the description or amenities rather than the listing title. Send landlords
+          a direct message — private landlords are typically more flexible than large property management companies,
+          and in many states (California, Illinois, New York, Washington, and others) it is illegal to refuse a
+          tenant solely because they pay with a housing voucher.
+        </p>
+      </div>
+
       {/* Listings */}
       {section8.length > 0 && (
         <section className="mt-12">

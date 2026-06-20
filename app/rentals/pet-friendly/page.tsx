@@ -92,6 +92,29 @@ export default async function PetFriendlyPage() {
         </ul>
       </div>
 
+      {/* More about pet-friendly rentals */}
+      <div className="mt-10 space-y-4 text-sm text-gray-600 leading-relaxed">
+        <h2 className="text-xl font-extrabold text-gray-900">Finding pet-friendly rentals: what to expect</h2>
+        <p>
+          Finding a pet-friendly apartment or house for rent is one of the biggest challenges for renters with dogs,
+          cats, or other animals. While many landlords advertise "no pets," a growing number welcome well-behaved
+          animals — especially in single-family homes and smaller multi-family buildings where pet damage is easier
+          to manage. Private landlords tend to be significantly more flexible than large corporate apartment complexes.
+        </p>
+        <p>
+          <strong>What landlords typically allow:</strong> Most pet-friendly rentals accept cats and small-to-medium
+          dogs (under 25–40 lbs). Larger breeds are sometimes restricted by landlord insurance requirements, but the
+          best way to find out is to contact the landlord directly. A listing that doesn&apos;t mention pets may still
+          be open to a well-trained dog with references from a previous landlord.
+        </p>
+        <p>
+          <strong>Pet fees vs. pet deposits:</strong> Some landlords charge a monthly pet rent ($25–$75/mo per pet),
+          others require a one-time refundable pet deposit ($200–$500), and some require both. Always ask for the
+          full pet policy — including allowed breeds, weight limits, and number of pets — in writing as a signed
+          addendum to your lease before moving in.
+        </p>
+      </div>
+
       {/* Listings */}
       {petFriendly.length > 0 && (
         <section className="mt-12">

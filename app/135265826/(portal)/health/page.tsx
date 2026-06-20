@@ -3,65 +3,81 @@ import { adminClient } from '@/lib/moderator';
 export const dynamic = 'force-dynamic';
 
 const SERVICE_ORDER = [
-  'Supabase',
-  'Amazon Rekognition',
-  'Google Maps',
-  'Resend (Email)',
-  'Stripe (Payments)',
-  'ListHub (MLS)',
-  'RapidAPI (Property Data)',
-  'Apple Sign-In',
-  'Photo System',
-  'ADA Audit',
-  'Inman RSS',
-  'Daily Alert Cron',
+  { name: 'Supabase', icon: '🗄️', desc: 'Database & Auth' },
+  { name: 'Amazon Rekognition', icon: '📸', desc: 'Photo moderation AI' },
+  { name: 'Google Maps', icon: '🗺️', desc: 'Geocoding & map embeds' },
+  { name: 'Resend (Email)', icon: '📧', desc: 'Transactional email' },
+  { name: 'Stripe (Payments)', icon: '💳', desc: 'Payment processing' },
+  { name: 'ListHub (MLS)', icon: '🏘️', desc: 'MLS listing feed' },
+  { name: 'RapidAPI (Property Data)', icon: '📊', desc: 'Property data provider' },
+  { name: 'Apple Sign-In', icon: '🍎', desc: 'Apple OAuth credentials' },
+  { name: 'Photo System', icon: '🖼️', desc: 'Upload, compress & storage' },
+  { name: 'ADA Audit', icon: '♿', desc: 'WCAG accessibility logger' },
+  { name: 'Inman RSS', icon: '📰', desc: 'Real estate news feed' },
+  { name: 'Daily Alert Cron', icon: '⏰', desc: 'Morning renter alerts' },
 ];
+
+function formatDate(iso: string) {
+  return new Date(iso).toLocaleString('en-US', {
+    timeZone: 'America/Los_Angeles',
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  }) + ' PT';
+}
 
 export default async function HealthPage() {
   const sb = adminClient();
 
-  // Latest result per service
   const { data: rows } = await sb
     .from('system_health')
     .select('service, status, message, checked_at')
     .order('checked_at', { ascending: false })
     .limit(200);
 
-  // Deduplicate — keep only the most recent per service
   type HealthRow = { service: string; status: string; message: string; checked_at: string };
   const latest: Record<string, HealthRow> = {};
   for (const row of rows ?? []) {
     if (!latest[row.service]) latest[row.service] = row;
   }
 
-  const services = SERVICE_ORDER.map((name) => latest[name] ?? null).filter(Boolean) as HealthRow[];
+  const downCount = Object.values(latest).filter((s) => s.status === 'down').length;
+  const degradedCount = Object.values(latest).filter((s) => s.status === 'degraded').length;
+  const hasData = Object.keys(latest).length > 0;
+  const allOk = hasData && downCount === 0 && degradedCount === 0;
 
-  const allOk = services.every((s) => s.status === 'ok');
-  const downCount = services.filter((s) => s.status === 'down').length;
-  const degradedCount = services.filter((s) => s.status === 'degraded').length;
-
-  const statusStyles: Record<string, { dot: string; badge: string; row: string }> = {
-    ok:       { dot: 'bg-green-400', badge: 'bg-green-900 text-green-300', row: '' },
-    degraded: { dot: 'bg-yellow-400 animate-pulse', badge: 'bg-yellow-900 text-yellow-300', row: 'border-l-2 border-yellow-500' },
-    down:     { dot: 'bg-red-500 animate-pulse', badge: 'bg-red-900 text-red-300', row: 'border-l-2 border-red-500' },
+  const statusStyles: Record<string, { dot: string; badge: string; badgeLabel: string; border: string }> = {
+    ok:       { dot: 'bg-green-400', badge: 'bg-green-900/60 text-green-300 ring-1 ring-green-700', badgeLabel: 'Operational', border: 'border-gray-800' },
+    degraded: { dot: 'bg-yellow-400 animate-pulse', badge: 'bg-yellow-900/60 text-yellow-300 ring-1 ring-yellow-700', badgeLabel: 'Degraded', border: 'border-l-2 border-l-yellow-500 border-gray-800' },
+    down:     { dot: 'bg-red-500 animate-pulse', badge: 'bg-red-900/60 text-red-300 ring-1 ring-red-700', badgeLabel: 'Down', border: 'border-l-2 border-l-red-500 border-gray-800' },
+    unknown:  { dot: 'bg-gray-600', badge: 'bg-gray-800 text-gray-500 ring-1 ring-gray-700', badgeLabel: 'Not checked', border: 'border-gray-800' },
   };
 
-  const lastChecked = services[0]?.checked_at
-    ? new Date(services[0].checked_at).toLocaleString('en-US', { timeZone: 'America/Los_Angeles', dateStyle: 'medium', timeStyle: 'short' })
-    : 'Never';
-
   return (
-    <div className="max-w-3xl">
-      <div className="flex items-center justify-between mb-6">
+    <div className="max-w-4xl">
+      {/* Header */}
+      <div className="flex items-start justify-between mb-8">
         <div>
           <h1 className="text-xl font-extrabold text-white">System Health</h1>
-          <p className="text-sm text-gray-400 mt-0.5">Last checked: {lastChecked} PT · Runs every 6 hours</p>
+          <p className="text-sm text-gray-400 mt-1">
+            Monitors all background services automatically once daily at 8 AM PT.
+          </p>
         </div>
-        <div className={`rounded-2xl px-5 py-3 text-center ${allOk ? 'bg-green-900' : downCount > 0 ? 'bg-red-900' : 'bg-yellow-900'}`}>
-          {allOk ? (
-            <p className="text-green-300 font-bold text-sm">All systems operational</p>
+        <div className={`rounded-2xl px-5 py-3 text-center min-w-[160px] ${
+          !hasData ? 'bg-gray-800' : allOk ? 'bg-green-900/50 ring-1 ring-green-700' : downCount > 0 ? 'bg-red-900/50 ring-1 ring-red-700' : 'bg-yellow-900/50 ring-1 ring-yellow-700'
+        }`}>
+          {!hasData ? (
+            <p className="text-gray-400 font-bold text-sm">Awaiting first run</p>
+          ) : allOk ? (
+            <>
+              <div className="text-2xl mb-1">✅</div>
+              <p className="text-green-300 font-bold text-sm">All systems operational</p>
+            </>
           ) : (
             <>
+              <div className="text-2xl mb-1">{downCount > 0 ? '🚨' : '⚠️'}</div>
               {downCount > 0 && <p className="text-red-300 font-bold text-sm">{downCount} service{downCount > 1 ? 's' : ''} down</p>}
               {degradedCount > 0 && <p className="text-yellow-300 font-bold text-sm">{degradedCount} degraded</p>}
             </>
@@ -69,35 +85,44 @@ export default async function HealthPage() {
         </div>
       </div>
 
-      {services.length === 0 ? (
-        <div className="rounded-2xl border border-gray-800 py-16 text-center text-gray-500">
-          No health data yet. The monitor runs every 6 hours automatically.
-        </div>
-      ) : (
-        <div className="rounded-2xl border border-gray-800 overflow-hidden divide-y divide-gray-800">
-          {services.map((s) => {
-            const style = statusStyles[s.status] ?? statusStyles.ok;
-            return (
-              <div key={s.service} className={`flex items-center gap-4 px-5 py-4 bg-gray-900/30 ${style.row}`}>
-                <span className={`h-2.5 w-2.5 rounded-full shrink-0 ${style.dot}`} />
-                <div className="flex-1 min-w-0">
-                  <p className="font-semibold text-white text-sm">{s.service}</p>
-                  <p className="text-xs text-gray-400 mt-0.5 truncate">{s.message}</p>
-                </div>
-                <span className={`rounded-full px-2.5 py-0.5 text-xs font-bold uppercase ${style.badge}`}>
-                  {s.status}
-                </span>
-                <span className="text-xs text-gray-600 shrink-0">
-                  {new Date(s.checked_at).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
-                </span>
+      {/* Service grid */}
+      <div className="grid grid-cols-1 gap-3">
+        {SERVICE_ORDER.map(({ name, icon, desc }) => {
+          const row = latest[name];
+          const style = row ? (statusStyles[row.status] ?? statusStyles.ok) : statusStyles.unknown;
+          return (
+            <div key={name} className={`rounded-xl bg-gray-900 border ${style.border} px-5 py-4 flex items-center gap-4`}>
+              {/* Icon + dot */}
+              <div className="relative shrink-0">
+                <span className="text-2xl">{icon}</span>
+                <span className={`absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full ring-2 ring-gray-900 ${style.dot}`} />
               </div>
-            );
-          })}
-        </div>
-      )}
+
+              {/* Name + desc + message */}
+              <div className="flex-1 min-w-0">
+                <p className="font-bold text-white text-sm">{name}</p>
+                <p className="text-xs text-gray-500">{desc}</p>
+                {row?.message && (
+                  <p className="text-xs text-gray-400 mt-1 truncate">{row.message}</p>
+                )}
+              </div>
+
+              {/* Right: badge + date */}
+              <div className="shrink-0 text-right">
+                <span className={`inline-block rounded-full px-3 py-0.5 text-xs font-bold ${style.badge}`}>
+                  {style.badgeLabel}
+                </span>
+                <p className="text-xs text-gray-600 mt-1.5">
+                  {row ? formatDate(row.checked_at) : 'Never checked'}
+                </p>
+              </div>
+            </div>
+          );
+        })}
+      </div>
 
       <p className="mt-6 text-xs text-gray-600">
-        You receive an email at <span className="text-gray-400">peymansupervisor@gmail.com</span> immediately when any service goes down or becomes degraded.
+        Email alerts go to <span className="text-gray-400">peymansupervisor@gmail.com</span> immediately on any failure or degradation.
       </p>
     </div>
   );

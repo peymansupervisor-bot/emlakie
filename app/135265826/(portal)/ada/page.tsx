@@ -1,4 +1,5 @@
 import { adminClient } from '@/lib/moderator';
+import RunADAAuditButton from '../RunADAAuditButton';
 
 export const dynamic = 'force-dynamic';
 
@@ -45,11 +46,14 @@ export default async function ADAPage() {
             Runs daily at 2 AM · axe-core {latestRecords[0]?.axe_version ?? '—'} · WCAG 2.1 AA
           </p>
         </div>
+        <div className="flex items-center gap-3">
+          <RunADAAuditButton />
         <div className={`rounded-2xl px-5 py-3 text-center ${latestCritical > 0 ? 'bg-red-900' : latestTotal > 0 ? 'bg-yellow-900' : 'bg-green-900'}`}>
           <p className={`font-bold text-sm ${latestCritical > 0 ? 'text-red-300' : latestTotal > 0 ? 'text-yellow-300' : 'text-green-300'}`}>
             {latestCritical > 0 ? `${latestCritical} critical violation${latestCritical > 1 ? 's' : ''}` : latestTotal > 0 ? `${latestTotal} violations` : 'No violations'}
           </p>
           <p className="text-xs text-gray-400 mt-0.5">Last scan: {latestDate}</p>
+        </div>
         </div>
       </div>
 

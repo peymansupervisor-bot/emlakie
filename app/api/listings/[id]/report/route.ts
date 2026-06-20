@@ -1,0 +1,39 @@
+import { NextRequest, NextResponse } from 'next/server';
+import { createClient } from '@supabase/supabase-js';
+
+const VALID_REASONS = [
+  'Scam or fraud',
+  'Inaccurate listing information',
+  'Inappropriate photos',
+  'Discriminatory content',
+  'Already rented / no longer available',
+  'Duplicate listing',
+  'Other',
+];
+
+export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const { id: listingId } = await params;
+  const { reason, details } = await req.json();
+
+  if (!reason || !VALID_REASONS.includes(reason)) {
+    return NextResponse.json({ error: 'Invalid reason.' }, { status: 400 });
+  }
+
+  const sb = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+  );
+
+  const ip = req.headers.get('x-forwarded-for')?.split(',')[0].trim() ?? null;
+
+  const { error } = await sb.from('listing_reports').insert({
+    listing_id: listingId,
+    reason,
+    details: details?.trim().slice(0, 1000) || null,
+    reporter_ip: ip,
+  });
+
+  if (error) return NextResponse.json({ error: 'Could not submit report.' }, { status: 500 });
+
+  return NextResponse.json({ ok: true });
+}

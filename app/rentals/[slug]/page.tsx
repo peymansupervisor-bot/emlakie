@@ -19,6 +19,7 @@ import NeighborhoodScores from '@/components/NeighborhoodScores';
 import NearbySchools from '@/components/NearbySchools';
 import { getPropertyData } from '@/lib/zllw';
 import StreetViewExplorer from '@/components/StreetViewExplorer';
+import ReportButton from '@/components/ReportButton';
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -193,6 +194,9 @@ export default async function ListingPage({ params }: Props) {
             {listing.address}, {listing.city}
             {listing.state ? `, ${listing.state}` : ''} {listing.zip ?? ''}
           </p>
+          <div className="mt-2">
+            <ReportButton listingId={listing.id} />
+          </div>
 
           {listing.description && (
             <div className="mt-8 rounded-2xl border border-gray-100 bg-gray-50 px-6 py-5">

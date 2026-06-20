@@ -46,16 +46,13 @@ export default async function NewsTicker() {
             style={{ width: 'max-content' }}
           >
             {items.map((h, i) => (
-              <a
+              <span
                 key={i}
-                href={h.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-6 text-sm font-medium text-green-50 hover:text-white hover:underline transition-colors"
+                className="inline-flex items-center gap-2 px-6 text-sm font-medium text-green-50"
               >
                 <span className="text-green-300 select-none" aria-hidden="true">●</span>
                 {h.title}
-              </a>
+              </span>
             ))}
           </div>
         </div>

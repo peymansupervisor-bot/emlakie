@@ -27,6 +27,39 @@ function verdict(userRent: number, avg: number): { label: string; color: string;
   return { label: 'Above market', color: 'text-red-600', detail: `You may be overpaying — your rent is ${Math.round(diff)}% above the local average.` };
 }
 
+const rentCheckFaqs = [
+  {
+    q: 'How does the Rent Check tool work?',
+    a: 'Enter your city, bedroom count, and your current monthly rent. We compare it against active rental listings from real landlords in your area and show you whether your rent is below market, at market, or above market.',
+  },
+  {
+    q: 'Is this tool free?',
+    a: 'Yes — the Rent Check tool is completely free. No account, no email, and no credit card required.',
+  },
+  {
+    q: 'What data is this based on?',
+    a: 'Results are based on active rental listings posted directly by landlords on EMLAKIE. We show you the market low, average, median, and high for your city and bedroom count.',
+  },
+  {
+    q: 'My rent is above market — what can I do?',
+    a: 'If you discover you\'re overpaying, browse current listings in your city on EMLAKIE and contact landlords directly. Many landlords are open to negotiation, especially in markets where vacancies are higher than normal.',
+  },
+  {
+    q: 'How accurate are the results?',
+    a: 'Accuracy depends on the number of comparable listings available in your city. We show you exactly how many listings were used in the comparison. Cities with more active listings provide more precise results.',
+  },
+];
+
+const rentCheckFaqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: rentCheckFaqs.map(f => ({
+    '@type': 'Question',
+    name: f.q,
+    acceptedAnswer: { '@type': 'Answer', text: f.a },
+  })),
+};
+
 export default function RentCheckPage() {
   const [form, setForm] = useState({ city: '', bedrooms: '1', propertyType: '', rent: '' });
   const [loading, setLoading] = useState(false);
@@ -61,6 +94,7 @@ export default function RentCheckPage() {
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-14 sm:px-6">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(rentCheckFaqSchema) }} />
 
       {/* Header */}
       <div className="text-center">
@@ -248,6 +282,19 @@ export default function RentCheckPage() {
           )}
         </div>
       )}
+
+      {/* FAQ */}
+      <section className="mt-16">
+        <h2 className="text-xl font-extrabold text-gray-900">Frequently asked questions</h2>
+        <div className="mt-6 divide-y divide-gray-100">
+          {rentCheckFaqs.map(f => (
+            <div key={f.q} className="py-5">
+              <p className="font-bold text-gray-900">{f.q}</p>
+              <p className="mt-2 text-sm text-gray-600 leading-relaxed">{f.a}</p>
+            </div>
+          ))}
+        </div>
+      </section>
 
       {/* Trust signals */}
       {!result && (

@@ -3,7 +3,7 @@ import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'List Your Rental Property Free — EMLAKIE for Landlords',
-  description: 'Post your rental listing for free on EMLAKIE. Reach thousands of local renters, manage applications, and fill vacancies faster — no broker fees, no commissions.',
+  description: 'Post your rental listing free on EMLAKIE. Reach thousands of local renters, manage applications, and fill vacancies faster — no broker fees ever.',
   alternates: { canonical: 'https://emlakie.com/landlords' },
   openGraph: {
     title: 'List Your Rental Property Free | EMLAKIE',
@@ -103,11 +103,20 @@ const faqs = [
   },
 ];
 
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map(f => ({
+    '@type': 'Question',
+    name: f.q,
+    acceptedAnswer: { '@type': 'Answer', text: f.a },
+  })),
+};
+
 export default function LandlordsPage() {
   return (
     <div>
-
-      {/* Hero */}
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
       <section className="bg-white py-20 text-center">
         <div className="mx-auto max-w-3xl px-4 sm:px-6">
           <p className="text-xs font-bold uppercase tracking-widest text-brand-600">For Landlords &amp; Property Owners</p>

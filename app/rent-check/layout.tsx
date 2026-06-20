@@ -1,20 +1,20 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Is My Rent Fair? Free Rent Check Tool',
-  description: 'Find out if you\'re overpaying for rent. Compare your monthly rent against real landlord listings in your city — free, instant, no sign-up required.',
+  title: 'Free Rent Check — Is Your Rent Fair? | EMLAKIE',
+  description: "Find out if you're overpaying rent. Enter your address and current rent to instantly compare against real local listings. Free rent check tool from EMLAKIE.",
   alternates: { canonical: 'https://emlakie.com/rent-check' },
   openGraph: {
-    title: 'Is My Rent Fair? Free Rent Check Tool | EMLAKIE',
-    description: 'Compare your rent against real landlord listings in your city. Free and instant — no account needed.',
+    title: 'Free Rent Check — Is Your Rent Fair? | EMLAKIE',
+    description: 'Compare your rent against real local listings instantly. Free tool — no signup required.',
     type: 'website',
     url: 'https://emlakie.com/rent-check',
-    images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: 'EMLAKIE Rent Check' }],
+    images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: 'EMLAKIE Rent Check Tool' }],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Is My Rent Fair? Free Rent Check Tool | EMLAKIE',
-    description: 'Compare your rent against real landlord listings in your city. Free and instant — no account needed.',
+    title: 'Free Rent Check — Is Your Rent Fair? | EMLAKIE',
+    description: 'Compare your rent against real local listings instantly. Free tool — no signup required.',
     images: ['/opengraph-image'],
   },
 };

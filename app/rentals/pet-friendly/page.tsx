@@ -49,6 +49,14 @@ export default async function PetFriendlyPage() {
     <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
 
+      <nav aria-label="Breadcrumb" className="mb-6 flex items-center gap-2 text-sm text-gray-500">
+        <Link href="/" className="hover:text-brand-600">Home</Link>
+        <span aria-hidden="true">/</span>
+        <Link href="/rentals" className="hover:text-brand-600">Rentals</Link>
+        <span aria-hidden="true">/</span>
+        <span className="font-medium text-gray-900" aria-current="page">Pet-Friendly Rentals</span>
+      </nav>
+
       <div className="text-center">
         <p className="text-xs font-semibold uppercase tracking-widest text-brand-600">Rentals</p>
         <h1 className="mt-2 text-3xl font-extrabold text-gray-900 sm:text-4xl">Pet-Friendly Rentals</h1>
@@ -82,6 +90,29 @@ export default async function PetFriendlyPage() {
           <li>• Check that the unit has outdoor space or is close to a park.</li>
           <li>• Request any pet policy in writing before signing the lease.</li>
         </ul>
+      </div>
+
+      {/* More about pet-friendly rentals */}
+      <div className="mt-10 space-y-4 text-sm text-gray-600 leading-relaxed">
+        <h2 className="text-xl font-extrabold text-gray-900">Finding pet-friendly rentals: what to expect</h2>
+        <p>
+          Finding a pet-friendly apartment or house for rent is one of the biggest challenges for renters with dogs,
+          cats, or other animals. While many landlords advertise "no pets," a growing number welcome well-behaved
+          animals — especially in single-family homes and smaller multi-family buildings where pet damage is easier
+          to manage. Private landlords tend to be significantly more flexible than large corporate apartment complexes.
+        </p>
+        <p>
+          <strong>What landlords typically allow:</strong> Most pet-friendly rentals accept cats and small-to-medium
+          dogs (under 25–40 lbs). Larger breeds are sometimes restricted by landlord insurance requirements, but the
+          best way to find out is to contact the landlord directly. A listing that doesn&apos;t mention pets may still
+          be open to a well-trained dog with references from a previous landlord.
+        </p>
+        <p>
+          <strong>Pet fees vs. pet deposits:</strong> Some landlords charge a monthly pet rent ($25–$75/mo per pet),
+          others require a one-time refundable pet deposit ($200–$500), and some require both. Always ask for the
+          full pet policy — including allowed breeds, weight limits, and number of pets — in writing as a signed
+          addendum to your lease before moving in.
+        </p>
       </div>
 
       {/* Listings */}

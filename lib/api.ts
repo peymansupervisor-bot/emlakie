@@ -2,6 +2,7 @@ import { createClient } from '@supabase/supabase-js';
 import { unstable_noStore as noStore } from 'next/cache';
 import { Listing, ListingFilters, ListingsResponse, ZipLocation } from './types';
 import { sampleListings } from './sample-data';
+import { US_STATES, stateByAbbr } from './states';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'https://api.emlakie.com/api';
 
@@ -358,6 +359,105 @@ export async function getListingsByCity(citySlug: string): Promise<{ listings: L
 
   const result = await getListings({ city: match.city });
   return { ...result, city: match.city, state: match.state };
+}
+
+export interface StateListingsResult {
+  listings: Listing[];
+  total: number;
+  state: { name: string; abbr: string; slug: string };
+  cities: { city: string; slug: string; count: number; avgRent: number }[];
+  avgRent: number | null;
+  minRent: number | null;
+  maxRent: number | null;
+  usingSampleData: boolean;
+}
+
+export async function getTopStates(limit = 51): Promise<Array<{ name: string; abbr: string; slug: string; count: number }>> {
+  try {
+    const sb = supabaseAdmin();
+    const { data } = await sb
+      .from('listings')
+      .select('state')
+      .eq('status', 'active')
+      .not('state', 'is', null)
+      .limit(2000);
+
+    if (!data || data.length === 0) throw new Error('no data');
+
+    const map = new Map<string, number>();
+    for (const row of data) {
+      const abbr = ((row.state as string) ?? '').trim().toUpperCase();
+      if (!abbr) continue;
+      map.set(abbr, (map.get(abbr) ?? 0) + 1);
+    }
+
+    return Array.from(map.entries())
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, limit)
+      .map(([abbr, count]) => {
+        const s = stateByAbbr.get(abbr);
+        return s ? { name: s.name, abbr: s.abbr, slug: s.slug, count } : null;
+      })
+      .filter(Boolean) as Array<{ name: string; abbr: string; slug: string; count: number }>;
+  } catch {
+    // Fall back to all 50 states from static list
+    return US_STATES.slice(0, limit).map((s) => ({ ...s, count: 0 }));
+  }
+}
+
+export async function getListingsByState(stateSlug: string): Promise<StateListingsResult | null> {
+  const { stateBySlug } = await import('./states');
+  const stateInfo = stateBySlug.get(stateSlug);
+  if (!stateInfo) return null;
+
+  try {
+    const sb = supabaseAdmin();
+    const { data } = await sb
+      .from('listings')
+      .select('*')
+      .eq('status', 'active')
+      .ilike('state', stateInfo.abbr)
+      .order('created_at', { ascending: false })
+      .limit(100);
+
+    const listings = (data ?? []).map(rowToListing);
+
+    // City breakdown
+    const cityMap = new Map<string, { count: number; total: number }>();
+    for (const l of listings) {
+      const key = l.city.trim();
+      const entry = cityMap.get(key) ?? { count: 0, total: 0 };
+      entry.count += 1;
+      entry.total += l.price;
+      cityMap.set(key, entry);
+    }
+    const cities = Array.from(cityMap.entries())
+      .sort((a, b) => b[1].count - a[1].count)
+      .slice(0, 20)
+      .map(([city, { count, total }]) => ({
+        city,
+        slug: city.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, ''),
+        count,
+        avgRent: Math.round(total / count),
+      }));
+
+    const prices = listings.map((l) => l.price).filter((p) => p > 0);
+    const avgRent = prices.length ? Math.round(prices.reduce((a, b) => a + b, 0) / prices.length) : null;
+    const minRent = prices.length ? Math.min(...prices) : null;
+    const maxRent = prices.length ? Math.max(...prices) : null;
+
+    if (listings.length < 3) {
+      // Pad with sample data filtered by state abbr
+      const samples = sampleListings.filter((l) => l.state?.toUpperCase() === stateInfo.abbr);
+      const merged = [...listings, ...samples].slice(0, 12);
+      return { listings: merged, total: merged.length, state: stateInfo, cities, avgRent, minRent, maxRent, usingSampleData: listings.length === 0 };
+    }
+
+    return { listings, total: listings.length, state: stateInfo, cities, avgRent, minRent, maxRent, usingSampleData: false };
+  } catch {
+    const samples = sampleListings.filter((l) => l.state?.toUpperCase() === stateInfo.abbr);
+    return { listings: samples, total: samples.length, state: stateInfo, cities: [], avgRent: null, minRent: null, maxRent: null, usingSampleData: true };
+  }
 }
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;

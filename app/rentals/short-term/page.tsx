@@ -5,11 +5,11 @@ import ListingCard from '@/components/ListingCard';
 
 export const metadata: Metadata = {
   title: 'Short-Term Rentals — Monthly & Flexible Lease Apartments',
-  description: 'Find short-term and month-to-month rentals. Flexible leases for relocations, travel nurses, remote workers, and anyone who needs housing without a long commitment.',
+  description: 'Find short-term and month-to-month rentals. Flexible leases for relocations, travel nurses, and remote workers — no long commitment, no broker fees.',
   alternates: { canonical: 'https://emlakie.com/rentals/short-term' },
   openGraph: {
     title: 'Short-Term Rentals — Monthly & Flexible Lease Apartments',
-    description: 'Find short-term and month-to-month rentals. Flexible leases for relocations, travel nurses, remote workers, and anyone who needs housing without a long commitment.',
+    description: 'Find short-term and month-to-month rentals. Flexible leases for relocations, travel nurses, and remote workers — no long commitment, no broker fees.',
     type: 'website',
     url: 'https://emlakie.com/rentals/short-term',
     images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: 'EMLAKIE Short-Term Rentals' }],
@@ -48,6 +48,14 @@ export default async function ShortTermPage() {
   return (
     <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
+
+      <nav aria-label="Breadcrumb" className="mb-6 flex items-center gap-2 text-sm text-gray-500">
+        <Link href="/" className="hover:text-brand-600">Home</Link>
+        <span aria-hidden="true">/</span>
+        <Link href="/rentals" className="hover:text-brand-600">Rentals</Link>
+        <span aria-hidden="true">/</span>
+        <span className="font-medium text-gray-900" aria-current="page">Short-Term Rentals</span>
+      </nav>
 
       <div className="text-center">
         <p className="text-xs font-semibold uppercase tracking-widest text-brand-600">Rentals</p>

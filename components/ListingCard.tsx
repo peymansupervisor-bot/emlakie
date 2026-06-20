@@ -15,7 +15,7 @@ export default function ListingCard({ listing, priority = false }: { listing: Li
         {photo ? (
           <Image
             src={photo}
-            alt={`${formatBeds(listing.bedrooms)}, ${formatBaths(listing.bathrooms)} ${formatPropertyType(listing.property_type)} at ${listing.address}, ${listing.city}`}
+            alt={`${formatPrice(listing.price)} — ${formatBeds(listing.bedrooms)}, ${formatBaths(listing.bathrooms)} ${formatPropertyType(listing.property_type)} at ${listing.address}, ${listing.city}`}
             fill
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
             priority={priority}

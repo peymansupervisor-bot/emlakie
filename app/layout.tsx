@@ -41,6 +41,11 @@ export const metadata: Metadata = {
     description: 'Browse houses, apartments, and condos for rent. EMLAKIE connects renters directly with landlords.',
     images: ['/opengraph-image'],
   },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true },
+  },
   icons: {
     icon: [
       { url: '/favicon-32x32.png', type: 'image/png', sizes: '32x32' },

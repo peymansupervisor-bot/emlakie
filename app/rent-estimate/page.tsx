@@ -36,6 +36,39 @@ function formatType(t: string) {
   return t.charAt(0).toUpperCase() + t.slice(1).replace(/-/g, ' ');
 }
 
+const rentEstimateFaqs = [
+  {
+    q: 'What is the E-rent Value™?',
+    a: 'The E-rent Value™ is EMLAKIE\'s automated rent estimate for landlords. It analyzes active listings in your city with similar bedrooms and property type to suggest a competitive rent range for your property.',
+  },
+  {
+    q: 'How is the suggested rent range calculated?',
+    a: 'We analyze active rental listings from real landlords in your city that match your property type and bedroom count. We suggest a range that positions your unit competitively — typically near or slightly below the market median to help you attract quality tenants faster.',
+  },
+  {
+    q: 'Is it free to use?',
+    a: 'Yes — the E-rent Value™ tool is completely free. No account, no credit card, and no email address required.',
+  },
+  {
+    q: 'When should I price higher or lower than the estimate?',
+    a: 'Price higher if your unit has premium features such as parking, in-unit washer/dryer, an updated kitchen, or a renovated bathroom — these typically justify an 8–15% premium. Price toward the lower end if you want to fill the vacancy quickly or if the unit needs cosmetic work.',
+  },
+  {
+    q: 'How often should I re-check the estimate?',
+    a: 'We recommend checking before each new lease and before renewing an existing tenancy. Rental markets can shift 5–10% year over year, and staying current helps you avoid undercharging long-term tenants or pricing a vacant unit above the market.',
+  },
+];
+
+const rentEstimateFaqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: rentEstimateFaqs.map(f => ({
+    '@type': 'Question',
+    name: f.q,
+    acceptedAnswer: { '@type': 'Answer', text: f.a },
+  })),
+};
+
 export default function RentEstimatePage() {
   const [form, setForm] = useState({ city: '', bedrooms: '2', bathrooms: '1', propertyType: 'apartment' });
   const [loading, setLoading] = useState(false);
@@ -70,6 +103,7 @@ export default function RentEstimatePage() {
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-14 sm:px-6">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(rentEstimateFaqSchema) }} />
 
       {/* Hero */}
       <div className="text-center">
@@ -263,6 +297,19 @@ export default function RentEstimatePage() {
           )}
         </div>
       )}
+
+      {/* FAQ */}
+      <section className="mt-16">
+        <h2 className="text-xl font-extrabold text-gray-900">Frequently asked questions</h2>
+        <div className="mt-6 divide-y divide-gray-100">
+          {rentEstimateFaqs.map(f => (
+            <div key={f.q} className="py-5">
+              <p className="font-bold text-gray-900">{f.q}</p>
+              <p className="mt-2 text-sm text-gray-600 leading-relaxed">{f.a}</p>
+            </div>
+          ))}
+        </div>
+      </section>
 
       {/* Trust signals — shown before result */}
       {!result && (

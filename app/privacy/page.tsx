@@ -2,12 +2,21 @@ import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Privacy Policy | EMLAKIE',
-  description: 'Privacy Policy for EMLAKIE — how we collect, use, and protect your personal information.',
+  description: 'Read EMLAKIE\'s Privacy Policy to learn how we collect, use, store, and protect your personal information when you use our rental platform and mobile app.',
   alternates: { canonical: 'https://emlakie.com/privacy' },
+  robots: { index: true, follow: false },
   openGraph: {
     title: 'Privacy Policy | EMLAKIE',
-    description: 'Privacy Policy for EMLAKIE — how we collect, use, and protect your personal information.',
-    images: [{ url: '/logo.png', width: 512, height: 512, alt: 'EMLAKIE' }],
+    description: 'How EMLAKIE collects, uses, and protects your personal information on our rental platform.',
+    type: 'website',
+    url: 'https://emlakie.com/privacy',
+    images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: 'EMLAKIE' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Privacy Policy | EMLAKIE',
+    description: 'How EMLAKIE collects, uses, and protects your personal information on our rental platform.',
+    images: ['/opengraph-image'],
   },
 };
 

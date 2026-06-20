@@ -2,7 +2,8 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import ListingCard from '@/components/ListingCard';
-import { getAllCities, getListingsByCity } from '@/lib/api';
+import SeoLinkGrid from '@/components/SeoLinkGrid';
+import { getAllCities, getListingsByCity, getTrendingCities } from '@/lib/api';
 import { formatPrice } from '@/lib/format';
 
 interface Props {
@@ -45,7 +46,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function CityPage({ params }: Props) {
   const { city: slug } = await params;
-  const result = await getListingsByCity(slug);
+  const [result, trendingCities] = await Promise.all([
+    getListingsByCity(slug),
+    getTrendingCities(8),
+  ]);
   if (!result) notFound();
 
   const { listings, total, city, state, usingSampleData } = result;
@@ -191,6 +195,8 @@ export default async function CityPage({ params }: Props) {
           </Link>
         ))}
       </section>
+
+      <SeoLinkGrid trendingCities={trendingCities} />
     </div>
   );
 }

@@ -107,7 +107,9 @@ export default async function ListingPage({ params }: Props) {
     name: listing.title,
     description: listing.description ?? '',
     url: `https://emlakie.com/rentals/${listing.slug ?? listing.id}`,
-    image: listing.photos?.[0] ?? 'https://emlakie.com/logo.png',
+    image: listing.photos?.length
+      ? listing.photos.map(p => ({ '@type': 'ImageObject', url: p, width: 1200, height: 800 }))
+      : [{ '@type': 'ImageObject', url: 'https://emlakie.com/opengraph-image', width: 1200, height: 630 }],
     offers: {
       '@type': 'Offer',
       price: listing.price,
@@ -127,10 +129,22 @@ export default async function ListingPage({ params }: Props) {
     floorSize: listing.sqft ? { '@type': 'QuantitativeValue', value: listing.sqft, unitCode: 'FTK' } : undefined,
   };
 
+  const ytTourMatch = listing.virtual_tour_url?.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/))([A-Za-z0-9_-]{11})/);
+  const videoSchema = ytTourMatch ? {
+    '@context': 'https://schema.org',
+    '@type': 'VideoObject',
+    name: `Virtual Tour — ${listing.title}`,
+    description: `Video tour of ${listing.title} in ${listing.city}, ${listing.state}`,
+    thumbnailUrl: `https://img.youtube.com/vi/${ytTourMatch[1]}/maxresdefault.jpg`,
+    embedUrl: `https://www.youtube.com/embed/${ytTourMatch[1]}`,
+    uploadDate: new Date().toISOString().split('T')[0],
+  } : null;
+
   return (
     <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(listingSchema) }} />
+      {videoSchema && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(videoSchema) }} />}
       <Link href="/rentals" className="text-sm font-semibold text-brand-600 hover:text-brand-700">
         ← Back to search
       </Link>

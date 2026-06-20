@@ -49,6 +49,14 @@ export default async function Section8Page() {
     <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
 
+      <nav aria-label="Breadcrumb" className="mb-6 flex items-center gap-2 text-sm text-gray-500">
+        <Link href="/" className="hover:text-brand-600">Home</Link>
+        <span aria-hidden="true">/</span>
+        <Link href="/rentals" className="hover:text-brand-600">Rentals</Link>
+        <span aria-hidden="true">/</span>
+        <span className="font-medium text-gray-900" aria-current="page">Section 8 Rentals</span>
+      </nav>
+
       <div className="text-center">
         <p className="text-xs font-semibold uppercase tracking-widest text-brand-600">Rentals</p>
         <h1 className="mt-2 text-3xl font-extrabold text-gray-900 sm:text-4xl">Section 8 / Housing Voucher Rentals</h1>
@@ -93,6 +101,31 @@ export default async function Section8Page() {
           against tenants based on source of income, which includes housing vouchers. If you believe you have been
           discriminated against, contact your local fair housing agency or HUD at{' '}
           <a href="https://www.hud.gov/topics/housing_choice_voucher_program_section_8" target="_blank" rel="noopener noreferrer" className="underline font-semibold">hud.gov</a>.
+        </p>
+      </div>
+
+      {/* How the HCV process works */}
+      <div className="mt-6 space-y-4 text-sm text-gray-600 leading-relaxed">
+        <h2 className="text-xl font-extrabold text-gray-900">How the Housing Choice Voucher process works</h2>
+        <p>
+          The Section 8 Housing Choice Voucher program is administered locally by Public Housing Authorities (PHAs)
+          across the country. Landlords who participate agree to have their units inspected and to charge rent within
+          HUD-approved payment standards. In return, they receive a guaranteed portion of rent directly from the
+          government each month — reducing vacancy risk and providing a reliable income stream.
+        </p>
+        <p>
+          <strong>For renters:</strong> Once you have a voucher, you typically have 60–120 days (extendable in
+          many jurisdictions) to find a participating landlord. The unit must pass a Housing Quality Standards
+          (HQS) inspection and rent must fall within your local payment standard. Your share of the rent is
+          based on approximately 30% of your adjusted gross income — the government pays the remainder directly
+          to the landlord.
+        </p>
+        <p>
+          <strong>Finding landlords who accept vouchers:</strong> Many landlords on EMLAKIE who accept Housing
+          Choice Vouchers note it in the description or amenities rather than the listing title. Send landlords
+          a direct message — private landlords are typically more flexible than large property management companies,
+          and in many states (California, Illinois, New York, Washington, and others) it is illegal to refuse a
+          tenant solely because they pay with a housing voucher.
         </p>
       </div>
 

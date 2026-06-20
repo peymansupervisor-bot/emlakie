@@ -49,6 +49,14 @@ export default async function FurnishedPage() {
     <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
 
+      <nav aria-label="Breadcrumb" className="mb-6 flex items-center gap-2 text-sm text-gray-500">
+        <Link href="/" className="hover:text-brand-600">Home</Link>
+        <span aria-hidden="true">/</span>
+        <Link href="/rentals" className="hover:text-brand-600">Rentals</Link>
+        <span aria-hidden="true">/</span>
+        <span className="font-medium text-gray-900" aria-current="page">Furnished Rentals</span>
+      </nav>
+
       <div className="text-center">
         <p className="text-xs font-semibold uppercase tracking-widest text-brand-600">Rentals</p>
         <h1 className="mt-2 text-3xl font-extrabold text-gray-900 sm:text-4xl">Furnished Rentals</h1>
@@ -86,6 +94,28 @@ export default async function FurnishedPage() {
           ))}
         </div>
         <p className="mt-3 text-xs text-gray-500">Always confirm exactly what's included with the landlord before signing.</p>
+      </div>
+
+      {/* More about furnished rentals */}
+      <div className="mt-10 space-y-4 text-sm text-gray-600 leading-relaxed">
+        <h2 className="text-xl font-extrabold text-gray-900">What to look for in a furnished rental</h2>
+        <p>
+          Furnished apartments and houses for rent vary widely — from bare-essentials setups (a mattress and a couch)
+          to fully-equipped homes with linens, cookware, smart TVs, and high-speed internet. Before you sign a lease,
+          get a complete inventory of what&apos;s included in writing so there are no surprises on move-in day.
+        </p>
+        <p>
+          <strong>Typical lease terms:</strong> Furnished rentals most often come with flexible or shorter lease
+          agreements — month-to-month, 3-month, or 6-month terms are common. This makes them ideal for travel nurses
+          on 13-week assignments, professionals on corporate relocations, remote workers testing a new city, or
+          anyone bridging a gap between a sold home and a new permanent residence.
+        </p>
+        <p>
+          <strong>Cost vs. unfurnished:</strong> Furnished units typically cost 10–30% more per month than a
+          comparable unfurnished rental. For stays of three months or longer, compare that premium against the cost
+          of buying basic furniture, renting storage, or shipping your belongings — furnished often wins on total
+          cost. Short-term furnished housing is almost always cheaper than an extended-stay hotel.
+        </p>
       </div>
 
       {/* Listings */}

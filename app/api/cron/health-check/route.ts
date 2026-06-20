@@ -131,6 +131,7 @@ async function checkRapidAPI(): Promise<CheckResult> {
     const res = await fetch('https://zllw-working-api.p.rapidapi.com/pro/byaddress?propertyaddress=123+Main+St+Los+Angeles+CA', {
       headers: { 'x-rapidapi-key': key, 'x-rapidapi-host': 'zllw-working-api.p.rapidapi.com' },
       signal: AbortSignal.timeout(8000),
+      cache: 'no-store',
     });
     if (res.status === 200) return { service: 'RapidAPI (Property Data)', status: 'ok', message: 'API responding' };
     if (res.status === 401 || res.status === 403) return { service: 'RapidAPI (Property Data)', status: 'down', message: 'API key rejected or revoked' };

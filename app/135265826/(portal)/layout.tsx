@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { getModeratorSession, adminClient } from '@/lib/moderator';
 import AdminSignOut from './AdminSignOut';
+import ChangePasswordButton from './ChangePasswordButton';
 
 export const metadata = { title: 'Moderator Dashboard — EMLAKIE', robots: { index: false } };
 
@@ -35,6 +36,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
             </div>
             <div className="flex items-center gap-4">
               <span className="text-xs text-gray-400">{session.email}</span>
+              <ChangePasswordButton />
               <AdminSignOut />
             </div>
           </div>

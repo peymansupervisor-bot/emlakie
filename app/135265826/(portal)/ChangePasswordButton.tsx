@@ -1,7 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import { supabase } from '@/lib/supabase';
+import { createBrowserClient } from '@supabase/ssr';
+
+const sb = createBrowserClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+);
 
 export default function ChangePasswordButton() {
   const [open, setOpen] = useState(false);
@@ -20,13 +25,13 @@ export default function ChangePasswordButton() {
     setBusy(true);
 
     // Re-authenticate to verify current password
-    const { data: { user } } = await supabase.auth.getUser();
+    const { data: { user } } = await sb.auth.getUser();
     if (!user?.email) { setErr('Session error. Please sign in again.'); setBusy(false); return; }
 
-    const { error: signInErr } = await supabase.auth.signInWithPassword({ email: user.email, password: current });
+    const { error: signInErr } = await sb.auth.signInWithPassword({ email: user.email, password: current });
     if (signInErr) { setErr('Current password is incorrect.'); setBusy(false); return; }
 
-    const { error: updateErr } = await supabase.auth.updateUser({ password: next });
+    const { error: updateErr } = await sb.auth.updateUser({ password: next });
     if (updateErr) { setErr(updateErr.message); setBusy(false); return; }
 
     setMsg('Password changed successfully.');

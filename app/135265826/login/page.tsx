@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { supabase } from '@/lib/supabase';
+import { createBrowserClient } from '@supabase/ssr';
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -15,7 +15,15 @@ export default function AdminLoginPage() {
     e.preventDefault();
     setBusy(true);
     setError('');
-    const { error: err } = await supabase.auth.signInWithPassword({ email, password });
+
+    // Use SSR browser client so the session is stored in cookies,
+    // making it visible to the server-side layout auth check.
+    const sb = createBrowserClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    );
+
+    const { error: err } = await sb.auth.signInWithPassword({ email, password });
     if (err) { setError(err.message); setBusy(false); return; }
     router.replace('/135265826');
   }
@@ -33,7 +41,7 @@ export default function AdminLoginPage() {
             <label className="block text-xs font-semibold text-gray-400 mb-1.5">Email</label>
             <input
               type="email" value={email} onChange={(e) => setEmail(e.target.value)} required
-              className="w-full rounded-xl bg-gray-800 border border-gray-700 px-4 py-2.5 text-sm text-white placeholder-gray-500 outline-none focus:border-brand-500"
+              className="w-full rounded-xl bg-gray-800 border border-gray-700 px-4 py-2.5 text-sm text-white placeholder-gray-500 outline-none focus:border-green-500"
               placeholder="moderator@emlakie.com"
             />
           </div>
@@ -41,7 +49,7 @@ export default function AdminLoginPage() {
             <label className="block text-xs font-semibold text-gray-400 mb-1.5">Password</label>
             <input
               type="password" value={password} onChange={(e) => setPassword(e.target.value)} required
-              className="w-full rounded-xl bg-gray-800 border border-gray-700 px-4 py-2.5 text-sm text-white placeholder-gray-500 outline-none focus:border-brand-500"
+              className="w-full rounded-xl bg-gray-800 border border-gray-700 px-4 py-2.5 text-sm text-white placeholder-gray-500 outline-none focus:border-green-500"
               placeholder="••••••••"
             />
           </div>
@@ -49,7 +57,7 @@ export default function AdminLoginPage() {
           {error && <p className="text-sm font-medium text-red-400">{error}</p>}
 
           <button type="submit" disabled={busy}
-            className="w-full rounded-xl bg-brand-600 py-2.5 text-sm font-bold text-white hover:bg-brand-700 transition disabled:opacity-60 mt-2">
+            className="w-full rounded-xl bg-green-600 py-2.5 text-sm font-bold text-white hover:bg-green-700 transition disabled:opacity-60 mt-2">
             {busy ? 'Signing in…' : 'Sign in'}
           </button>
         </form>

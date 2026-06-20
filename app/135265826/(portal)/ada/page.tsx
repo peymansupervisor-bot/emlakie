@@ -32,7 +32,8 @@ export default async function ADAPage() {
 
   const latestRun = runs[0];
   const latestRecords = latestRun?.[1] ?? [];
-  const latestTotal = latestRecords.reduce((n, r) => n + r.violation_count, 0);
+  const scanErrors = latestRecords.filter((r) => r.violation_count === -1).length;
+  const latestTotal = latestRecords.filter((r) => r.violation_count > 0).reduce((n, r) => n + r.violation_count, 0);
   const hasIssues = latestRecords.some((r) => r.violation_count !== 0);
   const latestCritical = latestRecords.reduce((n, r) => n + r.critical_count, 0);
   const latestDate = latestRecords[0]?.scanned_at
@@ -51,9 +52,15 @@ export default async function ADAPage() {
         <div className="flex items-center gap-3">
           <RepairViolationsButton hasViolations={hasIssues} />
           <RunADAAuditButton />
-        <div className={`rounded-2xl px-5 py-3 text-center ${latestCritical > 0 ? 'bg-red-900' : latestTotal > 0 ? 'bg-yellow-900' : 'bg-green-900'}`}>
-          <p className={`font-bold text-sm ${latestCritical > 0 ? 'text-red-300' : latestTotal > 0 ? 'text-yellow-300' : 'text-green-300'}`}>
-            {latestCritical > 0 ? `${latestCritical} critical violation${latestCritical > 1 ? 's' : ''}` : latestTotal > 0 ? `${latestTotal} violations` : 'No violations'}
+        <div className={`rounded-2xl px-5 py-3 text-center ${latestCritical > 0 || scanErrors > 0 ? 'bg-red-900' : latestTotal > 0 ? 'bg-yellow-900' : 'bg-green-900'}`}>
+          <p className={`font-bold text-sm ${latestCritical > 0 || scanErrors > 0 ? 'text-red-300' : latestTotal > 0 ? 'text-yellow-300' : 'text-green-300'}`}>
+            {latestCritical > 0
+              ? `${latestCritical} critical violation${latestCritical > 1 ? 's' : ''}`
+              : scanErrors > 0
+              ? `${scanErrors} scan error${scanErrors > 1 ? 's' : ''}`
+              : latestTotal > 0
+              ? `${latestTotal} violation${latestTotal > 1 ? 's' : ''}`
+              : 'No violations'}
           </p>
           <p className="text-xs text-gray-400 mt-0.5">Last scan: {latestDate}</p>
         </div>

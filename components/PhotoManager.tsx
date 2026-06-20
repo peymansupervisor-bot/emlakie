@@ -7,6 +7,7 @@ import { supabase } from '@/lib/supabase';
 
 const MAX_PX = 1200;
 const JPEG_QUALITY = 0.75;
+const MAX_PHOTOS = 25;
 
 function compressImage(file: File): Promise<File> {
   return new Promise((resolve) => {
@@ -49,16 +50,19 @@ export default function PhotoManager({ listingId, initialPhotos }: Props) {
   async function handleUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const files = Array.from(e.target.files ?? []);
     if (!files.length) return;
+    const remaining = MAX_PHOTOS - photos.length;
+    if (remaining <= 0) { setMsg(`Maximum ${MAX_PHOTOS} photos allowed.`); return; }
+    const toUpload = files.slice(0, remaining);
+    if (toUpload.length < files.length) setMsg(`Only ${remaining} slot${remaining > 1 ? 's' : ''} remaining — uploading first ${toUpload.length}.`);
     setUploading(true);
-    setMsg(null);
     const newUrls: string[] = [];
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('Not signed in');
 
-      for (let i = 0; i < files.length; i++) {
-        setUploadProgress(`Compressing ${i + 1} of ${files.length}…`);
-        const compressed = await compressImage(files[i]);
+      for (let i = 0; i < toUpload.length; i++) {
+        setUploadProgress(`Compressing ${i + 1} of ${toUpload.length}…`);
+        const compressed = await compressImage(toUpload[i]);
         setUploadProgress(`Uploading ${i + 1} of ${files.length}…`);
         const path = `${user.id}/${Date.now()}-${Math.random().toString(36).slice(2)}.jpg`;
         const { error: uploadErr } = await supabase.storage
@@ -79,10 +83,10 @@ export default function PhotoManager({ listingId, initialPhotos }: Props) {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
       setPhotos(data.photos);
-      setMsg(`${files.length} photo${files.length > 1 ? 's' : ''} uploaded.`);
+      setMsg(`${toUpload.length} photo${toUpload.length > 1 ? 's' : ''} uploaded.`);
     } catch (err: unknown) {
       setMsg(newUrls.length > 0
-        ? `${newUrls.length} of ${files.length} uploaded — ${(err as Error).message}`
+        ? `${newUrls.length} of ${toUpload.length} uploaded — ${(err as Error).message}`
         : ((err as Error).message ?? 'Upload failed.'));
     } finally {
       setUploading(false);
@@ -138,18 +142,22 @@ export default function PhotoManager({ listingId, initialPhotos }: Props) {
     <div className="rounded-2xl border border-gray-200 p-6 shadow-card">
       <div className="flex items-center justify-between mb-4">
         <h2 className="font-bold text-gray-900">Photos</h2>
-        <label className={`cursor-pointer rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-700 ${uploading ? 'opacity-60 pointer-events-none' : ''}`}>
-          {uploading ? (uploadProgress || 'Uploading…') : '+ Add photos'}
-          <input
-            ref={fileRef}
-            type="file"
-            accept="image/*"
-            multiple
-            className="sr-only"
-            onChange={handleUpload}
-            disabled={uploading}
-          />
-        </label>
+        {photos.length >= MAX_PHOTOS ? (
+          <span className="rounded-lg bg-gray-100 px-4 py-2 text-sm font-semibold text-gray-400">25 photo limit reached</span>
+        ) : (
+          <label className={`cursor-pointer rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-700 ${uploading ? 'opacity-60 pointer-events-none' : ''}`}>
+            {uploading ? (uploadProgress || 'Uploading…') : `+ Add photos (${photos.length}/25)`}
+            <input
+              ref={fileRef}
+              type="file"
+              accept="image/*"
+              multiple
+              className="sr-only"
+              onChange={handleUpload}
+              disabled={uploading}
+            />
+          </label>
+        )}
       </div>
 
       {msg && (

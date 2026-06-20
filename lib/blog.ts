@@ -678,6 +678,255 @@ export const posts: Post[] = [
   },
 ];
 
+  {
+    slug: 'average-rent-san-francisco-2026',
+    title: 'Average Rent in San Francisco in 2026: What You\'ll Actually Pay',
+    description: 'San Francisco remains one of the most expensive rental markets in the world. Here\'s a neighborhood-by-neighborhood breakdown of what renters are paying in 2026.',
+    date: '2026-06-20',
+    category: 'Market Trends',
+    readTime: 5,
+    citySlug: 'san-francisco',
+    content: `
+<p>San Francisco's rental market defies easy summary. Rents famously spiked during the tech boom, fell sharply during the pandemic, and have since partially recovered — but the city remains one of the most expensive rental markets in the world. Here's what you'll actually pay in 2026.</p>
+
+<h2>Citywide Averages</h2>
+<ul>
+  <li><strong>Studio:</strong> $2,000–$2,800/mo</li>
+  <li><strong>1-Bedroom:</strong> $2,800–$3,800/mo</li>
+  <li><strong>2-Bedroom:</strong> $3,800–$5,200/mo</li>
+  <li><strong>3-Bedroom:</strong> $5,000–$7,000+/mo</li>
+</ul>
+
+<h2>Rent by Neighborhood</h2>
+<ul>
+  <li><strong>SoMa (South of Market):</strong> $3,000–$4,200/mo (1BR) — tech hub; modern high-rises; close to Caltrain</li>
+  <li><strong>Mission District:</strong> $2,800–$3,800/mo (1BR) — vibrant Latino culture; bars, restaurants, murals; rent-controlled buildings exist</li>
+  <li><strong>Castro / Noe Valley:</strong> $3,000–$4,200/mo (1BR) — walkable, family-friendly, community feel</li>
+  <li><strong>Richmond / Sunset:</strong> $2,400–$3,400/mo (1BR) — most affordable neighborhoods in SF proper; foggy but spacious</li>
+  <li><strong>Pacific Heights:</strong> $3,500–$5,500/mo (1BR) — Victorian homes, city views, high-end boutiques</li>
+  <li><strong>Tenderloin / Civic Center:</strong> $2,200–$3,000/mo (1BR) — lowest rents in the city but highest urban challenges</li>
+  <li><strong>Marina / Cow Hollow:</strong> $3,200–$4,500/mo (1BR) — young professional crowd; scenic waterfront</li>
+</ul>
+
+<h2>Rent Control in San Francisco</h2>
+<p>San Francisco has among the strongest renter protections in the country. Units built before 1979 are subject to rent control, which limits annual increases to well below market rates. If you secure a rent-controlled unit, the financial calculus changes dramatically — many long-term tenants pay 40–60% below current market rate. Look specifically for pre-1979 buildings when searching.</p>
+
+<h2>The Oakland Alternative</h2>
+<p>Many SF renters commute from Oakland, Berkeley, or the East Bay, where comparable units cost 30–40% less. BART connects these cities in 15–25 minutes, making a cross-bay commute financially rational for most jobs.</p>
+
+<h2>San Francisco Renter Tips</h2>
+<ul>
+  <li><strong>Act within 24 hours.</strong> Desirable units in the $2,800–$3,500 range receive multiple applications in a single day.</li>
+  <li><strong>Ask about rent control status.</strong> Buildings built after June 1979 are generally exempt, but it's always worth asking.</li>
+  <li><strong>Parking is a premium.</strong> Dedicated parking can add $200–$400/mo to rent. Consider whether you actually need a car.</li>
+  <li><strong>Roommates are common.</strong> Many San Franciscans split units to manage costs — a 2BR at $4,000 shared two ways is $2,000/person.</li>
+  <li><strong>Subletting rules matter.</strong> California law and SF's Rent Ordinance give tenants certain subletting rights — know them before you sign.</li>
+</ul>
+
+<p><a href="/rentals/city/san-francisco">Browse San Francisco rentals on EMLAKIE</a> — posted directly by landlords, no broker fees, no commissions.</p>
+    `.trim(),
+  },
+  {
+    slug: 'average-rent-boston-2026',
+    title: 'Average Rent in Boston in 2026: College Town Prices Year-Round',
+    description: 'Boston is one of the most expensive rental markets in the Northeast, driven by universities, healthcare, and tech. Here\'s a neighborhood breakdown for 2026.',
+    date: '2026-06-19',
+    category: 'Market Trends',
+    readTime: 5,
+    citySlug: 'boston',
+    content: `
+<p>Boston's rental market is shaped by an enormous student and young-professional population, a world-class medical and biotech sector, and a chronically limited housing supply. Rents have risen steadily, making Boston one of the ten most expensive cities to rent in the United States.</p>
+
+<h2>Citywide Averages</h2>
+<ul>
+  <li><strong>Studio:</strong> $1,900–$2,500/mo</li>
+  <li><strong>1-Bedroom:</strong> $2,400–$3,200/mo</li>
+  <li><strong>2-Bedroom:</strong> $3,000–$4,200/mo</li>
+  <li><strong>3-Bedroom:</strong> $3,800–$5,500/mo</li>
+</ul>
+
+<h2>Rent by Neighborhood</h2>
+<ul>
+  <li><strong>Back Bay / Beacon Hill:</strong> $3,000–$5,000/mo (1BR) — historic brownstones, Newbury Street; Boston's most prestigious addresses</li>
+  <li><strong>South End:</strong> $2,800–$4,000/mo (1BR) — Victorian rowhouses, restaurant row, arts scene</li>
+  <li><strong>Fenway / Kenmore:</strong> $2,200–$3,200/mo (1BR) — student-heavy; proximity to hospitals, universities, and Fenway Park</li>
+  <li><strong>Jamaica Plain (JP):</strong> $2,100–$3,000/mo (1BR) — diverse, green, community-oriented; popular with young families</li>
+  <li><strong>Allston / Brighton:</strong> $1,900–$2,600/mo (1BR) — Boston's college neighborhood; best value in the city; MBTA access</li>
+  <li><strong>East Boston:</strong> $1,900–$2,600/mo (1BR) — up-and-coming; waterfront views; 10 minutes to downtown via Blue Line</li>
+  <li><strong>Somerville (near T):</strong> $2,400–$3,400/mo (1BR) — Davis and Porter Squares; tech-adjacent; strong community feel</li>
+  <li><strong>Cambridge:</strong> $2,800–$4,000/mo (1BR) — Harvard/MIT adjacency premium; walkable; high demand</li>
+</ul>
+
+<h2>The September 1st Moving Surge</h2>
+<p>Boston has a unique rental calendar. Because so many leases align with the academic year, the vast majority of Boston apartments turn over on September 1st. This creates an intense rental season from June through August, when landlords receive dozens of applications for quality units. <strong>Begin your search no later than June</strong> if you want to move in September, and be prepared to sign a lease months before your move-in date.</p>
+
+<h2>Greater Boston Alternatives</h2>
+<p>Many Boston workers live in surrounding cities at meaningfully lower rents:</p>
+<ul>
+  <li><strong>Lynn:</strong> $1,500–$2,000/mo (1BR); 30-min commuter rail to North Station</li>
+  <li><strong>Quincy:</strong> $1,800–$2,400/mo (1BR); Red Line to Downtown Crossing</li>
+  <li><strong>Waltham:</strong> $2,000–$2,700/mo (1BR); Route 128 tech corridor</li>
+  <li><strong>Malden / Medford:</strong> $1,900–$2,500/mo (1BR); Orange/Green Line access</li>
+</ul>
+
+<h2>Boston Renter Tips</h2>
+<ul>
+  <li><strong>Broker fees are common but not mandatory.</strong> Massachusetts allows landlords to charge a broker fee (often one month's rent) when using an agent. Platforms like EMLAKIE connect you directly with landlords who list without broker fees.</li>
+  <li><strong>Massachusetts has strong tenant protections.</strong> Security deposits are capped at one month's rent, and landlords must return them with interest within 30 days of move-out.</li>
+  <li><strong>Heat included matters.</strong> Boston winters are brutal — an apartment with "heat included" is worth considerably more than its face-rent suggests.</li>
+  <li><strong>MBTA access drives value.</strong> Units within a 10-minute walk of a T stop command premiums. Know your subway line before you search.</li>
+</ul>
+
+<p><a href="/rentals/city/boston">Browse Boston rentals on EMLAKIE</a> — connect directly with landlords, no broker fees.</p>
+    `.trim(),
+  },
+  {
+    slug: 'average-rent-nashville-2026',
+    title: 'Average Rent in Nashville in 2026: Music City\'s Booming Rental Market',
+    description: 'Nashville has become one of the fastest-growing rental markets in the US. Here\'s what renters are paying across East Nashville, Midtown, and the surrounding suburbs in 2026.',
+    date: '2026-06-18',
+    category: 'Market Trends',
+    readTime: 4,
+    citySlug: 'nashville',
+    content: `
+<p>Nashville's population growth over the last decade has been extraordinary. Driven by corporate relocations, a thriving music and entertainment industry, and no state income tax, the city has transformed from an affordable Sunbelt market into one of the most competitive in the Southeast. Here's what renters are paying in 2026.</p>
+
+<h2>Citywide Averages</h2>
+<ul>
+  <li><strong>Studio:</strong> $1,400–$1,900/mo</li>
+  <li><strong>1-Bedroom:</strong> $1,600–$2,300/mo</li>
+  <li><strong>2-Bedroom:</strong> $2,000–$3,000/mo</li>
+  <li><strong>3-Bedroom:</strong> $2,500–$3,800/mo</li>
+</ul>
+
+<h2>Rent by Neighborhood</h2>
+<ul>
+  <li><strong>East Nashville:</strong> $1,800–$2,600/mo (1BR) — Nashville's hippest neighborhood; bungalows, craft bars, creative class; walkable pockets</li>
+  <li><strong>Midtown / Vanderbilt:</strong> $1,900–$2,700/mo (1BR) — dense, walkable, near hospitals and university</li>
+  <li><strong>The Gulch:</strong> $2,200–$3,200/mo (1BR) — upscale high-rises, walkable, close to downtown; Nashville's highest rents</li>
+  <li><strong>12South / Belmont:</strong> $1,900–$2,700/mo (1BR) — trendy boutiques and restaurants; popular with young professionals</li>
+  <li><strong>Germantown:</strong> $1,900–$2,600/mo (1BR) — historic neighborhood just north of downtown; artisanal food scene</li>
+  <li><strong>Antioch / Nolensville Pike:</strong> $1,300–$1,800/mo (1BR) — most affordable in the metro; diverse immigrant communities</li>
+  <li><strong>Brentwood / Franklin:</strong> $1,800–$2,600/mo (1BR) — upscale suburbs; excellent schools; 20–30 min south of downtown</li>
+  <li><strong>Murfreesboro:</strong> $1,200–$1,700/mo (1BR) — fast-growing suburb 35 miles SE; best value in the metro</li>
+</ul>
+
+<h2>Why Nashville Rents Keep Rising</h2>
+<p>Nashville adds roughly 100 people per day. Corporate relocations — Amazon's operations hub, Oracle's headquarters, and dozens of healthcare companies — continue to bring well-paid workers competing for a limited housing supply. While new apartment construction has ramped up, it hasn't kept pace with demand in the most desirable neighborhoods.</p>
+
+<h2>Tennessee Renter Facts</h2>
+<ul>
+  <li>Tennessee has no rent control and is generally landlord-friendly.</li>
+  <li>No state income tax means your take-home pay goes further, partially offsetting higher rents.</li>
+  <li>A car is essential in most of Nashville; limited public transit outside of core areas.</li>
+  <li>Summers are hot and humid (90°F+); factor in cooling costs of $100–$200/mo.</li>
+</ul>
+
+<h2>Nashville Renter Tips</h2>
+<ul>
+  <li><strong>Look at suburbs.</strong> Murfreesboro, Smyrna, and Hendersonville offer 30–40% savings with reasonable commutes.</li>
+  <li><strong>New buildings mean new amenities.</strong> Nashville has seen a high-rise construction boom — newer buildings often include gyms, rooftop decks, and concierge at competitive prices.</li>
+  <li><strong>Move fast on East Nashville units.</strong> The most sought-after bungalows and cottages rent within days of listing.</li>
+</ul>
+
+<p><a href="/rentals/city/nashville">Browse Nashville rentals on EMLAKIE</a> — posted directly by landlords, no broker fees, no commissions.</p>
+    `.trim(),
+  },
+  {
+    slug: 'average-rent-dallas-2026',
+    title: 'Average Rent in Dallas in 2026: Texas\' Largest Rental Market',
+    description: 'Dallas-Fort Worth is one of the fastest-growing metros in America. Here\'s what renters pay across Uptown, Deep Ellum, Oak Cliff, and the suburbs in 2026.',
+    date: '2026-06-17',
+    category: 'Market Trends',
+    readTime: 5,
+    citySlug: 'dallas',
+    content: `
+<p>Dallas-Fort Worth is the fourth-largest metro in the United States and one of its fastest-growing. The combination of no state income tax, a business-friendly environment, and relatively affordable housing has drawn hundreds of thousands of new residents over the past five years — but that growth has pushed rents meaningfully higher.</p>
+
+<h2>Citywide Averages (Dallas Proper)</h2>
+<ul>
+  <li><strong>Studio:</strong> $1,200–$1,700/mo</li>
+  <li><strong>1-Bedroom:</strong> $1,400–$2,100/mo</li>
+  <li><strong>2-Bedroom:</strong> $1,800–$2,800/mo</li>
+  <li><strong>3-Bedroom:</strong> $2,300–$3,500/mo</li>
+</ul>
+
+<h2>Rent by Neighborhood</h2>
+<ul>
+  <li><strong>Uptown:</strong> $1,900–$2,800/mo (1BR) — Dallas's most walkable neighborhood; restaurants, bars, and parks; popular with young professionals</li>
+  <li><strong>Deep Ellum:</strong> $1,600–$2,400/mo (1BR) — arts and music district; live music venues, galleries; gritty-chic</li>
+  <li><strong>Oak Lawn:</strong> $1,600–$2,300/mo (1BR) — LGBTQ+ friendly; near hospital district; walkable pockets</li>
+  <li><strong>Oak Cliff:</strong> $1,300–$1,900/mo (1BR) — diverse, creative, rapidly gentrifying; Bishop Arts District</li>
+  <li><strong>Lower Greenville:</strong> $1,600–$2,300/mo (1BR) — historic bungalows; bar and restaurant strip; popular with 30-somethings</li>
+  <li><strong>North Dallas / Addison:</strong> $1,500–$2,100/mo (1BR) — suburban but convenient; large apartment complexes with amenities</li>
+  <li><strong>Garland / Mesquite:</strong> $1,100–$1,600/mo (1BR) — most affordable in the metro; east Dallas suburbs</li>
+  <li><strong>Plano / McKinney:</strong> $1,400–$2,000/mo (1BR) — north suburbs; corporate corridors; excellent schools</li>
+</ul>
+
+<h2>Fort Worth vs. Dallas</h2>
+<p>Fort Worth sits 30 miles west of Dallas and shares the same metro but has a distinct character. Rents in Fort Worth average 15–20% below Dallas, with 1BR apartments typically running $1,200–$1,800/mo. The Sundance Square, Near Southside, and Cultural District neighborhoods are Fort Worth's rental sweet spots. The Trinity Railway Express connects the two cities in 60–75 minutes.</p>
+
+<h2>Dallas Renter Tips</h2>
+<ul>
+  <li><strong>DART light rail is limited but growing.</strong> Focus on neighborhoods along the Red, Blue, Green, or Orange lines if you want transit options.</li>
+  <li><strong>Summer heat is serious.</strong> Temperatures routinely hit 100°F+ in July and August. Ask about energy-efficient HVAC before signing.</li>
+  <li><strong>Texas is landlord-friendly.</strong> No rent control; read your lease carefully, especially regarding early termination fees.</li>
+  <li><strong>New apartment supply is high.</strong> Dallas has seen massive high-rise construction — use this leverage to negotiate move-in specials or free months.</li>
+  <li><strong>Tornadoes are real.</strong> Check that your building has a designated shelter area, especially if you're renting in the suburbs.</li>
+</ul>
+
+<p><a href="/rentals/city/dallas">Browse Dallas rentals on EMLAKIE</a> — listed directly by landlords, no broker fees, no commissions.</p>
+    `.trim(),
+  },
+  {
+    slug: 'average-rent-tampa-2026',
+    title: 'Average Rent in Tampa in 2026: Florida\'s Most Underrated Rental Market',
+    description: 'Tampa has emerged as one of Florida\'s most competitive rental markets. Here\'s what renters pay in Ybor City, South Tampa, St. Pete, and beyond in 2026.',
+    date: '2026-06-16',
+    category: 'Market Trends',
+    readTime: 4,
+    citySlug: 'tampa',
+    content: `
+<p>Tampa Bay has quietly become one of the most sought-after rental markets in the Southeast. Remote work, Florida's lack of state income tax, and a booming job market in healthcare, finance, and technology have drawn a wave of new residents — pushing rents well above their pre-pandemic levels.</p>
+
+<h2>Citywide Averages</h2>
+<ul>
+  <li><strong>Studio:</strong> $1,400–$1,900/mo</li>
+  <li><strong>1-Bedroom:</strong> $1,600–$2,200/mo</li>
+  <li><strong>2-Bedroom:</strong> $2,000–$2,900/mo</li>
+  <li><strong>3-Bedroom:</strong> $2,500–$3,600/mo</li>
+</ul>
+
+<h2>Rent by Neighborhood (Tampa + St. Pete)</h2>
+<ul>
+  <li><strong>South Tampa / Hyde Park:</strong> $2,000–$3,000/mo (1BR) — Tampa's upscale residential enclave; walkable, tree-lined streets; close to downtown</li>
+  <li><strong>Ybor City:</strong> $1,500–$2,200/mo (1BR) — historic cigar district; brick streets, nightlife, Latin cultural heritage; rapidly gentrifying</li>
+  <li><strong>Channelside / Waterstreet:</strong> $2,200–$3,200/mo (1BR) — brand new development district downtown; high-rises with Riverwalk access</li>
+  <li><strong>Seminole Heights:</strong> $1,600–$2,200/mo (1BR) — craftsman bungalows; breweries, coffee shops; neighborhood renaissance underway</li>
+  <li><strong>New Tampa / USF Area:</strong> $1,400–$1,900/mo (1BR) — northeast suburban; large apartment complexes; near University of South Florida</li>
+  <li><strong>St. Petersburg (Downtown):</strong> $1,800–$2,600/mo (1BR) — across the bay; beach access; thriving arts scene; growing tech hub</li>
+  <li><strong>Clearwater:</strong> $1,600–$2,200/mo (1BR) — white sand beaches; tourist town but growing residential base</li>
+  <li><strong>Brandon / Riverview:</strong> $1,300–$1,800/mo (1BR) — most affordable eastern suburbs; commuter-friendly</li>
+</ul>
+
+<h2>Tampa vs. Orlando vs. Miami</h2>
+<p>Within Florida, Tampa sits in an interesting middle ground. It's more affordable than Miami (where comparable 1BR apartments run $2,500–$3,500/mo) but pricier than Orlando ($1,400–$1,900/mo). Tampa offers better job market diversity and shorter commutes than Orlando, plus beach access that Orlando can't match.</p>
+
+<h2>Hurricane and Flood Risk</h2>
+<p>Tampa Bay is considered one of the highest hurricane-risk metropolitan areas in the country due to the shallow bay, low elevation, and geography. Before renting, ask whether the property is in a FEMA flood zone, whether the landlord carries flood insurance, and whether your building has generator backup. Renters insurance that includes hurricane coverage is strongly recommended.</p>
+
+<h2>Tampa Renter Tips</h2>
+<ul>
+  <li>A car is essential in Tampa; public transit outside of downtown is sparse.</li>
+  <li>Florida has no rent control. Rents can increase significantly at lease renewal.</li>
+  <li>Summers (June–September) are intensely hot and humid; cooling costs run $150–$250/mo.</li>
+  <li>Pet-friendly rentals are abundant in Tampa compared to other major metros — great for pet owners.</li>
+  <li>The Selmon Expressway and I-275 are the main arteries; live near your work or commute times balloon.</li>
+</ul>
+
+<p><a href="/rentals/city/tampa">Browse Tampa rentals on EMLAKIE</a> — connect directly with landlords, no broker fees, no commissions.</p>
+    `.trim(),
+  },
 export function getPost(slug: string): Post | undefined {
   return posts.find(p => p.slug === slug);
 }

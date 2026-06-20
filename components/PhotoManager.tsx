@@ -71,6 +71,20 @@ export default function PhotoManager({ listingId, initialPhotos }: Props) {
           .upload(path, compressed, { contentType: 'image/jpeg', upsert: false });
         if (uploadErr) throw new Error(uploadErr.message);
         const { data: { publicUrl } } = supabase.storage.from('listing-photos').getPublicUrl(path);
+
+        // Content moderation check
+        setUploadProgress(`Checking photo ${i + 1} of ${toUpload.length}…`);
+        const modRes = await fetch('/api/moderate-image', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ url: publicUrl }),
+        });
+        const modData = await modRes.json();
+        if (!modData.safe) {
+          await supabase.storage.from('listing-photos').remove([path]);
+          throw new Error(`Photo ${i + 1} was flagged as inappropriate and was not uploaded.`);
+        }
+
         newUrls.push(publicUrl);
       }
 

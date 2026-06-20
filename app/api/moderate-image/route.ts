@@ -1,10 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { RekognitionClient, DetectModerationLabelsCommand } from '@aws-sdk/client-rekognition';
 
-const API_KEY = process.env.MODERATE_CONTENT_API_KEY ?? '';
+const AWS_REGION = process.env.AWS_REGION ?? 'us-west-2';
+const AWS_ACCESS_KEY = process.env.AWS_ACCESS_KEY_ID ?? '';
+const AWS_SECRET_KEY = process.env.AWS_SECRET_ACCESS_KEY ?? '';
 
 export async function POST(req: NextRequest) {
-  if (!API_KEY) {
-    // If no key configured, allow all uploads (fail open)
+  // If AWS credentials not configured, fail open so landlords aren't blocked
+  if (!AWS_ACCESS_KEY || !AWS_SECRET_KEY) {
     return NextResponse.json({ safe: true });
   }
 
@@ -12,16 +15,31 @@ export async function POST(req: NextRequest) {
   if (!url) return NextResponse.json({ error: 'Missing url' }, { status: 400 });
 
   try {
-    const res = await fetch(
-      `https://api.moderatecontent.com/moderate/?key=${API_KEY}&url=${encodeURIComponent(url)}`,
-    );
-    const data = await res.json();
+    // Fetch the image bytes from Supabase storage
+    const imageRes = await fetch(url);
+    if (!imageRes.ok) throw new Error('Could not fetch image for moderation');
+    const imageBytes = new Uint8Array(await imageRes.arrayBuffer());
 
-    // rating_index: 1 = everyone, 2 = teen, 3 = adult
-    const safe = data.rating_index !== 3;
-    return NextResponse.json({ safe, rating: data.rating_label ?? data.rating });
+    const client = new RekognitionClient({
+      region: AWS_REGION,
+      credentials: { accessKeyId: AWS_ACCESS_KEY, secretAccessKey: AWS_SECRET_KEY },
+    });
+
+    const command = new DetectModerationLabelsCommand({
+      Image: { Bytes: imageBytes },
+      MinConfidence: 70, // Only flag if 70%+ confident it's inappropriate
+    });
+
+    const result = await client.send(command);
+    const labels = result.ModerationLabels ?? [];
+    const safe = labels.length === 0;
+
+    return NextResponse.json({
+      safe,
+      flags: labels.map((l) => l.Name),
+    });
   } catch {
-    // On API error, fail open so a service outage doesn't block landlords
+    // On any error, fail open so an outage doesn't block landlords
     return NextResponse.json({ safe: true });
   }
 }

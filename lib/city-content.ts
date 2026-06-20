@@ -169,3 +169,7 @@ const CITY_CONTENT: Record<string, CityContent> = {
 export function getCityContent(slug: string): CityContent | null {
   return CITY_CONTENT[slug] ?? null;
 }
+
+export function getAllCitySlugs(): string[] {
+  return Object.keys(CITY_CONTENT);
+}

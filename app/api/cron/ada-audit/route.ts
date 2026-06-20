@@ -3,13 +3,14 @@ import { createClient } from '@supabase/supabase-js';
 import { Resend } from 'resend';
 import { randomUUID } from 'crypto';
 import { cureViolations } from '@/lib/ada-cure';
+import { getAllSlugs } from '@/lib/blog';
+import { getAllCitySlugs } from '@/lib/city-content';
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://emlakie.com';
 const ADMIN_EMAIL = 'peymansupervisor@gmail.com';
 
-// Pages to audit on every run — all publicly visible pages
-const PAGES_TO_AUDIT = [
-  // Core
+// Static public pages — add new routes here as the site grows
+const STATIC_PAGES = [
   '/',
   '/rentals',
   '/contact',
@@ -21,37 +22,23 @@ const PAGES_TO_AUDIT = [
   '/rent-check',
   '/rent-estimate',
   '/app',
-
-  // Legal
   '/accessibility',
   '/privacy',
   '/terms',
   '/disclaimer',
-
-  // Rental filters
   '/rentals/furnished',
   '/rentals/pet-friendly',
   '/rentals/section-8',
   '/rentals/short-term',
-
-  // City landing pages
-  '/rentals/city/los-angeles',
-  '/rentals/city/beverly-hills',
-  '/rentals/city/west-hollywood',
-  '/rentals/city/venice',
-  '/rentals/city/winnetka',
-  '/rentals/city/bakersfield',
-
-  // State page
   '/rentals/state/california',
-
-  // Blog index + sample posts
   '/blog',
-  '/blog/average-rent-los-angeles-2026',
-  '/blog/best-neighborhoods-rent-los-angeles',
-  '/blog/how-to-apply-rental-los-angeles',
-  '/blog/landlord-guide-listing-rental-la',
 ];
+
+function buildPageList(): string[] {
+  const blogPages = getAllSlugs().map((slug) => `/blog/${slug}`);
+  const cityPages = getAllCitySlugs().map((slug) => `/rentals/city/${slug}`);
+  return [...STATIC_PAGES, ...cityPages, ...blogPages];
+}
 
 interface Violation {
   id: string;
@@ -178,12 +165,13 @@ export async function GET(req: NextRequest) {
   }
 
   const runId = randomUUID();
+  const pagesToAudit = buildPageList();
   const axeCore = await import('axe-core');
   const axeVersion: string = axeCore.version;
   const database = sb();
   const results: Array<{ path: string; violations: Violation[]; passes: number; incomplete: number; error?: string }> = [];
 
-  for (const path of PAGES_TO_AUDIT) {
+  for (const path of pagesToAudit) {
     try {
       const { violations, passes, incomplete } = await auditPage(path);
       results.push({ path, violations, passes, incomplete });
@@ -225,7 +213,7 @@ export async function GET(req: NextRequest) {
   await database.from('system_health').insert({
     service: 'ADA Audit',
     status: results.every((r) => !r.error) ? 'ok' : 'degraded',
-    message: `Run ${runId} — ${PAGES_TO_AUDIT.length} pages scanned`,
+    message: `Run ${runId} — ${pagesToAudit.length} pages scanned`,
   });
 
   // Send alert if any critical or serious violations found

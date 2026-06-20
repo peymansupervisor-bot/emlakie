@@ -89,7 +89,7 @@ export default function SearchBar({ large = false }: { large?: boolean }) {
         onSubmit={onSubmit}
         role="search"
         aria-label="Search rental listings"
-        className="flex w-full overflow-hidden rounded-xl bg-white shadow-card"
+        className="flex w-full overflow-hidden rounded-xl bg-white shadow-[0_4px_24px_rgba(0,0,0,0.10)] transition-shadow hover:shadow-[0_6px_32px_rgba(0,0,0,0.14)]"
       >
         <label htmlFor="search-q" className="sr-only">Search rentals</label>
         <input

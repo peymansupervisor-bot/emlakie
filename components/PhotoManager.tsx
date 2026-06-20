@@ -8,6 +8,7 @@ import { supabase } from '@/lib/supabase';
 const MAX_PX = 1200;
 const JPEG_QUALITY = 0.75;
 const MAX_PHOTOS = 25;
+const MIN_PHOTOS = 5;
 
 function compressImage(file: File): Promise<File> {
   return new Promise((resolve) => {
@@ -118,6 +119,7 @@ export default function PhotoManager({ listingId, initialPhotos }: Props) {
   }
 
   async function handleDelete(url: string) {
+    if (photos.length <= MIN_PHOTOS) { setMsg(`Minimum ${MIN_PHOTOS} photos required.`); return; }
     setDeletingUrl(url);
     setMsg(null);
     try {
@@ -165,7 +167,7 @@ export default function PhotoManager({ listingId, initialPhotos }: Props) {
       )}
 
       {photos.length === 0 ? (
-        <p className="py-8 text-center text-sm text-gray-500">No photos yet. Add clean, watermark-free photos.</p>
+        <p className="py-8 text-center text-sm text-gray-500">No photos yet. Add at least {MIN_PHOTOS} clean, watermark-free photos.</p>
       ) : (
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
           {photos.map((url, i) => (

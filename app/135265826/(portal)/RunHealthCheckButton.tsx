@@ -9,11 +9,20 @@ export default function RunHealthCheckButton() {
     setState('running');
     try {
       const res = await fetch('/api/admin/run-health-check', { method: 'POST' });
-      setState(res.ok ? 'done' : 'error');
-    } catch {
+      if (res.ok) {
+        setState('done');
+        setTimeout(() => window.location.reload(), 1500);
+      } else {
+        const data = await res.json().catch(() => ({}));
+        console.error('Health check error:', data);
+        setState('error');
+        setTimeout(() => setState('idle'), 4000);
+      }
+    } catch (e) {
+      console.error('Health check fetch error:', e);
       setState('error');
+      setTimeout(() => setState('idle'), 4000);
     }
-    setTimeout(() => setState('idle'), 4000);
   }
 
   return (

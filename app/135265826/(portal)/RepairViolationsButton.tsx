@@ -49,10 +49,10 @@ export default function RepairViolationsButton({ hasViolations }: { hasViolation
                                  'bg-amber-600 text-white hover:bg-amber-500'
         }`}
       >
-        {status === 'running' ? '🔧 Repairing…' :
+        {status === 'running' ? '🔧 Curing…' :
          status === 'done'    ? `✅ ${result?.fixed ?? 0} fixed` :
          status === 'error'   ? '❌ Failed' :
-                                '🔧 Repair Violations'}
+                                '🔧 Cure Violations'}
       </button>
 
       {showResult && result && (

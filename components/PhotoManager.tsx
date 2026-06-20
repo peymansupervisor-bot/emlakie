@@ -5,6 +5,33 @@ import { useRef, useState } from 'react';
 import { getToken } from '@/lib/landlord/client';
 import { supabase } from '@/lib/supabase';
 
+const MAX_PX = 1920;
+const JPEG_QUALITY = 0.8;
+
+function compressImage(file: File): Promise<File> {
+  return new Promise((resolve) => {
+    const img = document.createElement('img');
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      const scale = Math.min(1, MAX_PX / Math.max(img.width, img.height));
+      const w = Math.round(img.width * scale);
+      const h = Math.round(img.height * scale);
+      const canvas = document.createElement('canvas');
+      canvas.width = w;
+      canvas.height = h;
+      canvas.getContext('2d')!.drawImage(img, 0, 0, w, h);
+      canvas.toBlob(
+        (blob) => resolve(blob ? new File([blob], file.name.replace(/\.\w+$/, '.jpg'), { type: 'image/jpeg' }) : file),
+        'image/jpeg',
+        JPEG_QUALITY,
+      );
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); resolve(file); };
+    img.src = url;
+  });
+}
+
 interface Props {
   listingId: string;
   initialPhotos: string[];
@@ -30,13 +57,13 @@ export default function PhotoManager({ listingId, initialPhotos }: Props) {
       if (!user) throw new Error('Not signed in');
 
       for (let i = 0; i < files.length; i++) {
+        setUploadProgress(`Compressing ${i + 1} of ${files.length}…`);
+        const compressed = await compressImage(files[i]);
         setUploadProgress(`Uploading ${i + 1} of ${files.length}…`);
-        const file = files[i];
-        const ext = file.name.split('.').pop() ?? 'jpg';
-        const path = `${user.id}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+        const path = `${user.id}/${Date.now()}-${Math.random().toString(36).slice(2)}.jpg`;
         const { error: uploadErr } = await supabase.storage
           .from('listing-photos')
-          .upload(path, file, { contentType: file.type, upsert: false });
+          .upload(path, compressed, { contentType: 'image/jpeg', upsert: false });
         if (uploadErr) throw new Error(uploadErr.message);
         const { data: { publicUrl } } = supabase.storage.from('listing-photos').getPublicUrl(path);
         newUrls.push(publicUrl);

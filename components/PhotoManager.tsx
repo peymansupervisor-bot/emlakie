@@ -5,8 +5,8 @@ import { useRef, useState } from 'react';
 import { getToken } from '@/lib/landlord/client';
 import { supabase } from '@/lib/supabase';
 
-const MAX_PX = 1920;
-const JPEG_QUALITY = 0.8;
+const MAX_PX = 1200;
+const JPEG_QUALITY = 0.75;
 
 function compressImage(file: File): Promise<File> {
   return new Promise((resolve) => {

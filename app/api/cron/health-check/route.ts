@@ -105,21 +105,29 @@ async function checkStripe(): Promise<CheckResult> {
   }
 }
 
-async function checkListHub(): Promise<CheckResult> {
+async function checkBridge(): Promise<CheckResult> {
   try {
-    const clientId = process.env.LISTHUB_CLIENT_ID;
-    const clientSecret = process.env.LISTHUB_CLIENT_SECRET;
-    if (!clientId || !clientSecret) return { service: 'ListHub (MLS)', status: 'down', message: 'Credentials missing' };
-    const res = await fetch('https://auth.listhub.com/oauth2/token', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: new URLSearchParams({ grant_type: 'client_credentials', client_id: clientId, client_secret: clientSecret }),
-      signal: AbortSignal.timeout(8000),
+    const apiKey = process.env.BRIDGE_API_KEY;
+    const dataset = process.env.BRIDGE_DATASET;
+    if (!apiKey || !dataset) return { service: 'Bridge Interactive (CLAW MLS)', status: 'down', message: 'BRIDGE_API_KEY or BRIDGE_DATASET missing' };
+    const params = new URLSearchParams({
+      access_token: apiKey,
+      '$top': '1',
+      '$filter': "StandardStatus eq 'Active'",
     });
-    if (res.ok) return { service: 'ListHub (MLS)', status: 'ok', message: 'OAuth token issued' };
-    return { service: 'ListHub (MLS)', status: 'down', message: `Auth failed: HTTP ${res.status}` };
+    const res = await fetch(`https://api.bridgedataoutput.com/api/v2/${dataset}/listings?${params}`, {
+      signal: AbortSignal.timeout(8000),
+      cache: 'no-store',
+    });
+    if (res.status === 200) {
+      const data = await res.json();
+      const count = data?.total?.value ?? 0;
+      return { service: 'Bridge Interactive (CLAW MLS)', status: 'ok', message: `API reachable · ${count} active listings` };
+    }
+    if (res.status === 401 || res.status === 403) return { service: 'Bridge Interactive (CLAW MLS)', status: 'down', message: 'API key rejected' };
+    return { service: 'Bridge Interactive (CLAW MLS)', status: 'degraded', message: `HTTP ${res.status}` };
   } catch (e: unknown) {
-    return { service: 'ListHub (MLS)', status: 'down', message: String(e) };
+    return { service: 'Bridge Interactive (CLAW MLS)', status: 'down', message: String(e) };
   }
 }
 
@@ -335,7 +343,7 @@ export async function GET(req: NextRequest) {
     checkGoogleMaps(),
     checkResend(),
     checkStripe(),
-    checkListHub(),
+    checkBridge(),
     checkRapidAPI(),
     checkAppleSignIn(),
     checkPhotoSystem(),

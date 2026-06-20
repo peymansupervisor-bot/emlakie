@@ -9,7 +9,7 @@ const SERVICE_ORDER = [
   { name: 'Google Maps', icon: '🗺️', desc: 'Geocoding & map embeds' },
   { name: 'Resend (Email)', icon: '📧', desc: 'Transactional email' },
   { name: 'Stripe (Payments)', icon: '💳', desc: 'Payment processing' },
-  { name: 'ListHub (MLS)', icon: '🏘️', desc: 'MLS listing feed' },
+  { name: 'Bridge Interactive (CLAW MLS)', icon: '🏘️', desc: 'CLAW MLS listing feed via Bridge' },
   { name: 'RapidAPI (Property Data)', icon: '📊', desc: 'Property data provider' },
   { name: 'Apple Sign-In', icon: '🍎', desc: 'Apple OAuth credentials' },
   { name: 'Photo System', icon: '🖼️', desc: 'Upload, compress & storage' },

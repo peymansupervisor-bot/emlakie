@@ -198,17 +198,55 @@ export default async function ZipPage({ params }: Props) {
         <h2 className="text-xl font-bold text-gray-900">
           Rental Market in {label} {params.zip}
         </h2>
-        <p className="mt-3 leading-relaxed text-gray-600">
-          {hasListings && avgPrice
-            ? `There ${total === 1 ? 'is' : 'are'} currently ${total} rental ${total === 1 ? 'home' : 'homes'} listed in ${label}, zip code ${params.zip}. The average asking rent is ${formatPrice(avgPrice)}/month, with prices ranging from ${formatPrice(minPrice!)} to ${formatPrice(maxPrice!)}. Browse listings above and apply directly through the Emlakie app.`
-            : `${label} ${params.zip} is a growing rental market. As landlords list homes here, prices and availability will appear on this page automatically. Download the Emlakie app to get notified when new rentals are posted in this area.`}
-        </p>
-        <Link
-          href="/app"
-          className="mt-4 inline-block rounded-lg bg-brand-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-brand-700"
-        >
-          {hasListings ? 'Apply in the App' : 'Get Notified'}
-        </Link>
+        {hasListings && avgPrice ? (
+          <>
+            <p className="mt-3 leading-relaxed text-gray-600">
+              There {total === 1 ? 'is' : 'are'} currently <strong>{total} rental {total === 1 ? 'home' : 'homes'}</strong> listed
+              in {label}, ZIP code {params.zip}. The average asking rent is <strong>{formatPrice(avgPrice)}/month</strong>,
+              with prices ranging from {formatPrice(minPrice!)} to {formatPrice(maxPrice!)}. Browse listings above and
+              apply directly through the EMLAKIE app — no broker fees.
+            </p>
+            <Link
+              href="/app"
+              className="mt-4 inline-block rounded-lg bg-brand-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-brand-700"
+            >
+              Apply in the App
+            </Link>
+          </>
+        ) : (
+          <>
+            <p className="mt-3 leading-relaxed text-gray-600">
+              {label} {params.zip} is a residential area in {state}. No rentals have been listed
+              in this specific ZIP code yet, but landlords in the area can post their properties
+              for free — and renters searching here will see new listings as soon as they go live.
+            </p>
+            <p className="mt-3 leading-relaxed text-gray-600">
+              In the meantime, browse available rentals across{' '}
+              <Link href={`/rentals/city/${city.toLowerCase().replace(/\s+/g, '-')}`} className="font-semibold text-brand-600 hover:text-brand-700">
+                {city}
+              </Link>
+              {' '}or explore all homes for rent in{' '}
+              <Link href={`/rentals/state/${state.toLowerCase().replace(/\s+/g, '-')}`} className="font-semibold text-brand-600 hover:text-brand-700">
+                {state}
+              </Link>
+              .
+            </p>
+            <div className="mt-4 flex flex-wrap gap-3">
+              <Link
+                href={`/rentals/city/${city.toLowerCase().replace(/\s+/g, '-')}`}
+                className="rounded-lg bg-brand-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-brand-700"
+              >
+                Rentals in {city}
+              </Link>
+              <Link
+                href="/landlord/login"
+                className="rounded-lg border border-gray-200 px-5 py-2.5 text-sm font-semibold text-gray-700 hover:border-brand-400 hover:text-brand-700"
+              >
+                List a property here — free
+              </Link>
+            </div>
+          </>
+        )}
       </section>
 
       <SeoLinkGrid trendingCities={trendingCities} />

@@ -46,8 +46,8 @@ async function checkInmanRSS(): Promise<CheckResult> {
       headers: { 'User-Agent': 'Mozilla/5.0 (compatible; EMlakieBot/1.0; +https://emlakie.com)' },
       signal: AbortSignal.timeout(8000),
     });
-    // 403 means Inman is up but blocks server IPs — site uses fallback headlines so this is non-critical
-    if (res.status === 403) return { service: 'Inman RSS', status: 'degraded', message: 'Inman blocks server requests (403) — site using fallback headlines' };
+    // 403 means Inman blocks server IPs — expected; site uses fallback headlines which is fully functional
+    if (res.status === 403) return { service: 'Inman RSS', status: 'ok', message: 'Inman blocks server requests (expected) — site displaying fallback headlines' };
     if (!res.ok) return { service: 'Inman RSS', status: 'degraded', message: `HTTP ${res.status}` };
     const text = await res.text();
     const count = (text.match(/<item>/g) ?? []).length;

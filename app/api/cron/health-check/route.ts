@@ -172,6 +172,29 @@ async function checkAppleSignIn(): Promise<CheckResult> {
   }
 }
 
+async function checkADAAudit(): Promise<CheckResult> {
+  try {
+    const sb = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_KEY ?? process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    );
+    const { data } = await sb
+      .from('system_health')
+      .select('checked_at, message')
+      .eq('service', 'ADA Audit')
+      .order('checked_at', { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    if (!data) return { service: 'ADA Audit', status: 'degraded', message: 'No audit run on record yet' };
+    const hoursAgo = (Date.now() - new Date(data.checked_at).getTime()) / 3_600_000;
+    if (hoursAgo > 26) return { service: 'ADA Audit', status: 'down', message: `Last audit was ${Math.round(hoursAgo)}h ago — missed a daily run` };
+    return { service: 'ADA Audit', status: 'ok', message: `Last audit ${Math.round(hoursAgo)}h ago · ${data.message}` };
+  } catch (e: unknown) {
+    return { service: 'ADA Audit', status: 'down', message: String(e) };
+  }
+}
+
 async function checkDailyCron(): Promise<CheckResult> {
   try {
     const sb = createClient(
@@ -261,6 +284,7 @@ export async function GET(req: NextRequest) {
     checkListHub(),
     checkRapidAPI(),
     checkAppleSignIn(),
+    checkADAAudit(),
     checkDailyCron(),
   ]);
 

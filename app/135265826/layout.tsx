@@ -8,6 +8,7 @@ export const metadata = { title: 'Moderator Dashboard — EMLAKIE', robots: { in
 const NAV = [
   { href: '/135265826', label: 'All Listings' },
   { href: '/135265826/flags', label: 'Flagged Reports' },
+  { href: '/135265826/ada', label: 'ADA Audit' },
   { href: '/135265826/health', label: '⬤ Health' },
   { href: '/135265826/moderators', label: 'Moderators' },
 ];

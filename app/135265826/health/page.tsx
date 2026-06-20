@@ -11,6 +11,7 @@ const SERVICE_ORDER = [
   'ListHub (MLS)',
   'RapidAPI (Property Data)',
   'Apple Sign-In',
+  'ADA Audit',
   'Inman RSS',
   'Daily Alert Cron',
 ];

@@ -151,6 +151,56 @@ async function checkRapidAPI(): Promise<CheckResult> {
   }
 }
 
+async function checkGoogleSignIn(): Promise<CheckResult> {
+  try {
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    if (!supabaseUrl) return { service: 'Google Sign-In', status: 'down', message: 'Supabase URL missing' };
+    const res = await fetch(`${supabaseUrl}/auth/v1/authorize?provider=google&redirect_to=https://emlakie.com`, {
+      redirect: 'manual',
+      signal: AbortSignal.timeout(8000),
+    });
+    if (res.status === 302) {
+      const location = res.headers.get('location') ?? '';
+      if (location.includes('accounts.google.com') || location.includes('google.com')) {
+        return { service: 'Google Sign-In', status: 'ok', message: 'OAuth redirect to Google confirmed' };
+      }
+      return { service: 'Google Sign-In', status: 'degraded', message: `Unexpected redirect: ${location.slice(0, 80)}` };
+    }
+    if (res.status === 500 || res.status === 400) {
+      const body = await res.text().catch(() => '');
+      return { service: 'Google Sign-In', status: 'down', message: body.slice(0, 120) || `HTTP ${res.status}` };
+    }
+    return { service: 'Google Sign-In', status: 'degraded', message: `Unexpected HTTP ${res.status}` };
+  } catch (e: unknown) {
+    return { service: 'Google Sign-In', status: 'down', message: String(e) };
+  }
+}
+
+async function checkFacebookSignIn(): Promise<CheckResult> {
+  try {
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    if (!supabaseUrl) return { service: 'Facebook Sign-In', status: 'down', message: 'Supabase URL missing' };
+    const res = await fetch(`${supabaseUrl}/auth/v1/authorize?provider=facebook&redirect_to=https://emlakie.com`, {
+      redirect: 'manual',
+      signal: AbortSignal.timeout(8000),
+    });
+    if (res.status === 302) {
+      const location = res.headers.get('location') ?? '';
+      if (location.includes('facebook.com')) {
+        return { service: 'Facebook Sign-In', status: 'ok', message: 'OAuth redirect to Facebook confirmed' };
+      }
+      return { service: 'Facebook Sign-In', status: 'degraded', message: `Unexpected redirect: ${location.slice(0, 80)}` };
+    }
+    if (res.status === 500 || res.status === 400) {
+      const body = await res.text().catch(() => '');
+      return { service: 'Facebook Sign-In', status: 'down', message: body.slice(0, 120) || `HTTP ${res.status}` };
+    }
+    return { service: 'Facebook Sign-In', status: 'degraded', message: `Unexpected HTTP ${res.status}` };
+  } catch (e: unknown) {
+    return { service: 'Facebook Sign-In', status: 'down', message: String(e) };
+  }
+}
+
 async function checkAppleSignIn(): Promise<CheckResult> {
   try {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -346,6 +396,8 @@ export async function GET(req: NextRequest) {
     checkBridge(),
     checkRapidAPI(),
     checkAppleSignIn(),
+    checkGoogleSignIn(),
+    checkFacebookSignIn(),
     checkPhotoSystem(),
     checkADAAudit(),
     checkDailyCron(),

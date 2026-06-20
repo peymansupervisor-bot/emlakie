@@ -12,6 +12,8 @@ const SERVICE_ORDER = [
   { name: 'Bridge Interactive (CLAW MLS)', icon: '🏘️', desc: 'CLAW MLS listing feed via Bridge' },
   { name: 'RapidAPI (Property Data)', icon: '📊', desc: 'Property data provider' },
   { name: 'Apple Sign-In', icon: '🍎', desc: 'Apple OAuth credentials' },
+  { name: 'Google Sign-In', icon: '🔵', desc: 'Google OAuth credentials' },
+  { name: 'Facebook Sign-In', icon: '📘', desc: 'Facebook OAuth credentials' },
   { name: 'Photo System', icon: '🖼️', desc: 'Upload, compress & storage' },
   { name: 'ADA Audit', icon: '♿', desc: 'WCAG accessibility logger' },
   { name: 'Inman RSS', icon: '📰', desc: 'Real estate news feed' },

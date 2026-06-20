@@ -137,6 +137,41 @@ async function checkRapidAPI(): Promise<CheckResult> {
   }
 }
 
+async function checkAppleSignIn(): Promise<CheckResult> {
+  try {
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    if (!supabaseUrl) return { service: 'Apple Sign-In', status: 'down', message: 'Supabase URL missing' };
+
+    // Supabase's authorize endpoint redirects to Apple if credentials are valid.
+    // We follow redirects=false and expect a 302 to accounts.apple.com.
+    // Any other response means the Apple client secret is expired or misconfigured.
+    const res = await fetch(`${supabaseUrl}/auth/v1/authorize?provider=apple&redirect_to=https://emlakie.com`, {
+      redirect: 'manual',
+      signal: AbortSignal.timeout(8000),
+    });
+
+    if (res.status === 302) {
+      const location = res.headers.get('location') ?? '';
+      if (location.includes('appleid.apple.com') || location.includes('apple.com')) {
+        return { service: 'Apple Sign-In', status: 'ok', message: 'OAuth redirect to Apple confirmed' };
+      }
+      return { service: 'Apple Sign-In', status: 'degraded', message: `Unexpected redirect: ${location.slice(0, 80)}` };
+    }
+
+    if (res.status === 500 || res.status === 400) {
+      const body = await res.text().catch(() => '');
+      const hint = body.includes('expired') || body.includes('invalid_client')
+        ? 'Apple client secret is likely expired — regenerate the JWT in Supabase dashboard'
+        : `HTTP ${res.status}: ${body.slice(0, 120)}`;
+      return { service: 'Apple Sign-In', status: 'down', message: hint };
+    }
+
+    return { service: 'Apple Sign-In', status: 'degraded', message: `Unexpected HTTP ${res.status}` };
+  } catch (e: unknown) {
+    return { service: 'Apple Sign-In', status: 'down', message: String(e) };
+  }
+}
+
 async function checkDailyCron(): Promise<CheckResult> {
   try {
     const sb = createClient(
@@ -225,6 +260,7 @@ export async function GET(req: NextRequest) {
     checkStripe(),
     checkListHub(),
     checkRapidAPI(),
+    checkAppleSignIn(),
     checkDailyCron(),
   ]);
 

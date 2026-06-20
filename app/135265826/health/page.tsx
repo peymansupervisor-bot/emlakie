@@ -10,6 +10,7 @@ const SERVICE_ORDER = [
   'Stripe (Payments)',
   'ListHub (MLS)',
   'RapidAPI (Property Data)',
+  'Apple Sign-In',
   'Inman RSS',
   'Daily Alert Cron',
 ];

@@ -7,15 +7,50 @@ import { cureViolations } from '@/lib/ada-cure';
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://emlakie.com';
 const ADMIN_EMAIL = 'peymansupervisor@gmail.com';
 
-// Pages to audit on every run
+// Pages to audit on every run — all publicly visible pages
 const PAGES_TO_AUDIT = [
+  // Core
   '/',
   '/rentals',
-  '/landlord/login',
   '/contact',
-  '/accessibility',
   '/how-it-works',
   '/landlords',
+  '/login',
+  '/support',
+  '/cities',
+  '/rent-check',
+  '/rent-estimate',
+  '/app',
+
+  // Legal
+  '/accessibility',
+  '/privacy',
+  '/terms',
+  '/disclaimer',
+
+  // Rental filters
+  '/rentals/furnished',
+  '/rentals/pet-friendly',
+  '/rentals/section-8',
+  '/rentals/short-term',
+
+  // City landing pages
+  '/rentals/city/los-angeles',
+  '/rentals/city/beverly-hills',
+  '/rentals/city/west-hollywood',
+  '/rentals/city/venice',
+  '/rentals/city/winnetka',
+  '/rentals/city/bakersfield',
+
+  // State page
+  '/rentals/state/california',
+
+  // Blog index + sample posts
+  '/blog',
+  '/blog/average-rent-los-angeles-2026',
+  '/blog/best-neighborhoods-rent-los-angeles',
+  '/blog/how-to-apply-rental-los-angeles',
+  '/blog/landlord-guide-listing-rental-la',
 ];
 
 interface Violation {

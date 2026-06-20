@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createSupabaseWithToken } from '@/lib/supabase-server'
 import { compressImage } from '@/lib/compress-image'
 
+const MAX_PHOTOS = 25;
+const MIN_PHOTOS = 5;
+
 // POST /api/listings/[id]/photos — upload new photos and append to listing
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -40,7 +43,8 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   }
 
   const existingPhotos = (listing.photos as string[]) ?? []
-  const updatedPhotos = [...existingPhotos, ...newUrls]
+  if (existingPhotos.length >= MAX_PHOTOS) return NextResponse.json({ error: `Maximum ${MAX_PHOTOS} photos allowed.` }, { status: 400 })
+  const updatedPhotos = [...existingPhotos, ...newUrls].slice(0, MAX_PHOTOS)
 
   const { error } = await supabase.from('listings').update({ photos: updatedPhotos }).eq('id', id).eq('landlord_id', user.id)
   if (error) return NextResponse.json({ error: 'Something went wrong' }, { status: 500 })
@@ -72,7 +76,10 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   const { data: listing } = await supabase.from('listings').select('photos').eq('id', id).eq('landlord_id', user.id).single()
   if (!listing) return NextResponse.json({ error: 'Not found' }, { status: 404 })
 
-  const updatedPhotos = [...((listing.photos as string[]) ?? []), ...validUrls]
+  const existingPhotos = (listing.photos as string[]) ?? []
+  if (existingPhotos.length >= MAX_PHOTOS) return NextResponse.json({ error: `Maximum ${MAX_PHOTOS} photos allowed.` }, { status: 400 })
+  const updatedPhotos = [...existingPhotos, ...validUrls].slice(0, MAX_PHOTOS)
+
   const { error } = await supabase.from('listings').update({ photos: updatedPhotos }).eq('id', id).eq('landlord_id', user.id)
   if (error) return NextResponse.json({ error: 'Something went wrong' }, { status: 500 })
 
@@ -117,7 +124,9 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
   const { data: listing } = await supabase.from('listings').select('photos').eq('id', id).eq('landlord_id', user.id).single()
   if (!listing) return NextResponse.json({ error: 'Not found' }, { status: 404 })
 
-  const updatedPhotos = ((listing.photos as string[]) ?? []).filter((p) => p !== photoUrl)
+  const currentPhotos = (listing.photos as string[]) ?? []
+  if (currentPhotos.length <= MIN_PHOTOS) return NextResponse.json({ error: `Minimum ${MIN_PHOTOS} photos required.` }, { status: 400 })
+  const updatedPhotos = currentPhotos.filter((p) => p !== photoUrl)
   const { error } = await supabase.from('listings').update({ photos: updatedPhotos }).eq('id', id).eq('landlord_id', user.id)
   if (error) return NextResponse.json({ error: 'Something went wrong' }, { status: 500 })
 

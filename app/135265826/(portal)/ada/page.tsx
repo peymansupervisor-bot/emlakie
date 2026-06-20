@@ -1,5 +1,6 @@
 import { adminClient } from '@/lib/moderator';
 import RunADAAuditButton from '../RunADAAuditButton';
+import RepairViolationsButton from '../RepairViolationsButton';
 
 export const dynamic = 'force-dynamic';
 
@@ -47,6 +48,7 @@ export default async function ADAPage() {
           </p>
         </div>
         <div className="flex items-center gap-3">
+          <RepairViolationsButton hasViolations={latestTotal > 0} />
           <RunADAAuditButton />
         <div className={`rounded-2xl px-5 py-3 text-center ${latestCritical > 0 ? 'bg-red-900' : latestTotal > 0 ? 'bg-yellow-900' : 'bg-green-900'}`}>
           <p className={`font-bold text-sm ${latestCritical > 0 ? 'text-red-300' : latestTotal > 0 ? 'text-yellow-300' : 'text-green-300'}`}>

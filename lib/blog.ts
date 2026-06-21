@@ -2060,6 +2060,118 @@ export const posts: Post[] = [
 <p>Looking for a rental in Los Angeles? <a href="/rentals/city/los-angeles">Browse LA rentals on EMLAKIE</a> — all listed directly by landlords, no broker fees.</p>
     `.trim(),
   },
+
+  {
+    slug: 'la-right-to-counsel-notice-landlord-requirements-2026',
+    title: 'LA Landlords: LAHD Updated the Right to Counsel Notice in June 2026 — Are You Compliant?',
+    description: 'The Los Angeles Housing Department updated its Right to Counsel (RTC) notice forms on June 11, 2026. LA landlords must use the new forms immediately or risk losing eviction cases.',
+    date: '2026-06-21',
+    category: 'Landlord Tips',
+    readTime: 5,
+    citySlug: 'los-angeles',
+    content: `
+<p><em>Legal guidance contributed by <strong>David Lee, Attorney at Law</strong>, a Los Angeles landlord-tenant attorney. This article is for informational purposes only and does not constitute legal advice. Consult a licensed attorney for advice specific to your situation.</em></p>
+
+<p>The Los Angeles Housing Department (LAHD) updated its Right to Counsel (RTC) notice forms on <strong>June 11, 2026</strong>. If you are a landlord with rental property in the City of Los Angeles, you are required by law to use these updated forms — and failure to do so can be used against you as an <strong>affirmative defense by a tenant in an eviction proceeding</strong>.</p>
+
+<h2>What Is the Right to Counsel (RTC) Program?</h2>
+<p>The City of Los Angeles Right to Counsel ordinance (Chapter XVI, Housing Regulations of the Los Angeles Municipal Code) provides qualifying tenants with access to free legal representation in eviction and administrative proceedings that may result in the termination of their tenancy or rental housing subsidy.</p>
+<p>The program is administered by Stay Housed LA (SHLA), a coalition of legal aid organizations. Tenants who receive an eviction notice can call <strong>(888) 694-0040</strong> or visit <a href="https://stayhousedla.org/get-legal-help" rel="noopener noreferrer" target="_blank">stayhousedla.org/get-legal-help</a> to apply for free legal assistance.</p>
+
+<h2>What LA Landlords Are Required to Do</h2>
+<p>Under the RTC ordinance, landlords of rental units in the City of Los Angeles must:</p>
+<ul>
+  <li><strong>Provide</strong> a Notice of Right to Counsel at the beginning of a tenancy, in the tenant's primary language</li>
+  <li><strong>Attach</strong> a Notice of Right to Counsel to any eviction notice served on a tenant (including 3-day, 30-day, and 60-day notices)</li>
+  <li><strong>Attach</strong> a Notice of Right to Counsel to any notice of termination of rental housing subsidy (e.g., Section 8 termination)</li>
+  <li><strong>Attach</strong> a Notice of Right to Counsel to any rental housing subsidy administrative proceeding correspondence that may result in termination of the subsidy</li>
+  <li><strong>Post</strong> the Notice of Right to Counsel in a conspicuous common area of the residential building where the tenant resides</li>
+</ul>
+<p>Notice forms in multiple languages are available at <a href="https://housing.lacity.gov/RTC" rel="noopener noreferrer" target="_blank">housing.lacity.gov/RTC</a>.</p>
+
+<h2>Why the June 11 Update Matters</h2>
+<p>LAHD updated these forms on June 11, 2026. Using outdated RTC notice forms — even if you have been providing notices — may not satisfy the ordinance. A tenant facing eviction can raise non-compliance with the RTC as an <strong>affirmative defense in an Unlawful Detainer (eviction) lawsuit</strong>, potentially causing you to lose the case regardless of the underlying grounds for eviction.</p>
+<p>This is not a technicality to take lightly. Los Angeles courts have upheld RTC compliance requirements, and tenants now have access to well-funded legal aid organizations specifically trained to identify these defenses.</p>
+
+<h2>What Tenants Must Do After Receiving an Eviction Notice</h2>
+<p>The updated RTC notice advises tenants that after receiving an Unlawful Detainer (eviction) lawsuit, they must:</p>
+<ul>
+  <li>File an Answer with the court <strong>within 10 business days</strong></li>
+  <li>Apply for RTC legal assistance as soon as possible by contacting Stay Housed LA at <strong>(888) 694-0040</strong> or online at stayhousedla.org</li>
+</ul>
+
+<h2>Action Items for LA Landlords — Do This Now</h2>
+<ol>
+  <li>Download the updated RTC notice forms from <a href="https://housing.lacity.gov/RTC" rel="noopener noreferrer" target="_blank">housing.lacity.gov/RTC</a> — make sure you get the version updated June 11, 2026</li>
+  <li>Replace any posted notices in your building's common areas with the new forms</li>
+  <li>Use the updated forms for all future eviction notices and new tenancy paperwork</li>
+  <li>Keep copies of all served notices in your records</li>
+  <li>If you are in an active eviction proceeding, consult your attorney to confirm your notices were compliant</li>
+</ol>
+
+<h2>Does This Apply to Your Property?</h2>
+<p>The RTC ordinance applies to rental units located within the <strong>City of Los Angeles</strong> boundaries. It does not apply to properties in unincorporated LA County, Beverly Hills, Santa Monica, West Hollywood, or other independent cities within the greater LA area — those cities have their own rules. If you are unsure whether your property falls within City of Los Angeles jurisdiction, check your property's address at <a href="https://zimas.lacity.org" rel="noopener noreferrer" target="_blank">zimas.lacity.org</a>.</p>
+
+<p><em>This article was prepared with guidance from <strong>David Lee, Attorney at Law</strong>, a Los Angeles-based landlord-tenant attorney. For legal advice specific to your property or situation, consult a licensed California attorney.</em></p>
+
+<p>Are you a Los Angeles landlord? <a href="/landlord/login">List your rental on EMLAKIE free</a> — no broker fees, no commissions. Or <a href="/rentals/city/los-angeles">browse LA rentals</a> if you're a tenant looking for your next home.</p>
+    `.trim(),
+  },
+
+  {
+    slug: 'la-right-to-counsel-tenant-guide-2026',
+    title: 'Free Legal Help for LA Tenants Facing Eviction: The Right to Counsel Program Explained',
+    description: 'If you receive an eviction notice in Los Angeles, you may qualify for free legal representation under the City\'s Right to Counsel program. Here\'s how it works and how to apply.',
+    date: '2026-06-21',
+    category: 'Renter Tips',
+    readTime: 4,
+    citySlug: 'los-angeles',
+    content: `
+<p><em>Legal guidance contributed by <strong>David Lee, Attorney at Law</strong>, a Los Angeles landlord-tenant attorney. This article is for informational purposes only and does not constitute legal advice. Consult a licensed attorney for advice specific to your situation.</em></p>
+
+<p>If you are a tenant in the City of Los Angeles and you have received an eviction notice or an Unlawful Detainer (UD) lawsuit, you may be entitled to <strong>free legal representation</strong> — at no cost to you — under the City's Right to Counsel (RTC) program. Here's everything you need to know.</p>
+
+<h2>What Is the Right to Counsel Program?</h2>
+<p>The Los Angeles Right to Counsel ordinance (Chapter XVI of the LA Municipal Code) guarantees qualifying tenants the right to access free legal help in eviction proceedings and in administrative matters that could result in the loss of their tenancy or rental housing subsidy (such as Section 8).</p>
+<p>The program is run by <strong>Stay Housed LA (SHLA)</strong>, a coalition of legal aid organizations funded to provide this representation. The service is completely free for eligible tenants.</p>
+
+<h2>How to Get Help — Contact Stay Housed LA</h2>
+<p>If you receive an eviction notice or court papers, contact Stay Housed LA immediately:</p>
+<ul>
+  <li><strong>Phone:</strong> (888) 694-0040</li>
+  <li><strong>Online:</strong> <a href="https://stayhousedla.org/get-legal-help" rel="noopener noreferrer" target="_blank">stayhousedla.org/get-legal-help</a></li>
+</ul>
+<p>Apply as soon as possible — time is critical in eviction cases.</p>
+
+<h2>What You Must Do After Receiving an Eviction Lawsuit</h2>
+<p>If your landlord files an Unlawful Detainer (eviction) lawsuit against you in court, you have a very short window to respond:</p>
+<ul>
+  <li>You must <strong>file a written Answer with the court within 10 business days</strong> of being served</li>
+  <li>If you do not file an Answer, the court may issue a default judgment against you — meaning you could lose without a hearing</li>
+  <li>Apply for RTC legal assistance immediately so an attorney can help you file your Answer correctly</li>
+</ul>
+
+<h2>What Notices Your Landlord Must Give You</h2>
+<p>Under the RTC ordinance, your landlord is required to:</p>
+<ul>
+  <li>Provide you with a Notice of Right to Counsel when you first move in</li>
+  <li>Attach a Right to Counsel notice to any eviction notice they serve you</li>
+  <li>Attach a Right to Counsel notice to any notice terminating your rental housing subsidy</li>
+  <li>Post a Right to Counsel notice in a common area of your building</li>
+</ul>
+<p>If your landlord failed to provide these notices, this may be an <strong>affirmative defense</strong> in your eviction case. Tell your attorney if you did not receive the RTC notice — it could be significant to your case.</p>
+
+<h2>LAHD Updated the RTC Forms in June 2026</h2>
+<p>The Los Angeles Housing Department updated its Right to Counsel notice forms on <strong>June 11, 2026</strong>. Landlords are required to use the updated forms. If your landlord served you an eviction notice with an outdated form, raise this with your legal aid attorney immediately.</p>
+
+<h2>Does This Apply to Your Apartment?</h2>
+<p>The Right to Counsel program applies to tenants renting within the <strong>City of Los Angeles</strong>. If you live in an unincorporated part of LA County, or in a separate city like Beverly Hills, Santa Monica, or Burbank, different rules may apply. When in doubt, call Stay Housed LA — they can tell you whether you qualify.</p>
+
+<p><em>This article was prepared with guidance from <strong>David Lee, Attorney at Law</strong>, a Los Angeles-based landlord-tenant attorney. For legal advice specific to your situation, consult a licensed California attorney.</em></p>
+
+<p>Looking for a new rental in Los Angeles? <a href="/rentals/city/los-angeles">Browse LA rentals on EMLAKIE</a> — all listed directly by landlords, no broker fees.</p>
+    `.trim(),
+  },
 ];
 
 export function getPost(slug: string): Post | undefined {

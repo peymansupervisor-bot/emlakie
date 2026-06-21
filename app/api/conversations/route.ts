@@ -22,8 +22,8 @@ export async function GET(req: NextRequest) {
   if (!data?.length) return NextResponse.json([]);
 
   // Enrich with listing address and tenant name
-  const listingIds = [...new Set(data.map((c) => c.listing_id).filter(Boolean))];
-  const tenantIds = [...new Set(data.map((c) => c.tenant_id).filter(Boolean))];
+  const listingIds = Array.from(new Set(data.map((c) => c.listing_id).filter(Boolean)));
+  const tenantIds = Array.from(new Set(data.map((c) => c.tenant_id).filter(Boolean)));
 
   const [listingsRes, profilesRes, unreadRes] = await Promise.all([
     admin.from('listings').select('id, address, city, state').in('id', listingIds),

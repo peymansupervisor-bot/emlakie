@@ -156,6 +156,7 @@ export default function NewPropertyPage() {
   const [error, setError] = useState('');
   const [filterWarnings, setFilterWarnings] = useState<{term: string; reason: string; law: string; suggestion: string}[]>([]);
   const [filterChecking, setFilterChecking] = useState(false);
+  const [aiGenerating, setAiGenerating] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
   const filterTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -193,6 +194,35 @@ export default function NewPropertyPage() {
           : `${form.title} ${value}`;
         checkContent(updated);
       }, 600);
+    }
+  }
+
+  async function generateDescription() {
+    setAiGenerating(true);
+    try {
+      const res = await fetch('/api/listings/generate-description', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          address: form.address,
+          city: form.city,
+          state: form.state,
+          propertyType: form.propertyType,
+          bedrooms: form.bedrooms,
+          bathrooms: form.bathrooms,
+          sqft: form.sqft,
+          price: form.price,
+          amenities: form.amenities,
+        }),
+      });
+      if (res.ok) {
+        const { description } = await res.json();
+        set('description', description);
+      }
+    } catch {
+      // silently ignore — landlord can still write manually
+    } finally {
+      setAiGenerating(false);
     }
   }
 
@@ -514,7 +544,27 @@ export default function NewPropertyPage() {
             <p className="mt-1 text-xs text-gray-500">Make it specific — renters search by keywords.</p>
           </div>
           <div>
-            <label htmlFor="new-description" className={labelCls}>Description *</label>
+            <div className="flex items-center justify-between mb-1">
+              <label htmlFor="new-description" className={labelCls.replace(' mb-1', '')}>Description *</label>
+              <button
+                type="button"
+                onClick={generateDescription}
+                disabled={aiGenerating}
+                className="flex items-center gap-1.5 rounded-lg bg-violet-50 border border-violet-200 px-3 py-1.5 text-xs font-semibold text-violet-700 hover:bg-violet-100 transition disabled:opacity-60"
+              >
+                {aiGenerating ? (
+                  <>
+                    <svg className="h-3.5 w-3.5 animate-spin" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+                    </svg>
+                    Writing…
+                  </>
+                ) : (
+                  <>✨ Write with AI</>
+                )}
+              </button>
+            </div>
             <textarea
               id="new-description"
               className={`${inputCls} min-h-[160px] resize-y ${filterWarnings.length > 0 ? 'border-red-400 focus:border-red-500 focus:ring-red-400' : ''}`}

@@ -16,6 +16,7 @@ const SERVICE_ORDER = [
   { name: 'Facebook Sign-In', icon: '📘', desc: 'Facebook OAuth credentials' },
   { name: 'Photo System', icon: '🖼️', desc: 'Upload, compress & storage' },
   { name: 'ADA Audit', icon: '♿', desc: 'WCAG accessibility logger' },
+  { name: 'SEO Audit', icon: '🔍', desc: 'SEO meta tags, headings & structured data' },
   { name: 'Inman RSS', icon: '📰', desc: 'Real estate news feed' },
   { name: 'Daily Alert Cron', icon: '⏰', desc: 'Morning renter alerts' },
 ];

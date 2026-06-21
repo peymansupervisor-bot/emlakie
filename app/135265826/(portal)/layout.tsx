@@ -21,6 +21,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
     { href: '/135265826', label: 'All Listings', badge: null },
     { href: '/135265826/flags', label: 'Flagged Reports', badge: flagCount > 0 ? flagCount : null },
     { href: '/135265826/ada', label: 'ADA Audit', badge: null },
+    { href: '/135265826/seo', label: 'SEO Audit', badge: null },
     { href: '/135265826/health', label: '⬤ Health', badge: null },
     { href: '/135265826/moderators', label: 'Moderators', badge: null },
   ];

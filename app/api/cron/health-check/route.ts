@@ -307,6 +307,22 @@ async function checkADAAudit(): Promise<CheckResult> {
   }
 }
 
+async function checkSmartDescriptions(): Promise<CheckResult> {
+  try {
+    const key = process.env.ANTHROPIC_API_KEY;
+    if (!key) return { service: 'Smart Descriptions (AI)', status: 'down', message: 'ANTHROPIC_API_KEY missing' };
+    const res = await fetch('https://api.anthropic.com/v1/models', {
+      headers: { 'x-api-key': key, 'anthropic-version': '2023-06-01' },
+      signal: AbortSignal.timeout(8000),
+    });
+    if (res.status === 200) return { service: 'Smart Descriptions (AI)', status: 'ok', message: 'Anthropic API key valid' };
+    if (res.status === 401) return { service: 'Smart Descriptions (AI)', status: 'down', message: 'API key invalid or revoked' };
+    return { service: 'Smart Descriptions (AI)', status: 'degraded', message: `HTTP ${res.status}` };
+  } catch (e: unknown) {
+    return { service: 'Smart Descriptions (AI)', status: 'down', message: String(e) };
+  }
+}
+
 async function checkDailyCron(): Promise<CheckResult> {
   try {
     const sb = createClient(
@@ -397,6 +413,7 @@ export async function GET(req: NextRequest) {
     checkPhotoSystem(),
     checkADAAudit(),
     checkDailyCron(),
+    checkSmartDescriptions(),
   ]);
 
   const results: CheckResult[] = checks.map((c) =>

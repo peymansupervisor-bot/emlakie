@@ -1,5 +1,6 @@
 import { adminClient } from '@/lib/moderator';
 import RunSEOAuditButton from '../RunSEOAuditButton';
+import RepairSEOButton from '../RepairSEOButton';
 
 export const dynamic = 'force-dynamic';
 
@@ -74,6 +75,7 @@ export default async function SEOPage() {
           </p>
         </div>
         <div className="flex items-center gap-3">
+          <RepairSEOButton hasIssues={latestErrors > 0 || latestWarnings > 0} />
           <RunSEOAuditButton />
           <div className={`rounded-2xl px-5 py-3 text-center ${latestErrors > 0 ? 'bg-red-900' : latestWarnings > 0 ? 'bg-yellow-900' : 'bg-green-900'}`}>
             <p className={`font-bold text-sm ${latestErrors > 0 ? 'text-red-300' : latestWarnings > 0 ? 'text-yellow-300' : 'text-green-300'}`}>

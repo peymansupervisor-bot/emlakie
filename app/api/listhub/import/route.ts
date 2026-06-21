@@ -40,7 +40,7 @@ function isAllowedPhotoUrl(url: string): boolean {
   }
 }
 
-// POST /api/listhub/import — import a single ListHub listing into Emlakie
+// POST /api/listhub/import — import a single ListHub listing into EMLAKIE
 export async function POST(req: NextRequest) {
   const secret = req.headers.get('x-import-secret');
   if (!secret || secret !== process.env.LISTHUB_IMPORT_SECRET) {

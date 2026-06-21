@@ -127,7 +127,7 @@ export default async function HealthPage() {
       </div>
 
       <p className="mt-6 text-xs text-gray-600">
-        Email alerts go to <span className="text-gray-400">Support@Emlakie.com</span> immediately on any failure or degradation.
+        Email alerts go to <span className="text-gray-400">support@emlakie.com</span> immediately on any failure or degradation.
       </p>
     </div>
   );

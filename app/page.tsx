@@ -238,7 +238,7 @@ export default async function HomePage() {
             </div>
           </div>
           <div className="hidden h-64 w-64 overflow-hidden rounded-full lg:flex">
-            <Image src="/logo.png" alt="Emlakie" width={256} height={256} sizes="256px" className="h-full w-full object-cover" />
+            <Image src="/logo.png" alt="EMLAKIE" width={256} height={256} sizes="256px" className="h-full w-full object-cover" />
           </div>
         </div>
       </section>

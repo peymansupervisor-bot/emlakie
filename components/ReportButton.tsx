@@ -92,7 +92,7 @@ export default function ReportButton({ listingId }: { listingId: string }) {
                   <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                 </svg>
                 <p className="font-semibold text-gray-900">Listing flagged</p>
-                <p className="mt-1 text-sm text-gray-500">Our team will review this listing. Thank you for helping keep Emlakie safe.</p>
+                <p className="mt-1 text-sm text-gray-500">Our team will review this listing. Thank you for helping keep EMLAKIE safe.</p>
                 <button onClick={closeModal} className="mt-5 rounded-xl bg-brand-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-brand-700 transition">
                   Close
                 </button>

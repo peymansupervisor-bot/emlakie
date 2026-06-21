@@ -45,7 +45,7 @@ export default function AlertsPage() {
       </div>
 
       <p className="mt-6 text-center text-sm text-gray-500">
-        Real-time push alerts are available in the Emlakie app.{' '}
+        Real-time push alerts are available in the EMLAKIE app.{' '}
         <Link href="/app" className="font-semibold text-brand-600 hover:text-brand-700">
           Download →
         </Link>

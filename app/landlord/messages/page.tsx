@@ -69,7 +69,7 @@ export default function MessagesPage() {
       )}
 
       <p className="mt-6 text-center text-sm text-gray-500">
-        Full messaging is available in the Emlakie app.{' '}
+        Full messaging is available in the EMLAKIE app.{' '}
         <a href="/app" className="font-semibold text-brand-600 hover:text-brand-700">
           Download →
         </a>

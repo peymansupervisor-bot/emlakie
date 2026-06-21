@@ -49,7 +49,7 @@ export async function POST(req: NextRequest) {
           unit_amount: plan.price,
           product_data: {
             name: `${plan.label} — ${listing.address}`,
-            description: `Featured placement on Emlakie for ${plan.days} days`,
+            description: `Featured placement on EMLAKIE for ${plan.days} days`,
           },
         },
         quantity: 1,

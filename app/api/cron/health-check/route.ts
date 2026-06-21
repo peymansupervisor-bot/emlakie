@@ -6,7 +6,7 @@ import { Resend } from 'resend';
 type Status = 'ok' | 'degraded' | 'down';
 interface CheckResult { service: string; status: Status; message: string }
 
-const ADMIN_EMAIL = 'Support@Emlakie.com';
+const ADMIN_EMAIL = 'support@emlakie.com';
 
 // ─── individual probes ────────────────────────────────────────────────────────
 

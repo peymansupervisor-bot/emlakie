@@ -212,7 +212,7 @@ export default function LandlordLoginPage() {
       {step === 'signup' && (
         <>
           <h2 className="text-3xl font-extrabold text-gray-900">Create account</h2>
-          <p className="mt-2 text-gray-500">List your rentals on Emlakie for free.</p>
+          <p className="mt-2 text-gray-500">List your rentals on EMLAKIE for free.</p>
           <form onSubmit={onSignup} className="mt-8 space-y-4">
             <input id="signup-email" type="email" value={email} onChange={(e) => setEmail(e.target.value)}
               placeholder="Email address" aria-label="Email address" autoComplete="email" required className={inputClass} />

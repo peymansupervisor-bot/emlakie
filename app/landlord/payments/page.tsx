@@ -94,7 +94,7 @@ export default function BoostPage() {
         <h1 className="text-3xl font-extrabold text-gray-900">Boost a Listing</h1>
       </div>
       <p className="mb-8 text-gray-500">
-        Listing on Emlakie is always free. Boost gives your property featured placement
+        Listing on EMLAKIE is always free. Boost gives your property featured placement
         on the homepage — seen by every renter who visits.
       </p>
 

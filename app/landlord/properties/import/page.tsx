@@ -74,7 +74,7 @@ export default function ImportFromMlsPage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Import from MLS</h1>
-          <p className="text-sm text-gray-500 mt-1">Your active MLS listings — import them to Emlakie with one click</p>
+          <p className="text-sm text-gray-500 mt-1">Your active MLS listings — import them to EMLAKIE with one click</p>
         </div>
         {listings.length > 0 && (
           <button
@@ -142,7 +142,7 @@ export default function ImportFromMlsPage() {
                       onClick={() => importListing(l)}
                       className="w-full rounded-xl bg-brand-600 py-2 text-sm font-semibold text-white hover:bg-brand-700 transition"
                     >
-                      Import to Emlakie
+                      Import to EMLAKIE
                     </button>
                   )}
                   {status === 'importing' && (

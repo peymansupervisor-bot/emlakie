@@ -16,7 +16,7 @@ export default async function ModeratorsPage() {
       <h1 className="text-xl font-extrabold text-white mb-1">Moderators</h1>
       <p className="text-sm text-gray-400 mb-8">
         Moderators can view, edit, suspend, and delete any listing. They sign in at{' '}
-        <span className="text-brand-400">/135265826/login</span> using their Emlakie account.
+        <span className="text-brand-400">/135265826/login</span> using their EMLAKIE account.
       </p>
 
       <div className="rounded-2xl border border-gray-800 overflow-hidden mb-8">
@@ -45,7 +45,7 @@ export default async function ModeratorsPage() {
       <div className="rounded-2xl border border-gray-800 bg-gray-900 px-6 py-6">
         <h2 className="text-sm font-bold text-white mb-4">Add a moderator</h2>
         <p className="text-xs text-gray-400 mb-4">
-          The person must already have an Emlakie landlord account. Enter their exact email address.
+          The person must already have an EMLAKIE landlord account. Enter their exact email address.
         </p>
         <AddModeratorForm />
       </div>

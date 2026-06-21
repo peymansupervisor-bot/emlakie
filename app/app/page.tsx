@@ -25,7 +25,7 @@ export const metadata: Metadata = {
 export default function AppPage() {
   return (
     <section className="mx-auto flex max-w-3xl flex-col items-center px-4 py-24 text-center sm:px-6">
-      <Image src="/logo.png" alt="Emlakie" width={80} height={80} className="rounded-3xl shadow-card" />
+      <Image src="/logo.png" alt="EMLAKIE" width={80} height={80} className="rounded-3xl shadow-card" />
       <h1 className="mt-8 text-4xl font-extrabold text-gray-900">
         The EMLAKIE app is almost here
       </h1>

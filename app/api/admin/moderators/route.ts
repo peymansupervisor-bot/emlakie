@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
   if (lookupErr) return NextResponse.json({ error: 'Could not look up users.' }, { status: 500 });
 
   const match = users.users.find((u) => u.email?.toLowerCase() === email.toLowerCase());
-  if (!match) return NextResponse.json({ error: 'No Emlakie account found for that email.' }, { status: 404 });
+  if (!match) return NextResponse.json({ error: 'No EMLAKIE account found for that email.' }, { status: 404 });
 
   const { error } = await sb.from('moderators').insert({ user_id: match.id, email: match.email });
   if (error) {

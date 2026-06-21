@@ -10,7 +10,7 @@ export default function BoostSuccessPage() {
       </div>
       <h1 className="mb-3 text-3xl font-extrabold text-gray-900">Your listing is now boosted!</h1>
       <p className="mb-8 max-w-sm text-gray-500">
-        It will appear in the featured section on the Emlakie homepage for the duration of your plan.
+        It will appear in the featured section on the EMLAKIE homepage for the duration of your plan.
         Renters visiting the site will see it first.
       </p>
       <Link

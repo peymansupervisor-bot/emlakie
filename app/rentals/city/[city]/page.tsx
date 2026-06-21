@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import ListingCard from '@/components/ListingCard';
 import SeoLinkGrid from '@/components/SeoLinkGrid';
+import RelatedArticles from '@/components/RelatedArticles';
 import { getAllCities, getListingsByCity, getTrendingCities } from '@/lib/api';
 import { formatPrice } from '@/lib/format';
 import { getCityContent } from '@/lib/city-content';
@@ -284,6 +285,9 @@ export default async function CityPage({ params }: Props) {
           </Link>
         ))}
       </section>
+
+      {/* Related blog articles for this city */}
+      <RelatedArticles citySlug={slug} />
 
       <SeoLinkGrid trendingCities={trendingCities} />
     </div>

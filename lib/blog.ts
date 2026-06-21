@@ -925,6 +925,717 @@ export const posts: Post[] = [
 <p><a href="/rentals/city/tampa">Browse Tampa rentals on EMLAKIE</a> — connect directly with landlords, no broker fees, no commissions.</p>
     `.trim(),
   },
+  // ── How-to guides & renter/landlord resources ───────────────────────────
+  {
+    slug: 'how-much-rent-can-i-afford',
+    title: 'How Much Rent Can I Afford? The 30% Rule Explained',
+    description: 'A practical breakdown of how to budget for rent, when the 30% rule works, and when to adjust it for your situation.',
+    date: '2026-06-15',
+    category: 'Renter Tips',
+    readTime: 4,
+    content: `
+<p>The classic rule of thumb is that you should spend no more than 30% of your gross monthly income on rent. But in many cities — especially coastal metros — that rule is impossible to follow without moving to a significantly cheaper neighborhood. Here's how to think about it in 2026.</p>
+
+<h2>The 30% Rule: Where It Comes From</h2>
+<p>The 30% guideline dates to a 1969 federal housing standard. It was designed as a ceiling for what low-income renters should pay in subsidized housing — not as a universal budget target. Applying it rigidly in a city like New York or San Francisco often leaves renters with an unrealistically small selection of units.</p>
+
+<h2>A More Practical Framework</h2>
+<p>Rather than a fixed percentage, think in terms of what you have left over after rent:</p>
+<ul>
+  <li>Can you still save at least 10–15% of your income after rent?</li>
+  <li>Can you cover food, transportation, and utilities comfortably?</li>
+  <li>Are you building an emergency fund, or depleting one?</li>
+</ul>
+<p>If the answer to these is yes, your rent may be fine — even if it's 35–40% of gross income.</p>
+
+<h2>What Landlords Actually Require</h2>
+<p>Most landlords use a <strong>3× rent rule</strong> — they require your gross monthly income to be at least 3 times the monthly rent. This is not a budget guideline; it's an income threshold to qualify. Qualifying at 3× doesn't mean you can comfortably afford the unit — it just means you pass the landlord's minimum income check.</p>
+
+<h2>Rent Affordability by Income Level</h2>
+<ul>
+  <li><strong>$40,000/year ($3,333/mo gross):</strong> 30% = $1,000/mo rent. Reasonable in cities like Kansas City, Omaha, or inland metros.</li>
+  <li><strong>$60,000/year ($5,000/mo gross):</strong> 30% = $1,500/mo rent. Stretches to cover much of the US market.</li>
+  <li><strong>$80,000/year ($6,667/mo gross):</strong> 30% = $2,000/mo rent. Comfortable in most major cities.</li>
+  <li><strong>$120,000/year ($10,000/mo gross):</strong> 30% = $3,000/mo rent. Covers most non-luxury units in high-cost metros.</li>
+</ul>
+
+<h2>When It's OK to Go Over 30%</h2>
+<ul>
+  <li>Your income is likely to increase significantly in the next 1–2 years.</li>
+  <li>You have low or no debt and no car payments.</li>
+  <li>The location dramatically cuts commute costs or eliminates a car.</li>
+  <li>You're splitting with roommates and the effective per-person cost drops below 30%.</li>
+</ul>
+
+<h2>Use a Free Rent Estimate Tool</h2>
+<p>Before you start searching, check what similar units actually rent for in your target neighborhood. <a href="/rent-estimate">EMLAKIE's free rent estimate tool</a> gives you a market-rate benchmark based on local listings — so you can enter a search with realistic expectations.</p>
+    `.trim(),
+  },
+  {
+    slug: 'first-time-renter-guide',
+    title: 'First-Time Renter\'s Complete Guide: Everything You Need to Know',
+    description: 'A step-by-step guide for first-time renters — from building credit to signing a lease and getting your deposit back.',
+    date: '2026-06-14',
+    category: 'Renter Tips',
+    readTime: 7,
+    content: `
+<p>Renting your first apartment can feel overwhelming. Lease terms, security deposits, credit checks, renters insurance — there's a lot to navigate before you get the keys. This guide walks you through every step.</p>
+
+<h2>Step 1: Know Your Budget Before You Search</h2>
+<p>Before you look at a single listing, calculate what you can actually afford. A good starting point: your gross monthly income divided by 3 gives you the maximum rent most landlords will approve you for. Be honest with yourself about your after-rent expenses — food, transportation, utilities, and savings. <a href="/rent-estimate">Use EMLAKIE's rent estimator</a> to see what comparable units cost in your target area.</p>
+
+<h2>Step 2: Gather Your Documents</h2>
+<p>Landlords move fast on good applicants. Have these ready before you start touring:</p>
+<ul>
+  <li>Government-issued photo ID</li>
+  <li>Last 2–3 pay stubs (or bank statements if self-employed)</li>
+  <li>Offer letter if you're starting a new job</li>
+  <li>Previous landlord contact information and reference</li>
+  <li>Social Security number (for credit check)</li>
+</ul>
+
+<h2>Step 3: Understand Your Credit Score</h2>
+<p>Most landlords require a credit score of 620–650 minimum, with 700+ preferred. Check your credit score for free through your bank, Credit Karma, or Experian before applying. If your score is low, you have options: offer a larger security deposit, get a guarantor (co-signer), or look for landlords who accept new-to-credit renters.</p>
+
+<h2>Step 4: Tour Smart</h2>
+<p>When you visit a unit, go beyond looking at how it looks. Check:</p>
+<ul>
+  <li>Water pressure (run faucets and flush toilets)</li>
+  <li>Cell signal and whether the landlord allows WiFi installation</li>
+  <li>Natural light in every room</li>
+  <li>Noise levels — listen from the bedroom during your tour</li>
+  <li>Condition of appliances, floors, and walls</li>
+  <li>How the exterior and common areas are maintained</li>
+  <li>Proximity to laundry if in-unit isn't included</li>
+</ul>
+
+<h2>Step 5: Read the Lease — All of It</h2>
+<p>The lease is a legally binding contract. Key things to understand before you sign:</p>
+<ul>
+  <li><strong>Lease term and renewal terms</strong> — most are 12 months</li>
+  <li><strong>Rent increase notice period</strong> — how much notice does the landlord have to give?</li>
+  <li><strong>Security deposit amount and return conditions</strong></li>
+  <li><strong>Early termination clause</strong> — what does it cost to break the lease?</li>
+  <li><strong>Pet policy</strong> — even if you don't have pets now</li>
+  <li><strong>Utilities</strong> — which are included and which aren't</li>
+  <li><strong>Subletting</strong> — are you allowed to have someone else move in temporarily?</li>
+  <li><strong>Guest policy</strong> — is there a limit on how long guests can stay?</li>
+</ul>
+
+<h2>Step 6: Document Everything at Move-In</h2>
+<p>Take photos or a video of every room, every wall, and every appliance on the day you move in. Send them to the landlord via email the same day with a note saying "move-in condition documentation." This protects you from having your security deposit wrongfully withheld at move-out.</p>
+
+<h2>Step 7: Get Renters Insurance</h2>
+<p>Renters insurance is the most underrated financial product for tenants. It covers your belongings if stolen, your liability if someone is injured in your apartment, and often temporary housing if your unit becomes uninhabitable. It typically costs $10–$25/month. Some landlords require it; if yours doesn't, get it anyway.</p>
+
+<h2>Step 8: Know Your Rights</h2>
+<p>Tenant rights vary by state and city. Generally, you have the right to a habitable unit, protection from illegal landlord entry (typically 24 hours notice required), and a return of your security deposit within a legally specified period after move-out (with an itemized list of any deductions). Learn your state's specific tenant protections before you sign.</p>
+
+<p>Ready to start searching? <a href="/rentals">Browse rental listings on EMLAKIE</a> — all posted directly by landlords, no broker fees, no middlemen.</p>
+    `.trim(),
+  },
+  {
+    slug: 'how-to-screen-tenants',
+    title: 'How to Screen Tenants: A Landlord\'s Complete Guide',
+    description: 'A step-by-step framework for screening rental applicants, running background checks, and choosing the right tenant while staying compliant with fair housing laws.',
+    date: '2026-06-13',
+    category: 'Landlord Tips',
+    readTime: 6,
+    content: `
+<p>Tenant screening is the single most important thing you do as a landlord. A great tenant pays on time, takes care of your property, and renews their lease. A problem tenant can cost you months of lost rent, legal fees, and property damage. Here's how to screen systematically and legally.</p>
+
+<h2>Set Clear Minimum Criteria Before You Start</h2>
+<p>Before advertising your property, write down your minimum requirements. This protects you from fair housing violations (applying criteria inconsistently) and saves time during the review process. Common criteria:</p>
+<ul>
+  <li>Minimum monthly income: 2.5–3× the monthly rent</li>
+  <li>Minimum credit score: 620 or higher</li>
+  <li>No evictions in the past 5 years</li>
+  <li>No felony convictions in the past 7 years (check state restrictions on criminal history)</li>
+  <li>Positive rental history with previous landlords</li>
+</ul>
+<p><strong>Apply the same criteria to every applicant.</strong> Any deviation opens you to fair housing liability.</p>
+
+<h2>What to Ask on the Application</h2>
+<ul>
+  <li>Full legal name and date of birth</li>
+  <li>Current and previous addresses (with landlord contact info)</li>
+  <li>Current employer, position, and income</li>
+  <li>Social Security Number (for credit/background check)</li>
+  <li>Number of people who will live in the unit</li>
+  <li>Pets (type, breed, weight)</li>
+  <li>Reason for leaving current residence</li>
+</ul>
+
+<h2>Run a Credit Check</h2>
+<p>A credit report shows payment history, open accounts, total debt, and public records (including judgments and collection accounts). Look for:</p>
+<ul>
+  <li>Overall score (650+ is a reasonable floor)</li>
+  <li>Payment history — consistent late payments are a red flag</li>
+  <li>Collections accounts — especially utilities, which suggest a history of non-payment to service providers</li>
+  <li>Eviction-related judgments</li>
+</ul>
+
+<h2>Run a Background Check</h2>
+<p>Background checks typically cover criminal history, sex offender registry, and eviction records. Use a reputable screening service. Note: many states limit how far back you can look (e.g., 7 years), and several states and cities restrict use of criminal history in housing decisions. Check your local laws carefully.</p>
+
+<h2>Verify Income</h2>
+<p>Request pay stubs from the last 2–3 months. For self-employed applicants, bank statements or a CPA-signed letter. For new employees, an offer letter with start date and salary. Verify that the numbers match what was stated on the application.</p>
+
+<h2>Call Previous Landlords</h2>
+<p>Don't skip this step. Previous landlords are your best predictor of future behavior. Ask:</p>
+<ul>
+  <li>Did they pay rent on time?</li>
+  <li>Did they give proper notice before moving out?</li>
+  <li>Did they take care of the property?</li>
+  <li>Would you rent to them again?</li>
+</ul>
+<p>If a landlord hesitates or gives vague answers to "would you rent to them again," that's a meaningful signal.</p>
+
+<h2>Fair Housing: What You Cannot Do</h2>
+<p>Federal Fair Housing law prohibits denying housing based on race, color, national origin, religion, sex, familial status, or disability. Many states add additional protected classes (source of income, sexual orientation, age, etc.). You cannot ask about these characteristics or make decisions based on them. Stick to objective, verifiable financial and rental history criteria.</p>
+
+<h2>Make It Simple With EMLAKIE</h2>
+<p>When tenants apply through EMLAKIE, you receive an application packet that includes income, credit score, and an AI match score — so you can compare applicants at a glance. <a href="/landlords">Learn how EMLAKIE works for landlords</a>.</p>
+    `.trim(),
+  },
+  {
+    slug: 'moving-checklist-renters',
+    title: 'The Ultimate Moving Checklist for Renters (8 Weeks to Move-In Day)',
+    description: 'A week-by-week checklist for renters to stay organized from lease signing to move-in — covering logistics, utilities, address changes, and move-in documentation.',
+    date: '2026-06-12',
+    category: 'Renter Tips',
+    readTime: 5,
+    content: `
+<p>Moving is one of the most stressful life events you can navigate. The best way to manage it: break it into weekly tasks starting 8 weeks before your move. Here's a complete checklist.</p>
+
+<h2>8 Weeks Before</h2>
+<ul>
+  <li>Sign your new lease and pay the security deposit</li>
+  <li>Give notice to your current landlord (typically 30–60 days — check your lease)</li>
+  <li>Start researching moving companies or truck rental options</li>
+  <li>Set a moving budget</li>
+</ul>
+
+<h2>6 Weeks Before</h2>
+<ul>
+  <li>Book a moving company (good ones book out fast, especially on weekends)</li>
+  <li>Start decluttering — donate or sell items you won't take</li>
+  <li>Order packing supplies (boxes, tape, bubble wrap)</li>
+  <li>Notify your employer, bank, and any subscription services of your upcoming address change</li>
+</ul>
+
+<h2>4 Weeks Before</h2>
+<ul>
+  <li>Begin packing non-essential items (books, seasonal clothes, décor)</li>
+  <li>Set up utilities at your new place: electricity, gas, internet</li>
+  <li>Schedule a mail forward at USPS.com</li>
+  <li>Update your address with the DMV if you're moving to a new state</li>
+  <li>Arrange parking permits or elevator access for move-in day at both locations</li>
+</ul>
+
+<h2>2 Weeks Before</h2>
+<ul>
+  <li>Confirm your moving company booking with a reminder call</li>
+  <li>Pack all but the essentials you need daily</li>
+  <li>Confirm utility start dates at the new place</li>
+  <li>Arrange pet care or childcare for move-in day</li>
+  <li>Transfer or pick up medical records if changing providers</li>
+</ul>
+
+<h2>1 Week Before</h2>
+<ul>
+  <li>Pack your "first night" box: toiletries, phone charger, change of clothes, snacks, bedding</li>
+  <li>Defrost and clean refrigerator at your old place</li>
+  <li>Clean and photograph your old unit</li>
+  <li>Confirm move-in time and building access with your new landlord</li>
+  <li>Double-check your new lease for any move-in rules (elevator times, loading dock hours)</li>
+</ul>
+
+<h2>Move-In Day</h2>
+<ul>
+  <li><strong>Document the condition of every room with photos and video before you bring anything in</strong></li>
+  <li>Email photos to your landlord the same day with a written note</li>
+  <li>Test all locks, keys, appliances, and utilities</li>
+  <li>Get copies of any building access fobs or parking passes</li>
+  <li>Confirm mailbox location and whether you need a new key</li>
+  <li>Note anything already damaged — make sure it's documented in writing</li>
+</ul>
+
+<h2>Week After Move-In</h2>
+<ul>
+  <li>Update address: driver's license, voter registration, insurance, bank, employer payroll</li>
+  <li>Register your car in the new state if applicable</li>
+  <li>Get renters insurance if you don't already have it ($10–$25/month)</li>
+  <li>Meet your neighbors</li>
+</ul>
+
+<p>Finding your next rental? <a href="/rentals">Browse EMLAKIE listings</a> — all posted directly by landlords, no broker fees.</p>
+    `.trim(),
+  },
+  {
+    slug: 'renting-with-pets-guide',
+    title: 'Renting With Pets: How to Find Pet-Friendly Rentals and Win Over Landlords',
+    description: 'A practical guide for pet owners navigating the rental market — from finding pet-friendly listings to writing a pet résumé that gets landlords to say yes.',
+    date: '2026-06-11',
+    category: 'Renter Tips',
+    readTime: 5,
+    content: `
+<p>Renting with pets is one of the biggest challenges in the housing market. Despite the fact that 70% of US households own a pet, many landlords prohibit them — or charge significant fees that add to the cost of renting. Here's how to navigate it successfully.</p>
+
+<h2>The Pet-Friendly Rental Challenge</h2>
+<p>Landlords who restrict or prohibit pets are generally concerned about property damage, noise complaints, and liability. Understanding these concerns helps you address them proactively when applying. The good news: with the right approach, many landlords who say "no pets" on their listing will make exceptions for the right tenant with the right animal.</p>
+
+<h2>Start With the Right Search</h2>
+<p>Use EMLAKIE's pet-friendly filter to see only listings that explicitly welcome pets. This saves time and reduces rejection. Many smaller landlords who list directly are more flexible than large property management companies, which often have blanket breed or weight restrictions.</p>
+
+<h2>Understand Pet Deposits and Pet Rent</h2>
+<ul>
+  <li><strong>Pet deposit:</strong> A one-time refundable amount (typically $200–$500 per pet) held against pet-related damage</li>
+  <li><strong>Non-refundable pet fee:</strong> A one-time charge that isn't returned at move-out (varies by state — California prohibits non-refundable deposits)</li>
+  <li><strong>Pet rent:</strong> An additional monthly fee (typically $25–$75/month per pet)</li>
+</ul>
+<p>Know your state's laws. In California, the total of all deposits (including pet) cannot exceed 2 months' rent for unfurnished units.</p>
+
+<h2>Create a Pet Résumé</h2>
+<p>A pet résumé is a one-page document that introduces your pet to a landlord and demonstrates that you're a responsible pet owner. Include:</p>
+<ul>
+  <li>Pet's name, breed, age, and weight</li>
+  <li>Up-to-date vaccination records</li>
+  <li>Spayed/neutered status</li>
+  <li>Training certifications or obedience classes completed</li>
+  <li>A reference letter from your previous landlord confirming no pet-related damage</li>
+  <li>A photo of your pet (makes it feel personal and less threatening)</li>
+</ul>
+
+<h2>Offer Extra Protection to the Landlord</h2>
+<ul>
+  <li>Offer a larger security deposit to cover any potential pet damage</li>
+  <li>Offer to have carpets professionally cleaned at move-out</li>
+  <li>Show proof of renters insurance that includes pet liability coverage</li>
+</ul>
+
+<h2>Know Your Rights: Assistance Animals</h2>
+<p>If your pet is an emotional support animal (ESA) or service animal, federal fair housing law requires landlords to make reasonable accommodations — even in no-pet buildings. You're generally not required to pay pet deposits for a documented ESA. You will need documentation from a licensed healthcare provider. Service animals (trained to perform specific tasks) have even broader protections.</p>
+
+<h2>Breeds and Size Restrictions</h2>
+<p>Large-breed and "aggressive breed" restrictions are common. Many buildings prohibit pit bulls, Rottweilers, and German Shepherds regardless of individual temperament. If you have a restricted breed, focus your search on private landlords (more likely to be flexible) and be upfront about the breed rather than trying to hide it — dishonesty on an application is grounds for eviction.</p>
+
+<p>Ready to find your next pet-friendly rental? <a href="/rentals/pet-friendly">Browse pet-friendly listings on EMLAKIE</a> — no broker fees, all landlord-direct.</p>
+    `.trim(),
+  },
+  {
+    slug: 'california-tenant-rights-guide',
+    title: 'California Tenant Rights: A Complete Guide for 2026',
+    description: 'A practical overview of California tenant rights — covering rent caps, eviction protections, security deposits, habitability, and the landlord\'s duty to repair.',
+    date: '2026-06-10',
+    category: 'Renter Tips',
+    readTime: 7,
+    content: `
+<p>California has some of the strongest tenant protections in the United States. Whether you're a new renter or a longtime resident, understanding your rights can save you thousands of dollars and protect your housing stability. Here's what you need to know in 2026.</p>
+
+<h2>Statewide Rent Cap: AB 1482</h2>
+<p>California's Tenant Protection Act of 2019 (AB 1482) limits annual rent increases to <strong>5% plus local CPI (Consumer Price Index), with a maximum of 10%</strong>, for most rental units more than 15 years old. This means:</p>
+<ul>
+  <li>A landlord cannot raise your rent 20% at renewal to push you out</li>
+  <li>Most single-family homes that are owner-occupied, condos being sold, and newer buildings are exempt</li>
+  <li>Always ask your landlord whether your unit is covered by AB 1482</li>
+</ul>
+
+<h2>Just Cause Eviction Protections</h2>
+<p>Under AB 1482, once you've lived in a covered unit for 12 months, your landlord must have a "just cause" to evict you. Just causes include:</p>
+<ul>
+  <li><strong>At-fault:</strong> Non-payment of rent, lease violations, unauthorized subletting, criminal activity</li>
+  <li><strong>No-fault:</strong> Owner move-in, demolition, substantial renovation, government order</li>
+</ul>
+<p>For no-fault evictions, landlords must pay you one month's rent as relocation assistance.</p>
+
+<h2>Security Deposits: What Landlords Can Charge</h2>
+<p>Effective April 2024 under AB 12, California caps security deposits at <strong>one month's rent</strong> for most residential tenants. Previously the cap was two months (unfurnished) or three months (furnished). Key rules:</p>
+<ul>
+  <li>Landlord must return your deposit within <strong>21 days</strong> of move-out</li>
+  <li>Must provide an itemized statement of any deductions</li>
+  <li>Can only deduct for unpaid rent, cleaning, and damages beyond normal wear and tear</li>
+  <li>"Normal wear and tear" includes paint fading, minor scuffs, and carpet worn by normal use — landlords cannot deduct for these</li>
+</ul>
+
+<h2>The Right to a Habitable Unit</h2>
+<p>California law requires landlords to maintain rental units in a habitable condition. This includes:</p>
+<ul>
+  <li>Working heat, plumbing, and electrical systems</li>
+  <li>Weatherproofing (no leaking roof or broken windows)</li>
+  <li>Freedom from rodents, cockroaches, and vermin</li>
+  <li>Safe and sanitary common areas</li>
+</ul>
+<p>If your landlord fails to make required repairs after you've given written notice, you may have the right to "repair and deduct" — hire a contractor and deduct the cost from rent (limited to one month's rent, once per year).</p>
+
+<h2>Right to Privacy: Landlord Entry Rules</h2>
+<p>In California, landlords must give <strong>24 hours' advance written notice</strong> before entering your unit in almost all circumstances (except genuine emergencies). They can only enter during normal business hours unless you agree otherwise. Unauthorized entry is a violation of your right to quiet enjoyment.</p>
+
+<h2>Local Rent Control: Is Your City Covered?</h2>
+<p>Many California cities have their own local rent control ordinances that are <em>stronger</em> than AB 1482. Cities with significant local rent control include:</p>
+<ul>
+  <li>Los Angeles (RSO) — covers buildings built before 1978</li>
+  <li>San Francisco — covers buildings built before 1979</li>
+  <li>Oakland — covers most units built before 1983</li>
+  <li>Santa Monica — covers buildings with 2+ units built before 1979</li>
+  <li>West Hollywood — covers most units built before 1979</li>
+  <li>Berkeley, East Palo Alto, Hayward, Richmond, and others</li>
+</ul>
+
+<h2>Anti-Discrimination Protections</h2>
+<p>California's Fair Employment and Housing Act prohibits housing discrimination based on race, sex, religion, national origin, familial status, disability, sexual orientation, gender identity, source of income, and several other characteristics. If you believe you've been discriminated against, file a complaint with the California Civil Rights Department (CRD) or HUD.</p>
+
+<p>Have questions about a specific rental or city? <a href="/rentals">Browse California rentals on EMLAKIE</a> — all listed directly by landlords.</p>
+    `.trim(),
+  },
+  {
+    slug: 'furnished-vs-unfurnished-rentals',
+    title: 'Furnished vs. Unfurnished Rentals: Which Is Right for You?',
+    description: 'A practical comparison of furnished and unfurnished rentals — who each type is best for, what to expect to pay, and what to look for when touring.',
+    date: '2026-06-09',
+    category: 'Renter Tips',
+    readTime: 4,
+    content: `
+<p>When searching for a rental, one of the first filters you'll encounter is furnished vs. unfurnished. The difference goes beyond whether a couch is included — it affects your cost, flexibility, and the type of landlord you'll work with.</p>
+
+<h2>What "Furnished" Actually Means</h2>
+<p>Furnished rentals typically include:</p>
+<ul>
+  <li>Beds and bedroom furniture</li>
+  <li>Living room furniture (sofa, coffee table, often a TV)</li>
+  <li>Kitchen appliances and often basic cookware and dishes</li>
+  <li>Linens (in higher-end furnished units)</li>
+</ul>
+<p>What "furnished" includes varies enormously. Always confirm in writing exactly what is included — especially in short-term furnished rentals, which can range from hotel-like completeness to a few basic pieces.</p>
+
+<h2>Who Should Rent Furnished</h2>
+<p>Furnished rentals are best for:</p>
+<ul>
+  <li><strong>Short-term renters</strong> (1–6 months): Moving for a project, waiting on a home purchase, or testing a city before committing</li>
+  <li><strong>Relocation renters:</strong> Moving cross-country when moving your furniture doesn't make financial sense</li>
+  <li><strong>Digital nomads and remote workers</strong> who move frequently</li>
+  <li><strong>First-time renters</strong> who haven't accumulated furniture yet</li>
+</ul>
+
+<h2>Who Should Rent Unfurnished</h2>
+<p>Unfurnished rentals are best for:</p>
+<ul>
+  <li>Anyone planning to stay 12+ months</li>
+  <li>Renters who already own furniture</li>
+  <li>People who want full control over their living environment</li>
+  <li>Budget-conscious renters: furnished units typically cost 15–30% more per month</li>
+</ul>
+
+<h2>The Price Difference</h2>
+<p>Furnished units typically rent for 15–30% more than comparable unfurnished units. On a $1,800/month apartment, that's $270–$540 extra per month, or $3,240–$6,480 per year. Over a year, you could buy excellent furniture for the price difference — making unfurnished the better financial choice for most long-term renters.</p>
+
+<h2>Key Questions to Ask About Furnished Rentals</h2>
+<ul>
+  <li>Is there an itemized list of what is included? Can you photograph/document everything at move-in?</li>
+  <li>Who is responsible for furniture damage?</li>
+  <li>Is the furniture quality consistent with the rent?</li>
+  <li>Are utilities included? (They often are in short-term furnished rentals)</li>
+  <li>Is the WiFi included and what is the speed?</li>
+</ul>
+
+<h2>Short-Term vs. Long-Term Furnished</h2>
+<p>Short-term furnished rentals (Airbnb-style monthly stays, corporate housing) operate very differently from long-term furnished apartments. Short-term rentals typically offer more flexibility but cost significantly more and offer fewer tenant protections (many are exempt from local rent ordinances). Long-term furnished apartments function like normal leases with standard tenant rights, just with furniture included.</p>
+
+<p>Browse <a href="/rentals/furnished">furnished rentals on EMLAKIE</a> or <a href="/rentals">search all listings</a> — including short-term and long-term options directly from landlords.</p>
+    `.trim(),
+  },
+  {
+    slug: 'how-to-write-rental-listing',
+    title: 'How to Write a Rental Listing That Gets Qualified Tenants Fast',
+    description: 'A landlord\'s guide to writing compelling rental listings — what information to include, how to price, and how to write a description that filters in the right tenants.',
+    date: '2026-06-08',
+    category: 'Landlord Tips',
+    readTime: 5,
+    content: `
+<p>A well-written rental listing attracts more qualified applicants, filters out poor fits, and rents your unit faster. Here's how to write one that works.</p>
+
+<h2>The Title: Be Specific</h2>
+<p>Your listing title is the first thing prospective tenants read. A great title includes the most important facts without being cluttered. Examples:</p>
+<ul>
+  <li><strong>Good:</strong> "3BR/2BA House in Oak Park — Yard, Garage, Pets OK"</li>
+  <li><strong>Better:</strong> "Updated 3BR/2BA Craftsman in Oak Park with Private Yard | Move-In Ready"</li>
+  <li><strong>Avoid:</strong> "Nice 3 bedroom house for rent" — too generic, doesn't stand out</li>
+</ul>
+
+<h2>The Description: Lead With the Best Features</h2>
+<p>Write your description in order of what matters most to your ideal tenant. A tenant looking in that price range and size probably cares most about:</p>
+<ol>
+  <li>The home itself (layout, updates, condition)</li>
+  <li>Location benefits (walkability, transit, schools, parking)</li>
+  <li>Amenities (laundry, outdoor space, storage, AC/heat)</li>
+  <li>Practical details (pets, utilities included, lease terms)</li>
+</ol>
+
+<h2>Include All the Key Information Upfront</h2>
+<p>Renters hate playing 20 questions. Include:</p>
+<ul>
+  <li>Square footage</li>
+  <li>Number of bedrooms and bathrooms</li>
+  <li>Monthly rent and security deposit amount</li>
+  <li>Pet policy (including any breed or weight restrictions)</li>
+  <li>Parking availability (and cost if separate)</li>
+  <li>Utilities: what's included vs. what the tenant pays</li>
+  <li>Laundry: in-unit, shared, or laundromat</li>
+  <li>Lease length and available move-in date</li>
+  <li>Income requirements (e.g., "3× monthly income required")</li>
+</ul>
+
+<h2>Photos: The Make-or-Break Factor</h2>
+<p>Listings with high-quality photos receive 3–4× more inquiries. Smartphones today take excellent photos with the right setup:</p>
+<ul>
+  <li>Shoot during the day with all interior lights on and blinds/curtains open</li>
+  <li>Declutter completely — remove personal items, kitchen countertop appliances, bathroom products</li>
+  <li>Lead with the best room — kitchen or living area is usually strongest</li>
+  <li>Include every room, the exterior, and any outdoor space</li>
+  <li>Wide-angle shots make spaces look larger (most phone cameras have this built in)</li>
+</ul>
+
+<h2>What to Avoid</h2>
+<ul>
+  <li>Discriminatory language (no references to race, religion, national origin, familial status, etc.)</li>
+  <li>Vague phrases like "great neighborhood" without specifics</li>
+  <li>Hiding known issues — undisclosed problems will come out and damage trust</li>
+  <li>Listing without photos or with dark/blurry photos</li>
+  <li>Asking for personal information before anyone has viewed the unit (scam red flag — don't create this impression)</li>
+</ul>
+
+<h2>Price It Right</h2>
+<p>Check 5–10 comparable active listings in your neighborhood before setting your price. Price slightly below the median and you'll receive significantly more applications in less time — giving you a better pool to choose from. Overpriced listings sit vacant.</p>
+
+<p>Ready to list your rental? <a href="/landlords">Post your property free on EMLAKIE</a> — your listing reaches qualified tenants directly, no broker needed.</p>
+    `.trim(),
+  },
+  {
+    slug: 'security-deposit-laws-by-state',
+    title: 'Security Deposit Laws by State: What Landlords Can (and Can\'t) Charge in 2026',
+    description: 'A state-by-state breakdown of security deposit limits, return deadlines, and what landlords can legally deduct — for both renters and landlords.',
+    date: '2026-06-07',
+    category: 'Landlord Tips',
+    readTime: 6,
+    content: `
+<p>Security deposits are one of the most contested areas of landlord-tenant law. Renters often don't know their rights; landlords sometimes don't know the limits. Here's a practical breakdown of the rules in the most populous states.</p>
+
+<h2>What Security Deposits Are For</h2>
+<p>Security deposits are held by landlords to cover:</p>
+<ul>
+  <li>Unpaid rent at the end of tenancy</li>
+  <li>Damage to the unit beyond normal wear and tear</li>
+  <li>Cleaning costs if the unit is left in significantly worse condition than at move-in</li>
+</ul>
+<p><strong>Normal wear and tear</strong> — paint fading, carpet worn by normal use, minor scuffs — cannot be deducted. A landlord cannot charge for repainting because you lived there for 3 years; paint wears naturally over time.</p>
+
+<h2>State-by-State Security Deposit Limits</h2>
+
+<h3>California</h3>
+<p>Maximum: <strong>1 month's rent</strong> (as of April 1, 2024, per AB 12). Return deadline: <strong>21 days</strong> after move-out.</p>
+
+<h3>New York</h3>
+<p>Maximum: <strong>1 month's rent</strong>. Return deadline: <strong>14 days</strong> with itemized statement.</p>
+
+<h3>Texas</h3>
+<p>No statutory limit on deposit amount. Return deadline: <strong>30 days</strong> after surrender of the property.</p>
+
+<h3>Florida</h3>
+<p>No statutory limit on deposit amount. Return deadline: <strong>15 days</strong> (if no deductions) or <strong>30 days</strong> (if claiming deductions, with written notice).</p>
+
+<h3>Illinois</h3>
+<p>No statewide limit, but Chicago's RLTO requires deposits to be held in interest-bearing accounts and caps total amount. Return deadline: <strong>30 days</strong> (14 days if deductions with itemized list).</p>
+
+<h3>Washington</h3>
+<p>No statutory limit. Return deadline: <strong>21 days</strong> (with itemized statement).</p>
+
+<h3>Colorado</h3>
+<p>Maximum: <strong>2 months' rent</strong>. Return deadline: <strong>30 days</strong> (60 days if stated in lease).</p>
+
+<h3>North Carolina</h3>
+<p>Maximum: <strong>2 months' rent</strong> for month-to-month; <strong>2 months' rent</strong> for longer leases. Return deadline: <strong>30 days</strong>.</p>
+
+<h3>Georgia</h3>
+<p>No statutory limit. Return deadline: <strong>30 days</strong>.</p>
+
+<h3>Arizona</h3>
+<p>Maximum: <strong>1.5 months' rent</strong>. Return deadline: <strong>14 business days</strong>.</p>
+
+<h2>What Landlords Can and Cannot Deduct</h2>
+<p><strong>Allowable deductions:</strong></p>
+<ul>
+  <li>Unpaid rent</li>
+  <li>Significant cleaning (beyond what a normal end-of-tenancy clean would cost)</li>
+  <li>Damage from pets, children, or accidents that goes beyond normal wear</li>
+  <li>Broken windows, holes in walls, damaged appliances</li>
+</ul>
+<p><strong>Not allowable deductions:</strong></p>
+<ul>
+  <li>Normal wear and tear on paint, carpet, or flooring</li>
+  <li>Pre-existing damage documented at move-in</li>
+  <li>Replacing items that were already old or worn when you moved in</li>
+</ul>
+
+<h2>Protecting Your Deposit as a Renter</h2>
+<ol>
+  <li>Do a thorough move-in walkthrough and document everything with photos/video</li>
+  <li>Email your documentation to the landlord the day you move in</li>
+  <li>Return the unit in the same condition, minus normal wear</li>
+  <li>Clean thoroughly before your final inspection</li>
+  <li>Get your forwarding address to the landlord in writing</li>
+  <li>Follow up in writing if your deposit isn't returned on time</li>
+</ol>
+
+<p>Find your next rental and connect directly with landlords on <a href="/rentals">EMLAKIE</a> — no broker fees, no middlemen.</p>
+    `.trim(),
+  },
+  {
+    slug: 'average-rent-san-diego-2026',
+    title: 'Average Rent in San Diego in 2026: Ocean Views at a Price',
+    description: 'San Diego is one of California\'s most expensive rental markets. Here\'s a neighborhood-by-neighborhood breakdown of what renters are paying in 2026.',
+    date: '2026-06-06',
+    category: 'Market Trends',
+    readTime: 5,
+    citySlug: 'san-diego',
+    content: `
+<p>San Diego's rental market combines California's coastal premium with a strong military presence and a booming biotech sector. Rents have risen steadily even as other Sun Belt markets softened, driven by limited supply and strong demand. Here's what renters are paying in 2026.</p>
+
+<h2>Citywide Averages</h2>
+<ul>
+  <li><strong>Studio:</strong> $1,700–$2,300/mo</li>
+  <li><strong>1-Bedroom:</strong> $2,200–$3,000/mo</li>
+  <li><strong>2-Bedroom:</strong> $2,900–$4,000/mo</li>
+  <li><strong>3-Bedroom:</strong> $3,800–$5,200/mo</li>
+</ul>
+
+<h2>Rent by Neighborhood</h2>
+<ul>
+  <li><strong>La Jolla:</strong> $3,000–$4,800/mo (1BR) — ocean views, UCSD adjacency, upscale dining and retail</li>
+  <li><strong>Pacific Beach (PB):</strong> $2,500–$3,500/mo (1BR) — beach lifestyle, young renters, bar scene</li>
+  <li><strong>Ocean Beach (OB):</strong> $2,300–$3,200/mo (1BR) — laid-back beach town character; more alternative vibe than PB</li>
+  <li><strong>North Park / South Park:</strong> $2,000–$2,800/mo (1BR) — San Diego's most walkable neighborhood; craft beer, restaurants, arts</li>
+  <li><strong>Hillcrest:</strong> $2,100–$2,900/mo (1BR) — LGBTQ+ neighborhood; walkable, medical center proximity</li>
+  <li><strong>Mission Valley:</strong> $1,900–$2,500/mo (1BR) — central location; large apartment complexes; car-dependent</li>
+  <li><strong>Chula Vista:</strong> $1,700–$2,300/mo (1BR) — most affordable in the metro; new development near the bay</li>
+  <li><strong>El Cajon / Santee:</strong> $1,500–$2,100/mo (1BR) — East County suburbs; best value in the metro</li>
+</ul>
+
+<h2>The Military Factor</h2>
+<p>San Diego hosts the largest concentration of military in the country — Naval Base Coronado, Marine Corps Base Camp Pendleton, and multiple other installations. Military families with BAH (Basic Allowance for Housing) create consistent demand, especially in Chula Vista, Miramar, and Oceanside. This adds a floor to the market and keeps vacancy rates low.</p>
+
+<h2>Biotech Premium</h2>
+<p>Torrey Pines Mesa hosts one of the highest concentrations of biotech companies in the world. Proximity to UCSD, Salk Institute, and Scripps Research makes La Jolla and Del Mar the priciest residential areas in the county. Tech and biotech workers on high salaries support premium rents throughout the coastal North County.</p>
+
+<h2>San Diego Renter Tips</h2>
+<ul>
+  <li>California AB 1482 caps annual rent increases at 5% + CPI for most units built before 2009.</li>
+  <li>San Diego County has no local rent control ordinance beyond the state cap.</li>
+  <li>Act quickly — desirable units in North Park and beach communities rent within 2–3 days of listing.</li>
+  <li>Parking is often separate and can add $100–$200/month; ask before signing.</li>
+  <li>May Gray and June Gloom are real — coastal areas see overcast mornings until noon from May through July.</li>
+</ul>
+
+<p><a href="/rentals/city/san-diego">Browse San Diego rentals on EMLAKIE</a> — all listed directly by landlords, no broker fees.</p>
+    `.trim(),
+  },
+  {
+    slug: 'average-rent-portland-2026',
+    title: 'Average Rent in Portland, OR in 2026: Is the Market Finally Cooling?',
+    description: 'Portland\'s rental market has softened considerably from its pandemic-era highs. Here\'s what renters pay across NE, SE, the Pearl District, and East Portland.',
+    date: '2026-06-05',
+    category: 'Market Trends',
+    readTime: 4,
+    citySlug: 'portland',
+    content: `
+<p>Portland experienced some of the most dramatic rent growth in the country during 2020–2022, but aggressive apartment construction and population stabilization have brought significant relief. In 2026, Portland is one of the more renter-friendly markets on the West Coast. Here's what tenants are paying.</p>
+
+<h2>Citywide Averages</h2>
+<ul>
+  <li><strong>Studio:</strong> $1,100–$1,500/mo</li>
+  <li><strong>1-Bedroom:</strong> $1,400–$2,000/mo</li>
+  <li><strong>2-Bedroom:</strong> $1,900–$2,700/mo</li>
+  <li><strong>3-Bedroom:</strong> $2,400–$3,300/mo</li>
+</ul>
+
+<h2>Rent by Neighborhood</h2>
+<ul>
+  <li><strong>Pearl District:</strong> $1,900–$2,800/mo (1BR) — luxury high-rises, walkable, upscale dining; Portland's most polished neighborhood</li>
+  <li><strong>NW Portland / Nob Hill:</strong> $1,700–$2,400/mo (1BR) — Victorian architecture, walkable commercial strip, upscale</li>
+  <li><strong>Alberta Arts District (NE):</strong> $1,500–$2,100/mo (1BR) — indie restaurants and boutiques; creative community; historic homes</li>
+  <li><strong>Division Street (SE):</strong> $1,500–$2,100/mo (1BR) — Portland's best restaurant corridor; walkable; eclectic mix of housing</li>
+  <li><strong>Mississippi Avenue (N):</strong> $1,400–$2,000/mo (1BR) — craft shops, bars, community vibe</li>
+  <li><strong>East Portland (outer SE/NE):</strong> $1,000–$1,500/mo (1BR) — most affordable in the city; car-dependent; some MAX access</li>
+  <li><strong>St. Johns (N):</strong> $1,200–$1,700/mo (1BR) — up-and-coming bridge town; charming commercial strip; 20 min to downtown</li>
+</ul>
+
+<h2>Oregon's Rent Stabilization Law</h2>
+<p>Oregon became the first state to enact statewide rent stabilization in 2019. Key provisions:</p>
+<ul>
+  <li>Annual rent increases are capped at <strong>10% or CPI + 3%</strong>, whichever is lower, for units more than 15 years old</li>
+  <li>New construction (less than 15 years old) is exempt</li>
+  <li>Landlords must give 90 days' notice for rent increases above 10% (which are now prohibited on covered units)</li>
+</ul>
+
+<h2>Portland Market Dynamics in 2026</h2>
+<p>Portland has seen above-average apartment vacancy rates since 2022. Many landlords are offering incentives — first month free, waived fees, reduced deposits. The pipeline of new construction in the Pearl and inner SE continues to add supply. For renters, this is one of the best markets in recent years.</p>
+
+<h2>Portland Renter Tips</h2>
+<ul>
+  <li>TriMet's MAX light rail connects the inner city well; East Portland has less coverage.</li>
+  <li>Portland's winters (November–March) are persistently rainy — factor weather into your neighborhood choice.</li>
+  <li>Oregon's rent stabilization law protects many tenants; ask your landlord whether your unit qualifies.</li>
+  <li>Vancouver, WA (just across the river) offers 10–20% lower rents with freeway access to Portland jobs.</li>
+</ul>
+
+<p><a href="/rentals/city/portland">Browse Portland rentals on EMLAKIE</a> — posted directly by landlords, no broker fees.</p>
+    `.trim(),
+  },
+  {
+    slug: 'average-rent-charlotte-2026',
+    title: 'Average Rent in Charlotte, NC in 2026: The South\'s Banking Capital',
+    description: 'Charlotte is one of the fastest-growing rental markets in the Southeast. Here\'s what renters pay across NoDa, South End, Dilworth, and the suburbs in 2026.',
+    date: '2026-06-04',
+    category: 'Market Trends',
+    readTime: 4,
+    citySlug: 'charlotte',
+    content: `
+<p>Charlotte's status as the US banking capital outside New York City has drawn corporate relocations and professional talent at a remarkable pace. The result: a rental market that has grown 30%+ over the past five years — but still remains well below comparable Northeast and West Coast cities. Here's what renters pay in 2026.</p>
+
+<h2>Citywide Averages</h2>
+<ul>
+  <li><strong>Studio:</strong> $1,200–$1,700/mo</li>
+  <li><strong>1-Bedroom:</strong> $1,500–$2,200/mo</li>
+  <li><strong>2-Bedroom:</strong> $1,900–$2,900/mo</li>
+  <li><strong>3-Bedroom:</strong> $2,400–$3,600/mo</li>
+</ul>
+
+<h2>Rent by Neighborhood</h2>
+<ul>
+  <li><strong>South End:</strong> $1,900–$2,700/mo (1BR) — along the LYNX Blue Line; highest rents in the city; walkable; lots of new construction</li>
+  <li><strong>Uptown:</strong> $1,800–$2,600/mo (1BR) — Charlotte's downtown; high-rises and converted offices; corporate crowd</li>
+  <li><strong>NoDa (North Davidson):</strong> $1,600–$2,300/mo (1BR) — arts and live music district; eclectic; LYNX Blue Line extension improving transit</li>
+  <li><strong>Dilworth:</strong> $1,700–$2,400/mo (1BR) — historic bungalows; walkable to South End; popular with young professionals</li>
+  <li><strong>Myers Park:</strong> $2,000–$3,000/mo (1BR) — affluent tree-lined neighborhood; near Uptown; large homes</li>
+  <li><strong>University City:</strong> $1,300–$1,800/mo (1BR) — UNCC area; affordable; good for students and healthcare workers</li>
+  <li><strong>Ballantyne:</strong> $1,500–$2,100/mo (1BR) — southern suburb; newer construction; family-oriented; longer commute</li>
+  <li><strong>Concord / Kannapolis:</strong> $1,100–$1,600/mo (1BR) — most affordable in the metro; NASCAR museum; growing northeast corridor</li>
+</ul>
+
+<h2>The LYNX Blue Line Effect</h2>
+<p>Charlotte's light rail has transformed South End and NoDa. Properties within walking distance of Blue Line stations command a 10–20% premium over similar units further away. With planned extensions underway, properties along future alignments may offer value now before rail opens. Follow CATS (Charlotte Area Transit System) extension announcements if you're choosing a neighborhood.</p>
+
+<h2>Charlotte Renter Tips</h2>
+<ul>
+  <li>North Carolina has no rent control — rates can jump at renewal in a competitive market.</li>
+  <li>Charlotte traffic is increasingly heavy, especially on I-77 North and I-485. Live near work or the Blue Line.</li>
+  <li>Summers are hot and humid (90°F+); ask about energy-efficient HVAC before signing.</li>
+  <li>Concord, Gastonia, and Rock Hill (SC) offer substantially lower rents with manageable commutes.</li>
+  <li>Ask for move-in specials — many South End landlords offer one month free on 12-month leases.</li>
+</ul>
+
+<p><a href="/rentals/city/charlotte">Browse Charlotte rentals on EMLAKIE</a> — all listed directly by landlords, no broker fees.</p>
+    `.trim(),
+  },
 ];
 
 export function getPost(slug: string): Post | undefined {

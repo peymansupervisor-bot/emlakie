@@ -53,6 +53,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     })),
     ...zipPages,
     { url: `${base}/cities`, changeFrequency: 'monthly', priority: 0.85 },
+    { url: `${base}/about`, changeFrequency: 'monthly', priority: 0.7 },
     { url: `${base}/how-it-works`, changeFrequency: 'monthly', priority: 0.8 },
     { url: `${base}/landlords`, changeFrequency: 'monthly', priority: 0.7 },
     { url: `${base}/contact`, changeFrequency: 'monthly', priority: 0.6 },

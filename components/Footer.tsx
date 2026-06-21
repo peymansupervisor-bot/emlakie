@@ -37,6 +37,7 @@ export default function Footer() {
             <div>
               <p className="font-serif text-base font-bold tracking-tight text-gray-900">Company</p>
               <ul className="mt-4 space-y-3 text-sm text-gray-500">
+                <li><Link href="/about" className="transition hover:text-brand-600">About</Link></li>
                 <li><Link href="/blog" className="transition hover:text-brand-600">Blog</Link></li>
                 <li><Link href="/contact" className="transition hover:text-brand-600">Contact</Link></li>
                 <li><Link href="/privacy" className="transition hover:text-brand-600">Privacy</Link></li>

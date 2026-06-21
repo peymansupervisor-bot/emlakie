@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createSupabaseWithToken } from '@/lib/supabase-server';
+import { Resend } from 'resend';
+import { createSupabaseWithToken, createSupabaseAdmin } from '@/lib/supabase-server';
 
 // GET /api/listings/[id]/applications — fetch all applicants for a listing the landlord owns
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
@@ -45,10 +46,10 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     return NextResponse.json({ error: 'Invalid request' }, { status: 400 });
   }
 
-  // Verify landlord owns the listing this application belongs to
+  // Verify landlord owns the listing and fetch details for the email
   const { data: listing } = await supabase
     .from('listings')
-    .select('id')
+    .select('id, title, address, city, state, slug')
     .eq('id', id)
     .eq('landlord_id', user.id)
     .single();
@@ -59,9 +60,44 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     .update({ status })
     .eq('id', applicationId)
     .eq('listing_id', id)
-    .select()
+    .select('id, tenant_id, tenant_name, status')
     .single();
 
   if (error) return NextResponse.json({ error: 'Something went wrong' }, { status: 500 });
+
+  // Send confirmation email to applicant when landlord responds
+  if (status === 'approved' && data?.tenant_id) {
+    try {
+      const admin = createSupabaseAdmin();
+      const { data: { user: tenantAuth } } = await admin.auth.admin.getUserById(data.tenant_id);
+      const tenantEmail = tenantAuth?.email;
+      if (tenantEmail) {
+        const resend = new Resend(process.env.RESEND_API_KEY);
+        const listingUrl = `https://emlakie.com/rentals/${listing.slug ?? listing.id}`;
+        const location = [listing.city, listing.state].filter(Boolean).join(', ');
+        await resend.emails.send({
+          from: 'EMLAKIE <no-reply@emlakie.com>',
+          to: tenantEmail,
+          subject: `The landlord has responded to your inquiry — ${listing.address}`,
+          html: `
+            <div style="font-family:sans-serif;max-width:560px;margin:0 auto;color:#111">
+              <h2 style="color:#16a34a">Good news, ${data.tenant_name ?? 'there'}!</h2>
+              <p>The landlord at <strong>${listing.address}${location ? `, ${location}` : ''}</strong> has reviewed your inquiry and is ready to connect with you.</p>
+              <p>Reply directly to this email or contact the landlord through the listing page to schedule a showing or ask questions.</p>
+              <p style="margin:28px 0">
+                <a href="${listingUrl}" style="background:#16a34a;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:600">View Listing</a>
+              </p>
+              <p style="color:#6b7280;font-size:13px">You submitted this inquiry on ${new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}. If you're no longer interested, you can ignore this message.</p>
+              <hr style="border:none;border-top:1px solid #e5e7eb;margin:24px 0"/>
+              <p style="color:#9ca3af;font-size:12px">EMLAKIE · <a href="https://emlakie.com" style="color:#9ca3af">emlakie.com</a></p>
+            </div>
+          `,
+        });
+      }
+    } catch (emailErr) {
+      console.error('[applications] Failed to send response email:', emailErr);
+    }
+  }
+
   return NextResponse.json(data);
 }

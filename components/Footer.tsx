@@ -87,11 +87,15 @@ export default function Footer() {
           {/* Fair Housing */}
           <div>
             <div className="flex items-start gap-4">
-              {/* Equal Housing Opportunity logo.
-                  role="img" is required so that aria-label is a permitted
-                  attribute on this element. Without it the SVG's computed role
-                  is "none"/"presentation", which does not support aria-label
-                  and triggers the aria-allowed-attr violation. */}
+              {/*
+                aria-allowed-attr fix: aria-label is only permitted on elements
+                with a role that supports naming. An SVG without an explicit role
+                gets the computed role "none" / "presentation", which does NOT
+                support aria-label — axe flags this as an aria-allowed-attr
+                violation. Adding role="img" gives the SVG a concrete ARIA role
+                that allows aria-label as its accessible name, resolving the
+                violation while keeping the logo meaningful to screen readers.
+              */}
               <svg
                 role="img"
                 aria-label="Equal Housing Opportunity"

@@ -124,28 +124,4 @@ export const sampleListings: Listing[] = [
     status: 'active',
     isSample: true,
   },
-  {
-    id: 'sample-6',
-    title: 'Charming 2BR Condo with City Views',
-    description:
-      'Top-floor condo with vaulted ceilings, fireplace, and a balcony with sweeping city views. Covered parking and water included.',
-    address: '1100 Wilshire Blvd, Unit 210',
-    city: 'Los Angeles',
-    state: 'CA',
-    zip: '90017',
-    lat: 34.0515,
-    lng: -118.2593,
-    price: 2995,
-    bedrooms: 2,
-    bathrooms: 2,
-    sqft: 940,
-    property_type: 'condo',
-    amenities: ['Balcony', 'Fireplace', 'Covered Parking', 'Water Included'],
-    photos: [
-      'https://images.unsplash.com/photo-1493809842364-78817add7ffb?w=1200&q=80',
-      'https://images.unsplash.com/photo-1505691938895-1758d7feb511?w=1200&q=80',
-    ],
-    status: 'active',
-    isSample: true,
-  },
 ];

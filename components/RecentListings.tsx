@@ -16,7 +16,6 @@ export default async function RecentListings() {
         >
           <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-lg bg-gray-100">
             {l.photos?.[0] ? (
-              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={l.photos[0]} alt={`${l.city} rental`} className="absolute inset-0 h-full w-full object-cover" loading="lazy" />
             ) : (
               <div className="flex h-full w-full items-center justify-center">

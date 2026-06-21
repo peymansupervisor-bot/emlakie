@@ -152,7 +152,6 @@ export default function PropertyDashboardPage() {
       <div className="mt-4 flex items-center gap-4">
         <span className="relative block h-20 w-28 shrink-0 overflow-hidden rounded-xl bg-gray-100">
           {listing.photos?.[0] && (
-            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={listing.photos[0]} alt="" className="absolute inset-0 h-full w-full object-cover" />
           )}
         </span>

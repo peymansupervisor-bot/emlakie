@@ -296,7 +296,6 @@ export default function PropertiesPage() {
                       <Link href={`/landlord/properties/${listing.id}`} className="flex items-center gap-3">
                         <span className="relative block h-12 w-16 shrink-0 overflow-hidden rounded-lg bg-gray-100">
                           {listing.photos?.[0] && (
-                            {/* eslint-disable-next-line @next/next/no-img-element */}
                             <img src={listing.photos[0]} alt="" className="absolute inset-0 h-full w-full object-cover" loading="lazy" />
                           )}
                         </span>

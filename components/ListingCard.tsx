@@ -12,7 +12,6 @@ export default function ListingCard({ listing, priority = false }: { listing: Li
 
       <div className="relative aspect-[16/9] bg-gray-100">
         {photo ? (
-          // eslint-disable-next-line @next/next/no-img-element
           <img
             src={photo}
             alt={`${formatPrice(listing.price)} — ${formatBeds(listing.bedrooms)}, ${formatBaths(listing.bathrooms)} ${formatPropertyType(listing.property_type)} at ${listing.address}, ${listing.city}`}

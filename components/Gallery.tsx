@@ -92,7 +92,6 @@ export default function Gallery({ photos, title }: Props) {
           {failedIndices.has(activeIndex) ? (
             <PhotoPlaceholder />
           ) : (
-            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={photos[activeIndex]}
               alt={`${title} — photo ${activeIndex + 1}`}
@@ -163,7 +162,6 @@ export default function Gallery({ photos, title }: Props) {
                 {failedIndices.has(i) ? (
                   <PhotoPlaceholder />
                 ) : (
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={photo} alt={`Thumbnail ${i + 1}`} className="absolute inset-0 h-full w-full object-cover" loading="lazy" onError={() => markFailed(i)} />
                 )}
               </button>
@@ -221,7 +219,6 @@ export default function Gallery({ photos, title }: Props) {
               {failedIndices.has(activeIndex) ? (
                 <PhotoPlaceholder />
               ) : (
-                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={photos[activeIndex]}
                   alt={`${title} — photo ${activeIndex + 1}`}
@@ -274,7 +271,6 @@ export default function Gallery({ photos, title }: Props) {
                   {failedIndices.has(i) ? (
                     <PhotoPlaceholder />
                   ) : (
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src={photo} alt={`Thumbnail ${i + 1}`} className="absolute inset-0 h-full w-full object-cover" loading="lazy" onError={() => markFailed(i)} />
                   )}
                 </button>

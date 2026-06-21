@@ -1,5 +1,6 @@
 import { adminClient } from '@/lib/moderator';
 import Link from 'next/link';
+import BackfillButton from './BackfillButton';
 
 export const dynamic = 'force-dynamic';
 
@@ -9,14 +10,11 @@ export default async function LandlordsPage({ searchParams }: { searchParams: Pr
   const { q } = await searchParams;
   const sb = adminClient();
 
-  // Fetch auth users who have at least one listing (landlord_id in listings)
-  // We join profiles + auth.users via the service role
   const { data: profileRows } = await sb
     .from('profiles')
     .select('id, first_name, last_name, display_name, phone, phone_verified, email, account_id, created_at')
     .limit(500);
 
-  // Fetch listing counts per landlord
   const { data: listingCounts } = await sb
     .from('listings')
     .select('landlord_id, status');
@@ -51,6 +49,7 @@ export default async function LandlordsPage({ searchParams }: { searchParams: Pr
   rows = rows.sort((a, b) => accountNum(a.account_id) - accountNum(b.account_id));
 
   const total = rows.length;
+  const missingIdCount = (profileRows ?? []).filter((p) => !p.account_id).length;
 
   return (
     <div>
@@ -59,20 +58,23 @@ export default async function LandlordsPage({ searchParams }: { searchParams: Pr
           <h1 className="text-xl font-extrabold text-white">Registered Landlords</h1>
           <p className="text-sm text-gray-500 mt-0.5">{total} account{total !== 1 ? 's' : ''}</p>
         </div>
-        <form method="GET" className="flex gap-2">
-          <input
-            name="q"
-            defaultValue={q}
-            placeholder="Search name, email, phone…"
-            className="rounded-xl bg-gray-800 border border-gray-700 px-3 py-2 text-sm text-white placeholder-gray-500 outline-none focus:border-green-500 w-64"
-          />
-          <button
-            type="submit"
-            className="rounded-xl bg-green-600 px-4 py-2 text-sm font-semibold text-white hover:bg-green-700 transition"
-          >
-            Search
-          </button>
-        </form>
+        <div className="flex flex-wrap gap-2 items-center">
+          <BackfillButton missingCount={missingIdCount} />
+          <form method="GET" className="flex gap-2">
+            <input
+              name="q"
+              defaultValue={q}
+              placeholder="Search name, email, phone…"
+              className="rounded-xl bg-gray-800 border border-gray-700 px-3 py-2 text-sm text-white placeholder-gray-500 outline-none focus:border-green-500 w-64"
+            />
+            <button
+              type="submit"
+              className="rounded-xl bg-green-600 px-4 py-2 text-sm font-semibold text-white hover:bg-green-700 transition"
+            >
+              Search
+            </button>
+          </form>
+        </div>
       </div>
 
       {rows.length === 0 ? (
@@ -101,7 +103,7 @@ export default async function LandlordsPage({ searchParams }: { searchParams: Pr
                   '—';
                 const counts = countMap[p.id];
                 return (
-                  <tr key={p.id} className="hover:bg-gray-900/50 transition">
+                  <tr key={p.id} className={`hover:bg-gray-900/50 transition ${!p.account_id ? 'bg-amber-950/20' : ''}`}>
                     <td className="px-4 py-3 font-semibold text-white whitespace-nowrap">{name}</td>
                     <td className="px-4 py-3 text-gray-300 whitespace-nowrap">{p.email ?? '—'}</td>
                     <td className="px-4 py-3 text-gray-300 whitespace-nowrap">
@@ -114,7 +116,11 @@ export default async function LandlordsPage({ searchParams }: { searchParams: Pr
                         </span>
                       ) : '—'}
                     </td>
-                    <td className="px-4 py-3 text-xs text-gray-400 font-mono">{p.account_id ?? '—'}</td>
+                    <td className="px-4 py-3 text-xs font-mono">
+                      {p.account_id
+                        ? <span className="text-gray-400">{p.account_id}</span>
+                        : <span className="text-amber-500">missing</span>}
+                    </td>
                     <td className="px-4 py-3 text-center">
                       {counts ? (
                         <span className="text-white font-semibold">{counts.total}</span>

@@ -367,12 +367,12 @@ export async function GET(req: NextRequest) {
 
   // Store duplicate warnings as a separate summary record
   const dupIssues: SeoIssue[] = [];
-  for (const [title, pages] of titleMap.entries()) {
+  for (const [title, pages] of Array.from(titleMap.entries())) {
     if (pages.length > 1) {
       dupIssues.push({ code: 'duplicate-title', severity: 'warning', message: `Duplicate title "${title.slice(0, 60)}…" used on ${pages.length} pages: ${pages.join(', ')}` });
     }
   }
-  for (const [desc, pages] of descMap.entries()) {
+  for (const [desc, pages] of Array.from(descMap.entries())) {
     if (pages.length > 1) {
       dupIssues.push({ code: 'duplicate-description', severity: 'warning', message: `Duplicate meta description used on ${pages.length} pages: ${pages.join(', ')}` });
     }

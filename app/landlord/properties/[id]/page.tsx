@@ -308,7 +308,7 @@ export default function PropertyDashboardPage() {
                           : 'bg-gray-100 text-gray-600'
                     }`}
                   >
-                    {app.status}
+                    {app.status === 'approved' ? 'Responded' : app.status === 'rejected' ? 'Ignored' : app.status}
                   </span>
                 </div>
               </div>

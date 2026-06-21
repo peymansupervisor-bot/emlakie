@@ -20,7 +20,7 @@ function MatchScore({ score }: { score?: number }) {
 
 function StatusPill({ status }: { status: string }) {
   const cls = status === 'pending' ? 'bg-amber-100 text-amber-800' : status === 'approved' ? 'bg-brand-100 text-brand-800' : 'bg-gray-100 text-gray-600';
-  const label = status === 'pending' ? 'New' : status === 'approved' ? 'Approved' : 'Declined';
+  const label = status === 'pending' ? 'New' : status === 'approved' ? 'Responded' : 'Ignored';
   return <span className={`rounded-full px-2.5 py-1 text-xs font-semibold capitalize ${cls}`}>{label}</span>;
 }
 
@@ -159,13 +159,13 @@ function ApplicantDrawer({ lead, onClose, onStatusChange }: {
               onClick={() => onStatusChange(lead.id, 'approved')}
               className="flex-1 rounded-xl bg-brand-600 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-700"
             >
-              Approve
+              Respond
             </button>
             <button
               onClick={() => onStatusChange(lead.id, 'rejected')}
               className="flex-1 rounded-xl border border-gray-300 py-2.5 text-sm font-semibold text-gray-700 transition hover:bg-gray-50"
             >
-              Decline
+              Ignore
             </button>
           </div>
         )}
@@ -225,8 +225,8 @@ export default function LeadsPage() {
   const filters: { id: Filter; label: string }[] = [
     { id: 'all', label: `All (${leads.length})` },
     { id: 'pending', label: `New (${pending})` },
-    { id: 'approved', label: `Approved (${approved})` },
-    { id: 'rejected', label: `Declined (${rejected})` },
+    { id: 'approved', label: `Responded (${approved})` },
+    { id: 'rejected', label: `Ignored (${rejected})` },
   ];
 
   return (

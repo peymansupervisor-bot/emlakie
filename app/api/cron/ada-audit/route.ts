@@ -222,8 +222,36 @@ export async function GET(req: NextRequest) {
     cureResult = await cureViolations(cureRecords);
   }
 
+  // Only email about violations that are NEW (not present in the previous run)
   if (totalCritical > 0 || totalSerious > 0) {
-    await sendAlertEmail(withViolations, totalCritical);
+    const { data: prevRows } = await database
+      .from('ada_audit_log')
+      .select('page_path, violations')
+      .neq('run_id', runId)
+      .gt('violation_count', 0)
+      .order('scanned_at', { ascending: false })
+      .limit(pagesToAudit.length);
+
+    // Build a set of "page:violation_id" from the previous run
+    const prevKeys = new Set<string>();
+    for (const row of prevRows ?? []) {
+      for (const v of (row.violations ?? []) as Violation[]) {
+        prevKeys.add(`${row.page_path}:${v.id}`);
+      }
+    }
+
+    const newViolations = withViolations
+      .map((r) => ({
+        ...r,
+        violations: r.violations.filter((v) => !prevKeys.has(`${r.path}:${v.id}`)),
+      }))
+      .filter((r) => r.violations.length > 0);
+
+    const newCritical = newViolations.reduce((n, r) => n + r.violations.filter((v) => v.impact === 'critical').length, 0);
+
+    if (newViolations.length > 0) {
+      await sendAlertEmail(newViolations, newCritical);
+    }
   }
 
   return NextResponse.json({

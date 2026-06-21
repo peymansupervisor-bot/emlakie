@@ -3,7 +3,7 @@ import { createClient } from '@supabase/supabase-js';
 import { Resend } from 'resend';
 import { randomUUID } from 'crypto';
 import { getAllSlugs } from '@/lib/blog';
-import { getAllCitySlugs } from '@/lib/city-content';
+import { getAllCities } from '@/lib/api';
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://emlakie.com';
 const ADMIN_EMAIL = 'peymansupervisor@gmail.com';
@@ -27,9 +27,10 @@ const STATIC_PAGES = [
   '/rentals/state/california',
 ];
 
-function buildPageList(): string[] {
+async function buildPageList(): Promise<string[]> {
   const blogPages = getAllSlugs().map((slug) => `/blog/${slug}`);
-  const cityPages = getAllCitySlugs().map((slug) => `/rentals/city/${slug}`);
+  const cities = await getAllCities();
+  const cityPages = cities.map((c) => `/rentals/city/${c.slug}`);
   return [...STATIC_PAGES, ...cityPages, ...blogPages];
 }
 
@@ -276,7 +277,7 @@ export async function GET(req: NextRequest) {
   }
 
   const runId = randomUUID();
-  const pagesToAudit = buildPageList();
+  const pagesToAudit = await buildPageList();
   const database = sb();
   const results: SeoPageResult[] = [];
 

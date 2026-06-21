@@ -9,7 +9,7 @@ import { Application, LandlordListing } from '@/lib/landlord/types';
 import { formatBaths, formatBeds, formatPrice, formatSqft } from '@/lib/format';
 import PhotoManager from '@/components/PhotoManager';
 
-type Tab = 'overview' | 'applications' | 'photos';
+type Tab = 'overview' | 'inquiries' | 'photos';
 
 const LEASE_TERMS = [
   { value: 'month_to_month', label: 'Month-to-month' },
@@ -187,7 +187,7 @@ export default function PropertyDashboardPage() {
 
       {/* Tabs */}
       <div className="mt-6 border-b border-gray-200">
-        {(['overview', 'photos', 'applications'] as Tab[]).map((t) => (
+        {(['overview', 'photos', 'inquiries'] as Tab[]).map((t) => (
           <button
             key={t}
             onClick={() => setTab(t)}
@@ -198,7 +198,7 @@ export default function PropertyDashboardPage() {
             }`}
           >
             {t}
-            {t === 'applications' && pending.length > 0 && (
+            {t === 'inquiries' && pending.length > 0 && (
               <span className="ml-2 rounded-full bg-brand-600 px-2 py-0.5 text-xs font-bold text-white">
                 {pending.length}
               </span>
@@ -275,38 +275,11 @@ export default function PropertyDashboardPage() {
         <div className="mt-8">
           <PhotoManager listingId={listing.id} initialPhotos={listing.photos ?? []} />
         </div>
-      ) : tab === 'overview' ? (
-        <div className="mt-8 grid gap-6 sm:grid-cols-3">
-          {[
-            { label: 'Views', value: listing.view_count ?? 0 },
-            { label: 'Applicants', value: listing.applicant_count ?? applications.length },
-            { label: 'Monthly rent', value: formatPrice(listing.price) },
-          ].map((stat) => (
-            <div key={stat.label} className="rounded-2xl border border-gray-200 p-6 shadow-card">
-              <p className="text-sm font-semibold uppercase tracking-wide text-gray-500">{stat.label}</p>
-              <p className="mt-2 text-3xl font-extrabold text-gray-900">{stat.value}</p>
-            </div>
-          ))}
-
-          <div className="rounded-2xl border border-gray-200 p-6 shadow-card sm:col-span-3">
-            <h2 className="font-bold text-gray-900">Listing details</h2>
-            <p className="mt-2 text-gray-700">{listing.title}</p>
-            {listing.amenities?.length > 0 && (
-              <p className="mt-2 text-sm text-gray-600">Amenities: {listing.amenities.join(', ')}</p>
-            )}
-            <Link
-              href={`/rentals/${listing.slug ?? listing.id}`}
-              className="mt-4 inline-block text-sm font-semibold text-brand-600 hover:text-brand-700"
-            >
-              View public listing →
-            </Link>
-          </div>
-        </div>
-      ) : (
+      ) : tab === 'inquiries' ? (
         <div className="mt-8 space-y-4">
           {applications.length === 0 && (
             <p className="py-12 text-center text-gray-500">
-              No applications yet. Share your listing to get applicants.
+              No inquiries yet. Share your listing to get applicants.
             </p>
           )}
           {applications.map((app) => (
@@ -347,6 +320,33 @@ export default function PropertyDashboardPage() {
               )}
             </div>
           ))}
+        </div>
+      ) : tab === 'overview' ? (
+        <div className="mt-8 grid gap-6 sm:grid-cols-3">
+          {[
+            { label: 'Views', value: listing.view_count ?? 0 },
+            { label: 'Inquiries', value: listing.applicant_count ?? applications.length },
+            { label: 'Monthly rent', value: formatPrice(listing.price) },
+          ].map((stat) => (
+            <div key={stat.label} className="rounded-2xl border border-gray-200 p-6 shadow-card">
+              <p className="text-sm font-semibold uppercase tracking-wide text-gray-500">{stat.label}</p>
+              <p className="mt-2 text-3xl font-extrabold text-gray-900">{stat.value}</p>
+            </div>
+          ))}
+
+          <div className="rounded-2xl border border-gray-200 p-6 shadow-card sm:col-span-3">
+            <h2 className="font-bold text-gray-900">Listing details</h2>
+            <p className="mt-2 text-gray-700">{listing.title}</p>
+            {listing.amenities?.length > 0 && (
+              <p className="mt-2 text-sm text-gray-600">Amenities: {listing.amenities.join(', ')}</p>
+            )}
+            <Link
+              href={`/rentals/${listing.slug ?? listing.id}`}
+              className="mt-4 inline-block text-sm font-semibold text-brand-600 hover:text-brand-700"
+            >
+              View public listing →
+            </Link>
+          </div>
         </div>
       )}
     </div>

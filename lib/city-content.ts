@@ -635,6 +635,122 @@ const CITY_CONTENT: Record<string, CityContent> = {
       { label: 'Modesto rentals', slug: 'modesto' },
     ],
   },
+
+  'kansas-city': {
+    headline: 'Houses & Apartments for Rent in Kansas City, MO',
+    intro:
+      'Kansas City, Missouri is one of the hottest landlord markets in the Midwest — a city where out-of-state investors consistently find strong cash flow, low property taxes, and a growing tenant base. With a metro population of over 2 million, Kansas City has a robust rental demand across neighborhoods from the Crossroads Arts District to Blue Springs. Average home prices remain well below national averages while rents have risen steadily, making this one of the best cities for rental property returns in the country. Whether you own one rental home or a portfolio of investment properties in Kansas City, EMLAKIE lets you list directly to tenants — no broker fees, no commissions.',
+    highlights: [
+      { icon: '📈', label: 'Strong ROI', detail: 'Kansas City landlords report some of the highest cap rates in the Midwest — low acquisition costs combined with steady rent demand create reliable cash flow.' },
+      { icon: '🏘️', label: 'Out-of-State Friendly', detail: 'A favorite of out-of-state investors: affordable properties, landlord-friendly Missouri laws, and professional property managers widely available.' },
+      { icon: '💼', label: 'Job Market', detail: 'Major employers include Cerner, H&R Block, Hallmark, and a growing tech and logistics sector — stable tenant base of employed professionals.' },
+      { icon: '🚗', label: 'Commuter Spread', detail: 'Kansas City sprawls across two states (MO and KS) — rentals in suburbs like Overland Park, Lee\'s Summit, and Olathe are in high demand.' },
+      { icon: '🏠', label: 'Affordability', detail: 'Average rent for a 3-bedroom house in Kansas City is $1,300–$1,900/month — well below national averages, attracting long-term tenants.' },
+    ],
+    neighborhoods: ['Crossroads Arts District', 'Brookside', 'Waldo', 'Plaza', 'Midtown', 'Northland', 'Blue Springs', 'Lee\'s Summit', 'Overland Park', 'Westport'],
+    rentTips:
+      'Brookside, Waldo, and the Plaza are the most desirable rental neighborhoods — walkable, established, and high demand. Northland (north of the river) offers newer construction at lower prices. The Crossroads and Midtown attract young professionals. Out-of-state landlords should note that Missouri has no statewide rent control and eviction laws are relatively landlord-friendly, with cases processed efficiently through Jackson County courts.',
+    faqs: [
+      { q: 'Is Kansas City a good market for rental property investment?', a: 'Yes. Kansas City consistently ranks among the top US cities for rental property ROI. Low home prices (median under $200K in many areas), strong rental demand, no state rent control, and a growing population make it a top pick for out-of-state investors.' },
+      { q: 'What is the average rent in Kansas City, MO?', a: 'Average rent in Kansas City is approximately $1,100–$1,500/month for a 2-bedroom apartment and $1,300–$1,900/month for a 3-bedroom house. Premium neighborhoods like Brookside and the Plaza command higher rents of $1,600–$2,500/month.' },
+      { q: 'Does Missouri have rent control laws?', a: 'No. Missouri state law preempts local rent control ordinances — Kansas City landlords can set and adjust rents freely. Lease terms, security deposit limits (2 months\' rent), and notice periods are governed by Missouri state landlord-tenant law.' },
+      { q: 'How do I list my Kansas City rental property without a broker?', a: 'Post your Kansas City rental on EMLAKIE for free. Your listing reaches tenants searching specifically for homes in Kansas City — no broker commissions, no setup fees, no middlemen.' },
+      { q: 'What neighborhoods in Kansas City have the highest rental demand?', a: 'Brookside, Waldo, Midtown, and the Crossroads Arts District have the strongest demand from young professionals. Northland and Lee\'s Summit attract families. Blue Springs and Independence offer affordable rentals with high occupancy rates.' },
+      { q: 'Is Kansas City landlord-friendly?', a: 'Yes. Missouri is considered a landlord-friendly state. There is no rent control, evictions are processed relatively quickly, and security deposit rules are straightforward. Jackson County courts handle landlord-tenant cases efficiently.' },
+    ],
+    nearbySearches: [
+      { label: 'Overland Park rentals', slug: 'overland-park' },
+      { label: 'Independence rentals', slug: 'independence' },
+      { label: 'Omaha rentals', slug: 'omaha' },
+    ],
+  },
+
+  'omaha': {
+    headline: 'Houses & Apartments for Rent in Omaha, NE',
+    intro:
+      'Omaha, Nebraska is a rising star in the rental property investment world — a city with a strong, diversified economy, affordable home prices, and a tenant base that keeps vacancy rates low. Home to Fortune 500 companies including Berkshire Hathaway, Union Pacific, and Mutual of Omaha, the city attracts well-employed renters who stay long-term. Out-of-state landlords consistently choose Omaha for its high cap rates, low property taxes compared to other Midwest metros, and Nebraska\'s landlord-friendly legal environment. EMLAKIE connects Omaha landlords directly with qualified tenants — no broker fees, no listing costs.',
+    highlights: [
+      { icon: '📈', label: 'Investment Returns', detail: 'Omaha offers some of the best cap rates in the Midwest — home prices remain low while rents have grown 20%+ in the past 5 years.' },
+      { icon: '💼', label: 'Stable Economy', detail: 'Berkshire Hathaway, Union Pacific, Mutual of Omaha, and a major insurance/financial sector keep unemployment low and tenant quality high.' },
+      { icon: '🏘️', label: 'Out-of-State Investor Favorite', detail: 'Nebraska has no rent control, streamlined eviction procedures, and a predictable legal environment — a top reason out-of-state investors choose Omaha.' },
+      { icon: '🏠', label: 'Affordable Entry', detail: 'Single-family rental homes in Omaha can be acquired for $150K–$250K with rents of $1,200–$1,800/month — strong cash-on-cash returns.' },
+      { icon: '📊', label: 'Low Vacancy', detail: 'Omaha\'s rental vacancy rate consistently runs below 5% — strong demand from a growing population of students, young professionals, and relocating workers.' },
+    ],
+    neighborhoods: ['Dundee', 'Midtown Crossing', 'Benson', 'Aksarben', 'Old Market', 'Millard', 'Papillion', 'Bellevue', 'West Omaha', 'North Omaha'],
+    rentTips:
+      'Dundee and Midtown Crossing are premium neighborhoods with high tenant demand and low turnover. Benson and Aksarben attract younger renters and UNMC students. Millard and Papillion (suburbs) are popular with families and offer newer construction. North Omaha has the most affordable properties with the highest gross yields — good for experienced investors comfortable with higher management intensity. Nebraska has no rent control, and eviction timelines are among the fastest in the Midwest.',
+    faqs: [
+      { q: 'Is Omaha a good city for rental property investment?', a: 'Yes. Omaha is one of the most reliable rental markets in the Midwest. Low home prices, strong employment, no rent control, and consistently low vacancy rates make it a top pick for both local and out-of-state investors seeking stable cash flow.' },
+      { q: 'What is the average rent in Omaha, Nebraska?', a: 'Average rent in Omaha is approximately $1,000–$1,400/month for a 2-bedroom apartment and $1,200–$1,800/month for a 3-bedroom house. Premium neighborhoods like Dundee and Midtown Crossing average $1,500–$2,200/month.' },
+      { q: 'How much is rent in Omaha?', a: 'Rents in Omaha range from around $850/month for a 1-bedroom apartment to $1,800+/month for a 3-bedroom single-family home. The citywide average is approximately $1,150/month across all property types.' },
+      { q: 'Does Nebraska have rent control?', a: 'No. Nebraska has no statewide rent control law and prohibits local municipalities from enacting rent stabilization. Omaha landlords can set rents freely and adjust them between lease terms.' },
+      { q: 'Is Omaha landlord-friendly?', a: 'Yes — Nebraska is consistently ranked among the most landlord-friendly states. Eviction proceedings move quickly (often resolved in 3–6 weeks), there is no rent control, and security deposit rules are clear and fair.' },
+      { q: 'How do I list my Omaha rental property for free?', a: 'List your Omaha rental on EMLAKIE at no cost. Your property is shown to tenants actively searching for homes in Omaha — no broker fees, no commissions, and no monthly listing charges.' },
+    ],
+    nearbySearches: [
+      { label: 'Kansas City rentals', slug: 'kansas-city' },
+      { label: 'Lincoln rentals', slug: 'lincoln' },
+      { label: 'Des Moines rentals', slug: 'des-moines' },
+    ],
+  },
+
+  'cleveland': {
+    headline: 'Houses & Apartments for Rent in Cleveland, OH',
+    intro:
+      'Cleveland, Ohio is one of the most compelling rental property markets in the United States for investors — offering some of the highest gross rental yields of any major American city. With home prices averaging well under $150,000 in many neighborhoods and rents of $1,000–$1,600/month for single-family homes, Cleveland delivers cash flow that coastal markets simply cannot match. The city\'s economy is anchored by world-class healthcare (Cleveland Clinic is one of the top hospitals in the world), manufacturing, and a growing tech sector. Out-of-state landlords regularly build portfolios here, attracted by Ohio\'s landlord-friendly laws and professional property management infrastructure. EMLAKIE makes it easy to list your Cleveland rental and reach qualified local tenants — completely free.',
+    highlights: [
+      { icon: '📈', label: 'Highest Yields', detail: 'Cleveland consistently ranks among the top 5 US cities for gross rental yield — low purchase prices with rents that deliver 10–15% cap rates in many neighborhoods.' },
+      { icon: '🏥', label: 'Anchor Employers', detail: 'Cleveland Clinic (60,000+ employees), University Hospitals, Case Western Reserve University, and a major healthcare corridor create stable, high-income tenant demand.' },
+      { icon: '🏘️', label: 'Portfolio Investor Market', detail: 'A well-established market for out-of-state investors — professional property managers, turnkey operators, and real estate investment groups are widely available.' },
+      { icon: '💰', label: 'Low Entry Cost', detail: 'Single-family rental homes can be acquired for $80K–$180K in many Cleveland neighborhoods while renting for $1,000–$1,500/month — exceptional cash-on-cash returns.' },
+      { icon: '⚖️', label: 'Landlord-Friendly State', detail: 'Ohio has no rent control law. Eviction timelines are relatively fast, and landlord-tenant law is straightforward, favoring lease enforcement.' },
+    ],
+    neighborhoods: ['Ohio City', 'Tremont', 'Lakewood', 'Cleveland Heights', 'Shaker Heights', 'Collinwood', 'West Park', 'Garfield Heights', 'Parma', 'Euclid'],
+    rentTips:
+      'Ohio City, Tremont, and Lakewood are the most desirable neighborhoods — higher rents, low vacancy, strong appreciation. Cleveland Heights and Shaker Heights attract university faculty and medical professionals. Garfield Heights, Parma, and Euclid offer the highest gross yields for investors. Collinwood is a neighborhood to watch — gentrifying rapidly with artist communities and proximity to the lakefront. Ohio has no rent control — landlords can price freely and adjust between leases.',
+    faqs: [
+      { q: 'Is Cleveland a good city for rental property investment?', a: 'Yes — Cleveland is one of the highest-yielding rental markets in the US. Very low home prices combined with steady rental demand from healthcare workers, students, and blue-collar tenants deliver cap rates that often exceed 10%. It\'s a top pick for out-of-state investors building cash-flow portfolios.' },
+      { q: 'What is the average rent in Cleveland, Ohio?', a: 'Average rent in Cleveland is approximately $950–$1,300/month for a 2-bedroom apartment and $1,100–$1,600/month for a 3-bedroom house. Premium neighborhoods like Ohio City, Tremont, and Lakewood average $1,400–$2,000/month.' },
+      { q: 'Does Ohio have rent control?', a: 'No. Ohio state law prohibits local rent control ordinances. Cleveland landlords can set rents freely, raise rents between lease terms, and are not subject to any rent stabilization requirements.' },
+      { q: 'Is Cleveland a landlord-friendly city?', a: 'Yes. Ohio is a landlord-friendly state with no rent control, relatively efficient eviction courts, and clear landlord-tenant statutes. Cuyahoga County processes eviction cases in a structured and predictable way.' },
+      { q: 'How do I list my Cleveland rental for free?', a: 'Post your Cleveland rental on EMLAKIE at no cost — no broker fees, no commissions, no monthly charges. Your listing is shown directly to tenants searching for homes in Cleveland.' },
+      { q: 'What Cleveland neighborhoods have the best rental returns?', a: 'Garfield Heights, Euclid, and Collinwood offer the highest gross yields due to low purchase prices. Ohio City, Tremont, and Lakewood offer lower yields but stronger appreciation and premium tenants. Cleveland Heights attracts long-term renters from the university and medical sectors.' },
+    ],
+    nearbySearches: [
+      { label: 'Columbus rentals', slug: 'columbus' },
+      { label: 'Akron rentals', slug: 'akron' },
+      { label: 'Pittsburgh rentals', slug: 'pittsburgh' },
+    ],
+  },
+
+  'jacksonville': {
+    headline: 'Houses & Apartments for Rent in Jacksonville, FL',
+    intro:
+      'Jacksonville, Florida is the largest city by land area in the contiguous United States and one of the fastest-growing rental markets in the Southeast. With no state income tax, a booming population driven by migration from the Northeast and Midwest, and a diverse economy anchored by finance, healthcare, and the military, Jacksonville attracts a strong and growing tenant base. Out-of-state landlords are flocking to Jacksonville for its combination of relatively affordable property prices, rising rents, and Florida\'s decisively landlord-friendly legal environment. Whether you own single-family homes, duplexes, or apartment complexes in Jacksonville, EMLAKIE connects you directly with tenants — no broker fees, no listing costs.',
+    highlights: [
+      { icon: '☀️', label: 'Florida Growth', detail: 'Jacksonville is one of the fastest-growing cities in the US — population is up 15%+ in the past decade, fueling consistent rental demand.' },
+      { icon: '💰', label: 'No State Income Tax', detail: 'Florida\'s zero state income tax is a major draw for out-of-state investors and relocating tenants alike — improving both yields and tenant quality.' },
+      { icon: '⚖️', label: 'Landlord-Friendly', detail: 'Florida is one of the most landlord-friendly states in the country — no rent control, fast eviction timelines (as little as 3 weeks), and strong lease enforcement.' },
+      { icon: '💼', label: 'Diverse Economy', detail: 'Major employers include Bank of America, Fidelity National Financial, Mayo Clinic, Naval Station Mayport, and a booming logistics/distribution sector.' },
+      { icon: '🏠', label: 'Affordability vs. Miami', detail: 'Jacksonville offers Florida living at a fraction of Miami or Tampa prices — median home prices 40–50% lower with comparable rental income.' },
+    ],
+    neighborhoods: ['San Marco', 'Riverside', 'Avondale', 'Mandarin', 'Southside', 'Arlington', 'Neptune Beach', 'Ponte Vedra', 'Orange Park', 'Nocatee'],
+    rentTips:
+      'San Marco, Riverside, and Avondale are the most desirable urban neighborhoods — high demand, low vacancy, strong appreciation. Mandarin and Southside attract families and professionals. Neptune Beach and the Beaches communities command premium rents. Arlington offers the highest gross yields for budget-conscious investors. Florida has no rent control statewide — Jacksonville landlords set rents freely. The 3-day notice to pay or vacate is among the shortest in the country, making eviction procedures efficient.',
+    faqs: [
+      { q: 'Is Jacksonville, FL a good market for rental property investment?', a: 'Yes. Jacksonville combines Florida\'s landlord-friendly laws, no state income tax, strong population growth, and relatively affordable property prices to deliver excellent rental returns. It\'s one of the top markets for out-of-state investors in the Southeast.' },
+      { q: 'What is the average rent in Jacksonville, Florida?', a: 'Average rent in Jacksonville is approximately $1,300–$1,700/month for a 2-bedroom apartment and $1,500–$2,100/month for a 3-bedroom house. Premium areas like San Marco, Riverside, and the Beaches average $1,800–$2,800/month.' },
+      { q: 'Does Florida have rent control?', a: 'No. Florida law prohibits local rent control ordinances. Jacksonville landlords can set and adjust rents freely with no caps or stabilization requirements.' },
+      { q: 'Is Jacksonville a landlord-friendly city?', a: 'Yes — Florida is one of the most landlord-friendly states in the US. Evictions can be processed in as little as 3 weeks, there is no rent control, and security deposit rules clearly favor proper lease enforcement.' },
+      { q: 'Why are out-of-state investors buying rental property in Jacksonville?', a: 'Jacksonville offers a rare combination: Florida\'s no-income-tax environment, fast-growing population importing tenant demand, properties priced well below Miami and Tampa, rising rents, and landlord-friendly courts. It\'s one of the top 10 US cities for out-of-state rental investors.' },
+      { q: 'How do I list my Jacksonville rental property for free?', a: 'List your Jacksonville rental on EMLAKIE at no cost. No broker fees, no commissions, no monthly charges. Your property is shown directly to tenants actively searching for homes in Jacksonville.' },
+    ],
+    nearbySearches: [
+      { label: 'Orlando rentals', slug: 'orlando' },
+      { label: 'Tampa rentals', slug: 'tampa' },
+      { label: 'Gainesville rentals', slug: 'gainesville' },
+    ],
+  },
 };
 
 export function getCityContent(slug: string): CityContent | null {

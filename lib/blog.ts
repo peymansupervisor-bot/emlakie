@@ -1636,6 +1636,231 @@ export const posts: Post[] = [
 <p><a href="/rentals/city/charlotte">Browse Charlotte rentals on EMLAKIE</a> — all listed directly by landlords, no broker fees.</p>
     `.trim(),
   },
+
+  {
+    slug: 'out-of-state-landlord-guide-kansas-city',
+    title: 'Out-of-State Landlord Guide to Kansas City, MO: Why Investors Are Moving Their Money Here',
+    description: 'Kansas City is one of the top Midwest markets for out-of-state rental property investors. Here\'s why — and how to list your Kansas City rental for free.',
+    date: '2026-06-21',
+    category: 'Landlord Tips',
+    readTime: 6,
+    citySlug: 'kansas-city',
+    content: `
+<p>Kansas City, Missouri has quietly become one of the most talked-about rental property markets among out-of-state investors. While coastal investors chased appreciation in Austin and Phoenix, a growing number of landlords from California, New York, and Illinois have been building cash-flow portfolios in Kansas City — and the numbers back them up.</p>
+
+<h2>Why Out-of-State Landlords Choose Kansas City</h2>
+<p>The math is simple: Kansas City offers a combination that's nearly impossible to find on the coasts — affordable acquisition prices, rising rents, and a landlord-friendly legal environment.</p>
+<ul>
+  <li><strong>Home prices:</strong> Single-family rentals available for $120K–$250K in strong neighborhoods</li>
+  <li><strong>Monthly rents:</strong> $1,100–$1,900/month for 3-bedroom houses</li>
+  <li><strong>Cap rates:</strong> 7–12% in many neighborhoods — far above national averages</li>
+  <li><strong>No rent control:</strong> Missouri law prohibits local rent stabilization ordinances</li>
+  <li><strong>Eviction speed:</strong> Jackson County processes straightforward evictions efficiently</li>
+</ul>
+
+<h2>The Kansas City Tenant Base</h2>
+<p>Kansas City has a diverse, stable employment base that produces reliable tenants. Major employers include Cerner (now Oracle), H&R Block, Hallmark, Burns & McDonnell, and a rapidly growing logistics and distribution sector tied to its central US location. The metro also has a large military and federal government workforce.</p>
+<p>The city's universities — University of Missouri–Kansas City (UMKC), Rockhurst, and Johnson County Community College — generate consistent demand for student and young professional rentals near campus.</p>
+
+<h2>Best Neighborhoods for Rental Property in Kansas City</h2>
+<ul>
+  <li><strong>Brookside & Waldo:</strong> Premium neighborhoods with low vacancy and strong appreciation — ideal for buy-and-hold investors</li>
+  <li><strong>Midtown / Crossroads:</strong> High demand from young professionals and remote workers; walkable, artsy vibe</li>
+  <li><strong>Northland (north of the river):</strong> Newer construction, family tenants, lower acquisition costs</li>
+  <li><strong>Lee's Summit & Blue Springs:</strong> Suburban markets with excellent schools and long-term tenants</li>
+  <li><strong>Overland Park, KS:</strong> Just across the state line — consistently ranked among the best cities to live in the US</li>
+</ul>
+
+<h2>Missouri Landlord-Tenant Law: What You Need to Know</h2>
+<p>Missouri is a landlord-friendly state. Key points for out-of-state investors:</p>
+<ul>
+  <li>No statewide rent control — you set rents based on the market</li>
+  <li>Security deposits capped at 2 months' rent</li>
+  <li>Landlords must provide 24 hours' notice before entry (except emergencies)</li>
+  <li>Non-payment evictions proceed via an expedited unlawful detainer process</li>
+  <li>No local income tax in Kansas City proper (state income tax applies)</li>
+</ul>
+
+<h2>How to List Your Kansas City Rental</h2>
+<p>If you own rental property in Kansas City, listing on EMLAKIE puts your property in front of tenants actively searching for homes in the area — and it costs nothing. No broker commissions, no monthly fees, no middlemen.</p>
+<p><a href="/landlord/login">List your Kansas City rental free on EMLAKIE →</a></p>
+
+<p>Already a tenant looking for a home? <a href="/rentals/city/kansas-city">Browse Kansas City rentals on EMLAKIE</a> — all posted directly by landlords.</p>
+    `.trim(),
+  },
+
+  {
+    slug: 'out-of-state-landlord-guide-omaha',
+    title: 'Out-of-State Landlord Guide to Omaha, NE: The Midwest\'s Most Underrated Rental Market',
+    description: 'Omaha, Nebraska delivers some of the best rental yields in the Midwest. Here\'s why out-of-state landlords are investing here — and how to list your Omaha property free.',
+    date: '2026-06-21',
+    category: 'Landlord Tips',
+    readTime: 6,
+    citySlug: 'omaha',
+    content: `
+<p>Omaha, Nebraska doesn't always make the headlines the way Nashville or Austin do — but among serious rental property investors, it's an open secret. The city's combination of stable employment, low vacancy rates, affordable home prices, and Nebraska's landlord-friendly legal environment makes it one of the most reliable cash-flow markets in the country.</p>
+
+<h2>Why Out-of-State Investors Are Buying in Omaha</h2>
+<ul>
+  <li><strong>Acquisition price:</strong> Single-family rental homes available for $150K–$280K in strong neighborhoods</li>
+  <li><strong>Monthly rents:</strong> $1,200–$1,800/month for 3-bedroom houses</li>
+  <li><strong>Vacancy rate:</strong> Consistently below 5% — one of the tightest rental markets in the Midwest</li>
+  <li><strong>No rent control:</strong> Nebraska prohibits local rent stabilization laws</li>
+  <li><strong>Fast evictions:</strong> Douglas County processes landlord-tenant cases efficiently</li>
+</ul>
+
+<h2>Omaha's Economic Foundation</h2>
+<p>What makes Omaha so stable as a rental market is its anchor employers. The city is home to an extraordinary concentration of Fortune 500 headquarters relative to its size:</p>
+<ul>
+  <li>Berkshire Hathaway (Warren Buffett's home base)</li>
+  <li>Union Pacific Railroad</li>
+  <li>Mutual of Omaha</li>
+  <li>Conagra Brands</li>
+  <li>University of Nebraska Medical Center (UNMC) — one of the largest medical campuses in the US</li>
+</ul>
+<p>This foundation creates a large, employed, professional tenant base that produces low delinquency rates and long lease terms.</p>
+
+<h2>Best Neighborhoods for Rental Investment in Omaha</h2>
+<ul>
+  <li><strong>Dundee & Midtown Crossing:</strong> Premium urban neighborhoods, low vacancy, high tenant quality — best for long-term appreciation</li>
+  <li><strong>Benson:</strong> Up-and-coming arts district attracting young professionals — rising rents, still affordable to buy</li>
+  <li><strong>Aksarben:</strong> Near UNMC and University of Nebraska Omaha — strong student and medical worker demand</li>
+  <li><strong>Millard & Papillion:</strong> Southwest suburbs with newer construction and family-oriented tenants</li>
+  <li><strong>North Omaha:</strong> Highest gross yields for experienced investors — requires active management but delivers strong cash-on-cash returns</li>
+</ul>
+
+<h2>Nebraska Landlord-Tenant Law Overview</h2>
+<ul>
+  <li>No statewide rent control — rents are set by the market</li>
+  <li>Security deposits capped at 1 month's rent (2.25 months for furnished units)</li>
+  <li>24-hour notice required before landlord entry</li>
+  <li>Eviction process: 3-day notice to pay or quit, then court filing — typically resolved within 3–5 weeks</li>
+  <li>Nebraska has no state inheritance tax on rental property</li>
+</ul>
+
+<h2>List Your Omaha Rental for Free</h2>
+<p>EMLAKIE is free for landlords. List your Omaha rental property and reach tenants searching specifically in Omaha — no broker fees, no commissions, no monthly costs.</p>
+<p><a href="/landlord/login">List your Omaha rental on EMLAKIE →</a></p>
+
+<p>Searching for a home in Omaha? <a href="/rentals/city/omaha">Browse Omaha rentals on EMLAKIE</a> — all listed directly by landlords, no fees.</p>
+    `.trim(),
+  },
+
+  {
+    slug: 'out-of-state-landlord-guide-cleveland',
+    title: 'Out-of-State Landlord Guide to Cleveland, OH: The Highest-Yield Rental Market in the Midwest',
+    description: 'Cleveland, Ohio offers some of the highest rental yields of any US city. Here\'s what out-of-state landlords need to know before investing — and how to list your Cleveland property free.',
+    date: '2026-06-21',
+    category: 'Landlord Tips',
+    readTime: 7,
+    citySlug: 'cleveland',
+    content: `
+<p>Cleveland, Ohio is not a glamorous market — and that's exactly why it works so well for rental property investors. While other investors chased appreciation in Sun Belt cities with sub-4% cap rates, Cleveland landlords have been quietly collecting double-digit returns from a city with low home prices, steady tenant demand, and one of the largest medical employment centers in the world.</p>
+
+<h2>The Cleveland Investment Case</h2>
+<p>The numbers are hard to argue with:</p>
+<ul>
+  <li><strong>Acquisition price:</strong> Single-family rental homes for $80K–$200K in many neighborhoods</li>
+  <li><strong>Monthly rents:</strong> $1,000–$1,600/month for 3-bedroom houses</li>
+  <li><strong>Gross cap rates:</strong> 10–15% in many East Side and inner-ring suburb neighborhoods</li>
+  <li><strong>No rent control:</strong> Ohio law prohibits local rent stabilization</li>
+  <li><strong>Turnkey operators:</strong> A well-developed ecosystem of property managers and turnkey providers serves out-of-state investors</li>
+</ul>
+
+<h2>What Anchors Cleveland's Rental Demand</h2>
+<p>Cleveland is primarily a healthcare and education city now — and those sectors are recession-resistant.</p>
+<ul>
+  <li><strong>Cleveland Clinic:</strong> Over 67,000 employees globally, with the main campus in Cleveland — one of the top hospitals in the world</li>
+  <li><strong>University Hospitals:</strong> Another major healthcare employer with a large residential footprint</li>
+  <li><strong>Case Western Reserve University:</strong> Major research university generating student and faculty rental demand</li>
+  <li><strong>Cleveland State University & Tri-C:</strong> Additional university tenant bases</li>
+  <li><strong>Manufacturing & logistics:</strong> A recovering industrial base adds blue-collar tenant demand</li>
+</ul>
+
+<h2>Best Cleveland Neighborhoods for Rental Investment</h2>
+<ul>
+  <li><strong>Ohio City & Tremont:</strong> The most gentrified neighborhoods — premium rents, low vacancy, strong appreciation. Best for long-term investors</li>
+  <li><strong>Lakewood:</strong> Inner-ring suburb with exceptional walkability, restaurants, and stable tenant base of young professionals</li>
+  <li><strong>Cleveland Heights & Shaker Heights:</strong> Established suburbs near CWRU — medical and academic tenants, beautiful housing stock</li>
+  <li><strong>Garfield Heights & Euclid:</strong> Highest gross yields — homes under $100K renting for $1,000–$1,300/month. Best for cash-flow investors</li>
+  <li><strong>Collinwood:</strong> Rapidly gentrifying near the lakefront — early investors are seeing strong appreciation</li>
+  <li><strong>Parma:</strong> Stable, affordable inner suburb with blue-collar tenants and low vacancy</li>
+</ul>
+
+<h2>Ohio Landlord-Tenant Law: The Basics</h2>
+<ul>
+  <li>No statewide rent control — Ohio law prohibits municipalities from enacting rent stabilization</li>
+  <li>Security deposits: No statutory cap, but excess above 1 month must be held in a separate account</li>
+  <li>Landlord entry: 24-hour notice required except in emergencies</li>
+  <li>Eviction: 3-day notice to pay or vacate, then court filing — Cuyahoga County processes cases in a structured timeline</li>
+  <li>Lead paint disclosure: Required for pre-1978 housing — common in Cleveland's older housing stock</li>
+</ul>
+
+<h2>List Your Cleveland Rental for Free</h2>
+<p>Reach tenants actively searching for homes in Cleveland — with no broker fees, no commissions, and no monthly costs.</p>
+<p><a href="/landlord/login">List your Cleveland rental on EMLAKIE →</a></p>
+
+<p>Looking for a home in Cleveland? <a href="/rentals/city/cleveland">Browse Cleveland rentals on EMLAKIE</a> — all posted directly by landlords, no fees.</p>
+    `.trim(),
+  },
+
+  {
+    slug: 'out-of-state-landlord-guide-jacksonville',
+    title: 'Out-of-State Landlord Guide to Jacksonville, FL: Florida\'s Best-Kept Investment Secret',
+    description: 'Jacksonville offers Florida\'s landlord-friendly laws and no state income tax — at a fraction of Miami or Tampa prices. Here\'s what out-of-state investors need to know.',
+    date: '2026-06-21',
+    category: 'Landlord Tips',
+    readTime: 6,
+    citySlug: 'jacksonville',
+    content: `
+<p>When investors think of Florida rental properties, they usually think Miami, Orlando, or Tampa. But Jacksonville — Florida's largest city by land area and one of its fastest-growing — is where savvy out-of-state landlords are quietly building portfolios. The reason: you get all of Florida's advantages (no state income tax, landlord-friendly laws, population growth) at prices that are 40–50% lower than South Florida.</p>
+
+<h2>Why Jacksonville Works for Out-of-State Investors</h2>
+<ul>
+  <li><strong>Acquisition price:</strong> Single-family rental homes for $200K–$350K in strong neighborhoods</li>
+  <li><strong>Monthly rents:</strong> $1,500–$2,200/month for 3-bedroom houses</li>
+  <li><strong>No state income tax:</strong> Florida's zero income tax applies to rental income — a major advantage over investing in high-tax states</li>
+  <li><strong>No rent control:</strong> Florida law prohibits local rent stabilization</li>
+  <li><strong>Fast evictions:</strong> Florida's 3-day notice to pay or quit is one of the shortest in the country</li>
+  <li><strong>Population growth:</strong> Jacksonville's metro population is growing faster than nearly any major US city</li>
+</ul>
+
+<h2>Jacksonville's Tenant Base</h2>
+<p>What drives consistent rental demand in Jacksonville:</p>
+<ul>
+  <li><strong>Military:</strong> Naval Station Mayport and NAS Jacksonville together employ tens of thousands — military tenants are reliable and typically have housing allowances (BAH) that cover rent</li>
+  <li><strong>Healthcare:</strong> Mayo Clinic's Jacksonville campus, Baptist Health, and UF Health create a large medical professional tenant base</li>
+  <li><strong>Finance & insurance:</strong> Bank of America, Fidelity National Financial, and Fortegra are headquartered here</li>
+  <li><strong>Logistics:</strong> Jacksonville's port (JAXPORT) is one of the busiest in the Southeast, anchoring a large distribution and logistics workforce</li>
+  <li><strong>Migration:</strong> Continued in-migration from the Northeast and Midwest — remote workers and retirees seeking Florida's tax advantages and lifestyle</li>
+</ul>
+
+<h2>Best Jacksonville Neighborhoods for Rental Investment</h2>
+<ul>
+  <li><strong>San Marco & Riverside:</strong> Most desirable urban neighborhoods — premium rents, walkability, strong appreciation</li>
+  <li><strong>Mandarin:</strong> Established Southside suburb with family tenants, good schools, and long lease terms</li>
+  <li><strong>Southside / Deerwood:</strong> Professional tenants near corporate headquarters — low vacancy, strong demand</li>
+  <li><strong>Arlington:</strong> Highest gross yields in Jacksonville — lower acquisition costs with solid rental income</li>
+  <li><strong>Ponte Vedra & Nocatee:</strong> Upscale beach-adjacent communities — premium rents from high-income tenants</li>
+  <li><strong>Neptune Beach / Atlantic Beach:</strong> Beach communities command premium rents — excellent for higher-end rentals</li>
+</ul>
+
+<h2>Florida Landlord-Tenant Law: Key Points</h2>
+<ul>
+  <li>No statewide rent control — Florida law explicitly prohibits local rent stabilization ordinances</li>
+  <li>Security deposits: No statutory cap, but must be returned within 15 days after tenancy ends (or 30 days if deductions are claimed)</li>
+  <li>Notice to enter: 12 hours required except in emergencies</li>
+  <li>Eviction: 3-day notice to pay or quit (weekends excluded) — one of the shortest landlord notice periods in the US</li>
+  <li>Homestead exemption: Does not apply to rental properties — ensure your property is properly classified</li>
+</ul>
+
+<h2>List Your Jacksonville Rental for Free</h2>
+<p>Whether you own one rental home or a portfolio in Jacksonville, EMLAKIE lets you list directly to tenants — no broker commissions, no monthly fees, no middlemen.</p>
+<p><a href="/landlord/login">List your Jacksonville rental on EMLAKIE →</a></p>
+
+<p>Searching for a home in Jacksonville? <a href="/rentals/city/jacksonville">Browse Jacksonville rentals on EMLAKIE</a> — all posted directly by landlords, no fees.</p>
+    `.trim(),
+  },
 ];
 
 export function getPost(slug: string): Post | undefined {

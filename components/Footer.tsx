@@ -150,7 +150,12 @@ export default function Footer() {
             </p>
           </div>
 
-          <p>© {new Date().getFullYear()} EMLAKIE LLC. All rights reserved.</p>
+          <p>
+            © {new Date().getFullYear()} EMLAKIE LLC. All rights reserved.{' '}
+            <span className="ml-2">
+              Protected by DMCA — Registration No. DMCA-1074529.
+            </span>
+          </p>
         </div>
       </div>
     </footer>

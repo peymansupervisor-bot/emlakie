@@ -146,7 +146,7 @@ const CITIES_BY_STATE: Record<string, { city: string; slug: string }[]> = {
   Utah: [{ city: 'Salt Lake City', slug: 'salt-lake-city' }, { city: 'Provo', slug: 'provo' }, { city: 'West Valley City', slug: 'west-valley-city' }],
   Vermont: [{ city: 'Burlington', slug: 'burlington-vt' }],
   Virginia: [{ city: 'Virginia Beach', slug: 'virginia-beach' }, { city: 'Norfolk', slug: 'norfolk' }, { city: 'Chesapeake', slug: 'chesapeake' }, { city: 'Richmond', slug: 'richmond' }],
-  Washington: [{ city: 'Seattle', slug: 'seattle' }, { city: 'Spokane', slug: 'spokane' }, { city: 'Tacoma', slug: 'tacoma' }, { city: 'Bellevue', slug: 'bellevue' }],
+  Washington: [{ city: 'Seattle', slug: 'seattle' }, { city: 'Spokane', slug: 'spokane' }, { city: 'Tacoma', slug: 'tacoma' }, { city: 'Bellevue', slug: 'bellevue' }, { city: 'Federal Way', slug: 'federal-way' }, { city: 'Redmond', slug: 'redmond' }, { city: 'Kirkland', slug: 'kirkland' }, { city: 'Renton', slug: 'renton' }, { city: 'Kent', slug: 'kent' }, { city: 'Auburn', slug: 'auburn' }],
   'West Virginia': [{ city: 'Charleston', slug: 'charleston-wv' }, { city: 'Huntington', slug: 'huntington-wv' }],
   Wisconsin: [{ city: 'Milwaukee', slug: 'milwaukee' }, { city: 'Madison', slug: 'madison' }, { city: 'Green Bay', slug: 'green-bay' }],
   Wyoming: [{ city: 'Cheyenne', slug: 'cheyenne' }, { city: 'Casper', slug: 'casper' }],

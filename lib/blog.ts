@@ -2192,6 +2192,57 @@ export const posts: Post[] = [
 <p>Looking for a new rental in Los Angeles? <a href="/rentals/city/los-angeles">Browse LA rentals on EMLAKIE</a> — all listed directly by landlords, no broker fees.</p>
     `.trim(),
   },
+  {
+    slug: 'adult-family-homes-federal-way-wa',
+    title: 'Adult Family Homes in Federal Way, WA: A Booming Niche in King County Real Estate',
+    description: 'Federal Way has become one of Washington\'s top markets for Adult Family Home businesses. Here\'s what buyers, investors, and care providers need to know about this high-demand niche.',
+    date: '2026-06-21',
+    category: 'Market Trends',
+    readTime: 7,
+    citySlug: 'federal-way',
+    content: `
+<p>If you spend time in Federal Way real estate circles, you'll hear the same acronym come up again and again: AFH. Adult Family Homes are one of the most active and least-discussed demand drivers in the South King County housing market — and Federal Way sits at the center of it.</p>
+
+<h2>What Is an Adult Family Home?</h2>
+<p>An Adult Family Home (AFH) is a Washington state-licensed residential care setting that operates within a single-family home. Unlike nursing facilities or large assisted-living complexes, AFHs provide personalized care to a small number of adults — typically four to six residents — who need assistance with daily activities due to age, disability, or chronic illness. The intimate, home-like environment is the defining feature: residents live in a real house, in a real neighborhood, cared for by a small team of licensed providers.</p>
+
+<p>Washington's Department of Social and Health Services (DSHS) licenses and regulates AFHs under WAC 388-76. Requirements cover everything from caregiver-to-resident ratios and medication management to physical plant standards for the home itself — including bedroom size, bathroom accessibility, fire egress, and emergency systems.</p>
+
+<h2>Why Federal Way?</h2>
+<p>Federal Way has emerged as one of the highest-concentration AFH markets in King County for a combination of practical reasons:</p>
+
+<ul>
+  <li><strong>Affordable large-lot homes.</strong> AFH operators need single-family homes with four or more bedrooms, accessible bathrooms (or room to add them), and private outdoor space. Federal Way has a deep inventory of exactly this type of home — at prices significantly below Seattle or Bellevue.</li>
+  <li><strong>Strategic location.</strong> Positioned between Seattle and Tacoma on the I-5 corridor, Federal Way gives AFH operators access to two major healthcare markets, multiple hospital networks (St. Francis / Franciscan Health, MultiCare, UW Medicine), and a large referral base of case managers and social workers.</li>
+  <li><strong>Established AFH community.</strong> Federal Way has a mature network of AFH operators, many of whom have expanded from one licensed home to multiple locations over the years. This community creates informal mentorship, referral networks, and a pool of experienced caregivers — making it easier for new operators to get established.</li>
+  <li><strong>Diverse population.</strong> Federal Way's multicultural community — including large Filipino, East African, and Eastern European populations — has produced a generation of skilled AFH operators and caregivers, many of whom have built successful multi-home businesses serving residents across South King County.</li>
+</ul>
+
+<h2>What Buyers and Investors Need to Know</h2>
+<p>When a licensed AFH sells — particularly one that sells as a going concern with the business included — it commands a premium over comparable residential properties. Buyers are acquiring not just the real estate, but a licensed operation, an established resident census, trained staff, and a DSHS license that can take months to obtain from scratch.</p>
+
+<p>Key factors that determine whether a home will qualify for AFH licensing include:</p>
+<ul>
+  <li>Bedroom count and minimum room dimensions (DSHS specifies minimum square footage per resident)</li>
+  <li>Bathroom accessibility — grab bars, roll-in showers, or the ability to modify existing bathrooms</li>
+  <li>Separate sleeping quarters for the provider if they live on-site</li>
+  <li>Fire safety systems: interconnected smoke alarms, sprinkler systems in certain configurations, and emergency egress from every bedroom</li>
+  <li>Exterior lot: usable outdoor space for residents and adequate off-street parking for staff</li>
+</ul>
+
+<p>Not every large home qualifies, and buyers who are purchasing a home with the intent to operate an AFH should work with a real estate professional who understands both the transactional and licensing dimensions of the deal — and ideally consult directly with DSHS before closing.</p>
+
+<h2>A Recognized Name in Federal Way AFH</h2>
+<p>One of the best-known operators in Federal Way's Adult Family Home community is <strong>Six Star Adult Family Home</strong>, founded and operated by <strong>Dina Grib</strong>. With multiple licensed locations in Federal Way, Six Star has built a reputation for high-quality care and a strong track record with DSHS — the kind of established, multi-location operation that represents what success looks like in this market. For families in South King County searching for a trusted residential care placement, Six Star is a name that comes up consistently.</p>
+
+<h2>Finding the Right Home for an AFH</h2>
+<p>If you are looking to purchase a home in Federal Way or the surrounding South King County area with AFH operation in mind — whether as an owner-operator or as an investor leasing to an established provider — the search requires a specific lens. Standard listing searches filter by bedroom count and square footage, but AFH qualification goes deeper than that.</p>
+
+<p>At EMLAKIE, we connect buyers and renters with properties across the Federal Way market. If you are a landlord with a property that would qualify as an AFH site, or a renter in Federal Way's healthcare community, <a href="/rentals/city/federal-way">browse Federal Way listings here</a>.</p>
+
+<p><em>This article is for informational purposes only and does not constitute legal, licensing, or real estate advice. Prospective AFH operators should consult directly with Washington DSHS and a licensed real estate professional familiar with Washington AFH regulations.</em></p>
+    `.trim(),
+  },
 ];
 
 export function getPost(slug: string): Post | undefined {

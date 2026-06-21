@@ -751,6 +751,215 @@ const CITY_CONTENT: Record<string, CityContent> = {
       { label: 'Gainesville rentals', slug: 'gainesville' },
     ],
   },
+
+  'federal-way': {
+    headline: 'Renting in Federal Way, WA',
+    intro:
+      'Federal Way is one of the most affordable and strategically located cities in King County — sitting midway between Seattle and Tacoma on I-5, with direct access to both job markets. The city has grown considerably over the past decade, attracting families, healthcare workers, and service-industry professionals who need proximity to the metro corridor without Bellevue or Seattle prices. Federal Way is also one of Washington\'s premier markets for Adult Family Homes (AFH) — a state-licensed residential care model that converts single-family homes into small-group elder and disability care settings. Homes with the right bedroom count, bathroom configuration, and lot size command strong interest from licensed AFH operators, making this a uniquely dual-purpose rental and real estate market.',
+    highlights: [
+      { icon: '📍', label: 'Location', detail: 'Directly on I-5 between Seattle (30 min) and Tacoma (20 min). Commuters reach two major job markets without paying prices in either city.' },
+      { icon: '🏥', label: 'Healthcare Corridor', detail: 'St. Francis Hospital (Franciscan Health), Virginia Mason Franciscan clinics, and multiple senior care facilities make healthcare one of Federal Way\'s largest employment sectors.' },
+      { icon: '🏡', label: 'Adult Family Homes', detail: 'Federal Way has one of the highest concentrations of state-licensed Adult Family Homes in King County. Single-family homes with 4+ bedrooms, accessible bathrooms, and private lots are actively sought by AFH operators and buyers — supporting strong property demand in specific submarkets.' },
+      { icon: '🌲', label: 'Nature Access', detail: 'Dash Point State Park, Steel Lake Park, and Celebration Park offer beaches, trails, and open space. Puget Sound water access is minutes from most neighborhoods.' },
+      { icon: '🛒', label: 'Amenities', detail: 'The Commons at Federal Way mall, Pacific Highway retail corridor, and growing restaurant scene serve everyday needs. SeaTac Airport is a 15-minute drive north.' },
+    ],
+    neighborhoods: ['Downtown Federal Way', 'Steel Lake', 'Dash Point', 'Twin Lakes', 'Woodmont', 'Adelaide', 'Lakeland', 'Star Lake'],
+    rentTips:
+      'Federal Way offers significantly more square footage per dollar than Seattle or Bellevue — look for single-family home rentals if you need space. Homes near Pacific Highway South tend to be priced lowest; Dash Point and Twin Lakes command modest premiums for views and access to water. If you run or are starting an Adult Family Home business, work with a real estate professional familiar with Washington DSHS AFH licensing requirements — lot size, bedroom count, bathroom accessibility, and fire egress are all evaluated during licensing, and not every home qualifies.',
+    faqs: [
+      { q: 'What is an Adult Family Home (AFH) in Washington state?', a: 'An Adult Family Home is a state-licensed residential care setting operating within a single-family home, providing personal care to up to 6 adults who need assistance with daily living. Washington DSHS licenses and regulates AFHs. Federal Way has a high concentration of AFH properties due to its affordable large-lot homes, central location, and proximity to hospital and care networks.' },
+      { q: 'Does Federal Way have rent control?', a: 'No. Washington state law prohibits local rent control. However, state tenant protections apply — landlords must provide 20-day notice for rent increases over 10%, and just cause eviction rules apply to most tenancies.' },
+      { q: 'What is the average rent in Federal Way?', a: 'Federal Way 1-bedroom apartments average $1,500–$1,900/month in 2026. Single-family home rentals range from $2,200 to $3,200/month depending on size and condition. Prices are 25–35% below comparable Seattle inventory.' },
+      { q: 'How is the commute from Federal Way to Seattle?', a: 'About 30–40 minutes by car via I-5 in off-peak hours; 45–60 minutes during peak commutes. Sound Transit Express bus routes (Routes 577/578) offer a park-and-ride option. The Federal Way Link Extension (light rail) opened in 2024, adding direct rail service to downtown Seattle.' },
+    ],
+    nearbySearches: [
+      { label: 'Kent rentals', slug: 'kent' },
+      { label: 'Auburn rentals', slug: 'auburn' },
+      { label: 'Tacoma rentals', slug: 'tacoma' },
+    ],
+  },
+
+  'bellevue': {
+    headline: 'Renting in Bellevue, WA',
+    intro:
+      'Bellevue is the Eastside\'s premier city — a thriving tech hub across Lake Washington from Seattle, home to major Amazon offices, Microsoft\'s global campus in adjacent Redmond, and a growing roster of tech companies that have relocated east to avoid Seattle\'s commercial taxes. Downtown Bellevue has transformed dramatically over the past decade with luxury high-rises, a revitalized retail core, and light rail connectivity opening in 2023. Rents are among the highest in the Puget Sound region, but so are salaries — Bellevue attracts the highest household incomes in Washington state.',
+    highlights: [
+      { icon: '💻', label: 'Tech Hub', detail: 'Amazon\'s second HQ campus, hundreds of tech startups, and proximity to Microsoft Redmond make Bellevue the highest-paying job market in Washington. Average software engineer salaries exceed $180,000.' },
+      { icon: '🚇', label: 'East Link Light Rail', detail: 'The 2 Line (East Link) connects Bellevue\'s downtown to Seattle\'s Westlake station in under 25 minutes, reducing I-90 bridge commute dependence.' },
+      { icon: '🛍️', label: 'Bellevue Square', detail: 'Bellevue Square and the Lincoln Square complex create one of the Pacific Northwest\'s premier shopping and dining destinations — fully walkable from downtown apartments.' },
+      { icon: '🏫', label: 'Top Schools', detail: 'Bellevue School District is consistently ranked among the top 5 school districts in Washington. This drives strong family demand for rental homes in specific attendance zones.' },
+      { icon: '🌿', label: 'Parks', detail: 'Bellevue Downtown Park, Mercer Slough Nature Park, and the Eastside Rail Corridor trail system offer substantial green space within and adjacent to the city.' },
+    ],
+    neighborhoods: ['Downtown Bellevue', 'Bel-Red Corridor', 'Crossroads', 'Newport Hills', 'Somerset', 'Factoria', 'Lake Hills', 'Wilburton', 'West Bellevue'],
+    rentTips:
+      'Downtown Bellevue high-rises offer the newest amenities at the highest prices; ask about concessions — landlords in newer towers often offer one month free on a 13-month lease. Crossroads and Lake Hills offer better value with good schools. Somerset and Newport Hills are popular with families for their school zones and single-family home stock. Parking is generally included in buildings but confirm. Traffic on NE 8th and 520 corridor is severe; proximity to work or the light rail station meaningfully improves quality of life.',
+    faqs: [
+      { q: 'Is Bellevue part of Seattle?', a: 'No. Bellevue is a separate incorporated city in King County, across Lake Washington from Seattle. It has its own city council, police department, and school district. The two cities are connected by SR-520 and I-90 bridges, and now by East Link light rail.' },
+      { q: 'What is the average rent in Bellevue?', a: 'Bellevue 1-bedroom apartments average $2,300–$3,200/month in 2026. Downtown high-rises reach $3,500+. Crossroads and Lake Hills neighborhoods offer 1-bedrooms from $1,900–$2,400. Single-family home rentals range from $3,500 to $6,000/month.' },
+      { q: 'Which neighborhoods have the best schools in Bellevue?', a: 'Somerset, Newport Hills, and West Bellevue fall within Bellevue School District\'s most sought-after elementary attendance zones (Somerset Elementary, Spiritridge Elementary). Families often pay a significant rent premium to be in these zones.' },
+    ],
+    nearbySearches: [
+      { label: 'Seattle rentals', slug: 'seattle' },
+      { label: 'Redmond rentals', slug: 'redmond' },
+      { label: 'Kirkland rentals', slug: 'kirkland' },
+    ],
+  },
+
+  'redmond': {
+    headline: 'Renting in Redmond, WA',
+    intro:
+      'Redmond is the tech capital of the Eastside — home to Microsoft\'s global campus, Nintendo of America, Spaceflight Industries, and dozens of tech and gaming companies. Despite its corporate identity, Redmond maintains a genuinely livable character: bike-friendly trails, a compact downtown, and proximity to the Sammamish River corridor. The city has added significant apartment inventory near the downtown transit center, and the East Link light rail connection to Seattle opened a new commute option that has attracted more renters who work in both cities.',
+    highlights: [
+      { icon: '🖥️', label: 'Microsoft Campus', detail: 'Microsoft\'s global headquarters occupies much of central Redmond, employing over 50,000 people locally. Campus expansion continues — the redeveloped campus opened in 2022 with new transit-oriented apartments.' },
+      { icon: '🎮', label: 'Gaming & Tech', detail: 'Nintendo of America, Bungie (Destiny), and dozens of game studios call Redmond home. The city has the highest density of software engineers per capita of any US city.' },
+      { icon: '🚴', label: 'Trails', detail: 'The Sammamish River Trail and Redmond Watershed Preserve offer world-class cycling and hiking. Redmond consistently ranks as one of Washington\'s most bike-friendly cities.' },
+      { icon: '🚇', label: 'Light Rail', detail: 'The Redmond Technology and Downtown Redmond light rail stations connect to Seattle via East Link. Microsoft runs its own campus shuttles supplementing public transit.' },
+      { icon: '🌳', label: 'Livability', detail: 'Redmond has lower crime rates, strong parks, and a quieter residential character than Seattle — popular with families and early-career tech workers wanting space without a long commute.' },
+    ],
+    neighborhoods: ['Downtown Redmond', 'Overlake', 'Education Hill', 'Bear Creek', 'Grass Lawn', 'Rose Hill', 'Willows', 'Idylwood'],
+    rentTips:
+      'Overlake is closest to Microsoft\'s campus and most transit options — expect to pay a premium. Downtown Redmond is improving with new mixed-use buildings; ask about move-in specials. Education Hill and Bear Creek offer single-family homes at better prices. If you work at Microsoft, check whether your team is on the main Redmond campus or one of the Bellevue offices — it significantly affects your optimal neighborhood.',
+    faqs: [
+      { q: 'What is the average rent in Redmond?', a: 'Redmond 1-bedroom apartments average $2,100–$2,900/month in 2026. Overlake near Microsoft campus is priciest. Downtown Redmond and Rose Hill offer better value. Single-family home rentals range from $3,200 to $5,500/month.' },
+      { q: 'Do I need a car in Redmond?', a: 'It depends. If you work on Microsoft\'s campus and live in Overlake, a car is optional — Microsoft runs frequent internal shuttles and East Link connects to Seattle. For most other errands and destinations, a car remains useful, though Redmond\'s trail network makes cycling viable for many residents.' },
+      { q: 'Is Redmond family-friendly?', a: 'Very much so. Lake Washington School District serves most of Redmond with strong ratings. Bear Creek and Education Hill neighborhoods are particularly popular with families for their school zones and quiet residential streets.' },
+    ],
+    nearbySearches: [
+      { label: 'Bellevue rentals', slug: 'bellevue' },
+      { label: 'Kirkland rentals', slug: 'kirkland' },
+      { label: 'Seattle rentals', slug: 'seattle' },
+    ],
+  },
+
+  'kirkland': {
+    headline: 'Renting in Kirkland, WA',
+    intro:
+      'Kirkland is the Eastside\'s most livable waterfront city — a walkable downtown on the shores of Lake Washington, a vibrant restaurant and bar scene, and a relaxed Pacific Northwest character that feels noticeably different from corporate Bellevue or campus-driven Redmond. Google\'s Kirkland office is the largest outside of California, and a growing cluster of tech companies has settled here — but Kirkland retains a neighborhood feel that draws renters who want Eastside convenience with a more human scale. Waterfront rentals command significant premiums, while neighborhoods just east of downtown offer solid value.',
+    highlights: [
+      { icon: '🌊', label: 'Lake Washington', detail: 'Kirkland\'s downtown waterfront on Lake Washington offers swimming beaches, parks, and views across to Seattle. Marina Park and Waverly Beach Park are community gathering points year-round.' },
+      { icon: '🍽️', label: 'Downtown Scene', detail: 'Kirkland\'s downtown has one of the most concentrated restaurant and bar scenes on the Eastside — Lake Street and Central Way are walkable from most downtown apartments.' },
+      { icon: '💼', label: 'Google Kirkland', detail: 'Google\'s Kirkland campus is the company\'s largest engineering office outside its California HQ, bringing thousands of high-earning tech workers who drive local rental demand.' },
+      { icon: '🚌', label: 'Transit', detail: 'King County Metro routes connect Kirkland to Bellevue and Seattle. The cross-lake 255 bus connects to the University of Washington light rail station. Plans for a future Eastside light rail extension include Kirkland.' },
+      { icon: '🏃', label: 'Outdoor Life', detail: 'The Cross Kirkland Corridor (former rail trail), Juanita Beach Park, and O.O. Denny Park offer accessible outdoor recreation within city limits.' },
+    ],
+    neighborhoods: ['Downtown Kirkland', 'Juanita', 'Totem Lake', 'Kingsgate', 'North Rose Hill', 'Bridle Trails', 'South Kirkland', 'Lakeview'],
+    rentTips:
+      'Downtown waterfront units go fast and carry a 15–25% premium over comparable Eastside inventory. Juanita and Totem Lake offer more affordable options with good amenities. Totem Lake has seen significant new apartment construction — ask about current lease specials. If you work at Google, proximity to the Kirkland Urban campus (NE 85th St area) saves meaningful daily travel. Parking is generally included in apartment complexes but street parking in downtown is metered.',
+    faqs: [
+      { q: 'What is the average rent in Kirkland?', a: 'Kirkland 1-bedroom apartments average $2,000–$2,800/month in 2026. Downtown waterfront units reach $3,000+. Totem Lake and Juanita offer 1-bedrooms from $1,800–$2,300. Single-family home rentals range from $3,000 to $5,000/month.' },
+      { q: 'Is Kirkland walkable?', a: 'Downtown Kirkland is one of the most walkable communities on the Eastside — restaurants, shops, the waterfront, and parks are all accessible on foot. Neighborhoods further east (Kingsgate, Bridle Trails) are more car-dependent.' },
+      { q: 'How far is Kirkland from Seattle?', a: 'About 30–45 minutes by car via SR-520 during off-peak hours; longer during peak commutes. The Metro 255 bus to UW light rail takes approximately 45–55 minutes to downtown Seattle. The planned Eastside light rail extension would significantly improve connectivity.' },
+    ],
+    nearbySearches: [
+      { label: 'Bellevue rentals', slug: 'bellevue' },
+      { label: 'Redmond rentals', slug: 'redmond' },
+      { label: 'Bothell rentals', slug: 'bothell' },
+    ],
+  },
+
+  'renton': {
+    headline: 'Renting in Renton, WA',
+    intro:
+      'Renton sits at the southern tip of Lake Washington, just 11 miles south of downtown Seattle — and it is consistently one of King County\'s best-value rental markets. The city is home to Boeing\'s commercial airplane assembly, PACCAR (Kenworth trucks), and a major regional medical center, giving it a diverse economic base that insulates it from pure tech-sector swings. Renton\'s Highlands and Landing neighborhoods have seen meaningful renovation and new development, and light rail connectivity via the Rainier Beach corridor puts Seattle well within reach.',
+    highlights: [
+      { icon: '✈️', label: 'Boeing Assembly', detail: 'Boeing\'s Renton factory assembles the 737 MAX — one of the largest manufacturing employers in King County. Boeing\'s workforce creates stable, high-wage rental demand across Renton\'s neighborhoods.' },
+      { icon: '🏥', label: 'Valley Medical', detail: 'Valley Medical Center (UW Medicine) is a major regional hospital and one of Renton\'s largest employers, drawing healthcare workers who prefer to live close to work.' },
+      { icon: '💰', label: 'Value', detail: 'Renton offers King County location at 20–30% below Seattle or Bellevue rents. Single-family homes with garages are attainable at price points that would be impossible in neighboring cities.' },
+      { icon: '🌊', label: 'Lake Washington', detail: 'Gene Coulon Memorial Beach Park on Lake Washington offers swimming, boat launches, tennis courts, and waterfront dining — one of the most popular parks in South King County.' },
+      { icon: '🛣️', label: 'Commute Access', detail: 'I-405, SR-167, I-5, and SR-169 all converge in or near Renton. SeaTac Airport is 15 minutes away, making Renton ideal for frequent travelers.' },
+    ],
+    neighborhoods: ['Renton Highlands', 'The Landing', 'South Renton', 'Talbot Hill', 'Cascade', 'Benson Hill', 'Kennydale', 'North Renton'],
+    rentTips:
+      'The Landing (near Boeing) has the newest inventory and walkable retail — a solid choice for Boeing employees. Kennydale and North Renton offer the best Lake Washington proximity. Benson Hill has been annexing adjacent areas and adding inventory. Renton\'s I-405 corridor means rush-hour traffic builds quickly — if you commute to Bellevue, mornings northbound can add 20+ minutes.',
+    faqs: [
+      { q: 'What is the average rent in Renton?', a: 'Renton 1-bedroom apartments average $1,700–$2,200/month in 2026. The Landing and newer complexes are on the higher end. Highlands and South Renton offer the most affordable options. Single-family home rentals range from $2,500 to $3,800/month.' },
+      { q: 'Is Renton safe?', a: 'Renton is a mixed market. North Renton, Kennydale, and The Landing area are generally quiet and desirable. Parts of downtown Renton and South Renton have higher crime rates. Review specific block-level data before committing, and ask your prospective landlord about the immediate neighborhood.' },
+      { q: 'How far is Renton from Seattle?', a: 'About 20–30 minutes by car during off-peak hours; 40–55 minutes at peak. Metro Bus routes 101 and 106 connect Renton to downtown Seattle. There is no direct light rail connection yet, though the system\'s south extension stops at Rainier Beach and Tukwila.' },
+    ],
+    nearbySearches: [
+      { label: 'Kent rentals', slug: 'kent' },
+      { label: 'Bellevue rentals', slug: 'bellevue' },
+      { label: 'Federal Way rentals', slug: 'federal-way' },
+    ],
+  },
+
+  'kent': {
+    headline: 'Renting in Kent, WA',
+    intro:
+      'Kent is King County\'s third-largest city and the undisputed hub of the Green River Valley\'s industrial and logistics economy. Massive warehouse and distribution centers for Amazon, REI, and hundreds of other companies fill the valley floor, creating a large working-class and blue-collar rental base. For renters and families who need space, good schools, and a livable neighborhood at King County prices significantly below Seattle and Bellevue, Kent delivers consistently. The city\'s east side — particularly the East Hill and Meridian neighborhoods — has a completely different character from the valley: quiet residential streets, newer construction, and strong school options.',
+    highlights: [
+      { icon: '📦', label: 'Logistics Hub', detail: 'The Green River Valley is one of the Pacific Northwest\'s largest distribution and manufacturing corridors. Amazon, UPS, Boeing suppliers, and REI\'s distribution center employ thousands of Kent residents.' },
+      { icon: '💰', label: 'Affordability', detail: 'Kent consistently offers the most affordable single-family home rentals of any King County city. Three-bedroom homes rent for $2,200–$3,000/month — comparable to a Seattle 1-bedroom.' },
+      { icon: '🏫', label: 'Kent School District', detail: 'Kent School District is one of the largest in Washington, serving over 25,000 students. East Hill schools are among the district\'s highest-rated.' },
+      { icon: '🛣️', label: 'Highway Access', detail: 'SR-167, I-5, SR-99, and SR-516 provide strong access to all of South King County. SeaTac Airport is 15 minutes away. Commuting to Renton, Federal Way, Auburn, or Seattle is practical from most of Kent.' },
+      { icon: '🌿', label: 'Green River Trail', detail: 'The Green River Trail runs 19 miles through Kent, connecting the valley to Auburn, Tukwila, and the regional trail network. It\'s a popular cycling and walking corridor.' },
+    ],
+    neighborhoods: ['East Hill', 'Meridian', 'Downtown Kent', 'West Hill', 'Lake Meridian', 'Panther Lake', 'Covington (border)', 'Scenic Hill'],
+    rentTips:
+      'East Hill and Meridian offer the best quality-of-life for families — quieter streets, newer homes, and the district\'s best schools. Lake Meridian neighborhood has premium lake access at modest prices. Avoid lower Green River Valley areas if you want a quieter residential feel — the industrial character dominates. Kent has a significant multilingual community (Vietnamese, Spanish, Somali, and others) — a rich cultural environment for families from diverse backgrounds.',
+    faqs: [
+      { q: 'What is the average rent in Kent?', a: 'Kent 1-bedroom apartments average $1,500–$2,000/month in 2026. Single-family home rentals range from $2,200 to $3,400/month. Kent offers some of the lowest per-square-foot rental costs of any King County city.' },
+      { q: 'Is Kent a good place to raise a family?', a: 'East Kent and Meridian are genuinely family-friendly — good schools, accessible parks, and more space per dollar than Seattle or Bellevue. Downtown Kent and the valley floor are more industrial and less suited to families seeking a quiet residential experience.' },
+      { q: 'How far is Kent from Seattle?', a: 'About 25–35 minutes by car via SR-167 and I-5 off-peak; 45–60 minutes at peak hours. Sounder commuter rail connects Kent to Seattle\'s King Street Station in approximately 30 minutes — one of the most reliable commute options in South King County.' },
+    ],
+    nearbySearches: [
+      { label: 'Federal Way rentals', slug: 'federal-way' },
+      { label: 'Auburn rentals', slug: 'auburn' },
+      { label: 'Renton rentals', slug: 'renton' },
+    ],
+  },
+
+  'auburn': {
+    headline: 'Renting in Auburn, WA',
+    intro:
+      'Auburn straddles King and Pierce Counties at the southern edge of the Green River Valley — and it offers some of the most competitive rental prices of any city in the greater Seattle metro area. The city has a long history rooted in agriculture and manufacturing, and it maintains an unpretentious, working-class character while adding new housing and commercial development near the Sounder commuter rail station. For renters who prioritize space, commute access, and value over urban amenities, Auburn is consistently underrated.',
+    highlights: [
+      { icon: '🚆', label: 'Sounder Rail', detail: 'Auburn Sounder station connects directly to Seattle\'s King Street Station in approximately 40 minutes — one of the most reliable commute corridors in South King County.' },
+      { icon: '💰', label: 'Lowest Rents', detail: 'Auburn offers some of the lowest rental prices of any King County city — 30–40% below Seattle. Three-bedroom single-family homes routinely rent under $2,500/month.' },
+      { icon: '🏇', label: 'Emerald Downs', detail: 'Emerald Downs thoroughbred racetrack is a local institution, hosting racing from April through September. A unique community amenity unlike anything else in King County.' },
+      { icon: '🛒', label: 'Auburn SuperMall', detail: 'The Auburn SuperMall and adjacent retail corridor provide major shopping, dining, and services close to most Auburn neighborhoods.' },
+      { icon: '🌊', label: 'White River', detail: 'The White River and Green River corridors provide trail access, fishing, and natural scenery accessible from many Auburn neighborhoods.' },
+    ],
+    neighborhoods: ['Downtown Auburn', 'West Auburn', 'East Auburn', 'Auburn Way', 'Lea Hill', 'Lakeland Hills', 'Pacific (border)', 'Algona (border)'],
+    rentTips:
+      'Lakeland Hills is Auburn\'s most desirable neighborhood — newer homes, planned community feel, and strong schools. Lea Hill has good residential character. Downtown Auburn is improving with transit-oriented development near the Sounder station. West Auburn near SR-167 has the most industrial character. If commuting to Seattle, the Sounder is far more reliable than I-5 or SR-167 during peak hours.',
+    faqs: [
+      { q: 'What is the average rent in Auburn?', a: 'Auburn 1-bedroom apartments average $1,400–$1,900/month in 2026. Single-family home rentals range from $2,000 to $3,000/month — among the lowest in King County. Lakeland Hills commands a modest premium over other Auburn neighborhoods.' },
+      { q: 'Is Auburn in King County or Pierce County?', a: 'Both. Auburn spans the King/Pierce County line. Most of Auburn is in King County, but the Lakeland Hills neighborhood is in Pierce County. School district and city services are consistent throughout — the county line matters primarily for property tax purposes.' },
+      { q: 'Is Auburn safe?', a: 'Auburn is a mixed community. Lakeland Hills, Lea Hill, and newer residential developments are quiet and family-friendly. Parts of Auburn Way South and Downtown Auburn have higher property crime rates. Research specific neighborhoods before committing.' },
+    ],
+    nearbySearches: [
+      { label: 'Kent rentals', slug: 'kent' },
+      { label: 'Federal Way rentals', slug: 'federal-way' },
+      { label: 'Tacoma rentals', slug: 'tacoma' },
+    ],
+  },
+
+  'tacoma': {
+    headline: 'Renting in Tacoma, WA',
+    intro:
+      'Tacoma is the Puget Sound\'s most underrated city — a gritty, arts-driven port city 35 miles south of Seattle that has undergone a remarkable revitalization over the past decade. Where Seattle prices have climbed into the stratosphere, Tacoma offers waterfront neighborhoods, a legitimate restaurant and arts scene, and single-family home rentals at prices that feel like a different decade. The University of Washington Tacoma, Joint Base Lewis-McChord (JBLM), and a growing healthcare sector anchor the local economy, and new residents — many priced out of Seattle or Bellevue — continue to arrive.',
+    highlights: [
+      { icon: '🎨', label: 'Arts Scene', detail: 'Museum of Glass, Tacoma Art Museum, the Chihuly glass collection, and a vibrant arts district in the Hilltop neighborhood make Tacoma one of the Pacific Northwest\'s most culturally rich mid-size cities.' },
+      { icon: '💰', label: 'Value', detail: 'Tacoma rents are 40–50% below Seattle for comparable square footage. Waterfront bungalows, craftsman homes, and urban lofts are attainable at prices that wouldn\'t cover a Seattle studio.' },
+      { icon: '🚢', label: 'Port & Water', detail: 'The Port of Tacoma is the 5th-largest container port in North America. Commencement Bay waterfront, Point Defiance Park, and the Narrows bridge define Tacoma\'s dramatic geography.' },
+      { icon: '🎓', label: 'UW Tacoma', detail: 'University of Washington Tacoma\'s urban campus anchors downtown revitalization and creates a student and faculty rental base in the Warehouse District and Dome District.' },
+      { icon: '🚆', label: 'Sounder & Light Rail', detail: 'Tacoma Dome Sounder station connects to Seattle in approximately 55 minutes. Tacoma Link light rail runs through downtown to the Tacoma Dome. Sound Transit extensions reach Federal Way and will extend south.' },
+    ],
+    neighborhoods: ['Stadium District', 'North End', 'Proctor District', 'Hilltop', 'South End', 'Dome District', 'Ruston', 'Fircrest (border)', 'Point Defiance'],
+    rentTips:
+      'North End and Proctor District are Tacoma\'s most desirable residential neighborhoods — craftsman homes, walkable retail, and lower crime. Stadium District is revitalizing fast and within walking distance of UW Tacoma. Hilltop has undergone significant investment and gentrification; early movers got exceptional value. South End is more affordable but requires a car. Point Defiance area commands waterfront premiums but delivers on setting.',
+    faqs: [
+      { q: 'What is the average rent in Tacoma?', a: 'Tacoma 1-bedroom apartments average $1,400–$1,900/month in 2026. Single-family home rentals range from $1,900 to $3,000/month. North End and Proctor District command the highest premiums. South End and Dome District offer the most affordable inventory.' },
+      { q: 'Is Tacoma safe?', a: 'Tacoma is mixed. North End, Proctor, and Stadium District are generally safe and actively gentrifying. Hilltop has improved dramatically but retains some elevated crime pockets. South Tacoma and portions of Central Tacoma have higher crime rates. Research street-level data before committing to any specific address.' },
+      { q: 'How far is Tacoma from Seattle?', a: 'About 35–45 minutes by car via I-5 in off-peak conditions; 60–90 minutes during peak hours — I-5 between Tacoma and Seattle is one of the most congested stretches in the Pacific Northwest. Sounder commuter rail is far more predictable at approximately 55 minutes, making it the preferred commute for downtown Seattle workers.' },
+    ],
+    nearbySearches: [
+      { label: 'Federal Way rentals', slug: 'federal-way' },
+      { label: 'Auburn rentals', slug: 'auburn' },
+      { label: 'Seattle rentals', slug: 'seattle' },
+    ],
+  },
 };
 
 export function getCityContent(slug: string): CityContent | null {

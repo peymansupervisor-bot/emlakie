@@ -96,6 +96,11 @@ export default function SearchBar({ large = false }: { large?: boolean }) {
         onSubmit={onSubmit}
         className="flex w-full overflow-hidden rounded-xl bg-white shadow-[0_4px_24px_rgba(0,0,0,0.10)] transition-shadow hover:shadow-[0_6px_32px_rgba(0,0,0,0.14)]"
       >
+        {/* The sr-only <label> provides the accessible name for the combobox
+            input via the htmlFor/id pairing. A redundant aria-label on the
+            same <input role="combobox"> triggers an aria-allowed-attr
+            violation because axe flags conflicting naming mechanisms on
+            combobox inputs, so aria-label has been removed here. */}
         <label htmlFor="search-q" className="sr-only">Search rentals</label>
         <input
           id="search-q"
@@ -107,7 +112,6 @@ export default function SearchBar({ large = false }: { large?: boolean }) {
           onKeyDown={onKeyDown}
           onFocus={() => suggestions.length > 0 && setOpen(true)}
           placeholder="City, ZIP, address, or neighborhood"
-          aria-label="Search by city, ZIP, address, or neighborhood"
           aria-autocomplete="list"
           aria-expanded={open}
           aria-controls="search-suggestions"

@@ -197,6 +197,12 @@ export default function LandlordLoginPage() {
             <button type="submit" disabled={busy} className={btnClass} style={{ backgroundColor: '#16a34a' }}>
               {busy ? 'Signing in…' : 'Sign in'}
             </button>
+            <p className="text-center text-xs text-gray-400">
+              By signing in, you agree to our{' '}
+              <a href="/terms" className="underline hover:text-gray-600">Terms of Service</a>{' '}
+              and{' '}
+              <a href="/privacy" className="underline hover:text-gray-600">Privacy Policy</a>.
+            </p>
           </form>
           {error && <p role="alert" className="mt-4 rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700">{error}</p>}
           <SocialButtons />
@@ -220,6 +226,12 @@ export default function LandlordLoginPage() {
             <button type="submit" disabled={busy} className={btnClass} style={{ backgroundColor: '#16a34a' }}>
               {busy ? 'Creating account…' : 'Create account'}
             </button>
+            <p className="text-center text-xs text-gray-400">
+              By creating an account, you agree to our{' '}
+              <a href="/terms" className="underline hover:text-gray-600">Terms of Service</a>{' '}
+              and{' '}
+              <a href="/privacy" className="underline hover:text-gray-600">Privacy Policy</a>.
+            </p>
           </form>
           {error && <p role="alert" className="mt-4 rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700">{error}</p>}
           <SocialButtons />

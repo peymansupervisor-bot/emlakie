@@ -3,6 +3,7 @@ import { Inter, Plus_Jakarta_Sans, Playfair_Display } from 'next/font/google';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import CookieBanner from '@/components/CookieBanner';
+import { Analytics } from '@vercel/analytics/next';
 import './globals.css';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
@@ -37,8 +38,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'EMLAKIE — Find Your Next Rental Home',
-    description: 'Browse houses, apartments, and condos for rent. EMLAKIE connects renters directly with landlords.',
+    title: 'EMLAKIE — List Rentals Free & Find Tenants Fast',
+    description: 'Post your rental listing free on EMLAKIE. Reach thousands of qualified tenants, no broker fees, no middleman.',
     images: ['/opengraph-image'],
   },
   robots: {
@@ -65,6 +66,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <main id="main-content" className="min-h-[60vh]">{children}</main>
         <Footer />
         <CookieBanner />
+        <Analytics />
       </body>
     </html>
   );

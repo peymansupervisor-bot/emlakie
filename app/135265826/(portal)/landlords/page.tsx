@@ -14,7 +14,6 @@ export default async function LandlordsPage({ searchParams }: { searchParams: Pr
   const { data: profileRows } = await sb
     .from('profiles')
     .select('id, first_name, last_name, display_name, phone, phone_verified, email, account_id, created_at')
-    .order('created_at', { ascending: false })
     .limit(500);
 
   // Fetch listing counts per landlord
@@ -30,6 +29,12 @@ export default async function LandlordsPage({ searchParams }: { searchParams: Pr
     if (l.status === 'active') countMap[l.landlord_id].active++;
   }
 
+  function accountNum(id: string | null): number {
+    if (!id) return Infinity;
+    const m = id.match(/\d+$/);
+    return m ? parseInt(m[0], 10) : Infinity;
+  }
+
   let rows = (profileRows ?? []).filter((p) => {
     if (!q) return true;
     const lower = q.toLowerCase();
@@ -42,6 +47,8 @@ export default async function LandlordsPage({ searchParams }: { searchParams: Pr
       p.account_id?.toLowerCase().includes(lower)
     );
   });
+
+  rows = rows.sort((a, b) => accountNum(a.account_id) - accountNum(b.account_id));
 
   const total = rows.length;
 

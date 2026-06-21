@@ -56,17 +56,26 @@ export default function Filters() {
     <div className="flex flex-wrap items-center gap-3">
       <input
         type="text"
-        defaultValue={searchParams.get('city') ?? ''}
+        defaultValue={searchParams.get('city') ?? searchParams.get('q') ?? ''}
         onKeyDown={(e) => {
           if (e.key === 'Enter') {
             const val = (e.target as HTMLInputElement).value.trim();
-            setFilter('city', val);
+            const params = new URLSearchParams(searchParams.toString());
+            params.delete('q');
+            params.delete('page');
+            if (val) params.set('city', val); else params.delete('city');
+            router.push(`/rentals?${params.toString()}`);
           }
         }}
         onBlur={(e) => {
           const val = e.target.value.trim();
-          if (val !== (searchParams.get('city') ?? '')) {
-            setFilter('city', val);
+          const current = searchParams.get('city') ?? searchParams.get('q') ?? '';
+          if (val !== current) {
+            const params = new URLSearchParams(searchParams.toString());
+            params.delete('q');
+            params.delete('page');
+            if (val) params.set('city', val); else params.delete('city');
+            router.push(`/rentals?${params.toString()}`);
           }
         }}
         placeholder="City or ZIP"

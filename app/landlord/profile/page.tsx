@@ -29,7 +29,7 @@ export default function ProfilePage() {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    getProfile().then((p) => {
+    getProfile().then(async (p) => {
       if (!p) return;
       let digits = (p.phone ?? '').replace(/\D/g, '');
       if (digits.startsWith('1') && digits.length >= 11) digits = digits.slice(1);
@@ -44,7 +44,19 @@ export default function ProfilePage() {
         phone,
       });
       setEmail(p.email ?? '');
-      setAccountId(p.account_id ?? '');
+
+      // Auto-heal: if the trigger failed to assign an account ID, request one now
+      if (!p.account_id) {
+        try {
+          const res = await fetch('/api/landlord/assign-account-id', { method: 'POST' });
+          const json = await res.json();
+          setAccountId(json.account_id ?? '');
+        } catch {
+          // leave blank — profile page will show the contact support message
+        }
+      } else {
+        setAccountId(p.account_id);
+      }
     });
   }, []);
 

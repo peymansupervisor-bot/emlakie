@@ -57,6 +57,7 @@ export default function PhotoManager({ listingId, initialPhotos }: Props) {
     if (toUpload.length < files.length) setMsg(`Only ${remaining} slot${remaining > 1 ? 's' : ''} remaining — uploading first ${toUpload.length}.`);
     setUploading(true);
     const newUrls: string[] = [];
+    const skipped: string[] = [];
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('Not signed in');
@@ -64,28 +65,39 @@ export default function PhotoManager({ listingId, initialPhotos }: Props) {
       for (let i = 0; i < toUpload.length; i++) {
         setUploadProgress(`Compressing ${i + 1} of ${toUpload.length}…`);
         const compressed = await compressImage(toUpload[i]);
-        setUploadProgress(`Uploading ${i + 1} of ${files.length}…`);
+        setUploadProgress(`Uploading ${i + 1} of ${toUpload.length}…`);
         const path = `${user.id}/${Date.now()}-${Math.random().toString(36).slice(2)}.jpg`;
         const { error: uploadErr } = await supabase.storage
           .from('listing-photos')
           .upload(path, compressed, { contentType: 'image/jpeg', upsert: false });
-        if (uploadErr) throw new Error(uploadErr.message);
+        if (uploadErr) { skipped.push(toUpload[i].name); continue; }
         const { data: { publicUrl } } = supabase.storage.from('listing-photos').getPublicUrl(path);
 
         // Content moderation check
         setUploadProgress(`Checking photo ${i + 1} of ${toUpload.length}…`);
-        const modRes = await fetch('/api/moderate-image', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ url: publicUrl }),
-        });
-        const modData = await modRes.json();
-        if (!modData.safe) {
-          await supabase.storage.from('listing-photos').remove([path]);
-          throw new Error(`Photo ${i + 1} was flagged as inappropriate and was not uploaded.`);
+        try {
+          const modRes = await fetch('/api/moderate-image', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ url: publicUrl }),
+          });
+          const modData = await modRes.json();
+          if (!modData.safe) {
+            await supabase.storage.from('listing-photos').remove([path]);
+            skipped.push(toUpload[i].name);
+            continue;
+          }
+        } catch {
+          // moderation error — fail open, keep the photo
         }
 
         newUrls.push(publicUrl);
+      }
+
+      if (newUrls.length === 0) {
+        const reason = skipped.length > 0 ? 'Photos were flagged and not uploaded.' : 'No photos were uploaded.';
+        setMsg(reason);
+        return;
       }
 
       // Append all new URLs to the listing in one API call
@@ -98,11 +110,12 @@ export default function PhotoManager({ listingId, initialPhotos }: Props) {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
       setPhotos(data.photos);
-      setMsg(`${toUpload.length} photo${toUpload.length > 1 ? 's' : ''} uploaded.`);
+      const msg = skipped.length > 0
+        ? `${newUrls.length} photo${newUrls.length > 1 ? 's' : ''} uploaded. ${skipped.length} skipped (flagged or failed).`
+        : `${newUrls.length} photo${newUrls.length > 1 ? 's' : ''} uploaded.`;
+      setMsg(msg);
     } catch (err: unknown) {
-      setMsg(newUrls.length > 0
-        ? `${newUrls.length} of ${toUpload.length} uploaded — ${(err as Error).message}`
-        : ((err as Error).message ?? 'Upload failed.'));
+      setMsg((err as Error).message ?? 'Upload failed.');
     } finally {
       setUploading(false);
       setUploadProgress('');

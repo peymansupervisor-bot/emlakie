@@ -40,10 +40,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const ogImage = listing.photos?.[0]
     ? [{ url: listing.photos[0], width: 1200, height: 630, alt: listing.title }]
     : [{ url: '/og-image.png', width: 1200, height: 630, alt: 'EMLAKIE' }];
+  const isUnavailableForIndex = listing.status === 'rented' || listing.status === 'expired';
   return {
     title: `${listing.title}${statusLabel} — ${formatPrice(listing.price)}`,
     description: shortDesc,
     alternates: { canonical: canonicalUrl },
+    ...(isUnavailableForIndex && { robots: { index: false, follow: false } }),
     openGraph: {
       title: `${listing.title} — ${formatPrice(listing.price)}`,
       description: shortDesc,

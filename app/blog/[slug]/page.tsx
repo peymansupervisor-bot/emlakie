@@ -62,6 +62,7 @@ export default async function BlogPostPage({ params }: Props) {
         headline: post.title,
         description: post.description,
         datePublished: post.date,
+        dateModified: post.date,
         author: { '@type': 'Organization', name: 'EMLAKIE Editorial Team', url: 'https://emlakie.com' },
         image: { '@type': 'ImageObject', url: 'https://emlakie.com/og-image.png', width: 1200, height: 630 },
         publisher: { '@type': 'Organization', name: 'EMLAKIE', url: 'https://emlakie.com' },

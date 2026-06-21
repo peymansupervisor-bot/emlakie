@@ -57,6 +57,13 @@ export default async function StatePage({ params }: Props) {
   const { name, abbr } = state;
   const hasListings = listings.length > 0;
 
+  const stateFaqs = [
+    { q: `How many rentals are available in ${name}?`, a: total > 0 ? `There are currently ${total} rental homes listed in ${name} on EMLAKIE, including apartments, houses, and condos.` : `EMLAKIE lists rental homes across ${name} posted directly by landlords. New listings are added daily.` },
+    { q: `What is the average rent in ${name}?`, a: avgRent ? `The average rent in ${name} is ${formatPrice(avgRent)}/month, with listings ranging from ${formatPrice(minRent ?? 0)} to ${formatPrice(maxRent ?? 0)}/month.` : `Rental prices in ${name} vary by city and property type. Browse current listings on EMLAKIE to find up-to-date pricing.` },
+    { q: `How do I find a rental in ${name} without broker fees?`, a: `All listings on EMLAKIE are posted directly by landlords — there are no broker fees or middlemen. Browse homes in ${name}, message the landlord directly, and apply in minutes.` },
+    { q: `Can landlords in ${name} list for free on EMLAKIE?`, a: `Yes. Landlords in ${name} can post rental listings for free on EMLAKIE. Reach thousands of qualified renters without paying broker commissions.` },
+  ];
+
   const schema = {
     '@context': 'https://schema.org',
     '@graph': [
@@ -73,6 +80,14 @@ export default async function StatePage({ params }: Props) {
           { '@type': 'ListItem', position: 2, name: 'Rentals', item: 'https://emlakie.com/rentals' },
           { '@type': 'ListItem', position: 3, name: name, item: `https://emlakie.com/rentals/state/${slug}` },
         ],
+      },
+      {
+        '@type': 'FAQPage',
+        mainEntity: stateFaqs.map(f => ({
+          '@type': 'Question',
+          name: f.q,
+          acceptedAnswer: { '@type': 'Answer', text: f.a },
+        })),
       },
     ],
   };
@@ -222,6 +237,24 @@ export default async function StatePage({ params }: Props) {
             {item.label}
           </Link>
         ))}
+      </section>
+
+      {/* FAQ section */}
+      <section className="mt-12">
+        <h2 className="text-xl font-bold text-gray-900">Frequently Asked Questions</h2>
+        <div className="mt-4 divide-y divide-gray-200 rounded-xl border border-gray-200 bg-white">
+          {stateFaqs.map((faq) => (
+            <details key={faq.q} className="group px-6 py-4">
+              <summary className="flex cursor-pointer items-center justify-between gap-4 text-sm font-semibold text-gray-900 marker:content-none">
+                {faq.q}
+                <svg className="h-4 w-4 shrink-0 text-gray-400 transition group-open:rotate-180" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                  <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clipRule="evenodd" />
+                </svg>
+              </summary>
+              <p className="mt-3 text-sm leading-relaxed text-gray-600">{faq.a}</p>
+            </details>
+          ))}
+        </div>
       </section>
 
       {/* SEO link grid */}

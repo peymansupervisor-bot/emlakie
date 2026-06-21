@@ -348,7 +348,7 @@ export default function PropertyDashboardPage() {
             </Link>
           </div>
         </div>
-      )}
+      ) : null}
     </div>
   );
 }

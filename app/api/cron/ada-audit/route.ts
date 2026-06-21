@@ -137,10 +137,6 @@ async function sendAlertEmail(newViolations: { path: string; violations: Violati
           </thead>
           <tbody style="divide-y:1px solid #e5e7eb;">${rows}</tbody>
         </table>
-        <p style="margin:20px 0 0;font-size:13px;color:#6b7280;">
-          View full audit history at
-          <a href="https://emlakie.com/135265826/ada" style="color:#16a34a;">emlakie.com/135265826/ada</a>
-        </p>
         <p style="margin:12px 0 0;font-size:12px;color:#9ca3af;">
           All audit results are timestamped and stored permanently in your database for legal reference.
         </p>

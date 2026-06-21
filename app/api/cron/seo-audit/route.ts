@@ -261,10 +261,6 @@ async function sendAlertEmail(newIssues: SeoPageResult[], totalErrors: number) {
           </thead>
           <tbody>${rows}</tbody>
         </table>
-        <p style="margin:20px 0 0;font-size:13px;color:#6b7280;">
-          View full SEO audit at
-          <a href="https://emlakie.com/135265826/seo" style="color:#16a34a;">emlakie.com/135265826/seo</a>
-        </p>
       </div>
     `,
   });

@@ -368,10 +368,6 @@ async function sendAlertEmail(failures: CheckResult[]) {
           </thead>
           <tbody>${rows}</tbody>
         </table>
-        <p style="margin:24px 0 0;font-size:13px;color:#6b7280;">
-          View the full health dashboard at
-          <a href="https://emlakie.com/135265826/health" style="color:#16a34a;">emlakie.com/135265826/health</a>
-        </p>
       </div>
     `,
   });

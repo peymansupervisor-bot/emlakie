@@ -3,7 +3,7 @@ import { createSupabaseWithToken } from '@/lib/supabase-server'
 import { compressImage } from '@/lib/compress-image'
 
 const MAX_PHOTOS = 25;
-const MIN_PHOTOS = 5;
+const MIN_PHOTOS = 1;
 
 // POST /api/listings/[id]/photos — upload new photos and append to listing
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {

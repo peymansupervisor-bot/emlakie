@@ -8,7 +8,7 @@ import { supabase } from '@/lib/supabase';
 const MAX_PX = 1200;
 const JPEG_QUALITY = 0.75;
 const MAX_PHOTOS = 25;
-const MIN_PHOTOS = 5;
+const MIN_PHOTOS = 1;
 
 function compressImage(file: File): Promise<File> {
   return new Promise((resolve) => {

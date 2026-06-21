@@ -1,6 +1,5 @@
 'use client';
 
-import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -16,10 +15,15 @@ const TABS = [
   { href: '/landlord/profile',  label: 'Profile'        },
 ];
 
+function isProfileComplete(p: LandlordProfile | null): boolean {
+  if (!p) return false;
+  return !!(p.first_name && p.last_name && p.phone && p.email && p.account_id);
+}
+
 export default function LandlordLayout({ children }: { children: React.ReactNode }) {
-  const pathname  = usePathname();
-  const router    = useRouter();
-  const isLogin   = pathname === '/landlord/login';
+  const pathname = usePathname();
+  const router   = useRouter();
+  const isLogin  = pathname === '/landlord/login';
   const [ready, setReady] = useState(false);
   const [profile, setProfile] = useState<LandlordProfile | null>(null);
 
@@ -34,9 +38,7 @@ export default function LandlordLayout({ children }: { children: React.ReactNode
       setProfile(p);
       setReady(true);
 
-      // Force profile completion before accessing anything else
-      const profileIncomplete = p && (!p.first_name || !p.last_name || !p.phone);
-      if (profileIncomplete && pathname !== '/landlord/profile') {
+      if (!isProfileComplete(p) && pathname !== '/landlord/profile') {
         router.replace('/landlord/profile');
       }
     }
@@ -52,21 +54,17 @@ export default function LandlordLayout({ children }: { children: React.ReactNode
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Dashboard header */}
       <div style={{ backgroundColor: '#16a34a' }} className="text-white">
         <div className="mx-auto max-w-5xl px-4 sm:px-6">
-          {/* Top bar */}
           <div className="flex items-center justify-between py-4">
             <div>
               <p className="text-xs font-semibold uppercase tracking-widest text-green-200">Landlord Portal</p>
               <p className="text-xl font-extrabold leading-tight">
                 {profile?.first_name
                   ? `Welcome, ${profile.first_name}`
-                  : profile?.display_name
-                    ? `Welcome, ${profile.display_name.split(' ')[0]}`
-                    : profile?.email
-                      ? `Welcome, ${profile.email.split('@')[0]}`
-                      : 'Welcome back'}
+                  : profile?.email
+                    ? `Welcome, ${profile.email.split('@')[0]}`
+                    : 'Welcome back'}
               </p>
               {profile?.account_id && (
                 <p className="text-xs text-green-300 mt-0.5">Account {profile.account_id}</p>
@@ -94,7 +92,6 @@ export default function LandlordLayout({ children }: { children: React.ReactNode
             </div>
           </div>
 
-          {/* Tabs */}
           <div className="flex gap-1 overflow-x-auto pb-0">
             {TABS.map((tab) => {
               const active = isActive(tab);
@@ -115,21 +112,6 @@ export default function LandlordLayout({ children }: { children: React.ReactNode
           </div>
         </div>
       </div>
-
-      {/* Profile completion banner */}
-      {profile && (!profile.first_name || !profile.last_name || !profile.phone) && pathname !== '/landlord/profile' && (
-        <div className="border-b border-amber-200 bg-amber-50 px-4 py-3">
-          <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 sm:px-6">
-            <p className="text-sm font-medium text-amber-800">
-              Complete your profile so tenants can contact you — first name, last name, and phone number are required.
-            </p>
-            <Link href="/landlord/profile"
-              className="shrink-0 rounded-lg bg-amber-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-amber-700">
-              Complete profile →
-            </Link>
-          </div>
-        </div>
-      )}
 
       {/* Page content */}
       <main className="mx-auto max-w-5xl px-4 py-8 sm:px-6">

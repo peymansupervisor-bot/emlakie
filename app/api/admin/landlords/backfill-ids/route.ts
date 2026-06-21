@@ -19,7 +19,6 @@ export async function POST() {
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
   // Find the current max numeric suffix across all existing IDs
-  const prefix = 'EM-';
   let maxNum = 0;
   for (const p of profiles ?? []) {
     if (p.account_id) {
@@ -39,7 +38,7 @@ export async function POST() {
 
   for (const p of missing) {
     counter++;
-    updates.push({ id: p.id, account_id: `${prefix}${counter}` });
+    updates.push({ id: p.id, account_id: `EM-${String(counter).padStart(9, '0')}` });
   }
 
   // Update each profile individually (Supabase doesn't support bulk upsert with different values per row easily)

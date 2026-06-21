@@ -37,10 +37,9 @@ export default function ProfilePage() {
       const phone = digits.length === 10
         ? `(${digits.slice(0,3)}) ${digits.slice(3,6)}-${digits.slice(6)}`
         : digits;
-      const nameParts = (p.display_name ?? '').trim().split(' ');
       setForm({
-        first_name: p.first_name ?? nameParts[0] ?? '',
-        last_name:  p.last_name  ?? nameParts.slice(1).join(' ') ?? '',
+        first_name: p.first_name ?? '',
+        last_name:  p.last_name  ?? '',
         phone,
       });
       setEmail(p.email ?? '');

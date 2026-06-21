@@ -1861,6 +1861,205 @@ export const posts: Post[] = [
 <p>Searching for a home in Jacksonville? <a href="/rentals/city/jacksonville">Browse Jacksonville rentals on EMLAKIE</a> — all posted directly by landlords, no fees.</p>
     `.trim(),
   },
+
+  {
+    slug: 'la-rso-rent-increase-2026-tenant-guide',
+    title: 'LA Rent Increase 2026: What Tenants Need to Know About the New RSO Rules',
+    description: 'Los Angeles changed its Rent Stabilization Ordinance in 2026. Here\'s what the new rules mean for your rent — what your landlord can charge, what was eliminated, and when changes take effect.',
+    date: '2026-06-21',
+    category: 'Renter Tips',
+    readTime: 5,
+    citySlug: 'los-angeles',
+    content: `
+<p>Los Angeles just significantly reformed its Rent Stabilization Ordinance (RSO) — and the changes are largely good news for tenants. The LA City Council approved a new formula that lowers the maximum allowable rent increase and eliminates several add-ons that landlords previously used to push rents higher. Here's exactly what changed and what it means for your lease.</p>
+
+<h2>Who Does the RSO Apply To?</h2>
+<p>The Los Angeles RSO (also called LARSO) applies to residential rental units that were built <strong>on or before October 1, 1978</strong>, with some exceptions. If your building was built before 1978 and has 2 or more units, you are almost certainly covered. Newer buildings may fall under California's statewide AB 1482 rent cap instead.</p>
+
+<h2>The New Rent Increase Formula (Effective July 1, 2026)</h2>
+<p>Starting <strong>July 1, 2026</strong>, the annual allowable rent increase for RSO units is calculated using <strong>90% of the Consumer Price Index (CPI)</strong> — down from the previous 100% of CPI.</p>
+<p>The new increase is capped between a floor and ceiling:</p>
+<ul>
+  <li><strong>Maximum (ceiling): 4%</strong> — down from the previous maximum of 8%</li>
+  <li><strong>Minimum (floor): 1%</strong> — down from the previous minimum of 3%</li>
+</ul>
+<p>This means even in a high-inflation environment, your RSO landlord cannot raise your rent more than <strong>4% per year</strong>.</p>
+
+<h2>Interim Rule: Now Through June 30, 2026</h2>
+<p>For rent increases not yet noticed between June 1, 2025 and June 30, 2026, a temporary <strong>3% cap</strong> applies. If your landlord issued a notice during this period, the maximum increase is 3%.</p>
+
+<h2>What Was Eliminated — Effective February 2, 2026</h2>
+<p>Two add-ons that landlords previously used to increase rents beyond the base formula have been permanently eliminated:</p>
+<ul>
+  <li><strong>1% utility reimbursement increase</strong> — Landlords in master-metered buildings who paid tenants' utilities could previously add 1% on top of the base increase. This is now gone.</li>
+  <li><strong>10% increase for additional dependents</strong> — Landlords could previously raise rent by 10% when an additional dependent moved in. This add-on is eliminated.</li>
+</ul>
+
+<h2>What About Relocation Fees?</h2>
+<p>Relocation fees (owed to tenants displaced by owner move-ins or substantial renovations) continue to increase annually, indexed to <strong>100% of CPI</strong> — not the reduced 90% formula. This keeps tenant protections strong when displacement occurs.</p>
+
+<h2>What Your Landlord Cannot Do</h2>
+<ul>
+  <li>Raise your rent more than once per 12-month period</li>
+  <li>Increase rent above the allowable percentage without LAHD approval</li>
+  <li>Add utility or dependent surcharges (as of February 2, 2026)</li>
+  <li>Evict you without just cause if your unit is RSO-covered</li>
+</ul>
+
+<h2>How to Check If Your Unit Is RSO-Covered</h2>
+<p>You can look up your unit on the <a href="https://housing.lacity.gov" rel="noopener noreferrer" target="_blank">LAHD website</a> using your address. If you believe your landlord raised your rent illegally, you can file a complaint with the Los Angeles Housing Department (LAHD) at no cost.</p>
+
+<p>Looking for a new rental in Los Angeles? <a href="/rentals/city/los-angeles">Browse LA rentals on EMLAKIE</a> — all listed directly by landlords, no broker fees.</p>
+    `.trim(),
+  },
+
+  {
+    slug: 'la-rso-rent-increase-2026-landlord-guide',
+    title: 'LA RSO Changes 2026: What Los Angeles Landlords Need to Know Before July 1',
+    description: 'The Los Angeles RSO rent increase formula changed significantly in 2026. Here\'s what LA landlords can and cannot charge — new caps, eliminated add-ons, and key deadlines.',
+    date: '2026-06-21',
+    category: 'Landlord Tips',
+    readTime: 5,
+    citySlug: 'los-angeles',
+    content: `
+<p>Los Angeles landlords face significantly tightened RSO rules in 2026. The LA City Council passed a reformed Rent Stabilization Ordinance that reduces the maximum allowable annual rent increase and permanently eliminates two previously permitted add-ons. If you own RSO-covered units in Los Angeles, here's exactly what changed and what you need to do before July 1, 2026.</p>
+
+<h2>Quick Summary of Changes</h2>
+<ul>
+  <li><strong>New formula (July 1, 2026):</strong> 90% of CPI, capped between 1% and 4%</li>
+  <li><strong>Old maximum:</strong> 8% → <strong>New maximum: 4%</strong></li>
+  <li><strong>Old minimum:</strong> 3% → <strong>New minimum: 1%</strong></li>
+  <li><strong>Utility adder eliminated</strong> (as of February 2, 2026)</li>
+  <li><strong>Dependent occupant surcharge eliminated</strong> (as of February 2, 2026)</li>
+  <li><strong>Interim cap through June 30, 2026:</strong> 3% maximum</li>
+</ul>
+
+<h2>The New Rent Increase Formula in Detail</h2>
+<p>Starting <strong>July 1, 2026</strong>, the annual allowable rent increase for RSO-covered units is:</p>
+<ul>
+  <li>Calculated as <strong>90% of the CPI for All Items</strong> (previously 100%)</li>
+  <li>Subject to a hard ceiling of <strong>4%</strong> (previously 8%)</li>
+  <li>Subject to a hard floor of <strong>1%</strong> (previously 3%)</li>
+</ul>
+<p>In practical terms: if CPI runs at 3.5%, the allowable increase is 90% × 3.5% = 3.15%. If CPI drops below 1.1%, the floor of 1% applies. If CPI spikes above 4.4%, the ceiling of 4% applies.</p>
+
+<h2>The Interim Period: Now Through June 30, 2026</h2>
+<p>For rent increases served between June 1, 2025 and June 30, 2026 that have not yet taken effect, the allowable increase is capped at <strong>3%</strong>. If you issued a notice above 3% during this window, it needs to be corrected.</p>
+
+<h2>Two Add-Ons Permanently Eliminated</h2>
+<p>Effective <strong>February 2, 2026</strong>, two RSO add-ons that previously allowed landlords to exceed the base formula are permanently gone:</p>
+<ul>
+  <li><strong>1% utility reimbursement adder:</strong> Landlords in master-metered buildings who paid tenants' utilities could previously tack on an extra 1%. This is eliminated.</li>
+  <li><strong>10% dependent occupant surcharge:</strong> When an additional dependent moved in, landlords could raise rent 10%. This is eliminated.</li>
+</ul>
+<p>Any rent increases that included these add-ons after February 2, 2026 are not valid under the new ordinance.</p>
+
+<h2>What Remains Unchanged</h2>
+<ul>
+  <li>RSO still applies to units built on or before October 1, 1978 (with 2+ units)</li>
+  <li>Just cause eviction protections remain in effect</li>
+  <li>Relocation fees continue, indexed to 100% of CPI</li>
+  <li>Landlords may still apply for Individual Rent Adjustment (IRA) if operating costs justify a higher increase</li>
+  <li>Rent increases remain limited to once per 12-month period per tenant</li>
+</ul>
+
+<h2>Action Items for LA Landlords Before July 1</h2>
+<ol>
+  <li>Audit any pending rent increase notices — ensure they don't include eliminated add-ons</li>
+  <li>Confirm your building's RSO status at <a href="https://housing.lacity.gov" rel="noopener noreferrer" target="_blank">housing.lacity.gov</a></li>
+  <li>Calculate your July 2026 allowable increase using the new 90% CPI formula (LAHD publishes the official percentage)</li>
+  <li>Serve any new notices with the correct allowable percentage and 30 days advance notice</li>
+</ol>
+
+<h2>List Your Los Angeles Rental on EMLAKIE</h2>
+<p>EMLAKIE connects LA landlords directly with qualified tenants — no broker fees, no commissions. List your RSO or non-RSO unit for free and reach renters searching in Los Angeles right now.</p>
+<p><a href="/landlord/login">List your LA rental on EMLAKIE — free →</a></p>
+
+<p>Tenants: <a href="/rentals/city/los-angeles">Browse Los Angeles rentals on EMLAKIE</a> — all listed directly by landlords.</p>
+    `.trim(),
+  },
+
+  {
+    slug: 'la-rso-vs-ab1482-2026',
+    title: 'LA Rent Control 2026: RSO vs. AB 1482 — Which Law Applies to Your Rental?',
+    description: 'Not all LA rentals fall under the RSO. Here\'s how to tell whether your unit is covered by the LA RSO or California\'s AB 1482 — and what each law allows in 2026.',
+    date: '2026-06-21',
+    category: 'Renter Tips',
+    readTime: 5,
+    citySlug: 'los-angeles',
+    content: `
+<p>Los Angeles renters are protected by two separate rent control laws — and they're easy to confuse. The LA Rent Stabilization Ordinance (RSO) and California's statewide AB 1482 tenant protection law have different rules, different buildings they cover, and very different rent increase limits. Here's how to know which one applies to you in 2026.</p>
+
+<h2>The Two Laws at a Glance</h2>
+<table style="width:100%;border-collapse:collapse;font-size:0.9rem;">
+  <thead>
+    <tr style="background:#f3f4f6;">
+      <th style="padding:10px;text-align:left;border:1px solid #e5e7eb;">Feature</th>
+      <th style="padding:10px;text-align:left;border:1px solid #e5e7eb;">LA RSO (LARSO)</th>
+      <th style="padding:10px;text-align:left;border:1px solid #e5e7eb;">AB 1482 (Statewide)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="padding:10px;border:1px solid #e5e7eb;">Who sets it</td>
+      <td style="padding:10px;border:1px solid #e5e7eb;">City of Los Angeles</td>
+      <td style="padding:10px;border:1px solid #e5e7eb;">State of California</td>
+    </tr>
+    <tr style="background:#f9fafb;">
+      <td style="padding:10px;border:1px solid #e5e7eb;">Buildings covered</td>
+      <td style="padding:10px;border:1px solid #e5e7eb;">Built on or before Oct 1, 1978 (2+ units)</td>
+      <td style="padding:10px;border:1px solid #e5e7eb;">Built after 1978, over 15 years old, not single-family/condo</td>
+    </tr>
+    <tr>
+      <td style="padding:10px;border:1px solid #e5e7eb;">Max rent increase (2026)</td>
+      <td style="padding:10px;border:1px solid #e5e7eb;"><strong>4%</strong> (new cap from July 1, 2026)</td>
+      <td style="padding:10px;border:1px solid #e5e7eb;"><strong>5% + local CPI</strong> (max 10%)</td>
+    </tr>
+    <tr style="background:#f9fafb;">
+      <td style="padding:10px;border:1px solid #e5e7eb;">Just cause eviction</td>
+      <td style="padding:10px;border:1px solid #e5e7eb;">Yes — strong protections</td>
+      <td style="padding:10px;border:1px solid #e5e7eb;">Yes — after 12 months of tenancy</td>
+    </tr>
+    <tr>
+      <td style="padding:10px;border:1px solid #e5e7eb;">Relocation assistance</td>
+      <td style="padding:10px;border:1px solid #e5e7eb;">Yes — substantial amounts</td>
+      <td style="padding:10px;border:1px solid #e5e7eb;">Yes — 1 month's rent</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>How to Tell Which Law Covers Your Unit</h2>
+
+<h3>You're likely under the LA RSO if:</h3>
+<ul>
+  <li>Your building was built <strong>before October 1, 1978</strong></li>
+  <li>Your unit is in a building with <strong>2 or more units</strong></li>
+  <li>You're renting in the City of Los Angeles (not unincorporated LA County)</li>
+</ul>
+
+<h3>You're likely under AB 1482 (not RSO) if:</h3>
+<ul>
+  <li>Your building was built <strong>after 1978</strong> and is more than 15 years old</li>
+  <li>You rent a <strong>single-family home or condo</strong> (with some exceptions)</li>
+  <li>Your landlord is a <strong>small mom-and-pop owner</strong> with 2 or fewer properties</li>
+</ul>
+
+<h3>You may have <em>no</em> rent protection if:</h3>
+<ul>
+  <li>Your building was built <strong>within the last 15 years</strong></li>
+  <li>You rent a single-family home and your landlord owns only that one property</li>
+  <li>You live in a city outside LA that has opted out of AB 1482</li>
+</ul>
+
+<h2>The 2026 RSO Change That Matters Most</h2>
+<p>Starting <strong>July 1, 2026</strong>, the RSO maximum rent increase drops from 8% to <strong>4%</strong>. The new formula uses 90% of CPI, with a 1% floor and 4% ceiling. If your unit is RSO-covered and your landlord raises your rent more than 4%, they are in violation of the ordinance.</p>
+
+<h2>How to Look Up Your Unit</h2>
+<p>Go to <a href="https://housing.lacity.gov" rel="noopener noreferrer" target="_blank">housing.lacity.gov</a> and search your address. LAHD's database will show whether your unit is registered under the RSO. If in doubt, contact LAHD directly — their services are free for tenants.</p>
+
+<p>Looking for a rental in Los Angeles? <a href="/rentals/city/los-angeles">Browse LA rentals on EMLAKIE</a> — all listed directly by landlords, no broker fees.</p>
+    `.trim(),
+  },
 ];
 
 export function getPost(slug: string): Post | undefined {

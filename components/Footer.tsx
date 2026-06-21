@@ -16,7 +16,7 @@ export default function Footer() {
 
           <nav aria-label="Footer navigation" className="grid grid-cols-2 gap-10 sm:grid-cols-3">
             <div>
-              <h3 className="font-serif text-base font-bold tracking-tight text-gray-900">Renters</h3>
+              <p className="font-serif text-base font-bold tracking-tight text-gray-900">Renters</p>
               <ul className="mt-4 space-y-3 text-sm text-gray-500">
                 <li><Link href="/rentals" className="transition hover:text-brand-600">Browse rentals</Link></li>
                 <li><Link href="/rent-check" className="transition hover:text-brand-600">Is my rent fair?</Link></li>
@@ -28,14 +28,14 @@ export default function Footer() {
               </ul>
             </div>
             <div>
-              <h3 className="font-serif text-base font-bold tracking-tight text-gray-900">Landlords</h3>
+              <p className="font-serif text-base font-bold tracking-tight text-gray-900">Landlords</p>
               <ul className="mt-4 space-y-3 text-sm text-gray-500">
                 <li><Link href="/rent-estimate" className="transition hover:text-brand-600">E-rent Value™</Link></li>
                 <li><Link href="/landlord/login" className="transition hover:text-brand-600">List a property</Link></li>
               </ul>
             </div>
             <div>
-              <h3 className="font-serif text-base font-bold tracking-tight text-gray-900">Company</h3>
+              <p className="font-serif text-base font-bold tracking-tight text-gray-900">Company</p>
               <ul className="mt-4 space-y-3 text-sm text-gray-500">
                 <li><Link href="/blog" className="transition hover:text-brand-600">Blog</Link></li>
                 <li><Link href="/contact" className="transition hover:text-brand-600">Contact</Link></li>

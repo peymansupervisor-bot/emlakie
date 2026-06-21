@@ -93,6 +93,7 @@ export default function SearchBar({ large = false }: { large?: boolean }) {
         <label htmlFor="search-q" className="sr-only">Search rentals</label>
         <input
           id="search-q"
+          role="combobox"
           type="text"
           autoComplete="off"
           value={q}

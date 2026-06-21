@@ -52,36 +52,41 @@ export default function Filters() {
   const selectClass =
     'rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 outline-none focus:border-brand-600 focus:ring-1 focus:ring-brand-600';
 
+  const cityInputRef = useRef<HTMLInputElement>(null);
+
+  function submitCity() {
+    const val = cityInputRef.current?.value.trim() ?? '';
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete('q');
+    params.delete('page');
+    if (val) params.set('city', val); else params.delete('city');
+    router.push(`/rentals?${params.toString()}`);
+  }
+
   return (
     <div className="flex flex-wrap items-center gap-3">
-      <input
-        type="text"
-        defaultValue={searchParams.get('city') ?? searchParams.get('q') ?? ''}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter') {
-            const val = (e.target as HTMLInputElement).value.trim();
-            const params = new URLSearchParams(searchParams.toString());
-            params.delete('q');
-            params.delete('page');
-            if (val) params.set('city', val); else params.delete('city');
-            router.push(`/rentals?${params.toString()}`);
-          }
-        }}
-        onBlur={(e) => {
-          const val = e.target.value.trim();
-          const current = searchParams.get('city') ?? searchParams.get('q') ?? '';
-          if (val !== current) {
-            const params = new URLSearchParams(searchParams.toString());
-            params.delete('q');
-            params.delete('page');
-            if (val) params.set('city', val); else params.delete('city');
-            router.push(`/rentals?${params.toString()}`);
-          }
-        }}
-        placeholder="City or ZIP"
-        aria-label="Filter by city or ZIP code"
-        className={`${selectClass} w-44 placeholder-gray-400`}
-      />
+      <div className="flex overflow-hidden rounded-lg border border-gray-300 bg-white focus-within:border-brand-600 focus-within:ring-1 focus-within:ring-brand-600">
+        <input
+          ref={cityInputRef}
+          type="text"
+          defaultValue={searchParams.get('city') ?? searchParams.get('q') ?? ''}
+          onKeyDown={(e) => { if (e.key === 'Enter') submitCity(); }}
+          placeholder="City or ZIP"
+          aria-label="Filter by city or ZIP code"
+          className="w-36 bg-transparent px-3 py-2 text-sm font-medium text-gray-700 placeholder-gray-400 outline-none"
+        />
+        <button
+          type="button"
+          onClick={submitCity}
+          aria-label="Search by city or ZIP"
+          className="flex items-center px-2.5 text-gray-500 hover:bg-brand-50 hover:text-brand-600 transition"
+        >
+          <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true">
+            <circle cx="11" cy="11" r="7" />
+            <path d="m20 20-3.5-3.5" strokeLinecap="round" />
+          </svg>
+        </button>
+      </div>
 
       <select
         value={searchParams.get('minPrice') ?? ''}

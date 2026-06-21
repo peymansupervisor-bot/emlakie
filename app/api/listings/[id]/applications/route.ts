@@ -41,7 +41,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   const { data: { user }, error: authErr } = await supabase.auth.getUser();
   if (authErr || !user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-  const { applicationId, status } = await req.json();
+  const { applicationId, status, note } = await req.json();
   if (!applicationId || !['pending', 'approved', 'rejected'].includes(status)) {
     return NextResponse.json({ error: 'Invalid request' }, { status: 400 });
   }
@@ -79,14 +79,18 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
         const resend = new Resend(process.env.RESEND_API_KEY);
         const listingUrl = `https://emlakie.com/rentals/${listing.slug ?? listing.id}`;
         const location = [listing.city, listing.state].filter(Boolean).join(', ');
+        const noteHtml = note
+          ? `<div style="margin:16px 0;padding:14px 18px;background:#f0fdf4;border-left:4px solid #16a34a;border-radius:6px;font-size:14px;color:#166534;line-height:1.6;">${note}</div>`
+          : '';
         await resend.emails.send({
-          from: 'EMLAKIE <no-reply@emlakie.com>',
+          from: 'EMLAKIE <notifications@emlakie.com>',
           to: tenantEmail,
           subject: `The landlord has responded to your inquiry — ${listing.address}`,
           html: `
             <div style="font-family:sans-serif;max-width:560px;margin:0 auto;color:#111">
               <h2 style="color:#16a34a">Good news, ${data.tenant_name ?? 'there'}!</h2>
               <p>The landlord at <strong>${listing.address}${location ? `, ${location}` : ''}</strong> has reviewed your inquiry and is ready to connect with you.</p>
+              ${noteHtml}
               <p>Reply directly to this email or contact the landlord through the listing page to schedule a showing or ask questions.</p>
               <p style="margin:28px 0">
                 <a href="${listingUrl}" style="background:#16a34a;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:600">View Listing</a>

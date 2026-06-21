@@ -233,13 +233,13 @@ export async function getApplications(listingId: string): Promise<Application[]>
   return res.json();
 }
 
-export async function updateApplicationStatus(listingId: string, applicationId: string, status: 'pending' | 'approved' | 'rejected'): Promise<void> {
+export async function updateApplicationStatus(listingId: string, applicationId: string, status: 'pending' | 'approved' | 'rejected', note?: string): Promise<void> {
   if (isDemo()) return;
   const token = await getToken();
   await fetch(`/api/listings/${listingId}/applications`, {
     method: 'PATCH',
     headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ applicationId, status }),
+    body: JSON.stringify({ applicationId, status, note }),
   });
 }
 

@@ -65,6 +65,8 @@ export default function PropertyDashboardPage() {
   const [finalRent, setFinalRent] = useState('');
   const [leaseTerm, setLeaseTerm] = useState('12_months');
   const [respondingId, setRespondingId] = useState<string | null>(null);
+  const [respondModal, setRespondModal] = useState<string | null>(null);
+  const [respondNote, setRespondNote] = useState('');
 
   async function handleExtend() {
     setActionBusy(true);
@@ -130,13 +132,15 @@ export default function PropertyDashboardPage() {
     );
   }
 
-  async function handleInquiryAction(appId: string, status: 'approved' | 'rejected') {
+  async function handleInquiryAction(appId: string, status: 'approved' | 'rejected', note?: string) {
     setRespondingId(appId);
+    setRespondModal(null);
     try {
-      await updateApplicationStatus(id, appId, status);
+      await updateApplicationStatus(id, appId, status, note);
       setApplications((prev) => prev.map((a) => a.id === appId ? { ...a, status } : a));
     } catch { /* ignore */ } finally {
       setRespondingId(null);
+      setRespondNote('');
     }
   }
 
@@ -331,11 +335,11 @@ export default function PropertyDashboardPage() {
               {app.status === 'pending' && (
                 <div className="mt-4 flex gap-2">
                   <button
-                    onClick={() => handleInquiryAction(app.id, 'approved')}
+                    onClick={() => { setRespondModal(app.id); setRespondNote(''); }}
                     disabled={respondingId === app.id}
                     className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-700 disabled:opacity-60"
                   >
-                    {respondingId === app.id ? 'Saving…' : 'Respond'}
+                    {respondingId === app.id ? 'Sending…' : 'Respond'}
                   </button>
                   <button
                     onClick={() => handleInquiryAction(app.id, 'rejected')}
@@ -350,6 +354,7 @@ export default function PropertyDashboardPage() {
           ))}
         </div>
       ) : tab === 'overview' ? (
+
         <div className="mt-8 grid gap-6 sm:grid-cols-3">
           {[
             { label: 'Views', value: listing.view_count ?? 0 },
@@ -377,6 +382,37 @@ export default function PropertyDashboardPage() {
           </div>
         </div>
       ) : null}
+
+      {respondModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
+          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl">
+            <h2 className="text-lg font-extrabold text-gray-900">Respond to Inquiry</h2>
+            <p className="mt-1 text-sm text-gray-500">Add a personal note to send with your response email (optional).</p>
+            <textarea
+              value={respondNote}
+              onChange={(e) => setRespondNote(e.target.value)}
+              placeholder="e.g. Please contact me to schedule a viewing at your convenience."
+              rows={4}
+              className="mt-4 w-full rounded-xl border border-gray-300 px-3 py-2.5 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-200 resize-none"
+            />
+            <div className="mt-4 flex gap-3">
+              <button
+                onClick={() => handleInquiryAction(respondModal, 'approved', respondNote || undefined)}
+                disabled={!!respondingId}
+                className="flex-1 rounded-xl bg-brand-600 py-2.5 text-sm font-bold text-white transition hover:bg-brand-700 disabled:opacity-60"
+              >
+                {respondingId ? 'Sending…' : 'Send Response'}
+              </button>
+              <button
+                onClick={() => { setRespondModal(null); setRespondNote(''); }}
+                className="rounded-xl border border-gray-300 px-4 py-2.5 text-sm font-semibold text-gray-600 transition hover:border-gray-400"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

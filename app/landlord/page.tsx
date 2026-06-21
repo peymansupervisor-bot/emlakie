@@ -1,6 +1,5 @@
 'use client';
 
-import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
@@ -297,7 +296,8 @@ export default function PropertiesPage() {
                       <Link href={`/landlord/properties/${listing.id}`} className="flex items-center gap-3">
                         <span className="relative block h-12 w-16 shrink-0 overflow-hidden rounded-lg bg-gray-100">
                           {listing.photos?.[0] && (
-                            <Image src={listing.photos[0]} alt="" fill sizes="64px" className="object-cover" />
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img src={listing.photos[0]} alt="" className="absolute inset-0 h-full w-full object-cover" loading="lazy" />
                           )}
                         </span>
                         <span>

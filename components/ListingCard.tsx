@@ -1,4 +1,3 @@
-import Image from 'next/image';
 import Link from 'next/link';
 import { Listing } from '@/lib/types';
 import { formatBaths, formatBeds, formatPrice, formatPropertyType, formatSqft } from '@/lib/format';
@@ -13,13 +12,12 @@ export default function ListingCard({ listing, priority = false }: { listing: Li
 
       <div className="relative aspect-[16/9] bg-gray-100">
         {photo ? (
-          <Image
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
             src={photo}
             alt={`${formatPrice(listing.price)} — ${formatBeds(listing.bedrooms)}, ${formatBaths(listing.bathrooms)} ${formatPropertyType(listing.property_type)} at ${listing.address}, ${listing.city}`}
-            fill
-            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-            priority={priority}
-            className="object-cover transition duration-300 group-hover:scale-105"
+            loading={priority ? 'eager' : 'lazy'}
+            className="absolute inset-0 h-full w-full object-cover transition duration-300 group-hover:scale-105"
           />
         ) : (
           <div className="flex h-full items-center justify-center text-gray-500">

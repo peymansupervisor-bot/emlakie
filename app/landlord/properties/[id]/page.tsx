@@ -1,6 +1,5 @@
 'use client';
 
-import Image from 'next/image';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -153,7 +152,8 @@ export default function PropertyDashboardPage() {
       <div className="mt-4 flex items-center gap-4">
         <span className="relative block h-20 w-28 shrink-0 overflow-hidden rounded-xl bg-gray-100">
           {listing.photos?.[0] && (
-            <Image src={listing.photos[0]} alt="" fill sizes="112px" className="object-cover" />
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={listing.photos[0]} alt="" className="absolute inset-0 h-full w-full object-cover" />
           )}
         </span>
         <div>

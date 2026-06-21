@@ -10,12 +10,15 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   const session = await getModeratorSession();
   if (!session) redirect('/135265826/login');
 
-  const { count: openFlags } = await adminClient()
-    .from('listing_reports')
-    .select('*', { count: 'exact', head: true })
-    .eq('reviewed', false);
+  const sb = adminClient();
+
+  const [{ count: openFlags }, { count: missingIds }] = await Promise.all([
+    sb.from('listing_reports').select('*', { count: 'exact', head: true }).eq('reviewed', false),
+    sb.from('profiles').select('*', { count: 'exact', head: true }).is('account_id', null),
+  ]);
 
   const flagCount = openFlags ?? 0;
+  const missingIdCount = missingIds ?? 0;
 
   const NAV = [
     { href: '/135265826', label: 'All Listings', badge: null },
@@ -23,7 +26,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
     { href: '/135265826/ada', label: 'ADA Audit', badge: null },
     { href: '/135265826/seo', label: 'SEO Audit', badge: null },
     { href: '/135265826/health', label: '⬤ Health', badge: null },
-    { href: '/135265826/landlords', label: 'Landlords', badge: null },
+    { href: '/135265826/landlords', label: 'Landlords', badge: missingIdCount > 0 ? missingIdCount : null },
     { href: '/135265826/moderators', label: 'Moderators', badge: null },
   ];
 

@@ -1,6 +1,5 @@
 'use client';
 
-import Image from 'next/image';
 import { useState, useEffect, useCallback, useRef } from 'react';
 
 interface Props {
@@ -93,13 +92,11 @@ export default function Gallery({ photos, title }: Props) {
           {failedIndices.has(activeIndex) ? (
             <PhotoPlaceholder />
           ) : (
-            <Image
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
               src={photos[activeIndex]}
               alt={`${title} — photo ${activeIndex + 1}`}
-              fill
-              priority
-              sizes="(max-width: 768px) 100vw, 60vw"
-              className="object-cover"
+              className="absolute inset-0 h-full w-full object-cover"
               onError={() => markFailed(activeIndex)}
             />
           )}
@@ -166,7 +163,8 @@ export default function Gallery({ photos, title }: Props) {
                 {failedIndices.has(i) ? (
                   <PhotoPlaceholder />
                 ) : (
-                  <Image src={photo} alt={`Thumbnail ${i + 1}`} fill sizes="96px" className="object-cover" onError={() => markFailed(i)} />
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={photo} alt={`Thumbnail ${i + 1}`} className="absolute inset-0 h-full w-full object-cover" loading="lazy" onError={() => markFailed(i)} />
                 )}
               </button>
             ))}
@@ -223,13 +221,11 @@ export default function Gallery({ photos, title }: Props) {
               {failedIndices.has(activeIndex) ? (
                 <PhotoPlaceholder />
               ) : (
-                <Image
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
                   src={photos[activeIndex]}
                   alt={`${title} — photo ${activeIndex + 1}`}
-                  fill
-                  sizes="100vw"
-                  className="object-contain"
-                  priority
+                  className="absolute inset-0 h-full w-full object-contain"
                   onError={() => markFailed(activeIndex)}
                 />
               )}
@@ -278,7 +274,8 @@ export default function Gallery({ photos, title }: Props) {
                   {failedIndices.has(i) ? (
                     <PhotoPlaceholder />
                   ) : (
-                    <Image src={photo} alt={`Thumbnail ${i + 1}`} fill sizes="96px" className="object-cover" onError={() => markFailed(i)} />
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={photo} alt={`Thumbnail ${i + 1}`} className="absolute inset-0 h-full w-full object-cover" loading="lazy" onError={() => markFailed(i)} />
                   )}
                 </button>
               ))}

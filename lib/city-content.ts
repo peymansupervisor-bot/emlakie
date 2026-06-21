@@ -114,23 +114,26 @@ const CITY_CONTENT: Record<string, CityContent> = {
   },
 
   'bakersfield': {
-    headline: 'Renting in Bakersfield, CA',
+    headline: 'Houses & Apartments for Rent in Bakersfield, CA',
     intro:
-      'Bakersfield is the ninth-largest city in California and the seat of Kern County, sitting at the southern end of the San Joaquin Valley. Known for its agricultural roots, thriving oil industry, and country music heritage (home of the "Bakersfield Sound"), it\'s one of the most affordable major rental markets in California. Renters get significantly more space for their dollar compared to coastal cities, with a growing downtown and easy freeway access to Los Angeles via I-5 and SR-99.',
+      'Bakersfield is the ninth-largest city in California and one of the most affordable places to rent in the entire state. Located at the southern end of the San Joaquin Valley in Kern County, Bakersfield offers houses, apartments, and condos for rent at prices 50–60% lower than Los Angeles or the Bay Area. Whether you\'re looking for a 3-bedroom house in Northwest Bakersfield for your family, a studio near California State University Bakersfield (CSUB), or a home close to the area\'s agriculture and oil employers, EMLAKIE connects you directly with Bakersfield landlords — no broker fees, no middlemen.',
     highlights: [
-      { icon: '💰', label: 'Affordability', detail: 'Average rents in Bakersfield are among the lowest of any major California city — often 50–60% less than LA or the Bay Area for comparable space.' },
-      { icon: '🛣️', label: 'Commute to LA', detail: 'Bakersfield is roughly 110 miles north of Los Angeles via I-5 (Tejon Pass) or SR-99. Amtrak San Joaquins and Thruway buses also connect to Southern California.' },
-      { icon: '🌡️', label: 'Climate', detail: 'Hot summers (often over 100°F) with mild winters. Air conditioning is essential for rentals — confirm units are equipped before signing.' },
-      { icon: '🎓', label: 'Education', detail: 'Home to California State University, Bakersfield (CSUB) and Bakersfield College, making it a strong market for student and faculty rentals.' },
-      { icon: '🤠', label: 'Culture', detail: 'The Bakersfield Sound (Buck Owens, Merle Haggard) has left a lasting musical legacy. Buck Owens\' Crystal Palace is a local landmark.' },
+      { icon: '💰', label: 'Affordability', detail: 'Houses for rent in Bakersfield average $1,400–$2,000/month for a 3-bedroom — some of the lowest prices of any major California city.' },
+      { icon: '🏠', label: 'Space', detail: 'Unlike coastal California, Bakersfield rentals typically include a yard, garage, and multiple bedrooms at prices renters on the coast can only dream of.' },
+      { icon: '🛣️', label: 'Commute to LA', detail: 'Bakersfield is roughly 110 miles north of Los Angeles via I-5 or SR-99 — under 2 hours on a clear day. Amtrak San Joaquins also runs daily.' },
+      { icon: '🎓', label: 'Universities', detail: 'Home to California State University Bakersfield (CSUB) and Bakersfield College — strong demand for student and faculty rentals near campus.' },
+      { icon: '🌡️', label: 'Climate', detail: 'Hot summers (regularly over 100°F) with mild winters. Always confirm air conditioning is included before signing a lease.' },
     ],
-    neighborhoods: ['Downtown Bakersfield', 'Northwest Bakersfield', 'Southwest Bakersfield', 'Oleander', 'Stockdale', 'Rosedale', 'East Bakersfield'],
+    neighborhoods: ['Northwest Bakersfield', 'Southwest Bakersfield', 'Stockdale', 'Rosedale', 'Downtown Bakersfield', 'Oleander', 'East Bakersfield', 'Oildale'],
     rentTips:
-      'Northwest and Southwest Bakersfield are the most popular areas for families and professionals, with newer construction and better schools. Downtown is growing with new restaurants and arts venues. Air conditioning is non-negotiable — make sure it\'s included. Many landlords list directly here without brokers.',
+      'Northwest and Southwest Bakersfield are the most desirable areas for families, with newer construction, good schools, and suburban amenities. Stockdale and Rosedale are upscale with larger homes. Downtown is up-and-coming with restaurants and nightlife. East Bakersfield and Oildale offer the most affordable rents. Air conditioning is non-negotiable — confirm it\'s included. Landlords in Bakersfield mostly list direct, so you won\'t pay a broker fee on EMLAKIE.',
     faqs: [
-      { q: 'Is Bakersfield a good place to rent?', a: 'Yes, especially for budget-conscious renters. You get significantly more space per dollar than anywhere on the California coast, with a stable job market anchored by agriculture, oil, and healthcare.' },
-      { q: 'What is the average rent in Bakersfield?', a: 'A 1-bedroom in Bakersfield typically rents for $1,000–$1,500/month, and a 3-bedroom house for $1,500–$2,200 — far below California coastal averages.' },
-      { q: 'Does Bakersfield have rent control?', a: 'No. Bakersfield does not have a local rent stabilization ordinance. California\'s AB 1482 (statewide rent cap) applies to qualifying buildings over 15 years old, limiting increases to 5% + CPI per year.' },
+      { q: 'How much does it cost to rent a house in Bakersfield, CA?', a: 'Houses for rent in Bakersfield typically cost $1,400–$2,000/month for a 3-bedroom. Smaller 2-bedroom houses range from $1,100–$1,600/month. Prices vary by neighborhood — Northwest and Southwest Bakersfield command a premium, while East Bakersfield and Oildale are more affordable.' },
+      { q: 'What is the average rent in Bakersfield, CA?', a: 'The average rent in Bakersfield is approximately $1,200–$1,500/month for a 1-bedroom apartment and $1,500–$2,200/month for a 3-bedroom house. This makes Bakersfield one of the most affordable rental markets in California.' },
+      { q: 'Are there homes for rent in Bakersfield without broker fees?', a: 'Yes. All listings on EMLAKIE are posted directly by Bakersfield landlords — there are no broker fees or agent commissions. You contact the property owner directly and apply online at no cost.' },
+      { q: 'Is Bakersfield a good place to rent a home?', a: 'Yes — especially for renters who want space and affordability. You get significantly more square footage per dollar than anywhere on the California coast, with a stable local economy anchored by agriculture, oil, healthcare, and logistics. Northwest and Southwest Bakersfield offer excellent schools and family-friendly neighborhoods.' },
+      { q: 'Does Bakersfield have rent control?', a: 'No. Bakersfield does not have a local rent stabilization ordinance. California\'s statewide AB 1482 applies to qualifying buildings over 15 years old, capping annual increases at 5% + local CPI. Always ask your landlord whether your unit is covered.' },
+      { q: 'What neighborhoods in Bakersfield have the most homes for rent?', a: 'Northwest Bakersfield and Southwest Bakersfield have the highest concentration of rental listings — mostly single-family homes and newer apartment complexes. Stockdale is popular for upscale homes. East Bakersfield and Oildale offer the most budget-friendly options.' },
     ],
     nearbySearches: [
       { label: 'Los Angeles rentals', slug: 'los-angeles' },

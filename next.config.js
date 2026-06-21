@@ -5,16 +5,12 @@ const nextConfig = {
   },
   productionBrowserSourceMaps: false,
   images: {
+    unoptimized: true,
     remotePatterns: [
       { protocol: 'https', hostname: 'images.unsplash.com' },
       { protocol: 'https', hostname: '**.supabase.co' },
       { protocol: 'https', hostname: 'api.emlakie.com' },
     ],
-    // Limit size variants to reduce Vercel Image Optimization Transformations
-    deviceSizes: [640, 1080, 1920],
-    imageSizes: [64, 128, 256],
-    // Cache transformed images for 30 days (default is 60s) — drastically cuts re-transforms
-    minimumCacheTTL: 2592000,
   },
   async headers() {
     return [

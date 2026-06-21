@@ -87,8 +87,18 @@ export default function Footer() {
           {/* Fair Housing */}
           <div>
             <div className="flex items-start gap-4">
-              {/* Equal Housing Opportunity logo */}
-              <svg viewBox="0 0 100 100" className="h-10 w-10 shrink-0 fill-gray-500" aria-label="Equal Housing Opportunity" xmlns="http://www.w3.org/2000/svg">
+              {/* Equal Housing Opportunity logo.
+                  role="img" is required so that aria-label is a permitted
+                  attribute on this element. Without it the SVG's computed role
+                  is "none"/"presentation", which does not support aria-label
+                  and triggers the aria-allowed-attr violation. */}
+              <svg
+                role="img"
+                aria-label="Equal Housing Opportunity"
+                viewBox="0 0 100 100"
+                className="h-10 w-10 shrink-0 fill-gray-500"
+                xmlns="http://www.w3.org/2000/svg"
+              >
                 <path d="M50 5 L95 45 H80 V95 H55 V65 H45 V95 H20 V45 H5 Z"/>
                 <rect x="30" y="75" width="40" height="5"/>
                 <rect x="30" y="83" width="40" height="5"/>

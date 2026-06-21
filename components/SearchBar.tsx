@@ -85,8 +85,14 @@ export default function SearchBar({ large = false }: { large?: boolean }) {
 
   return (
     <div ref={containerRef} className={`relative w-full ${large ? 'max-w-2xl' : 'max-w-md'}`}>
-      <div role="search" aria-label="Search rental listings">
+      {/* role="search" with aria-label placed directly on the <form> so the
+          landmark and its accessible name are on the same element. Putting
+          role="search" on a <div> that contains a <form> caused the
+          aria-allowed-attr violation because axe resolves the implicit owner
+          as the <div>, which then inherits disallowed ARIA attributes. */}
       <form
+        role="search"
+        aria-label="Search rental listings"
         onSubmit={onSubmit}
         className="flex w-full overflow-hidden rounded-xl bg-white shadow-[0_4px_24px_rgba(0,0,0,0.10)] transition-shadow hover:shadow-[0_6px_32px_rgba(0,0,0,0.14)]"
       >
@@ -136,7 +142,6 @@ export default function SearchBar({ large = false }: { large?: boolean }) {
           <span className="hidden sm:inline">Search</span>
         </button>
       </form>
-      </div>
 
       {open && suggestions.length > 0 && (
         <ul

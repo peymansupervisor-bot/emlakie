@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { getAllApplications, deleteApplication } from '@/lib/landlord/client';
+import { getAllApplications, deleteApplication, sendMessageToTenant } from '@/lib/landlord/client';
 import { Application, LandlordListing } from '@/lib/landlord/types';
 
 type Filter = 'all' | 'pending' | 'approved' | 'rejected';
@@ -31,6 +31,10 @@ function ApplicantDrawer({ lead, onClose, onDelete }: {
 }) {
   const closeRef = useRef<HTMLButtonElement>(null);
   const drawerRef = useRef<HTMLDivElement>(null);
+  const [replyText, setReplyText] = useState('');
+  const [sending, setSending] = useState(false);
+  const [sent, setSent] = useState(false);
+  const [sendError, setSendError] = useState('');
 
   useEffect(() => {
     closeRef.current?.focus();
@@ -152,7 +156,48 @@ function ApplicantDrawer({ lead, onClose, onDelete }: {
           )}
         </div>
 
-        <div className="border-t border-gray-100 px-6 py-3">
+        {/* Reply box */}
+        <div className="border-t border-gray-100 px-6 pt-4 pb-2 space-y-2">
+          <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">Reply to {lead.tenant_name?.split(' ')[0]}</p>
+          {sent ? (
+            <div className="rounded-xl bg-brand-50 border border-brand-200 px-4 py-3 text-sm font-semibold text-brand-700">
+              ✓ Message sent successfully
+            </div>
+          ) : (
+            <>
+              <textarea
+                value={replyText}
+                onChange={(e) => setReplyText(e.target.value)}
+                placeholder="Type your message…"
+                rows={3}
+                className="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm text-gray-800 outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 resize-none"
+              />
+              {sendError && <p className="text-xs text-red-600">{sendError}</p>}
+              <button
+                disabled={sending || !replyText.trim()}
+                onClick={async () => {
+                  if (!lead.listingId) return;
+                  setSending(true);
+                  setSendError('');
+                  try {
+                    await sendMessageToTenant(lead.listingId, lead.id, replyText.trim());
+                    setSent(true);
+                    setReplyText('');
+                  } catch (e) {
+                    setSendError(e instanceof Error ? e.message : 'Failed to send');
+                  } finally {
+                    setSending(false);
+                  }
+                }}
+                className="w-full rounded-xl bg-brand-600 py-2 text-sm font-semibold text-white transition hover:bg-brand-700 disabled:opacity-40"
+              >
+                {sending ? 'Sending…' : 'Send Message'}
+              </button>
+            </>
+          )}
+        </div>
+
+        <div className="px-6 py-3">
           <button
             onClick={() => { if (confirm('Delete this inquiry? This cannot be undone.')) onDelete(lead.id); }}
             className="w-full rounded-xl border border-red-200 py-2 text-sm font-semibold text-red-600 transition hover:bg-red-50"

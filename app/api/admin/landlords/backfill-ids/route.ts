@@ -38,7 +38,7 @@ export async function POST() {
 
   for (const p of missing) {
     counter++;
-    updates.push({ id: p.id, account_id: `EM-${String(counter).padStart(9, '0')}` });
+    updates.push({ id: p.id, account_id: `EM-${counter}` });
   }
 
   // Update each profile individually (Supabase doesn't support bulk upsert with different values per row easily)

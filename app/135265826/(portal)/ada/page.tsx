@@ -1,6 +1,7 @@
 import { adminClient } from '@/lib/moderator';
 import RunADAAuditButton from '../RunADAAuditButton';
 import RepairViolationsButton from '../RepairViolationsButton';
+import ADAExportButtons from '../ADAExportButtons';
 
 export const dynamic = 'force-dynamic';
 
@@ -49,7 +50,8 @@ export default async function ADAPage() {
             Runs daily at 2 AM · axe-core {latestRecords[0]?.axe_version ?? '—'} · WCAG 2.1 AA
           </p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 no-print">
+          <ADAExportButtons records={(records ?? []) as never} />
           <RepairViolationsButton hasViolations={hasIssues} />
           <RunADAAuditButton />
         <div className={`rounded-2xl px-5 py-3 text-center ${latestCritical > 0 || scanErrors > 0 ? 'bg-red-900' : latestTotal > 0 ? 'bg-yellow-900' : 'bg-green-900'}`}>

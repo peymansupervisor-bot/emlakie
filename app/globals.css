@@ -58,3 +58,51 @@ textarea:focus-visible {
     scroll-behavior: auto !important;
   }
 }
+
+/* ── Print styles for ADA audit log ─────────────────────────────────────── */
+@media print {
+  /* Hide nav, buttons, and dark chrome — print just the content */
+  header, .no-print { display: none !important; }
+
+  /* Force light background so ink isn't wasted on dark theme */
+  body, html { background: #fff !important; color: #111 !important; }
+  * { color-adjust: exact; -webkit-print-color-adjust: exact; }
+
+  /* Make cards readable on white paper */
+  [class*="bg-gray-9"], [class*="bg-gray-8"] {
+    background: #f9fafb !important;
+    border: 1px solid #e5e7eb !important;
+  }
+  [class*="text-white"] { color: #111 !important; }
+  [class*="text-gray-4"], [class*="text-gray-5"] { color: #4b5563 !important; }
+
+  /* Keep violation badges readable */
+  .bg-red-900   { background: #fee2e2 !important; }
+  .text-red-300 { color: #991b1b !important; }
+  .bg-orange-900   { background: #ffedd5 !important; }
+  .text-orange-300 { color: #9a3412 !important; }
+  .bg-yellow-900   { background: #fef9c3 !important; }
+  .text-yellow-300 { color: #854d0e !important; }
+
+  /* Page breaks between audit runs */
+  .space-y-8 > div { page-break-inside: avoid; margin-bottom: 24px; }
+
+  /* Legal notice always on its own line */
+  .mt-8 { page-break-before: auto; }
+
+  /* Print title at top */
+  main::before {
+    content: "EMLAKIE — ADA / WCAG Accessibility Audit Log";
+    display: block;
+    font-size: 18px;
+    font-weight: 900;
+    margin-bottom: 4px;
+  }
+  main::after {
+    content: "Printed: " attr(data-print-date);
+    display: block;
+    font-size: 11px;
+    color: #6b7280;
+    margin-bottom: 24px;
+  }
+}

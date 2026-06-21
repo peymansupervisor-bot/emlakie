@@ -38,7 +38,7 @@ export default function LandlordLayout({ children }: { children: React.ReactNode
       setProfile(p);
       setReady(true);
 
-      if (!isProfileComplete(p) && pathname !== '/landlord/profile') {
+      if (signedIn && !isProfileComplete(p) && pathname !== '/landlord/profile') {
         router.replace('/landlord/profile');
       }
     }

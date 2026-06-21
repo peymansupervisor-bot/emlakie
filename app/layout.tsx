@@ -29,7 +29,7 @@ export const metadata: Metadata = {
     url: 'https://emlakie.com',
     images: [
       {
-        url: '/opengraph-image',
+        url: '/og-image.png',
         width: 1200,
         height: 630,
         alt: 'EMLAKIE — Find Your Next Rental Home',
@@ -40,7 +40,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'EMLAKIE — List Rentals Free & Find Tenants Fast',
     description: 'Post your rental listing free on EMLAKIE. Reach thousands of qualified tenants, no broker fees, no middleman.',
-    images: ['/opengraph-image'],
+    images: ['/og-image.png'],
   },
   robots: {
     index: true,

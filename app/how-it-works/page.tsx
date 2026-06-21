@@ -10,13 +10,13 @@ export const metadata: Metadata = {
     description: 'EMLAKIE connects renters and landlords directly. No broker fees, no commissions. Here\'s how it works.',
     type: 'website',
     url: 'https://emlakie.com/how-it-works',
-    images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: 'How EMLAKIE Works' }],
+    images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'How EMLAKIE Works' }],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'How EMLAKIE Works — Find & List Rentals Without a Broker',
     description: 'EMLAKIE connects renters and landlords directly. No broker fees, no commissions.',
-    images: ['/opengraph-image'],
+    images: ['/og-image.png'],
   },
 };
 

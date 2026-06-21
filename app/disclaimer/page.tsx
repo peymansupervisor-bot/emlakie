@@ -10,13 +10,13 @@ export const metadata: Metadata = {
     description: 'Read the EMLAKIE legal disclaimer before using our rental platform.',
     type: 'website',
     url: 'https://emlakie.com/disclaimer',
-    images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: 'EMLAKIE' }],
+    images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'EMLAKIE' }],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Legal Disclaimer | EMLAKIE',
     description: 'Read the EMLAKIE legal disclaimer before using our rental platform.',
-    images: ['/opengraph-image'],
+    images: ['/og-image.png'],
   },
 };
 

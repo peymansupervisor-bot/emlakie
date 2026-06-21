@@ -10,13 +10,13 @@ export const metadata: Metadata = {
     description: 'Terms governing your use of the EMLAKIE rental platform as a renter or landlord.',
     type: 'website',
     url: 'https://emlakie.com/terms',
-    images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: 'EMLAKIE' }],
+    images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'EMLAKIE' }],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Terms of Service | EMLAKIE',
     description: 'Terms governing your use of the EMLAKIE rental platform as a renter or landlord.',
-    images: ['/opengraph-image'],
+    images: ['/og-image.png'],
   },
 };
 

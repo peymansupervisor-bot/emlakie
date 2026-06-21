@@ -10,13 +10,13 @@ export const metadata: Metadata = {
     description: 'EMLAKIE\'s commitment to WCAG 2.1 AA accessibility for all renters and landlords.',
     type: 'website',
     url: 'https://emlakie.com/accessibility',
-    images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: 'EMLAKIE' }],
+    images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'EMLAKIE' }],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Accessibility Statement | EMLAKIE',
     description: 'EMLAKIE\'s commitment to WCAG 2.1 AA accessibility for all renters and landlords.',
-    images: ['/opengraph-image'],
+    images: ['/og-image.png'],
   },
 };
 

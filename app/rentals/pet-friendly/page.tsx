@@ -12,9 +12,9 @@ export const metadata: Metadata = {
     description: 'Find pet-friendly apartments, houses, and condos for rent. Browse listings from landlords who welcome dogs, cats, and other pets — no broker fees.',
     type: 'website',
     url: 'https://emlakie.com/rentals/pet-friendly',
-    images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: 'EMLAKIE Pet-Friendly Rentals' }],
+    images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'EMLAKIE Pet-Friendly Rentals' }],
   },
-  twitter: { card: 'summary_large_image', title: 'Pet-Friendly Rentals — Apartments & Houses That Allow Pets', description: 'Find pet-friendly apartments, houses, and condos for rent. Browse listings from landlords who welcome dogs, cats, and other pets — no broker fees.', images: ['/opengraph-image'] },
+  twitter: { card: 'summary_large_image', title: 'Pet-Friendly Rentals — Apartments & Houses That Allow Pets', description: 'Find pet-friendly apartments, houses, and condos for rent. Browse listings from landlords who welcome dogs, cats, and other pets — no broker fees.', images: ['/og-image.png'] },
 };
 
 const schema = {

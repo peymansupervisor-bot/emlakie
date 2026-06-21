@@ -39,7 +39,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     : `${formatBeds(listing.bedrooms)}, ${formatBaths(listing.bathrooms)} ${formatPropertyType(listing.property_type)} for rent at ${formatPrice(listing.price)}/mo in ${listing.city}, ${listing.state}. Contact the landlord directly on EMLAKIE — no broker fees.`;
   const ogImage = listing.photos?.[0]
     ? [{ url: listing.photos[0], width: 1200, height: 630, alt: listing.title }]
-    : [{ url: '/opengraph-image', width: 1200, height: 630, alt: 'EMLAKIE' }];
+    : [{ url: '/og-image.png', width: 1200, height: 630, alt: 'EMLAKIE' }];
   return {
     title: `${listing.title}${statusLabel} — ${formatPrice(listing.price)}`,
     description: shortDesc,
@@ -55,7 +55,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       card: 'summary_large_image',
       title: `${listing.title} — ${formatPrice(listing.price)}`,
       description: shortDesc,
-      images: listing.photos?.[0] ? [listing.photos[0]] : ['/opengraph-image'],
+      images: listing.photos?.[0] ? [listing.photos[0]] : ['/og-image.png'],
     },
   };
 }
@@ -110,7 +110,7 @@ export default async function ListingPage({ params }: Props) {
     url: `https://emlakie.com/rentals/${listing.slug ?? listing.id}`,
     image: listing.photos?.length
       ? listing.photos.map(p => ({ '@type': 'ImageObject', url: p, width: 1200, height: 800 }))
-      : [{ '@type': 'ImageObject', url: 'https://emlakie.com/opengraph-image', width: 1200, height: 630 }],
+      : [{ '@type': 'ImageObject', url: 'https://emlakie.com/og-image.png', width: 1200, height: 630 }],
     offers: {
       '@type': 'Offer',
       price: listing.price,

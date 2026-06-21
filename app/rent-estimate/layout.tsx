@@ -9,13 +9,13 @@ export const metadata: Metadata = {
     description: 'Find out what your rental property is worth. Compare against real local listings — free, instant, no signup.',
     type: 'website',
     url: 'https://emlakie.com/rent-estimate',
-    images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: 'EMLAKIE Rent Estimate Tool' }],
+    images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'EMLAKIE Rent Estimate Tool' }],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Free Rent Estimate for Landlords | EMLAKIE',
     description: 'Find out what your rental property is worth. Compare against real local listings — free, instant, no signup.',
-    images: ['/opengraph-image'],
+    images: ['/og-image.png'],
   },
 };
 

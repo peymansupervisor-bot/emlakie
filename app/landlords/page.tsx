@@ -10,13 +10,13 @@ export const metadata: Metadata = {
     description: 'Reach thousands of local renters. No broker fees, no commissions. Takes under 5 minutes.',
     type: 'website',
     url: 'https://emlakie.com/landlords',
-    images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: 'EMLAKIE for Landlords' }],
+    images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'EMLAKIE for Landlords' }],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'List Your Rental Property Free | EMLAKIE',
     description: 'Reach thousands of local renters. No broker fees, no commissions. Takes under 5 minutes.',
-    images: ['/opengraph-image'],
+    images: ['/og-image.png'],
   },
 };
 

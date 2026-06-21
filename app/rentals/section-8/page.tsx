@@ -12,9 +12,9 @@ export const metadata: Metadata = {
     description: 'Find landlords who accept Section 8 Housing Choice Vouchers. Browse rental homes that welcome HCV tenants — no broker fees.',
     type: 'website',
     url: 'https://emlakie.com/rentals/section-8',
-    images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: 'EMLAKIE Section 8 Rentals' }],
+    images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'EMLAKIE Section 8 Rentals' }],
   },
-  twitter: { card: 'summary_large_image', title: 'Section 8 Rentals — Housing Choice Voucher Accepted', description: 'Find landlords who accept Section 8 Housing Choice Vouchers. Browse rental homes that welcome HCV tenants — no broker fees.', images: ['/opengraph-image'] },
+  twitter: { card: 'summary_large_image', title: 'Section 8 Rentals — Housing Choice Voucher Accepted', description: 'Find landlords who accept Section 8 Housing Choice Vouchers. Browse rental homes that welcome HCV tenants — no broker fees.', images: ['/og-image.png'] },
 };
 
 const schema = {

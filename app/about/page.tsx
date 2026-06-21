@@ -10,13 +10,13 @@ export const metadata: Metadata = {
     description: 'EMLAKIE connects renters directly with landlords — no broker fees, no middlemen. Learn about our mission.',
     type: 'website',
     url: 'https://emlakie.com/about',
-    images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: 'About EMLAKIE' }],
+    images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'About EMLAKIE' }],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'About EMLAKIE — Our Mission to Make Renting Simple',
     description: 'EMLAKIE connects renters directly with landlords — no broker fees, no middlemen.',
-    images: ['/opengraph-image'],
+    images: ['/og-image.png'],
   },
 };
 

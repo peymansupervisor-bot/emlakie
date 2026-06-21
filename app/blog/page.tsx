@@ -11,13 +11,13 @@ export const metadata: Metadata = {
     description: 'Average rent data, neighborhood guides, and tips for renters and landlords across the United States.',
     type: 'website',
     url: 'https://emlakie.com/blog',
-    images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: 'EMLAKIE Blog' }],
+    images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'EMLAKIE Blog' }],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Rental Market Insights & Guides | EMLAKIE',
     description: 'Average rent data, neighborhood guides, and tips for renters and landlords across the United States.',
-    images: ['/opengraph-image'],
+    images: ['/og-image.png'],
   },
 };
 

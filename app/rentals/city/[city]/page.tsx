@@ -40,13 +40,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description,
       type: 'website',
       url: `https://emlakie.com/rentals/city/${slug}`,
-      images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: `Homes for Rent in ${label}` }],
+      images: [{ url: '/og-image.png', width: 1200, height: 630, alt: `Homes for Rent in ${label}` }],
     },
     twitter: {
       card: 'summary_large_image',
       title: content ? content.headline : `Homes for Rent in ${label}`,
       description,
-      images: ['/opengraph-image'],
+      images: ['/og-image.png'],
     },
   };
 }

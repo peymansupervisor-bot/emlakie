@@ -10,13 +10,13 @@ export const metadata: Metadata = {
     description: 'How EMLAKIE collects, uses, and protects your personal information on our rental platform.',
     type: 'website',
     url: 'https://emlakie.com/privacy',
-    images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: 'EMLAKIE' }],
+    images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'EMLAKIE' }],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Privacy Policy | EMLAKIE',
     description: 'How EMLAKIE collects, uses, and protects your personal information on our rental platform.',
-    images: ['/opengraph-image'],
+    images: ['/og-image.png'],
   },
 };
 

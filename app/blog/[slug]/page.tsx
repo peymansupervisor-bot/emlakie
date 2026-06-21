@@ -25,13 +25,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       type: 'article',
       url: `https://emlakie.com/blog/${slug}`,
       publishedTime: post.date,
-      images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: post.title }],
+      images: [{ url: '/og-image.png', width: 1200, height: 630, alt: post.title }],
     },
     twitter: {
       card: 'summary_large_image',
       title: post.title,
       description: post.description,
-      images: ['/opengraph-image'],
+      images: ['/og-image.png'],
     },
   };
 }
@@ -63,7 +63,7 @@ export default async function BlogPostPage({ params }: Props) {
         description: post.description,
         datePublished: post.date,
         author: { '@type': 'Organization', name: 'EMLAKIE Editorial Team', url: 'https://emlakie.com' },
-        image: { '@type': 'ImageObject', url: 'https://emlakie.com/opengraph-image', width: 1200, height: 630 },
+        image: { '@type': 'ImageObject', url: 'https://emlakie.com/og-image.png', width: 1200, height: 630 },
         publisher: { '@type': 'Organization', name: 'EMLAKIE', url: 'https://emlakie.com' },
         url: `https://emlakie.com/blog/${slug}`,
       },

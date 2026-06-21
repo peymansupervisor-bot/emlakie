@@ -9,14 +9,14 @@ export const metadata: Metadata = {
     description: 'Post your rental listing, get AI-matched applicants, and chat with tenants directly. No listing fees, no commissions.',
     type: 'website',
     url: 'https://emlakie.com/landlord/login',
-    images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: 'List Your Rental Property for Free | EMLAKIE' }],
+    images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'List Your Rental Property for Free | EMLAKIE' }],
   },
   robots: { index: false },
   twitter: {
     card: 'summary_large_image',
     title: 'List Your Rental Property for Free | EMLAKIE',
     description: 'Post your rental listing, get AI-matched applicants, and chat with tenants directly. No listing fees, no commissions.',
-    images: ['/opengraph-image'],
+    images: ['/og-image.png'],
   },
 };
 

@@ -20,13 +20,13 @@ export const metadata: Metadata = {
     description: 'Search rentals directly from landlords — no middlemen, no fees.',
     type: 'website',
     url: 'https://emlakie.com/rentals',
-    images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: 'EMLAKIE Rentals' }],
+    images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'EMLAKIE Rentals' }],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Homes & Apartments for Rent | EMLAKIE',
     description: 'Search rentals directly from landlords — no middlemen, no fees.',
-    images: ['/opengraph-image'],
+    images: ['/og-image.png'],
   },
 };
 

@@ -10,13 +10,13 @@ export const metadata: Metadata = {
     description: 'Get instant help with your EMLAKIE account. Our AI support agent is available 24/7 for listing, billing, and account issues.',
     type: 'website',
     url: 'https://emlakie.com/support',
-    images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: 'EMLAKIE' }],
+    images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'EMLAKIE' }],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Support | EMLAKIE',
     description: 'Get instant help with your EMLAKIE account. Our AI support agent is available 24/7 for listing, billing, and account issues.',
-    images: ['/opengraph-image'],
+    images: ['/og-image.png'],
   },
 };
 

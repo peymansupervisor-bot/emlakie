@@ -9,13 +9,13 @@ export const metadata: Metadata = {
     description: 'Compare your rent against real local listings instantly. Free tool — no signup required.',
     type: 'website',
     url: 'https://emlakie.com/rent-check',
-    images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: 'EMLAKIE Rent Check Tool' }],
+    images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'EMLAKIE Rent Check Tool' }],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Free Rent Check — Is Your Rent Fair? | EMLAKIE',
     description: 'Compare your rent against real local listings instantly. Free tool — no signup required.',
-    images: ['/opengraph-image'],
+    images: ['/og-image.png'],
   },
 };
 

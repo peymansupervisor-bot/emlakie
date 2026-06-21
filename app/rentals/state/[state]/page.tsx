@@ -33,13 +33,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description: `Find your next rental home in ${name}. Search directly from landlords — no middlemen, no fees.`,
       type: 'website',
       url: `https://emlakie.com/rentals/state/${slug}`,
-      images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: `Homes for Rent in ${name}` }],
+      images: [{ url: '/og-image.png', width: 1200, height: 630, alt: `Homes for Rent in ${name}` }],
     },
     twitter: {
       card: 'summary_large_image',
       title: `Homes for Rent in ${name} (${abbr}) | EMLAKIE`,
       description: `Find your next rental home in ${name}. Search directly from landlords — no middlemen, no fees.`,
-      images: ['/opengraph-image'],
+      images: ['/og-image.png'],
     },
   };
 }

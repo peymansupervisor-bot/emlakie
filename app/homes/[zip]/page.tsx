@@ -49,13 +49,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description: `Find your next home in ${city}, ${state}. Search rentals by price, bedrooms, and property type.`,
       type: 'website',
       url: `https://emlakie.com/homes/${params.zip}`,
-      images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: `Homes for Rent in ${label}` }],
+      images: [{ url: '/og-image.png', width: 1200, height: 630, alt: `Homes for Rent in ${label}` }],
     },
     twitter: {
       card: 'summary_large_image',
       title: `Homes for Rent in ${label}`,
       description: `Find your next home in ${city}, ${state}. Search rentals by price, bedrooms, and property type.`,
-      images: ['/opengraph-image'],
+      images: ['/og-image.png'],
     },
   };
 }

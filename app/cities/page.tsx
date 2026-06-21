@@ -11,13 +11,13 @@ export const metadata: Metadata = {
     description: 'Search rentals by city across the entire United States. Every listing comes directly from the landlord — no broker fees, no commissions.',
     type: 'website',
     url: 'https://emlakie.com/cities',
-    images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: 'Apartments for Rent by City' }],
+    images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'Apartments for Rent by City' }],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Apartments for Rent by City | EMLAKIE',
     description: 'Search rentals by city across every US state. Direct from landlords — no broker fees.',
-    images: ['/opengraph-image'],
+    images: ['/og-image.png'],
   },
 };
 

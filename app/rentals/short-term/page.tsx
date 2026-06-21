@@ -12,9 +12,9 @@ export const metadata: Metadata = {
     description: 'Find short-term and month-to-month rentals. Flexible leases for relocations, travel nurses, and remote workers — no long commitment, no broker fees.',
     type: 'website',
     url: 'https://emlakie.com/rentals/short-term',
-    images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: 'EMLAKIE Short-Term Rentals' }],
+    images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'EMLAKIE Short-Term Rentals' }],
   },
-  twitter: { card: 'summary_large_image', title: 'Short-Term Rentals — Monthly & Flexible Lease Apartments', description: 'Find short-term and month-to-month rentals. Flexible leases for relocations, travel nurses, and remote workers — no broker fees.', images: ['/opengraph-image'] },
+  twitter: { card: 'summary_large_image', title: 'Short-Term Rentals — Monthly & Flexible Lease Apartments', description: 'Find short-term and month-to-month rentals. Flexible leases for relocations, travel nurses, and remote workers — no broker fees.', images: ['/og-image.png'] },
 };
 
 const schema = {

@@ -26,13 +26,13 @@ export const metadata: Metadata = {
     description: 'Browse houses, apartments, and condos for rent directly from landlords. No broker fees, no middlemen.',
     type: 'website',
     url: 'https://emlakie.com',
-    images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: 'EMLAKIE — Find Your Next Rental Home' }],
+    images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'EMLAKIE — Find Your Next Rental Home' }],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'EMLAKIE — Find Your Next Rental Home',
     description: 'Browse houses, apartments, and condos for rent directly from landlords. No broker fees, no middlemen.',
-    images: ['/opengraph-image'],
+    images: ['/og-image.png'],
   },
 };
 

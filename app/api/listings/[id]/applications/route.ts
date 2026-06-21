@@ -60,17 +60,21 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     .update({ status })
     .eq('id', applicationId)
     .eq('listing_id', id)
-    .select('id, tenant_id, tenant_name, status')
+    .select('id, tenant_id, tenant_name, tenant_email, status')
     .single();
 
   if (error) return NextResponse.json({ error: 'Something went wrong' }, { status: 500 });
 
   // Send confirmation email to applicant when landlord responds
-  if (status === 'approved' && data?.tenant_id) {
+  if (status === 'approved') {
     try {
-      const admin = createSupabaseAdmin();
-      const { data: { user: tenantAuth } } = await admin.auth.admin.getUserById(data.tenant_id);
-      const tenantEmail = tenantAuth?.email;
+      // Prefer stored email; fall back to auth email for logged-in tenants
+      let tenantEmail = data?.tenant_email ?? null;
+      if (!tenantEmail && data?.tenant_id) {
+        const admin = createSupabaseAdmin();
+        const { data: { user: tenantAuth } } = await admin.auth.admin.getUserById(data.tenant_id);
+        tenantEmail = tenantAuth?.email ?? null;
+      }
       if (tenantEmail) {
         const resend = new Resend(process.env.RESEND_API_KEY);
         const listingUrl = `https://emlakie.com/rentals/${listing.slug ?? listing.id}`;

@@ -26,7 +26,7 @@ export default function ApplyForm({ listingId, listingPrice }: Props) {
     e.preventDefault();
     setError('');
 
-    if (!name || !phone || !income || !message) {
+    if (!name || !email || !phone || !income || !message) {
       setError('Please fill in all required fields.');
       return;
     }
@@ -107,13 +107,15 @@ export default function ApplyForm({ listingId, listingPrice }: Props) {
 
         {/* Email */}
         <div>
-          <label htmlFor="apply-email" className="block text-xs font-semibold text-gray-600 mb-1">Email <span className="text-gray-500 font-normal">(get instant confirmation)</span></label>
+          <label htmlFor="apply-email" className="block text-xs font-semibold text-gray-600 mb-1">Email *</label>
           <input
             id="apply-email"
             type="email"
             value={email}
             onChange={e => setEmail(e.target.value)}
             placeholder="you@example.com"
+            required
+            aria-required="true"
             className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
           />
         </div>

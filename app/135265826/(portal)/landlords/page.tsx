@@ -86,10 +86,10 @@ export default async function LandlordsPage({ searchParams }: { searchParams: Pr
           <table className="w-full text-sm">
             <thead className="bg-gray-900 text-xs text-gray-400 uppercase tracking-wider">
               <tr>
+                <th className="px-4 py-3 text-left">Account ID</th>
                 <th className="px-4 py-3 text-left">Name</th>
                 <th className="px-4 py-3 text-left">Email</th>
                 <th className="px-4 py-3 text-left">Phone</th>
-                <th className="px-4 py-3 text-left">Account ID</th>
                 <th className="px-4 py-3 text-center">Listings</th>
                 <th className="px-4 py-3 text-left">Joined</th>
                 <th className="px-4 py-3 text-left">Profile</th>
@@ -104,6 +104,11 @@ export default async function LandlordsPage({ searchParams }: { searchParams: Pr
                 const counts = countMap[p.id];
                 return (
                   <tr key={p.id} className={`hover:bg-gray-900/50 transition ${!p.account_id ? 'bg-amber-950/20' : ''}`}>
+                    <td className="px-4 py-3 text-xs font-mono">
+                      {p.account_id
+                        ? <span className="text-gray-400">{p.account_id}</span>
+                        : <span className="text-amber-500">missing</span>}
+                    </td>
                     <td className="px-4 py-3 font-semibold text-white whitespace-nowrap">{name}</td>
                     <td className="px-4 py-3 text-gray-300 whitespace-nowrap">{p.email ?? '—'}</td>
                     <td className="px-4 py-3 text-gray-300 whitespace-nowrap">
@@ -115,11 +120,6 @@ export default async function LandlordsPage({ searchParams }: { searchParams: Pr
                           )}
                         </span>
                       ) : '—'}
-                    </td>
-                    <td className="px-4 py-3 text-xs font-mono">
-                      {p.account_id
-                        ? <span className="text-gray-400">{p.account_id}</span>
-                        : <span className="text-amber-500">missing</span>}
                     </td>
                     <td className="px-4 py-3 text-center">
                       {counts ? (

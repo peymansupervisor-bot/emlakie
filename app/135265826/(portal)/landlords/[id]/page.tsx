@@ -1,6 +1,7 @@
 import { adminClient } from '@/lib/moderator';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import LandlordActions from './LandlordActions';
 
 export const dynamic = 'force-dynamic';
 
@@ -8,17 +9,19 @@ export default async function LandlordProfilePage({ params }: { params: Promise<
   const { id } = await params;
   const sb = adminClient();
 
-  const { data: profile } = await sb
-    .from('profiles')
-    .select('id, first_name, last_name, display_name, phone, phone_verified, email, account_id, created_at')
-    .eq('id', id)
-    .maybeSingle();
+  const [{ data: profile }, { data: authUser }] = await Promise.all([
+    sb.from('profiles')
+      .select('id, first_name, last_name, display_name, phone, phone_verified, email, account_id, created_at')
+      .eq('id', id)
+      .maybeSingle(),
+    sb.auth.admin.getUserById(id),
+  ]);
 
   if (!profile) notFound();
 
   const { data: listings } = await sb
     .from('listings')
-    .select('id, title, address, city, state, status, monthly_rent, created_at, slug, photos')
+    .select('id, title, address, city, state, status, monthly_rent, created_at, slug')
     .eq('landlord_id', id)
     .order('created_at', { ascending: false });
 
@@ -27,6 +30,9 @@ export default async function LandlordProfilePage({ params }: { params: Promise<
     profile.display_name ||
     profile.email?.split('@')[0] ||
     'Unknown';
+
+  const isBanned = !!authUser.user?.banned_until &&
+    new Date(authUser.user.banned_until) > new Date();
 
   const statusColor: Record<string, string> = {
     active: 'text-green-400 bg-green-900/40',
@@ -44,10 +50,17 @@ export default async function LandlordProfilePage({ params }: { params: Promise<
       </div>
 
       {/* Profile card */}
-      <div className="rounded-2xl border border-gray-800 bg-gray-900 p-6 mb-8">
+      <div className={`rounded-2xl border p-6 mb-8 ${isBanned ? 'border-red-700 bg-red-950/40' : 'border-gray-800 bg-gray-900'}`}>
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div>
-            <h1 className="text-2xl font-extrabold text-white">{name}</h1>
+            <div className="flex items-center gap-3">
+              <h1 className="text-2xl font-extrabold text-white">{name}</h1>
+              {isBanned && (
+                <span className="rounded bg-red-600 px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-white">
+                  Suspended
+                </span>
+              )}
+            </div>
             {profile.account_id && (
               <p className="text-xs text-gray-400 font-mono mt-0.5">Account {profile.account_id}</p>
             )}
@@ -75,6 +88,10 @@ export default async function LandlordProfilePage({ params }: { params: Promise<
             <p className="text-[10px] uppercase tracking-wider text-gray-500 mb-1">User ID</p>
             <p className="text-xs text-gray-400 font-mono break-all">{profile.id}</p>
           </div>
+        </div>
+
+        <div className="mt-6 pt-6 border-t border-gray-800">
+          <LandlordActions landlordId={id} isBanned={isBanned} />
         </div>
       </div>
 

@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { getAllApplications, updateApplicationStatus, deleteApplication } from '@/lib/landlord/client';
+import { getAllApplications, deleteApplication } from '@/lib/landlord/client';
 import { Application, LandlordListing } from '@/lib/landlord/types';
 
 type Filter = 'all' | 'pending' | 'approved' | 'rejected';
@@ -24,10 +24,9 @@ function StatusPill({ status }: { status: string }) {
   return <span className={`rounded-full px-2.5 py-1 text-xs font-semibold capitalize ${cls}`}>{label}</span>;
 }
 
-function ApplicantDrawer({ lead, onClose, onStatusChange, onDelete }: {
+function ApplicantDrawer({ lead, onClose, onDelete }: {
   lead: Lead;
   onClose: () => void;
-  onStatusChange: (id: string, status: 'approved' | 'rejected') => void;
   onDelete: (id: string) => void;
 }) {
   const closeRef = useRef<HTMLButtonElement>(null);
@@ -153,33 +152,6 @@ function ApplicantDrawer({ lead, onClose, onStatusChange, onDelete }: {
           )}
         </div>
 
-        {/* Actions */}
-        {lead.status === 'pending' && (
-          <div className="border-t border-gray-100 px-6 py-4 flex gap-3">
-            <button
-              onClick={() => onStatusChange(lead.id, 'approved')}
-              className="flex-1 rounded-xl bg-brand-600 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-700"
-            >
-              Respond
-            </button>
-            <button
-              onClick={() => onStatusChange(lead.id, 'rejected')}
-              className="flex-1 rounded-xl border border-gray-300 py-2.5 text-sm font-semibold text-gray-700 transition hover:bg-gray-50"
-            >
-              Ignore
-            </button>
-          </div>
-        )}
-        {lead.status !== 'pending' && (
-          <div className="border-t border-gray-100 px-6 py-4">
-            <button
-              onClick={() => onStatusChange(lead.id, 'pending' as 'approved')}
-              className="w-full rounded-xl border border-gray-300 py-2.5 text-sm font-semibold text-gray-600 transition hover:bg-gray-50"
-            >
-              Reset to pending
-            </button>
-          </div>
-        )}
         <div className="border-t border-gray-100 px-6 py-3">
           <button
             onClick={() => { if (confirm('Delete this inquiry? This cannot be undone.')) onDelete(lead.id); }}
@@ -206,14 +178,6 @@ export default function LeadsPage() {
       .then((apps) => setLeads(apps.map((a) => ({ ...a, listingId: a.listing_id }))))
       .catch(() => setLeads([]));
   }, []);
-
-  async function handleStatusChange(applicationId: string, status: 'approved' | 'rejected' | 'pending') {
-    const lead = leads?.find((l) => l.id === applicationId);
-    if (!lead?.listingId) return;
-    await updateApplicationStatus(lead.listingId, applicationId, status as 'approved' | 'rejected');
-    setLeads((prev) => prev?.map((l) => l.id === applicationId ? { ...l, status: status as Application['status'] } : l) ?? null);
-    setSelected((prev) => prev?.id === applicationId ? { ...prev, status: status as Application['status'] } : prev);
-  }
 
   async function handleDelete(applicationId: string) {
     const lead = leads?.find((l) => l.id === applicationId);
@@ -341,7 +305,6 @@ export default function LeadsPage() {
         <ApplicantDrawer
           lead={selected}
           onClose={() => setSelected(null)}
-          onStatusChange={handleStatusChange}
           onDelete={handleDelete}
         />
       )}

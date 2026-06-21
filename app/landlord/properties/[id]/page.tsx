@@ -337,27 +337,9 @@ export default function PropertyDashboardPage() {
                 </p>
               )}
               <div className="mt-4 flex flex-wrap gap-2">
-                {app.status === 'pending' && (
-                  <>
-                    <button
-                      onClick={() => { setRespondModal(app.id); setRespondNote(''); }}
-                      disabled={respondingId === app.id}
-                      className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-700 disabled:opacity-60"
-                    >
-                      {respondingId === app.id ? 'Sending…' : 'Respond'}
-                    </button>
-                    <button
-                      onClick={() => handleInquiryAction(app.id, 'rejected')}
-                      disabled={respondingId === app.id}
-                      className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-600 transition hover:border-red-300 hover:text-red-600 disabled:opacity-60"
-                    >
-                      Ignore
-                    </button>
-                  </>
-                )}
                 <button
                   onClick={() => { setMessageModal(app.id); setMessageText(''); setMessageSuccess(false); }}
-                  className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 transition hover:border-brand-400 hover:text-brand-700"
+                  className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-700"
                 >
                   Send Message
                 </button>

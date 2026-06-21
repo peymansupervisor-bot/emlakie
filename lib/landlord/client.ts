@@ -1,7 +1,7 @@
 'use client';
 
 import { supabase } from '@/lib/supabase';
-import { Application, Conversation, LandlordListing, LandlordProfile } from './types';
+import { Application, Conversation, ConversationThread, LandlordListing, LandlordProfile } from './types';
 
 export async function isSignedIn(): Promise<boolean> {
   const { data: { session } } = await supabase.auth.getSession();
@@ -63,6 +63,8 @@ export async function updateProfile(payload: { first_name: string; last_name: st
     .update({ first_name: payload.first_name.trim(), last_name: payload.last_name.trim(), phone: payload.phone.trim(), display_name, phone_verified: payload.phone_verified ?? false })
     .eq('id', user.id);
   if (error) throw new Error(error.message);
+  // Fire welcome email on first profile completion (non-blocking)
+  api('/api/welcome', { method: 'POST' }).catch(() => {});
 }
 
 export async function sendOtp(phone: string): Promise<void> {
@@ -239,7 +241,28 @@ export async function updateApplicationStatus(listingId: string, applicationId: 
 }
 
 export async function getConversations(): Promise<Conversation[]> {
-  return [];
+  return api<Conversation[]>('/api/conversations');
+}
+
+export async function getConversation(id: string): Promise<ConversationThread | null> {
+  return api<ConversationThread>(`/api/conversations/${id}`).catch(() => null);
+}
+
+export async function openConversation(listingId: string, applicationId: string): Promise<string> {
+  const { id } = await api<{ id: string }>('/api/conversations', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ listing_id: listingId, application_id: applicationId }),
+  });
+  return id;
+}
+
+export async function sendConversationMessage(conversationId: string, body: string): Promise<void> {
+  await api(`/api/conversations/${conversationId}/messages`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ body }),
+  });
 }
 
 export async function getCurrentUserId(): Promise<string> {

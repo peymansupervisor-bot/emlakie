@@ -43,6 +43,22 @@ export interface Conversation {
   unread?: boolean;
 }
 
+export interface ConversationMessage {
+  id: string;
+  sender_id: string;
+  body: string;
+  created_at: string;
+  from_landlord: boolean;
+}
+
+export interface ConversationThread {
+  id: string;
+  listing: { id: string; address: string; city: string; state: string; slug: string } | null;
+  tenant_name: string;
+  landlord_id: string;
+  messages: ConversationMessage[];
+}
+
 export type LandlordListing = Listing & {
   view_count?: number;
   applicant_count?: number;

@@ -66,7 +66,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   if (error) return NextResponse.json({ error: 'Something went wrong' }, { status: 500 });
 
   // Send confirmation email to applicant when landlord responds
-  if (status === 'approved') {
+  if (status === 'approved' || status === 'rejected') {
     try {
       // Prefer stored email; fall back to auth email for logged-in tenants
       let tenantEmail = data?.tenant_email ?? null;
@@ -82,22 +82,44 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
         const noteHtml = note
           ? `<div style="margin:16px 0;padding:14px 18px;background:#f0fdf4;border-left:4px solid #16a34a;border-radius:6px;font-size:14px;color:#166534;line-height:1.6;">${note}</div>`
           : '';
+        const isApproved = status === 'approved';
         await resend.emails.send({
           from: 'EMLAKIE <notifications@emlakie.com>',
           to: tenantEmail,
-          subject: `The landlord has responded to your inquiry — ${listing.address}`,
-          html: `
-            <div style="font-family:sans-serif;max-width:560px;margin:0 auto;color:#111">
-              <h2 style="color:#16a34a">Good news, ${data.tenant_name ?? 'there'}!</h2>
-              <p>The landlord at <strong>${listing.address}${location ? `, ${location}` : ''}</strong> has reviewed your inquiry and is ready to connect with you.</p>
-              ${noteHtml}
-              <p>Reply directly to this email or contact the landlord through the listing page to schedule a showing or ask questions.</p>
-              <p style="margin:28px 0">
-                <a href="${listingUrl}" style="background:#16a34a;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:600">View Listing</a>
-              </p>
-              <p style="color:#6b7280;font-size:13px">You submitted this inquiry on ${new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}. If you're no longer interested, you can ignore this message.</p>
-              <hr style="border:none;border-top:1px solid #e5e7eb;margin:24px 0"/>
-              <p style="color:#9ca3af;font-size:12px">EMLAKIE · <a href="https://emlakie.com" style="color:#9ca3af">emlakie.com</a></p>
+          subject: isApproved
+            ? `Great news — the landlord wants to connect! — ${listing.address}`
+            : `Update on your inquiry — ${listing.address}`,
+          html: isApproved ? `
+            <div style="font-family:sans-serif;max-width:560px;margin:0 auto;color:#111;background:#f3f4f6;padding:32px 16px;">
+              <div style="background:#16a34a;border-radius:16px 16px 0 0;padding:24px 32px;text-align:center;">
+                <p style="margin:0;font-size:22px;font-weight:900;color:#fff;">EMLAKIE</p>
+                <p style="margin:4px 0 0;font-size:13px;color:#bbf7d0;">Great news!</p>
+              </div>
+              <div style="background:#fff;border-radius:0 0 16px 16px;padding:28px 32px;">
+                <h2 style="margin:0 0 12px;color:#16a34a;font-size:20px;">The landlord wants to connect, ${data.tenant_name?.split(' ')[0] ?? 'there'}!</h2>
+                <p style="margin:0 0 8px;font-size:14px;color:#374151;">The landlord at <strong>${listing.address}${location ? `, ${location}` : ''}</strong> has reviewed your inquiry and is ready to move forward.</p>
+                ${noteHtml}
+                <p style="font-size:14px;color:#374151;">Reply to this email or contact the landlord through the listing page to schedule a showing.</p>
+                <a href="${listingUrl}" style="display:inline-block;margin-top:20px;background:#16a34a;color:#fff;text-decoration:none;font-size:14px;font-weight:700;padding:12px 28px;border-radius:10px;">View Listing</a>
+                <hr style="border:none;border-top:1px solid #e5e7eb;margin:24px 0"/>
+                <p style="margin:0;font-size:12px;color:#9ca3af;">EMLAKIE · <a href="https://emlakie.com" style="color:#9ca3af;">emlakie.com</a></p>
+              </div>
+            </div>
+          ` : `
+            <div style="font-family:sans-serif;max-width:560px;margin:0 auto;color:#111;background:#f3f4f6;padding:32px 16px;">
+              <div style="background:#374151;border-radius:16px 16px 0 0;padding:24px 32px;text-align:center;">
+                <p style="margin:0;font-size:22px;font-weight:900;color:#fff;">EMLAKIE</p>
+                <p style="margin:4px 0 0;font-size:13px;color:#d1d5db;">Update on your inquiry</p>
+              </div>
+              <div style="background:#fff;border-radius:0 0 16px 16px;padding:28px 32px;">
+                <p style="margin:0 0 12px;font-size:15px;color:#374151;">Hi <strong>${data.tenant_name?.split(' ')[0] ?? 'there'}</strong>,</p>
+                <p style="margin:0 0 12px;font-size:14px;color:#374151;">Thank you for your interest in <strong>${listing.address}${location ? `, ${location}` : ''}</strong>. Unfortunately, the landlord has moved forward with another applicant at this time.</p>
+                ${note ? `<div style="margin:16px 0;padding:14px 18px;background:#f9fafb;border-left:4px solid #9ca3af;border-radius:6px;font-size:14px;color:#374151;line-height:1.6;">${note}</div>` : ''}
+                <p style="font-size:14px;color:#374151;">Don't give up — new listings are added daily on EMLAKIE.</p>
+                <a href="https://emlakie.com/rentals" style="display:inline-block;margin-top:20px;background:#16a34a;color:#fff;text-decoration:none;font-size:14px;font-weight:700;padding:12px 28px;border-radius:10px;">Browse More Rentals</a>
+                <hr style="border:none;border-top:1px solid #e5e7eb;margin:24px 0"/>
+                <p style="margin:0;font-size:12px;color:#9ca3af;">EMLAKIE · <a href="https://emlakie.com" style="color:#9ca3af;">emlakie.com</a></p>
+              </div>
             </div>
           `,
         });

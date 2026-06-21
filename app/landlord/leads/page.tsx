@@ -2,7 +2,8 @@
 
 import { useEffect, useState, useRef } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { getAllApplications, deleteApplication, sendMessageToTenant } from '@/lib/landlord/client';
+import { useRouter } from 'next/navigation';
+import { getAllApplications, deleteApplication, sendMessageToTenant, openConversation } from '@/lib/landlord/client';
 import { Application, LandlordListing } from '@/lib/landlord/types';
 
 type Filter = 'all' | 'pending' | 'approved' | 'rejected';
@@ -10,6 +11,26 @@ type Filter = 'all' | 'pending' | 'approved' | 'rejected';
 interface Lead extends Application {
   listingAddress?: string;
   listingId?: string;
+}
+
+function OpenInMessagesButton({ listingId, applicationId }: { listingId: string; applicationId: string }) {
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+  async function handle() {
+    setLoading(true);
+    try {
+      const id = await openConversation(listingId, applicationId);
+      router.push(`/landlord/messages?c=${id}`);
+    } finally {
+      setLoading(false);
+    }
+  }
+  return (
+    <button onClick={handle} disabled={loading}
+      className="w-full rounded-xl border border-brand-200 bg-brand-50 py-2 text-sm font-semibold text-brand-700 transition hover:bg-brand-100 disabled:opacity-50">
+      {loading ? 'Opening…' : '💬 Open in Messages'}
+    </button>
+  );
 }
 
 function MatchScore({ score }: { score?: number }) {
@@ -197,7 +218,10 @@ function ApplicantDrawer({ lead, onClose, onDelete }: {
           )}
         </div>
 
-        <div className="px-6 py-3">
+        <div className="px-6 py-3 space-y-2">
+          {lead.listingId && (
+            <OpenInMessagesButton listingId={lead.listingId} applicationId={lead.id} />
+          )}
           <button
             onClick={() => { if (confirm('Delete this inquiry? This cannot be undone.')) onDelete(lead.id); }}
             className="w-full rounded-xl border border-red-200 py-2 text-sm font-semibold text-red-600 transition hover:bg-red-50"

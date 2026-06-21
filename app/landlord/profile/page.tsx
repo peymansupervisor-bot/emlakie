@@ -147,6 +147,7 @@ export default function ProfilePage() {
               className={inputCls}
               value={form.first_name}
               onChange={(e) => setForm((f) => ({ ...f, first_name: e.target.value }))}
+              onBlur={(e) => setForm((f) => ({ ...f, first_name: e.target.value.trim().replace(/\b\w/g, (c) => c.toUpperCase()) }))}
               placeholder="Jane"
             />
           </div>
@@ -157,6 +158,7 @@ export default function ProfilePage() {
               className={inputCls}
               value={form.last_name}
               onChange={(e) => setForm((f) => ({ ...f, last_name: e.target.value }))}
+              onBlur={(e) => setForm((f) => ({ ...f, last_name: e.target.value.trim().replace(/\b\w/g, (c) => c.toUpperCase()) }))}
               placeholder="Smith"
             />
           </div>

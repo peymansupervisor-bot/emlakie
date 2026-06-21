@@ -49,10 +49,15 @@ export async function verifyPhoneOtp(phone: string, token: string): Promise<void
   }
 }
 
+function toTitleCase(str: string): string {
+  return str.trim().replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
 export async function updateProfile(payload: { first_name: string; last_name: string; phone: string; phone_verified?: boolean }): Promise<void> {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error('Not signed in.');
-  const display_name = `${payload.first_name.trim()} ${payload.last_name.trim()}`.trim();
+  payload = { ...payload, first_name: toTitleCase(payload.first_name), last_name: toTitleCase(payload.last_name) };
+  const display_name = `${payload.first_name} ${payload.last_name}`.trim();
   const { error } = await supabase
     .from('profiles')
     .update({ first_name: payload.first_name.trim(), last_name: payload.last_name.trim(), phone: payload.phone.trim(), display_name, phone_verified: payload.phone_verified ?? false })

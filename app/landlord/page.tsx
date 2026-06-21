@@ -7,6 +7,21 @@ import { getMyListings, updateListing } from '@/lib/landlord/client';
 import { LandlordListing } from '@/lib/landlord/types';
 import { formatPrice, formatPropertyType } from '@/lib/format';
 
+function baseAddress(address: string | null | undefined): string {
+  if (!address) return '';
+  return address.replace(/[\s,]*(#|apt\.?|unit|suite|ste\.?|no\.?)\s*[\w-]+\s*$/i, '').trim();
+}
+
+function groupListings(listings: LandlordListing[]): Array<{ key: string; listings: LandlordListing[] }> {
+  const map = new Map<string, LandlordListing[]>();
+  for (const l of listings) {
+    const key = baseAddress(l.address) || l.id;
+    if (!map.has(key)) map.set(key, []);
+    map.get(key)!.push(l);
+  }
+  return Array.from(map.entries()).map(([key, listings]) => ({ key, listings }));
+}
+
 type Tab = 'all' | 'forRent' | 'offMarket';
 
 function expiryText(iso?: string | null): { text: string; cls: string } {
@@ -115,6 +130,97 @@ function PriceEditor({ listing, onSaved }: { listing: LandlordListing; onSaved: 
         </>
       )}
     </span>
+  );
+}
+
+function LandlordBuildingGroup({
+  groupKey,
+  listings,
+  onPriceSaved,
+}: {
+  groupKey: string;
+  listings: LandlordListing[];
+  onPriceSaved: (id: string, price: number) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const activeCount = listings.filter((l) => l.status === 'active').length;
+  const totalLeads = listings.reduce((s, l) => s + (l.applicant_count ?? 0), 0);
+
+  return (
+    <div className="rounded-xl border border-gray-200 overflow-hidden">
+      <button
+        onClick={() => setOpen((o) => !o)}
+        className="w-full flex items-center gap-3 px-4 py-3 bg-gray-50 hover:bg-gray-100 transition text-left"
+      >
+        <span className="text-gray-400 text-sm">{open ? '▾' : '▸'}</span>
+        <span className="text-base">🏢</span>
+        <div className="flex-1 min-w-0">
+          <p className="font-bold text-gray-900 text-sm truncate">{groupKey}</p>
+          <p className="text-xs text-gray-500 mt-0.5">
+            {listings.length} unit{listings.length !== 1 ? 's' : ''}
+            {activeCount > 0 && <span className="ml-2 text-brand-600">{activeCount} active</span>}
+            {totalLeads > 0 && <span className="ml-2 text-amber-600">{totalLeads} lead{totalLeads !== 1 ? 's' : ''}</span>}
+          </p>
+        </div>
+        <span className="text-xs text-gray-400 shrink-0">{open ? 'collapse' : 'expand'}</span>
+      </button>
+
+      {open && (
+        <table className="w-full text-sm border-t border-gray-200">
+          <thead className="bg-white text-xs text-gray-500 uppercase tracking-wider">
+            <tr>
+              <th className="px-4 py-2 text-left">Address</th>
+              <th className="px-4 py-2 text-left hidden sm:table-cell">Rent</th>
+              <th className="px-4 py-2 text-left hidden md:table-cell">Views</th>
+              <th className="px-4 py-2 text-left">Leads</th>
+              <th className="px-4 py-2 text-left hidden lg:table-cell">Expires</th>
+              <th className="px-4 py-2 text-left">Status</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-gray-100">
+            {listings.map((listing) => {
+              const pill = statusPill[listing.status] ?? statusPill.draft;
+              return (
+                <tr key={listing.id} className="group/row bg-white hover:bg-gray-50 transition">
+                  <td className="px-4 py-3">
+                    <Link href={`/landlord/properties/${listing.id}`} className="flex items-center gap-3">
+                      <span className="relative block h-12 w-16 shrink-0 overflow-hidden rounded-lg bg-gray-100">
+                        {listing.photos?.[0] && (
+                          <img src={listing.photos[0]} alt="" className="absolute inset-0 h-full w-full object-cover" loading="lazy" />
+                        )}
+                      </span>
+                      <span>
+                        <span className="block font-semibold text-gray-900">{listing.address}</span>
+                        <span className="block text-xs text-gray-500">
+                          {listing.city}, {listing.state} · {formatPropertyType(listing.property_type)}
+                        </span>
+                      </span>
+                    </Link>
+                  </td>
+                  <td className="hidden px-4 py-3 sm:table-cell">
+                    <PriceEditor listing={listing} onSaved={onPriceSaved} />
+                  </td>
+                  <td className="hidden px-4 py-3 text-gray-600 md:table-cell">{listing.view_count ?? 0}</td>
+                  <td className="px-4 py-3">
+                    {listing.applicant_count ? (
+                      <Link href={`/landlord/leads?listing=${listing.id}`} className="font-semibold text-brand-700 hover:underline">
+                        {listing.applicant_count} new
+                      </Link>
+                    ) : <span className="text-gray-500">—</span>}
+                  </td>
+                  <td className="hidden px-4 py-3 lg:table-cell">
+                    <span className={`text-sm ${expiryText(listing.expiresAt).cls}`}>{expiryText(listing.expiresAt).text}</span>
+                  </td>
+                  <td className="px-4 py-3">
+                    <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${pill.cls}`}>{pill.label}</span>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      )}
+    </div>
   );
 }
 
@@ -275,69 +381,64 @@ export default function PropertiesPage() {
           </p>
         </div>
       ) : (
-        <div className="mt-6 overflow-hidden rounded-2xl border border-gray-200">
-          <table className="w-full text-left text-sm">
-            <thead className="border-b border-gray-200 bg-gray-50 text-xs font-semibold uppercase tracking-wide text-gray-500">
-              <tr>
-                <th scope="col" className="px-4 py-3">Address</th>
-                <th scope="col" className="hidden px-4 py-3 sm:table-cell">Rent</th>
-                <th scope="col" className="hidden px-4 py-3 md:table-cell">Views</th>
-                <th scope="col" className="px-4 py-3">Leads</th>
-                <th scope="col" className="hidden px-4 py-3 lg:table-cell">Expires</th>
-                <th scope="col" className="px-4 py-3">Status</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-100">
-              {visible.map((listing) => {
-                const pill = statusPill[listing.status] ?? statusPill.draft;
-                return (
-                  <tr key={listing.id} className="group/row bg-white transition hover:bg-gray-50">
-                    <td className="px-4 py-3">
-                      <Link href={`/landlord/properties/${listing.id}`} className="flex items-center gap-3">
-                        <span className="relative block h-12 w-16 shrink-0 overflow-hidden rounded-lg bg-gray-100">
-                          {listing.photos?.[0] && (
-                            <img src={listing.photos[0]} alt="" className="absolute inset-0 h-full w-full object-cover" loading="lazy" />
-                          )}
-                        </span>
-                        <span>
-                          <span className="block font-semibold text-gray-900">{listing.address}</span>
-                          <span className="block text-xs text-gray-500">
-                            {listing.city}, {listing.state} · {formatPropertyType(listing.property_type)}
-                          </span>
-                        </span>
-                      </Link>
-                    </td>
-                    <td className="hidden px-4 py-3 sm:table-cell">
-                      <PriceEditor listing={listing} onSaved={handlePriceSaved} />
-                    </td>
-                    <td className="hidden px-4 py-3 text-gray-600 md:table-cell">
-                      {listing.view_count ?? 0}
-                    </td>
-                    <td className="px-4 py-3">
-                      {listing.applicant_count ? (
-                        <Link href={`/landlord/leads?listing=${listing.id}`}
-                          className="font-semibold text-brand-700 hover:underline">
-                          {listing.applicant_count} new{listing.applicant_count === 1 ? '' : ''}
-                        </Link>
-                      ) : (
-                        <span className="text-gray-500">—</span>
-                      )}
-                    </td>
-                    <td className="hidden px-4 py-3 lg:table-cell">
-                      <span className={`text-sm ${expiryText(listing.expiresAt).cls}`}>
-                        {expiryText(listing.expiresAt).text}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3">
-                      <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${pill.cls}`}>
-                        {pill.label}
-                      </span>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+        <div className="mt-6 space-y-2">
+          {groupListings(visible).map(({ key, listings: group }) =>
+            group.length === 1 ? (
+              <div key={group[0].id} className="overflow-hidden rounded-xl border border-gray-200">
+                <table className="w-full text-left text-sm">
+                  <tbody>
+                    {(() => {
+                      const listing = group[0];
+                      const pill = statusPill[listing.status] ?? statusPill.draft;
+                      return (
+                        <tr className="group/row bg-white transition hover:bg-gray-50">
+                          <td className="px-4 py-3">
+                            <Link href={`/landlord/properties/${listing.id}`} className="flex items-center gap-3">
+                              <span className="relative block h-12 w-16 shrink-0 overflow-hidden rounded-lg bg-gray-100">
+                                {listing.photos?.[0] && (
+                                  <img src={listing.photos[0]} alt="" className="absolute inset-0 h-full w-full object-cover" loading="lazy" />
+                                )}
+                              </span>
+                              <span>
+                                <span className="block font-semibold text-gray-900">{listing.address}</span>
+                                <span className="block text-xs text-gray-500">
+                                  {listing.city}, {listing.state} · {formatPropertyType(listing.property_type)}
+                                </span>
+                              </span>
+                            </Link>
+                          </td>
+                          <td className="hidden px-4 py-3 sm:table-cell">
+                            <PriceEditor listing={listing} onSaved={handlePriceSaved} />
+                          </td>
+                          <td className="hidden px-4 py-3 text-gray-600 md:table-cell">{listing.view_count ?? 0}</td>
+                          <td className="px-4 py-3">
+                            {listing.applicant_count ? (
+                              <Link href={`/landlord/leads?listing=${listing.id}`} className="font-semibold text-brand-700 hover:underline">
+                                {listing.applicant_count} new
+                              </Link>
+                            ) : <span className="text-gray-500">—</span>}
+                          </td>
+                          <td className="hidden px-4 py-3 lg:table-cell">
+                            <span className={`text-sm ${expiryText(listing.expiresAt).cls}`}>{expiryText(listing.expiresAt).text}</span>
+                          </td>
+                          <td className="px-4 py-3">
+                            <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${pill.cls}`}>{pill.label}</span>
+                          </td>
+                        </tr>
+                      );
+                    })()}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <LandlordBuildingGroup
+                key={key}
+                groupKey={key}
+                listings={group}
+                onPriceSaved={handlePriceSaved}
+              />
+            )
+          )}
         </div>
       )}
     </div>

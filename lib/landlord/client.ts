@@ -233,6 +233,16 @@ export async function getApplications(listingId: string): Promise<Application[]>
   return res.json();
 }
 
+export async function deleteApplication(listingId: string, appId: string): Promise<void> {
+  if (isDemo()) return;
+  const token = await getToken();
+  const res = await fetch(`/api/listings/${listingId}/applications/${appId}`, {
+    method: 'DELETE',
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!res.ok) throw new Error('Delete failed');
+}
+
 export async function sendMessageToTenant(listingId: string, appId: string, message: string): Promise<void> {
   if (isDemo()) return;
   const token = await getToken();

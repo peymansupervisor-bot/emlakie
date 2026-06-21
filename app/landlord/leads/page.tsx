@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { getAllApplications, updateApplicationStatus } from '@/lib/landlord/client';
+import { getAllApplications, updateApplicationStatus, deleteApplication } from '@/lib/landlord/client';
 import { Application, LandlordListing } from '@/lib/landlord/types';
 
 type Filter = 'all' | 'pending' | 'approved' | 'rejected';
@@ -24,10 +24,11 @@ function StatusPill({ status }: { status: string }) {
   return <span className={`rounded-full px-2.5 py-1 text-xs font-semibold capitalize ${cls}`}>{label}</span>;
 }
 
-function ApplicantDrawer({ lead, onClose, onStatusChange }: {
+function ApplicantDrawer({ lead, onClose, onStatusChange, onDelete }: {
   lead: Lead;
   onClose: () => void;
   onStatusChange: (id: string, status: 'approved' | 'rejected') => void;
+  onDelete: (id: string) => void;
 }) {
   const closeRef = useRef<HTMLButtonElement>(null);
   const drawerRef = useRef<HTMLDivElement>(null);
@@ -179,6 +180,14 @@ function ApplicantDrawer({ lead, onClose, onStatusChange }: {
             </button>
           </div>
         )}
+        <div className="border-t border-gray-100 px-6 py-3">
+          <button
+            onClick={() => { if (confirm('Delete this inquiry? This cannot be undone.')) onDelete(lead.id); }}
+            className="w-full rounded-xl border border-red-200 py-2 text-sm font-semibold text-red-600 transition hover:bg-red-50"
+          >
+            Delete Inquiry
+          </button>
+        </div>
       </div>
     </>
   );
@@ -204,6 +213,14 @@ export default function LeadsPage() {
     await updateApplicationStatus(lead.listingId, applicationId, status as 'approved' | 'rejected');
     setLeads((prev) => prev?.map((l) => l.id === applicationId ? { ...l, status: status as Application['status'] } : l) ?? null);
     setSelected((prev) => prev?.id === applicationId ? { ...prev, status: status as Application['status'] } : prev);
+  }
+
+  async function handleDelete(applicationId: string) {
+    const lead = leads?.find((l) => l.id === applicationId);
+    if (!lead?.listingId) return;
+    await deleteApplication(lead.listingId, applicationId);
+    setLeads((prev) => prev?.filter((l) => l.id !== applicationId) ?? null);
+    setSelected(null);
   }
 
   if (!leads) return <p className="py-16 text-center text-gray-500">Loading leads…</p>;
@@ -325,6 +342,7 @@ export default function LeadsPage() {
           lead={selected}
           onClose={() => setSelected(null)}
           onStatusChange={handleStatusChange}
+          onDelete={handleDelete}
         />
       )}
     </div>

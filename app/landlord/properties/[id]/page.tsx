@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { deactivateListing, extendListing, getApplications, getMyListing, markRented, updateApplicationStatus, sendMessageToTenant } from '@/lib/landlord/client';
+import { deactivateListing, extendListing, getApplications, getMyListing, markRented, updateApplicationStatus, sendMessageToTenant, deleteApplication } from '@/lib/landlord/client';
 import { Application, LandlordListing } from '@/lib/landlord/types';
 import { formatBaths, formatBeds, formatPrice, formatSqft } from '@/lib/format';
 import PhotoManager from '@/components/PhotoManager';
@@ -360,6 +360,16 @@ export default function PropertyDashboardPage() {
                   className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 transition hover:border-brand-400 hover:text-brand-700"
                 >
                   Send Message
+                </button>
+                <button
+                  onClick={async () => {
+                    if (!confirm('Delete this inquiry? This cannot be undone.')) return;
+                    await deleteApplication(id, app.id);
+                    setApplications((prev) => prev.filter((a) => a.id !== app.id));
+                  }}
+                  className="rounded-lg border border-red-200 px-4 py-2 text-sm font-semibold text-red-600 transition hover:bg-red-50"
+                >
+                  Delete
                 </button>
               </div>
             </div>

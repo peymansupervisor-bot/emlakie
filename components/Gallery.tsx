@@ -8,11 +8,26 @@ interface Props {
   title: string;
 }
 
+function PhotoPlaceholder() {
+  return (
+    <div className="flex h-full w-full items-center justify-center bg-gray-100">
+      <svg viewBox="0 0 32 32" className="h-12 w-12 fill-current text-gray-300" aria-hidden="true">
+        <path d="M3 7a2 2 0 0 1 2-2h22a2 2 0 0 1 2 2v18a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7zm2 0v11.586l4.293-4.293a1 1 0 0 1 1.414 0L14 17.586l5.293-5.293a1 1 0 0 1 1.414 0L27 18.586V7H5zm22 14.414-6.293-6.293L14 20.414l-4.293-4.293L5 20.707V25h22v-3.586z" />
+      </svg>
+    </div>
+  );
+}
+
 export default function Gallery({ photos, title }: Props) {
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [failedIndices, setFailedIndices] = useState<Set<number>>(new Set());
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const thumbsRef = useRef<HTMLDivElement>(null);
+
+  const markFailed = useCallback((i: number) => {
+    setFailedIndices(prev => new Set(prev).add(i));
+  }, []);
 
   const prev = useCallback(() => setActiveIndex((i) => (i - 1 + photos.length) % photos.length), [photos.length]);
   const next = useCallback(() => setActiveIndex((i) => (i + 1) % photos.length), [photos.length]);
@@ -75,14 +90,19 @@ export default function Gallery({ photos, title }: Props) {
       <div className="overflow-hidden rounded-xl">
         {/* Main image */}
         <div className="relative aspect-[16/9] w-full bg-gray-100">
-          <Image
-            src={photos[activeIndex]}
-            alt={`${title} — photo ${activeIndex + 1}`}
-            fill
-            priority
-            sizes="(max-width: 768px) 100vw, 60vw"
-            className="object-cover"
-          />
+          {failedIndices.has(activeIndex) ? (
+            <PhotoPlaceholder />
+          ) : (
+            <Image
+              src={photos[activeIndex]}
+              alt={`${title} — photo ${activeIndex + 1}`}
+              fill
+              priority
+              sizes="(max-width: 768px) 100vw, 60vw"
+              className="object-cover"
+              onError={() => markFailed(activeIndex)}
+            />
+          )}
 
           {/* Prev arrow */}
           {photos.length > 1 && (
@@ -143,7 +163,11 @@ export default function Gallery({ photos, title }: Props) {
                 }`}
                 aria-label={`Go to photo ${i + 1}`}
               >
-                <Image src={photo} alt={`Thumbnail ${i + 1}`} fill sizes="96px" className="object-cover" />
+                {failedIndices.has(i) ? (
+                  <PhotoPlaceholder />
+                ) : (
+                  <Image src={photo} alt={`Thumbnail ${i + 1}`} fill sizes="96px" className="object-cover" onError={() => markFailed(i)} />
+                )}
               </button>
             ))}
           </div>
@@ -196,14 +220,19 @@ export default function Gallery({ photos, title }: Props) {
             onClick={(e) => e.stopPropagation()}
           >
             <div className="relative h-full w-full max-h-[75vh]">
-              <Image
-                src={photos[activeIndex]}
-                alt={`${title} — photo ${activeIndex + 1}`}
-                fill
-                sizes="100vw"
-                className="object-contain"
-                priority
-              />
+              {failedIndices.has(activeIndex) ? (
+                <PhotoPlaceholder />
+              ) : (
+                <Image
+                  src={photos[activeIndex]}
+                  alt={`${title} — photo ${activeIndex + 1}`}
+                  fill
+                  sizes="100vw"
+                  className="object-contain"
+                  priority
+                  onError={() => markFailed(activeIndex)}
+                />
+              )}
             </div>
 
             {photos.length > 1 && (
@@ -246,7 +275,11 @@ export default function Gallery({ photos, title }: Props) {
                   }`}
                   aria-label={`Go to photo ${i + 1}`}
                 >
-                  <Image src={photo} alt={`Thumbnail ${i + 1}`} fill sizes="96px" className="object-cover" />
+                  {failedIndices.has(i) ? (
+                    <PhotoPlaceholder />
+                  ) : (
+                    <Image src={photo} alt={`Thumbnail ${i + 1}`} fill sizes="96px" className="object-cover" onError={() => markFailed(i)} />
+                  )}
                 </button>
               ))}
             </div>

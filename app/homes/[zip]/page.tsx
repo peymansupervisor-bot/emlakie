@@ -41,8 +41,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { city, state } = info;
   const label = `${city}, ${state} ${params.zip}`;
   return {
-    title: `Homes for Rent in ${label} | Emlakie`,
-    description: `Browse rentals in ${label}. Find apartments, houses, condos, and townhomes for rent on Emlakie — America's rental marketplace.`,
+    title: `Homes for Rent in ${label} | EMLAKIE`,
+    description: `Browse rentals in ${label}. Find apartments, houses, condos, and townhomes for rent on EMLAKIE — no broker fees, direct from landlords.`,
     alternates: { canonical: `https://emlakie.com/homes/${params.zip}` },
     openGraph: {
       title: `Homes for Rent in ${label}`,
@@ -86,20 +86,39 @@ export default async function ZipPage({ params }: Props) {
     ? Math.round(listings.map((l) => l.bedrooms).reduce((a, b) => a + b, 0) / listings.length)
     : null;
 
-  const breadcrumbSchema = {
+  const zipFaqs = [
+    { q: `How many homes are for rent in ${label} ${params.zip}?`, a: hasListings ? `There are currently ${total} rental homes listed in ${label}, ZIP ${params.zip} on EMLAKIE.` : `EMLAKIE lists rentals across ${label} as landlords post them. New listings in ZIP ${params.zip} will appear here as soon as they go live.` },
+    { q: `What is the average rent in ZIP code ${params.zip}?`, a: avgPrice ? `The average rent in ${label} ${params.zip} is ${formatPrice(avgPrice)}/month, ranging from ${formatPrice(minPrice!)} to ${formatPrice(maxPrice!)}.` : `Rental prices in ${label} vary by property type and size. Browse nearby listings to see current pricing.` },
+    { q: `Are there no-fee rentals in ${label} ${params.zip}?`, a: `All listings on EMLAKIE are posted directly by landlords — there are no broker fees or agent commissions. You contact the landlord directly and apply through the platform at no cost.` },
+    { q: `Can I list my rental property in ${params.zip} for free?`, a: `Yes. Landlords in ${label} can post their rental on EMLAKIE for free. Reach renters searching specifically in ${params.zip} and nearby ZIP codes.` },
+  ];
+
+  const pageSchema = {
     '@context': 'https://schema.org',
-    '@type': 'BreadcrumbList',
-    itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://emlakie.com' },
-      { '@type': 'ListItem', position: 2, name: 'Rentals', item: 'https://emlakie.com/rentals' },
-      { '@type': 'ListItem', position: 3, name: state, item: `https://emlakie.com/rentals?city=${encodeURIComponent(city)}` },
-      { '@type': 'ListItem', position: 4, name: `${label} ${params.zip}`, item: `https://emlakie.com/homes/${params.zip}` },
+    '@graph': [
+      {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://emlakie.com' },
+          { '@type': 'ListItem', position: 2, name: 'Rentals', item: 'https://emlakie.com/rentals' },
+          { '@type': 'ListItem', position: 3, name: state, item: `https://emlakie.com/rentals?city=${encodeURIComponent(city)}` },
+          { '@type': 'ListItem', position: 4, name: `${label} ${params.zip}`, item: `https://emlakie.com/homes/${params.zip}` },
+        ],
+      },
+      {
+        '@type': 'FAQPage',
+        mainEntity: zipFaqs.map(f => ({
+          '@type': 'Question',
+          name: f.q,
+          acceptedAnswer: { '@type': 'Answer', text: f.a },
+        })),
+      },
     ],
   };
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(pageSchema) }} />
       {/* Breadcrumb */}
       <nav className="flex flex-wrap items-center gap-1 text-sm text-gray-500">
         <Link href="/" className="hover:text-brand-600">Home</Link>
@@ -247,6 +266,24 @@ export default async function ZipPage({ params }: Props) {
             </div>
           </>
         )}
+      </section>
+
+      {/* FAQ section */}
+      <section className="mt-12">
+        <h2 className="text-xl font-bold text-gray-900">Frequently Asked Questions</h2>
+        <div className="mt-4 divide-y divide-gray-200 rounded-xl border border-gray-200 bg-white">
+          {zipFaqs.map((faq) => (
+            <details key={faq.q} className="group px-6 py-4">
+              <summary className="flex cursor-pointer items-center justify-between gap-4 text-sm font-semibold text-gray-900 marker:content-none">
+                {faq.q}
+                <svg className="h-4 w-4 shrink-0 text-gray-400 transition group-open:rotate-180" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                  <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clipRule="evenodd" />
+                </svg>
+              </summary>
+              <p className="mt-3 text-sm leading-relaxed text-gray-600">{faq.a}</p>
+            </details>
+          ))}
+        </div>
       </section>
 
       <SeoLinkGrid trendingCities={trendingCities} />

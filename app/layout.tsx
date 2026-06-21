@@ -12,18 +12,18 @@ const playfair = Playfair_Display({ subsets: ['latin'], variable: '--font-playfa
 export const metadata: Metadata = {
   metadataBase: new URL('https://emlakie.com'),
   title: {
-    default: 'EMLAKIE — Find Your Next Rental Home',
+    default: 'EMLAKIE — List Rentals Free & Find Tenants Fast',
     template: '%s | EMLAKIE',
   },
   description:
-    'Browse houses, apartments, and condos for rent. EMLAKIE connects renters directly with landlords — no hassle, no runaround.',
+    'Post your rental listing free on EMLAKIE. Reach thousands of qualified tenants, no broker fees, no middleman. Browse rentals or list your property today.',
   alternates: {
     canonical: 'https://emlakie.com',
   },
   openGraph: {
     siteName: 'EMLAKIE',
-    title: 'EMLAKIE — Find Your Next Rental Home',
-    description: 'Browse houses, apartments, and condos for rent. EMLAKIE connects renters directly with landlords — no hassle, no runaround.',
+    title: 'EMLAKIE — List Rentals Free & Find Tenants Fast',
+    description: 'Post your rental listing free on EMLAKIE. Reach thousands of qualified tenants, no broker fees, no middleman. Browse rentals or list your property today.',
     type: 'website',
     url: 'https://emlakie.com',
     images: [

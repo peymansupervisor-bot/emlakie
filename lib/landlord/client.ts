@@ -233,6 +233,20 @@ export async function getApplications(listingId: string): Promise<Application[]>
   return res.json();
 }
 
+export async function sendMessageToTenant(listingId: string, appId: string, message: string): Promise<void> {
+  if (isDemo()) return;
+  const token = await getToken();
+  const res = await fetch(`/api/listings/${listingId}/applications/${appId}/message`, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ message }),
+  });
+  if (!res.ok) {
+    const data = await res.json().catch(() => ({}));
+    throw new Error(data.error ?? 'Failed to send message');
+  }
+}
+
 export async function updateApplicationStatus(listingId: string, applicationId: string, status: 'pending' | 'approved' | 'rejected', note?: string): Promise<void> {
   if (isDemo()) return;
   const token = await getToken();

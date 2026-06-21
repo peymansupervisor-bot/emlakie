@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { deactivateListing, extendListing, getApplications, getMyListing, markRented, updateApplicationStatus } from '@/lib/landlord/client';
+import { deactivateListing, extendListing, getApplications, getMyListing, markRented, updateApplicationStatus, sendMessageToTenant } from '@/lib/landlord/client';
 import { Application, LandlordListing } from '@/lib/landlord/types';
 import { formatBaths, formatBeds, formatPrice, formatSqft } from '@/lib/format';
 import PhotoManager from '@/components/PhotoManager';
@@ -67,6 +67,10 @@ export default function PropertyDashboardPage() {
   const [respondingId, setRespondingId] = useState<string | null>(null);
   const [respondModal, setRespondModal] = useState<string | null>(null);
   const [respondNote, setRespondNote] = useState('');
+  const [messageModal, setMessageModal] = useState<string | null>(null);
+  const [messageText, setMessageText] = useState('');
+  const [messageSending, setMessageSending] = useState(false);
+  const [messageSuccess, setMessageSuccess] = useState(false);
 
   async function handleExtend() {
     setActionBusy(true);
@@ -332,24 +336,32 @@ export default function PropertyDashboardPage() {
                   <span className="font-semibold">AI summary:</span> {app.ai_summary}
                 </p>
               )}
-              {app.status === 'pending' && (
-                <div className="mt-4 flex gap-2">
-                  <button
-                    onClick={() => { setRespondModal(app.id); setRespondNote(''); }}
-                    disabled={respondingId === app.id}
-                    className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-700 disabled:opacity-60"
-                  >
-                    {respondingId === app.id ? 'Sending…' : 'Respond'}
-                  </button>
-                  <button
-                    onClick={() => handleInquiryAction(app.id, 'rejected')}
-                    disabled={respondingId === app.id}
-                    className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-600 transition hover:border-red-300 hover:text-red-600 disabled:opacity-60"
-                  >
-                    Ignore
-                  </button>
-                </div>
-              )}
+              <div className="mt-4 flex flex-wrap gap-2">
+                {app.status === 'pending' && (
+                  <>
+                    <button
+                      onClick={() => { setRespondModal(app.id); setRespondNote(''); }}
+                      disabled={respondingId === app.id}
+                      className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-700 disabled:opacity-60"
+                    >
+                      {respondingId === app.id ? 'Sending…' : 'Respond'}
+                    </button>
+                    <button
+                      onClick={() => handleInquiryAction(app.id, 'rejected')}
+                      disabled={respondingId === app.id}
+                      className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-600 transition hover:border-red-300 hover:text-red-600 disabled:opacity-60"
+                    >
+                      Ignore
+                    </button>
+                  </>
+                )}
+                <button
+                  onClick={() => { setMessageModal(app.id); setMessageText(''); setMessageSuccess(false); }}
+                  className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 transition hover:border-brand-400 hover:text-brand-700"
+                >
+                  Send Message
+                </button>
+              </div>
             </div>
           ))}
         </div>
@@ -382,6 +394,54 @@ export default function PropertyDashboardPage() {
           </div>
         </div>
       ) : null}
+
+      {messageModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
+          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl">
+            <h2 className="text-lg font-extrabold text-gray-900">Send Message</h2>
+            <p className="mt-1 text-sm text-gray-500">Your message will be emailed to the tenant.</p>
+            {messageSuccess ? (
+              <div className="mt-4 rounded-xl bg-brand-50 px-4 py-3 text-sm font-semibold text-brand-700">
+                ✓ Message sent successfully.
+              </div>
+            ) : (
+              <textarea
+                value={messageText}
+                onChange={(e) => setMessageText(e.target.value)}
+                placeholder="e.g. Hi, I'd love to schedule a showing. Are you available this weekend?"
+                rows={5}
+                className="mt-4 w-full rounded-xl border border-gray-300 px-3 py-2.5 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-200 resize-none"
+              />
+            )}
+            <div className="mt-4 flex gap-3">
+              {!messageSuccess && (
+                <button
+                  onClick={async () => {
+                    if (!messageText.trim()) return;
+                    setMessageSending(true);
+                    try {
+                      await sendMessageToTenant(id, messageModal, messageText);
+                      setMessageSuccess(true);
+                    } catch { /* ignore */ } finally {
+                      setMessageSending(false);
+                    }
+                  }}
+                  disabled={messageSending || !messageText.trim()}
+                  className="flex-1 rounded-xl bg-brand-600 py-2.5 text-sm font-bold text-white transition hover:bg-brand-700 disabled:opacity-60"
+                >
+                  {messageSending ? 'Sending…' : 'Send'}
+                </button>
+              )}
+              <button
+                onClick={() => { setMessageModal(null); setMessageText(''); setMessageSuccess(false); }}
+                className="rounded-xl border border-gray-300 px-4 py-2.5 text-sm font-semibold text-gray-600 transition hover:border-gray-400"
+              >
+                {messageSuccess ? 'Close' : 'Cancel'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {respondModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">

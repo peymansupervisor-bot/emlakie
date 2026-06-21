@@ -2070,7 +2070,7 @@ export const posts: Post[] = [
     readTime: 5,
     citySlug: 'los-angeles',
     content: `
-<p><em>Legal guidance contributed by <strong>David Lee, Attorney at Law</strong>, a Los Angeles landlord-tenant attorney. This article is for informational purposes only and does not constitute legal advice. Consult a licensed attorney for advice specific to your situation.</em></p>
+<p><em>Legal guidance contributed by <strong>Yong Lee ("David"), Real &amp; Lee, Ltd.</strong>, a Los Angeles landlord-tenant attorney. This article is for informational purposes only and does not constitute legal advice. Consult a licensed attorney for advice specific to your situation.</em></p>
 
 <p>The Los Angeles Housing Department (LAHD) updated its Right to Counsel (RTC) notice forms on <strong>June 11, 2026</strong>. If you own rental property in the City of Los Angeles, you are required by law to use these updated forms — and non-compliance can cost you far more than just an eviction case.</p>
 
@@ -2122,7 +2122,7 @@ export const posts: Post[] = [
 <h2>Does This Apply to Your Property?</h2>
 <p>The RTC ordinance applies to <strong>all rental units</strong> within the City of Los Angeles boundaries. It does not apply to properties in unincorporated LA County, Beverly Hills, Santa Monica, West Hollywood, or other independent cities — those jurisdictions have their own rules. Unsure? Check your property at <a href="https://zimas.lacity.org" rel="noopener noreferrer" target="_blank">zimas.lacity.org</a>.</p>
 
-<p><em>This article was prepared with guidance from <strong>David Lee, Attorney at Law</strong>, a Los Angeles-based landlord-tenant attorney. For legal advice specific to your property or situation, consult a licensed California attorney.</em></p>
+<p><em>This article was prepared with guidance from <strong>Yong Lee ("David"), Real &amp; Lee, Ltd.</strong>, a Los Angeles-based landlord-tenant attorney. For legal advice specific to your property or situation, consult a licensed California attorney.</em></p>
 
 <p>Are you a Los Angeles landlord? <a href="/landlord/login">List your rental on EMLAKIE free</a> — no broker fees, no commissions. Or <a href="/rentals/city/los-angeles">browse LA rentals</a> if you're a tenant looking for your next home.</p>
     `.trim(),
@@ -2137,7 +2137,7 @@ export const posts: Post[] = [
     readTime: 4,
     citySlug: 'los-angeles',
     content: `
-<p><em>Legal guidance contributed by <strong>David Lee, Attorney at Law</strong>, a Los Angeles landlord-tenant attorney. This article is for informational purposes only and does not constitute legal advice. Consult a licensed attorney for advice specific to your situation.</em></p>
+<p><em>Legal guidance contributed by <strong>Yong Lee ("David"), Real &amp; Lee, Ltd.</strong>, a Los Angeles landlord-tenant attorney. This article is for informational purposes only and does not constitute legal advice. Consult a licensed attorney for advice specific to your situation.</em></p>
 
 <p>If you are a tenant in the City of Los Angeles and you have received an eviction notice or an Unlawful Detainer (UD) lawsuit, you may be entitled to <strong>free legal representation</strong> — at no cost to you — under the City's Right to Counsel (RTC) program. This is one of the most powerful tenant protections in California, and many landlords don't follow the rules correctly.</p>
 
@@ -2187,7 +2187,7 @@ export const posts: Post[] = [
 <h2>Does This Apply to Your Apartment?</h2>
 <p>The Right to Counsel program applies to tenants renting within the <strong>City of Los Angeles</strong>. If you live in an unincorporated part of LA County, or in a separate city like Beverly Hills, Santa Monica, or Burbank, different rules may apply. When in doubt, call Stay Housed LA — they can tell you whether you qualify.</p>
 
-<p><em>This article was prepared with guidance from <strong>David Lee, Attorney at Law</strong>, a Los Angeles-based landlord-tenant attorney. For legal advice specific to your situation, consult a licensed California attorney.</em></p>
+<p><em>This article was prepared with guidance from <strong>Yong Lee ("David"), Real &amp; Lee, Ltd.</strong>, a Los Angeles-based landlord-tenant attorney. For legal advice specific to your situation, consult a licensed California attorney.</em></p>
 
 <p>Looking for a new rental in Los Angeles? <a href="/rentals/city/los-angeles">Browse LA rentals on EMLAKIE</a> — all listed directly by landlords, no broker fees.</p>
     `.trim(),

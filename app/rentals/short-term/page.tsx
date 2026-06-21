@@ -75,7 +75,7 @@ export default async function ShortTermPage() {
         ].map(item => (
           <div key={item.title} className="rounded-2xl border border-gray-100 bg-white p-5 text-center shadow-card">
             <span className="text-3xl">{item.icon}</span>
-            <h3 className="mt-3 font-bold text-gray-900 text-sm">{item.title}</h3>
+            <h2 className="mt-3 font-bold text-gray-900 text-sm">{item.title}</h2>
             <p className="mt-1 text-xs text-gray-500">{item.body}</p>
           </div>
         ))}

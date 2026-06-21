@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { enterDemo, signInWithPassword, signUpWithPassword, resetPassword, signInWithOAuth } from '@/lib/landlord/client';
+import { signInWithPassword, signUpWithPassword, resetPassword, signInWithOAuth } from '@/lib/landlord/client';
 
 type Step = 'login' | 'signup' | 'forgot' | 'forgot-sent';
 
@@ -66,7 +66,7 @@ export default function LandlordLoginPage() {
     } finally { setBusy(false); }
   }
 
-  function onDemo() { enterDemo(); router.push('/landlord'); }
+  function onDemo() { router.push('/rentals'); }
 
   async function onOAuth(provider: 'google' | 'facebook' | 'apple') {
     setBusy(true); setError('');
@@ -268,7 +268,7 @@ export default function LandlordLoginPage() {
       <div className="mt-10 border-t border-gray-200 pt-6 text-center">
         <p className="text-sm text-gray-500">Just want a look around first?</p>
         <button onClick={onDemo} className="mt-2 font-semibold text-green-600 hover:underline">
-          Preview the demo dashboard →
+          Browse listings as a tenant →
         </button>
       </div>
     </div>

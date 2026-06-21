@@ -4,7 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { getProfile, isDemo, isSignedIn, signOut } from '@/lib/landlord/client';
+import { getProfile, isSignedIn, signOut } from '@/lib/landlord/client';
 import { LandlordProfile } from '@/lib/landlord/types';
 
 const TABS = [
@@ -21,7 +21,6 @@ export default function LandlordLayout({ children }: { children: React.ReactNode
   const router    = useRouter();
   const isLogin   = pathname === '/landlord/login';
   const [ready, setReady] = useState(false);
-  const [demo,  setDemo]  = useState(false);
   const [profile, setProfile] = useState<LandlordProfile | null>(null);
 
   useEffect(() => {
@@ -32,12 +31,11 @@ export default function LandlordLayout({ children }: { children: React.ReactNode
         return;
       }
       const p = await getProfile();
-      setDemo(isDemo());
       setProfile(p);
       setReady(true);
 
       // Force profile completion before accessing anything else
-      const profileIncomplete = p && !isDemo() && (!p.first_name || !p.last_name || !p.phone);
+      const profileIncomplete = p && (!p.first_name || !p.last_name || !p.phone);
       if (profileIncomplete && pathname !== '/landlord/profile') {
         router.replace('/landlord/profile');
       }
@@ -57,14 +55,6 @@ export default function LandlordLayout({ children }: { children: React.ReactNode
       {/* Dashboard header */}
       <div style={{ backgroundColor: '#16a34a' }} className="text-white">
         <div className="mx-auto max-w-5xl px-4 sm:px-6">
-          {demo && (
-            <div className="border-b border-green-500 py-2 text-center text-xs font-semibold text-green-100">
-              Demo mode —{' '}
-              <Link href="/landlord/login" className="underline text-white">sign in with your email</Link>
-              {' '}to manage real listings
-            </div>
-          )}
-
           {/* Top bar */}
           <div className="flex items-center justify-between py-4">
             <div>
@@ -127,7 +117,7 @@ export default function LandlordLayout({ children }: { children: React.ReactNode
       </div>
 
       {/* Profile completion banner */}
-      {profile && (!profile.first_name || !profile.last_name || !profile.phone) && !demo && pathname !== '/landlord/profile' && (
+      {profile && (!profile.first_name || !profile.last_name || !profile.phone) && pathname !== '/landlord/profile' && (
         <div className="border-b border-amber-200 bg-amber-50 px-4 py-3">
           <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 sm:px-6">
             <p className="text-sm font-medium text-amber-800">

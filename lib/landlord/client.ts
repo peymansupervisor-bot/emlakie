@@ -1,22 +1,9 @@
 'use client';
 
 import { supabase } from '@/lib/supabase';
-import { Application, Conversation, LandlordListing, LandlordProfile, LandlordUser } from './types';
-import { demoApplications, demoConversations, demoListings } from './demo-data';
-
-const DEMO_KEY = 'emlakie_demo';
-
-export function isDemo(): boolean {
-  if (typeof window === 'undefined') return false;
-  return localStorage.getItem(DEMO_KEY) === '1';
-}
-
-export function enterDemo() {
-  if (typeof window !== 'undefined') localStorage.setItem(DEMO_KEY, '1');
-}
+import { Application, Conversation, LandlordListing, LandlordProfile } from './types';
 
 export async function isSignedIn(): Promise<boolean> {
-  if (isDemo()) return true;
   const { data: { session } } = await supabase.auth.getSession();
   return !!session;
 }
@@ -27,12 +14,10 @@ export async function getToken(): Promise<string | null> {
 }
 
 export async function signOut() {
-  if (typeof window !== 'undefined') localStorage.removeItem(DEMO_KEY);
   await supabase.auth.signOut();
 }
 
 export async function getProfile(): Promise<LandlordProfile | null> {
-  if (isDemo()) return { display_name: 'Demo User', account_id: 'EML-000' };
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return null;
   const { data } = await supabase
@@ -50,15 +35,12 @@ export async function sendPhoneVerification(phone: string): Promise<void> {
 }
 
 export async function verifyPhoneOtp(phone: string, token: string): Promise<void> {
-  // Save the current (email) session so we can restore it after the phone OTP
-  // switches to the phone-auth user.
   const { data: { session: originalSession } } = await supabase.auth.getSession();
 
   const e164 = '+1' + phone.replace(/\D/g, '');
   const { error } = await supabase.auth.verifyOtp({ phone: e164, token, type: 'sms' });
   if (error) throw new Error(error.message);
 
-  // Restore the original email session
   if (originalSession) {
     await supabase.auth.setSession({
       access_token: originalSession.access_token,
@@ -68,7 +50,6 @@ export async function verifyPhoneOtp(phone: string, token: string): Promise<void
 }
 
 export async function updateProfile(payload: { first_name: string; last_name: string; phone: string; phone_verified?: boolean }): Promise<void> {
-  if (isDemo()) throw new Error('Demo mode: sign in to update your profile.');
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error('Not signed in.');
   const display_name = `${payload.first_name.trim()} ${payload.last_name.trim()}`.trim();
@@ -90,7 +71,6 @@ export async function verifyOtp(phone: string, token: string): Promise<void> {
 }
 
 export async function signInWithOAuth(provider: 'google' | 'facebook' | 'apple'): Promise<void> {
-  if (typeof window !== 'undefined') localStorage.removeItem(DEMO_KEY);
   const { error } = await supabase.auth.signInWithOAuth({
     provider,
     options: { redirectTo: `${window.location.origin}/landlord` },
@@ -99,7 +79,6 @@ export async function signInWithOAuth(provider: 'google' | 'facebook' | 'apple')
 }
 
 export async function signInWithPassword(email: string, password: string): Promise<void> {
-  if (typeof window !== 'undefined') localStorage.removeItem(DEMO_KEY);
   const { error } = await supabase.auth.signInWithPassword({ email, password });
   if (error) throw new Error(error.message);
 }
@@ -150,18 +129,15 @@ async function api<T>(path: string, init: RequestInit = {}): Promise<T> {
 // ─── Listings ────────────────────────────────────────────────────────────────
 
 export async function getMyListings(): Promise<LandlordListing[]> {
-  if (isDemo()) return demoListings;
   return api<LandlordListing[]>('/api/listings');
 }
 
 export async function getMyListing(id: string): Promise<LandlordListing | null> {
-  if (isDemo()) return demoListings.find((l) => l.id === id) ?? null;
   const listings = await getMyListings();
   return listings.find((l) => l.id === id) ?? null;
 }
 
 export async function createListing(formData: FormData): Promise<LandlordListing> {
-  if (isDemo()) throw new Error('Demo mode: sign in with your phone to publish real listings.');
   const token = await getToken();
   if (!token) throw new Error('Not signed in.');
   const res = await fetch('/api/listings', {
@@ -176,7 +152,6 @@ export async function createListing(formData: FormData): Promise<LandlordListing
 }
 
 export async function updateListing(id: string, payload: Record<string, unknown>): Promise<{ slug?: string | null }> {
-  if (isDemo()) throw new Error('Demo mode: sign in with your phone to edit real listings.');
   return api<{ slug?: string | null }>(`/api/listings/${id}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
@@ -185,17 +160,14 @@ export async function updateListing(id: string, payload: Record<string, unknown>
 }
 
 export async function extendListing(id: string): Promise<LandlordListing> {
-  if (isDemo()) throw new Error('Demo mode: sign in with your phone to extend listings.');
   return api<LandlordListing>(`/api/listings/${id}/extend`, { method: 'POST' });
 }
 
 export async function deleteListing(id: string): Promise<void> {
-  if (isDemo()) throw new Error('Demo mode: sign in with your phone to delete listings.');
   await api(`/api/listings/${id}`, { method: 'DELETE' });
 }
 
 export async function deactivateListing(id: string): Promise<void> {
-  if (isDemo()) throw new Error('Demo mode: sign in with your phone to deactivate listings.');
   await api(`/api/listings/${id}/deactivate`, { method: 'POST' });
 }
 
@@ -203,7 +175,6 @@ export async function markRented(
   id: string,
   opts?: { finalRent?: number; leaseTerm?: string }
 ): Promise<void> {
-  if (isDemo()) throw new Error('Demo mode: sign in with your phone to update listings.');
   await api(`/api/listings/${id}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
@@ -216,15 +187,13 @@ export async function markRented(
   });
 }
 
-// ─── Applications & messages (still demo only until backend grows) ────────────
+// ─── Applications & messages ──────────────────────────────────────────────────
 
 export async function getAllApplications(): Promise<(Application & { listingAddress?: string })[]> {
-  if (isDemo()) return demoApplications.map((a) => ({ ...a, listingAddress: demoListings.find((l) => l.id === a.listing_id)?.address }));
   return api<(Application & { listingAddress?: string })[]>('/api/applications');
 }
 
 export async function getApplications(listingId: string): Promise<Application[]> {
-  if (isDemo()) return demoApplications.filter((a) => a.listing_id === listingId);
   const token = await getToken();
   const res = await fetch(`/api/listings/${listingId}/applications`, {
     headers: { Authorization: `Bearer ${token}` },
@@ -234,7 +203,6 @@ export async function getApplications(listingId: string): Promise<Application[]>
 }
 
 export async function deleteApplication(listingId: string, appId: string): Promise<void> {
-  if (isDemo()) return;
   const token = await getToken();
   const res = await fetch(`/api/listings/${listingId}/applications/${appId}`, {
     method: 'DELETE',
@@ -244,7 +212,6 @@ export async function deleteApplication(listingId: string, appId: string): Promi
 }
 
 export async function sendMessageToTenant(listingId: string, appId: string, message: string): Promise<void> {
-  if (isDemo()) return;
   const token = await getToken();
   const res = await fetch(`/api/listings/${listingId}/applications/${appId}/message`, {
     method: 'POST',
@@ -258,7 +225,6 @@ export async function sendMessageToTenant(listingId: string, appId: string, mess
 }
 
 export async function updateApplicationStatus(listingId: string, applicationId: string, status: 'pending' | 'approved' | 'rejected', note?: string): Promise<void> {
-  if (isDemo()) return;
   const token = await getToken();
   await fetch(`/api/listings/${listingId}/applications`, {
     method: 'PATCH',
@@ -268,7 +234,6 @@ export async function updateApplicationStatus(listingId: string, applicationId: 
 }
 
 export async function getConversations(): Promise<Conversation[]> {
-  if (isDemo()) return demoConversations;
   return [];
 }
 

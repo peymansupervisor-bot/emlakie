@@ -85,10 +85,9 @@ export default function SearchBar({ large = false }: { large?: boolean }) {
 
   return (
     <div ref={containerRef} className={`relative w-full ${large ? 'max-w-2xl' : 'max-w-md'}`}>
+      <div role="search" aria-label="Search rental listings">
       <form
         onSubmit={onSubmit}
-        role="search"
-        aria-label="Search rental listings"
         className="flex w-full overflow-hidden rounded-xl bg-white shadow-[0_4px_24px_rgba(0,0,0,0.10)] transition-shadow hover:shadow-[0_6px_32px_rgba(0,0,0,0.14)]"
       >
         <label htmlFor="search-q" className="sr-only">Search rentals</label>
@@ -136,6 +135,7 @@ export default function SearchBar({ large = false }: { large?: boolean }) {
           <span className="hidden sm:inline">Search</span>
         </button>
       </form>
+      </div>
 
       {open && suggestions.length > 0 && (
         <ul

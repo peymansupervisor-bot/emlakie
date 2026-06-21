@@ -106,7 +106,7 @@ export default function LoginPage() {
           </>
         ) : (
           <>
-            <h1 className="text-2xl font-semibold text-gray-900 mb-1">Enter code</h1>
+            <h2 className="text-2xl font-semibold text-gray-900 mb-1">Enter code</h2>
             <p className="text-gray-500 text-sm mb-6">
               We sent a 6-digit code to <span className="font-medium text-gray-700">{phone}</span>.
             </p>

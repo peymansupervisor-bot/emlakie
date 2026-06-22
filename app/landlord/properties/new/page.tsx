@@ -5,6 +5,27 @@ import { useRef, useState } from 'react';
 import { createListing } from '@/lib/landlord/client';
 import { supabase } from '@/lib/supabase';
 
+function convertToJpeg(file: File): Promise<File> {
+  return new Promise((resolve) => {
+    const img = document.createElement('img');
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      const canvas = document.createElement('canvas');
+      canvas.width = img.width;
+      canvas.height = img.height;
+      canvas.getContext('2d')!.drawImage(img, 0, 0);
+      canvas.toBlob(
+        (blob) => resolve(blob ? new File([blob], file.name.replace(/\.\w+$/, '.jpg'), { type: 'image/jpeg' }) : file),
+        'image/jpeg',
+        1.0,
+      );
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); resolve(file); };
+    img.src = url;
+  });
+}
+
 const PROPERTY_TYPES = [
   { value: 'house',     label: 'House' },
   { value: 'apartment', label: 'Apartment' },
@@ -325,8 +346,8 @@ export default function NewPropertyPage() {
       const photoUrls: string[] = [];
       for (let i = 0; i < photos.length; i++) {
         const file = photos[i];
-        console.log(`[submit] uploading photo ${i + 1}/${photos.length}: ${file.name} (${(file.size / 1024).toFixed(0)} KB, compression disabled)`);
-        const blob = file;
+        console.log(`[submit] uploading photo ${i + 1}/${photos.length}: ${file.name} (${(file.size / 1024).toFixed(0)} KB)`);
+        const blob = await convertToJpeg(file);
         const path = `${uid}/${Date.now()}-${Math.random().toString(36).slice(2)}.jpg`;
         const { error: upErr } = await supabase.storage
           .from('listing-photos')

@@ -25,15 +25,16 @@ export async function POST(req: NextRequest) {
   const { path } = await req.json() as { path: string }
   if (!path) return NextResponse.json({ error: 'Missing path' }, { status: 400 })
 
-  // Download raw file from storage
-  const { data: rawData, error: downloadErr } = await supabase.storage
-    .from('listing-photos')
-    .download(path)
-  if (downloadErr || !rawData) {
-    return NextResponse.json({ error: 'Failed to download original' }, { status: 500 })
+  // Build public URL and fetch the raw file directly.
+  // The listing-photos bucket is public so no auth header is needed for download,
+  // which avoids RLS policy issues with the originals/ subfolder.
+  const publicUrl = supabase.storage.from('listing-photos').getPublicUrl(path).data.publicUrl
+  const fetchRes = await fetch(publicUrl)
+  if (!fetchRes.ok) {
+    return NextResponse.json({ error: `Failed to download original: ${fetchRes.status}` }, { status: 500 })
   }
 
-  const rawBuffer = Buffer.from(await rawData.arrayBuffer())
+  const rawBuffer = Buffer.from(await fetchRes.arrayBuffer())
   const urls: Record<string, string> = {}
 
   for (const variant of VARIANTS) {

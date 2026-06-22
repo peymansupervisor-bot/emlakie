@@ -8,8 +8,8 @@ export const runtime = 'nodejs'
 export const maxDuration = 60
 
 const VARIANTS = [
-  { name: 'thumb',  width: 400  },
-  { name: 'medium', width: 1200 },
+  { name: 'thumb',  width: 800  },
+  { name: 'medium', width: 1920 },
   { name: 'full',   width: null },
 ] as const
 

@@ -62,33 +62,13 @@ export default function PhotoManager({ listingId, initialPhotos }: Props) {
       if (!user) throw new Error('Not signed in');
 
       for (let i = 0; i < toUpload.length; i++) {
-        setUploadProgress(`Compressing ${i + 1} of ${toUpload.length}…`);
-        const compressed = await compressImage(toUpload[i]);
         setUploadProgress(`Uploading ${i + 1} of ${toUpload.length}…`);
         const path = `${user.id}/${Date.now()}-${Math.random().toString(36).slice(2)}.jpg`;
         const { error: uploadErr } = await supabase.storage
           .from('listing-photos')
-          .upload(path, compressed, { contentType: 'image/jpeg', upsert: false });
+          .upload(path, toUpload[i], { contentType: toUpload[i].type || 'image/jpeg', upsert: false });
         if (uploadErr) { skipped.push(toUpload[i].name); continue; }
         const { data: { publicUrl } } = supabase.storage.from('listing-photos').getPublicUrl(path);
-
-        // Content moderation check
-        setUploadProgress(`Checking photo ${i + 1} of ${toUpload.length}…`);
-        try {
-          const modRes = await fetch('/api/moderate-image', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ url: publicUrl }),
-          });
-          const modData = await modRes.json();
-          if (!modData.safe) {
-            await supabase.storage.from('listing-photos').remove([path]);
-            skipped.push(toUpload[i].name);
-            continue;
-          }
-        } catch {
-          // moderation error — fail open, keep the photo
-        }
 
         newUrls.push(publicUrl);
       }

@@ -299,9 +299,7 @@ export default function NewPropertyPage() {
       if (form.description.length < 30) return 'Description must be at least 30 characters.';
       if (filterWarnings.length > 0) return 'Please remove the flagged language before continuing.';
     }
-    if (step === 3) {
-      if (photos.length === 0) return 'Upload at least 1 photo.';
-    }
+    // photo minimum temporarily disabled for debugging
     return '';
   }
 
@@ -327,9 +325,8 @@ export default function NewPropertyPage() {
       const photoUrls: string[] = [];
       for (let i = 0; i < photos.length; i++) {
         const file = photos[i];
-        console.log(`[submit] compressing photo ${i + 1}/${photos.length}: ${file.name} (${(file.size / 1024).toFixed(0)} KB)`);
-        const blob = await compressBrowser(file);
-        console.log(`[submit] compressed to ${(blob.size / 1024).toFixed(0)} KB, uploading to Supabase`);
+        console.log(`[submit] uploading photo ${i + 1}/${photos.length}: ${file.name} (${(file.size / 1024).toFixed(0)} KB, compression disabled)`);
+        const blob = file;
         const path = `${uid}/${Date.now()}-${Math.random().toString(36).slice(2)}.jpg`;
         const { error: upErr } = await supabase.storage
           .from('listing-photos')

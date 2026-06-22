@@ -286,20 +286,20 @@ export default function NewPropertyPage() {
     }));
   }
 
-  function addPhotos(files: FileList | null) {
+  async function addPhotos(files: FileList | null) {
     if (!files) return;
-    const newFiles = Array.from(files).filter((f) => f.type.startsWith('image/'));
-    setPhotos((prev) => [...prev, ...newFiles]);
-    newFiles.forEach((f) => {
-      const reader = new FileReader();
-      reader.onload = (e) => setPreviews((prev) => [...prev, e.target?.result as string]);
-      reader.readAsDataURL(f);
-    });
+    const newFiles = Array.from(files).filter((f) => f.type.startsWith('image/') || /\.(heic|heif)$/i.test(f.name));
+    for (const f of newFiles) {
+      const converted = await convertToJpeg(f);
+      const url = URL.createObjectURL(converted);
+      setPhotos((prev) => [...prev, converted]);
+      setPreviews((prev) => [...prev, url]);
+    }
   }
 
   function removePhoto(i: number) {
+    setPreviews((p) => { URL.revokeObjectURL(p[i]); return p.filter((_, idx) => idx !== i); });
     setPhotos((p) => p.filter((_, idx) => idx !== i));
-    setPreviews((p) => p.filter((_, idx) => idx !== i));
   }
 
   function validateStep(): string {
@@ -347,7 +347,7 @@ export default function NewPropertyPage() {
       for (let i = 0; i < photos.length; i++) {
         const file = photos[i];
         console.log(`[submit] uploading photo ${i + 1}/${photos.length}: ${file.name} (${(file.size / 1024).toFixed(0)} KB)`);
-        const blob = await convertToJpeg(file);
+        const blob = file; // already converted to JPEG in addPhotos()
         const path = `${uid}/${Date.now()}-${Math.random().toString(36).slice(2)}.jpg`;
         const { error: upErr } = await supabase.storage
           .from('listing-photos')

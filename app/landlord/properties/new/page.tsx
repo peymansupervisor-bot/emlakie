@@ -362,7 +362,7 @@ export default function NewPropertyPage() {
       if (form.ownershipType) fd.append('ownershipType', form.ownershipType);
       if (form.virtualTourUrl.trim()) fd.append('virtualTourUrl', form.virtualTourUrl.trim());
       photoUrls.forEach((url) => fd.append('photoUrl', url));
-      console.log('[submit] FormData entries:', [...fd.keys()]);
+      console.log('[submit] FormData entries:', Array.from(fd.keys()));
 
       // ── Step 4: POST to /api/listings ──────────────────────────────────────
       console.log('[submit] step 4: POST /api/listings');

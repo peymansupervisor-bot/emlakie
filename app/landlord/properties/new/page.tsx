@@ -316,6 +316,36 @@ export default function NewPropertyPage() {
     setBusy(true);
     setError('');
     try {
+      // ── Step 1: get auth user ──────────────────────────────────────────────
+      console.log('[submit] step 1: getting auth user');
+      const { data: { user } } = await supabase.auth.getUser();
+      const uid = user?.id ?? 'anon';
+      console.log('[submit] uid:', uid);
+
+      // ── Step 2: upload photos to Supabase Storage directly ────────────────
+      console.log('[submit] step 2: uploading', photos.length, 'photos directly to Supabase Storage');
+      const photoUrls: string[] = [];
+      for (let i = 0; i < photos.length; i++) {
+        const file = photos[i];
+        console.log(`[submit] compressing photo ${i + 1}/${photos.length}: ${file.name} (${(file.size / 1024).toFixed(0)} KB)`);
+        const blob = await compressBrowser(file);
+        console.log(`[submit] compressed to ${(blob.size / 1024).toFixed(0)} KB, uploading to Supabase`);
+        const path = `${uid}/${Date.now()}-${Math.random().toString(36).slice(2)}.jpg`;
+        const { error: upErr } = await supabase.storage
+          .from('listing-photos')
+          .upload(path, blob, { contentType: 'image/jpeg', upsert: false });
+        if (upErr) {
+          console.error(`[submit] Supabase storage upload failed for photo ${i + 1}:`, upErr);
+          throw new Error(`Photo ${i + 1} upload failed: ${upErr.message}`);
+        }
+        const url = supabase.storage.from('listing-photos').getPublicUrl(path).data.publicUrl;
+        console.log(`[submit] photo ${i + 1} uploaded → ${url}`);
+        photoUrls.push(url);
+      }
+      console.log('[submit] all photos uploaded, URLs:', photoUrls);
+
+      // ── Step 3: build FormData with text fields + URLs only ───────────────
+      console.log('[submit] step 3: building FormData (text + URL strings only, no binary)');
       const fd = new FormData();
       fd.append('title', form.title);
       fd.append('description', form.description);
@@ -334,24 +364,16 @@ export default function NewPropertyPage() {
       if (form.isBroker && form.licenseNumber.trim()) fd.append('licenseNumber', form.licenseNumber.trim());
       if (form.ownershipType) fd.append('ownershipType', form.ownershipType);
       if (form.virtualTourUrl.trim()) fd.append('virtualTourUrl', form.virtualTourUrl.trim());
-      // Upload photos directly to Supabase Storage from the browser so the
-      // listing API route only receives small URL strings — no binary data,
-      // no serverless body-size limit, no 413 regardless of photo count.
-      const { data: { user } } = await supabase.auth.getUser();
-      const uid = user?.id ?? 'anon';
-      const photoUrls = await Promise.all(photos.map(async (file) => {
-        const blob = await compressBrowser(file);
-        const path = `${uid}/${Date.now()}-${Math.random().toString(36).slice(2)}.jpg`;
-        const { error: upErr } = await supabase.storage
-          .from('listing-photos')
-          .upload(path, blob, { contentType: 'image/jpeg', upsert: false });
-        if (upErr) throw new Error(`Photo upload failed: ${upErr.message}`);
-        return supabase.storage.from('listing-photos').getPublicUrl(path).data.publicUrl;
-      }));
       photoUrls.forEach((url) => fd.append('photoUrl', url));
+      console.log('[submit] FormData entries:', [...fd.keys()]);
+
+      // ── Step 4: POST to /api/listings ──────────────────────────────────────
+      console.log('[submit] step 4: POST /api/listings');
       await createListing(fd);
+      console.log('[submit] listing created successfully');
       router.push('/landlord?created=1');
     } catch (e) {
+      console.error('[submit] FAILED:', e);
       setError(e instanceof Error ? e.message : 'Could not publish the listing. Please try again.');
     } finally {
       setBusy(false);

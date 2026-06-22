@@ -28,6 +28,35 @@ const AMENITIES_LIST = [
 
 type Step = 1 | 2 | 3 | 4;
 
+// Compress a photo in the browser before upload so the multipart body stays
+// well under Vercel's 4.5 MB serverless request limit. The server runs sharp
+// again for final quality tuning, but this pre-pass is what prevents 413s.
+async function compressBrowser(file: File): Promise<File> {
+  const MAX_PX = 1920;
+  const QUALITY = 0.82;
+  return new Promise((resolve) => {
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      const scale = Math.min(1, MAX_PX / Math.max(img.width, img.height));
+      const w = Math.round(img.width * scale);
+      const h = Math.round(img.height * scale);
+      const canvas = document.createElement('canvas');
+      canvas.width = w;
+      canvas.height = h;
+      canvas.getContext('2d')!.drawImage(img, 0, 0, w, h);
+      canvas.toBlob(
+        (blob) => resolve(blob ? new File([blob], file.name, { type: 'image/jpeg' }) : file),
+        'image/jpeg',
+        QUALITY,
+      );
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); resolve(file); };
+    img.src = url;
+  });
+}
+
 interface FormData {
   address: string;
   city: string;
@@ -304,7 +333,8 @@ export default function NewPropertyPage() {
       if (form.isBroker && form.licenseNumber.trim()) fd.append('licenseNumber', form.licenseNumber.trim());
       if (form.ownershipType) fd.append('ownershipType', form.ownershipType);
       if (form.virtualTourUrl.trim()) fd.append('virtualTourUrl', form.virtualTourUrl.trim());
-      photos.forEach((f) => fd.append('photos', f));
+      const compressed = await Promise.all(photos.map(compressBrowser));
+      compressed.forEach((f) => fd.append('photos', f));
       await createListing(fd);
       router.push('/landlord?created=1');
     } catch (e) {

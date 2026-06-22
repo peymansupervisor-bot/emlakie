@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createSupabaseWithToken } from '@/lib/supabase-server'
-import { createClient } from '@supabase/supabase-js'
 import sharp from 'sharp'
 
 export const runtime = 'nodejs'
@@ -19,18 +18,12 @@ export async function POST(req: NextRequest) {
   const token = req.headers.get('authorization')?.replace('Bearer ', '')
   if (!token) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const supabaseUser = createSupabaseWithToken(token)
-  const { data: { user }, error: authErr } = await supabaseUser.auth.getUser()
+  const supabase = createSupabaseWithToken(token)
+  const { data: { user }, error: authErr } = await supabase.auth.getUser()
   if (authErr || !user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const { path } = await req.json() as { path: string }
   if (!path) return NextResponse.json({ error: 'Missing path' }, { status: 400 })
-
-  // Service-role client for storage operations
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
-  )
 
   // Download raw file from storage
   const { data: rawData, error: downloadErr } = await supabase.storage

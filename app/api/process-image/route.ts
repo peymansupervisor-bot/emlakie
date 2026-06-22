@@ -19,19 +19,22 @@ function isHeic(buf: Buffer): boolean {
   return ftyp === 'ftyp' && /heic|heis|hevc|hevx|mif1|msf1/i.test(brand)
 }
 
-// Returns a JPEG-safe buffer. Tries Sharp directly first (works on most formats).
-// For HEIC/HEIF, Sharp's prebuilt binary lacks the HEVC decoder, so we fall back
-// to heic-convert which bundles its own WebAssembly libheif with the decoder.
+// Returns a JPEG-safe buffer.
+// HEIC must be checked first — Sharp's prebuilt binary can read HEIC metadata but
+// cannot decode the pixels (libde265 not bundled), so it passes metadata() and then
+// crashes at toBuffer(). heic-convert uses its own WASM libheif with the decoder.
 async function toJpegReadyBuffer(raw: Buffer): Promise<Buffer> {
-  try {
-    await sharp(raw, { failOn: 'none' }).metadata()
-    return raw
-  } catch {
-    if (!isHeic(raw)) throw new Error('Unsupported image format — only JPEG, PNG, WebP, TIFF, and HEIC are accepted')
+  if (isHeic(raw)) {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
     const heicConvert = require('heic-convert') as (o: { buffer: Buffer; format: 'JPEG'; quality: number }) => Promise<ArrayBuffer>
     const ab: ArrayBuffer = await heicConvert({ buffer: raw, format: 'JPEG', quality: 1 })
     return Buffer.from(new Uint8Array(ab))
+  }
+  try {
+    await sharp(raw, { failOn: 'none' }).metadata()
+    return raw
+  } catch {
+    throw new Error('Unsupported image format — only JPEG, PNG, WebP, TIFF, and HEIC are accepted')
   }
 }
 

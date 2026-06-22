@@ -13,14 +13,14 @@ interface PhotoItem {
 }
 
 const PROPERTY_TYPES = [
-  { value: 'house',     label: 'House' },
+  { value: 'adu',       label: 'ADU (Accessory Dwelling Unit)' },
   { value: 'apartment', label: 'Apartment' },
   { value: 'condo',     label: 'Condominium (Condo)' },
-  { value: 'townhouse', label: 'Townhouse' },
-  { value: 'studio',    label: 'Studio' },
-  { value: 'adu',       label: 'ADU (Accessory Dwelling Unit)' },
+  { value: 'house',     label: 'House' },
   { value: 'jadu',      label: 'JADU (Junior ADU)' },
   { value: 'room',      label: 'Room' },
+  { value: 'studio',    label: 'Studio' },
+  { value: 'townhouse', label: 'Townhouse' },
 ];
 
 // Studio ownership choices — determines E-sale Value™ eligibility

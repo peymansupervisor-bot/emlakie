@@ -2,6 +2,10 @@
 const nextConfig = {
   experimental: {
     serverComponentsExternalPackages: ['axe-core', 'jsdom'],
+        // Allow large multipart uploads for photo-heavy listings (up to 20 × 10 MB)
+        serverActions: {
+                bodySizeLimit: '50mb',
+        },
   },
   productionBrowserSourceMaps: false,
   images: {

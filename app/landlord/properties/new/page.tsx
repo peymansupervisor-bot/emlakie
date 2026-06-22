@@ -2,34 +2,14 @@
 
 import { useRouter } from 'next/navigation';
 import { useRef, useState } from 'react';
-import { createListing } from '@/lib/landlord/client';
+import { createListing, getToken } from '@/lib/landlord/client';
 import { supabase } from '@/lib/supabase';
 
-async function convertToJpeg(file: File): Promise<File> {
-  const isHeic = file.type === 'image/heic' || file.type === 'image/heif' || /\.(heic|heif)$/i.test(file.name);
-  if (isHeic) {
-    const heic2any = (await import('heic2any')).default;
-    const blob = await heic2any({ blob: file, toType: 'image/jpeg', quality: 1 }) as Blob;
-    return new File([blob], file.name.replace(/\.\w+$/, '.jpg'), { type: 'image/jpeg' });
-  }
-  return new Promise((resolve) => {
-    const img = document.createElement('img');
-    const url = URL.createObjectURL(file);
-    img.onload = () => {
-      URL.revokeObjectURL(url);
-      const canvas = document.createElement('canvas');
-      canvas.width = img.width;
-      canvas.height = img.height;
-      canvas.getContext('2d')!.drawImage(img, 0, 0);
-      canvas.toBlob(
-        (blob) => resolve(blob ? new File([blob], file.name.replace(/\.\w+$/, '.jpg'), { type: 'image/jpeg' }) : file),
-        'image/jpeg',
-        1.0,
-      );
-    };
-    img.onerror = () => { URL.revokeObjectURL(url); resolve(file); };
-    img.src = url;
-  });
+interface PhotoItem {
+  preview: string;   // blob URL for preview (revoked after processing)
+  medium: string;    // processed 1200px JPEG URL from server
+  uploading: boolean;
+  error?: string;
 }
 
 const PROPERTY_TYPES = [
@@ -207,8 +187,7 @@ export default function NewPropertyPage() {
   const [step, setStep] = useState<Step>(1);
   const [form, setForm] = useState<FormData>(empty);
 
-  const [photos, setPhotos] = useState<File[]>([]);
-  const [previews, setPreviews] = useState<string[]>([]);
+  const [photoItems, setPhotoItems] = useState<PhotoItem[]>([]);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const [filterWarnings, setFilterWarnings] = useState<{term: string; reason: string; law: string; suggestion: string}[]>([]);
@@ -294,18 +273,50 @@ export default function NewPropertyPage() {
 
   async function addPhotos(files: FileList | null) {
     if (!files) return;
-    const newFiles = Array.from(files).filter((f) => f.type.startsWith('image/') || /\.(heic|heif)$/i.test(f.name));
+    const newFiles = Array.from(files).filter(
+      (f) => f.type.startsWith('image/') || /\.(heic|heif)$/i.test(f.name),
+    );
     for (const f of newFiles) {
-      const converted = await convertToJpeg(f);
-      const url = URL.createObjectURL(converted);
-      setPhotos((prev) => [...prev, converted]);
-      setPreviews((prev) => [...prev, url]);
+      const preview = URL.createObjectURL(f);
+      const placeholder: PhotoItem = { preview, medium: '', uploading: true };
+      setPhotoItems((prev) => [...prev, placeholder]);
+
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) throw new Error('Not signed in');
+
+        // Upload raw file to storage — server will process it
+        const rawPath = `${user.id}/originals/${Date.now()}-${Math.random().toString(36).slice(2)}`;
+        const { error: upErr } = await supabase.storage
+          .from('listing-photos')
+          .upload(rawPath, f, { upsert: false });
+        if (upErr) throw new Error(upErr.message);
+
+        // Server-side processing: HEIC decode, resize variants, EXIF rotation
+        const token = await getToken();
+        const res = await fetch('/api/process-image', {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ path: rawPath }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error ?? 'Processing failed');
+
+        URL.revokeObjectURL(preview);
+        setPhotoItems((prev) => prev.map((p) =>
+          p.preview === preview ? { preview: data.medium, medium: data.medium, uploading: false } : p,
+        ));
+      } catch (err) {
+        URL.revokeObjectURL(preview);
+        setPhotoItems((prev) => prev.map((p) =>
+          p.preview === preview ? { ...p, uploading: false, error: (err as Error).message } : p,
+        ));
+      }
     }
   }
 
   function removePhoto(i: number) {
-    setPreviews((p) => { URL.revokeObjectURL(p[i]); return p.filter((_, idx) => idx !== i); });
-    setPhotos((p) => p.filter((_, idx) => idx !== i));
+    setPhotoItems((prev) => prev.filter((_, idx) => idx !== i));
   }
 
   function validateStep(): string {
@@ -347,26 +358,9 @@ export default function NewPropertyPage() {
       const uid = user?.id ?? 'anon';
       console.log('[submit] uid:', uid);
 
-      // ── Step 2: upload photos to Supabase Storage directly ────────────────
-      console.log('[submit] step 2: uploading', photos.length, 'photos directly to Supabase Storage');
-      const photoUrls: string[] = [];
-      for (let i = 0; i < photos.length; i++) {
-        const file = photos[i];
-        console.log(`[submit] uploading photo ${i + 1}/${photos.length}: ${file.name} (${(file.size / 1024).toFixed(0)} KB)`);
-        const blob = file; // already converted to JPEG in addPhotos()
-        const path = `${uid}/${Date.now()}-${Math.random().toString(36).slice(2)}.jpg`;
-        const { error: upErr } = await supabase.storage
-          .from('listing-photos')
-          .upload(path, blob, { contentType: 'image/jpeg', upsert: false });
-        if (upErr) {
-          console.error(`[submit] Supabase storage upload failed for photo ${i + 1}:`, upErr);
-          throw new Error(`Photo ${i + 1} upload failed: ${upErr.message}`);
-        }
-        const url = supabase.storage.from('listing-photos').getPublicUrl(path).data.publicUrl;
-        console.log(`[submit] photo ${i + 1} uploaded → ${url}`);
-        photoUrls.push(url);
-      }
-      console.log('[submit] all photos uploaded, URLs:', photoUrls);
+      // ── Step 2: collect processed photo URLs (uploaded + processed during selection) ──
+      const photoUrls = photoItems.filter((p) => !p.uploading && !p.error && p.medium).map((p) => p.medium);
+      console.log('[submit] photo URLs:', photoUrls);
 
       // ── Step 3: build FormData with text fields + URLs only ───────────────
       console.log('[submit] step 3: building FormData (text + URL strings only, no binary)');
@@ -728,27 +722,42 @@ export default function NewPropertyPage() {
             onChange={(e) => addPhotos(e.target.files)} />
 
           {/* Preview grid */}
-          {previews.length > 0 && (
+          {photoItems.length > 0 && (
             <div className="grid grid-cols-3 gap-3 sm:grid-cols-4">
-              {previews.map((src, i) => (
+              {photoItems.map((item, i) => (
                 <div key={i} className="group relative aspect-square overflow-hidden rounded-xl bg-gray-100">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={src} alt={`Property photo ${i + 1}`} className="h-full w-full object-cover" />
-                  {i === 0 && (
+                  {item.uploading ? (
+                    <div className="flex h-full w-full items-center justify-center">
+                      <svg className="h-6 w-6 animate-spin text-brand-500" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 00-8 8h4z" />
+                      </svg>
+                    </div>
+                  ) : item.error ? (
+                    <div className="flex h-full w-full flex-col items-center justify-center gap-1 p-2 text-center">
+                      <span className="text-xs text-red-500">Failed</span>
+                    </div>
+                  ) : (
+                    /* eslint-disable-next-line @next/next/no-img-element */
+                    <img src={item.preview} alt={`Property photo ${i + 1}`} className="h-full w-full object-cover" />
+                  )}
+                  {i === 0 && !item.uploading && !item.error && (
                     <span className="absolute left-1 top-1 rounded-full bg-brand-600 px-2 py-0.5 text-xs font-bold text-white">
                       Cover
                     </span>
                   )}
-                  <button onClick={() => removePhoto(i)}
-                    aria-label={`Remove photo ${i + 1}`}
-                    className="absolute right-1 top-1 flex h-6 w-6 items-center justify-center rounded-full bg-black/60 text-white opacity-0 transition group-hover:opacity-100">
-                    <span aria-hidden="true">×</span>
-                  </button>
+                  {!item.uploading && (
+                    <button onClick={() => removePhoto(i)}
+                      aria-label={`Remove photo ${i + 1}`}
+                      className="absolute right-1 top-1 flex h-6 w-6 items-center justify-center rounded-full bg-black/60 text-white opacity-0 transition group-hover:opacity-100">
+                      <span aria-hidden="true">×</span>
+                    </button>
+                  )}
                 </div>
               ))}
             </div>
           )}
-          <p className="text-sm text-gray-500">{photos.length} photo{photos.length !== 1 ? 's' : ''} selected</p>
+          <p className="text-sm text-gray-500">{photoItems.filter(p => !p.uploading && !p.error).length} photo{photoItems.filter(p => !p.uploading && !p.error).length !== 1 ? 's' : ''} ready{photoItems.some(p => p.uploading) ? ` · ${photoItems.filter(p => p.uploading).length} processing…` : ''}</p>
         </div>
       )}
 
@@ -785,14 +794,23 @@ export default function NewPropertyPage() {
           <div className="rounded-2xl border border-gray-200 p-5 shadow-card">
             <h2 className="font-bold text-gray-900">Photos</h2>
             <div className="mt-3 flex gap-2 overflow-x-auto pb-1">
-              {previews.map((src, i) => (
-                <div key={i} className="relative h-20 w-28 shrink-0 overflow-hidden rounded-lg">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={src} alt={`Property photo ${i + 1}`} className="h-full w-full object-cover" />
+              {photoItems.filter(p => !p.error).map((item, i) => (
+                <div key={i} className="relative h-20 w-28 shrink-0 overflow-hidden rounded-lg bg-gray-100">
+                  {item.uploading ? (
+                    <div className="flex h-full w-full items-center justify-center">
+                      <svg className="h-5 w-5 animate-spin text-brand-500" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 00-8 8h4z" />
+                      </svg>
+                    </div>
+                  ) : (
+                    /* eslint-disable-next-line @next/next/no-img-element */
+                    <img src={item.preview} alt={`Property photo ${i + 1}`} className="h-full w-full object-cover" />
+                  )}
                 </div>
               ))}
             </div>
-            <p className="mt-2 text-sm text-gray-500">{photos.length} photo{photos.length !== 1 ? 's' : ''}</p>
+            <p className="mt-2 text-sm text-gray-500">{photoItems.filter(p => !p.uploading && !p.error).length} photo{photoItems.filter(p => !p.uploading && !p.error).length !== 1 ? 's' : ''}</p>
           </div>
         </div>
       )}

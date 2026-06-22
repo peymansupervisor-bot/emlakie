@@ -8,33 +8,6 @@ import { supabase } from '@/lib/supabase';
 const MAX_PHOTOS = 25;
 const MIN_PHOTOS = 1;
 
-async function compressImage(file: File): Promise<File> {
-  const isHeic = file.type === 'image/heic' || file.type === 'image/heif' || /\.(heic|heif)$/i.test(file.name);
-  if (isHeic) {
-    const heic2any = (await import('heic2any')).default;
-    const blob = await heic2any({ blob: file, toType: 'image/jpeg', quality: 1 }) as Blob;
-    return new File([blob], file.name.replace(/\.\w+$/, '.jpg'), { type: 'image/jpeg' });
-  }
-  return new Promise((resolve) => {
-    const img = document.createElement('img');
-    const url = URL.createObjectURL(file);
-    img.onload = () => {
-      URL.revokeObjectURL(url);
-      const canvas = document.createElement('canvas');
-      canvas.width = img.width;
-      canvas.height = img.height;
-      canvas.getContext('2d')!.drawImage(img, 0, 0);
-      canvas.toBlob(
-        (blob) => resolve(blob ? new File([blob], file.name.replace(/\.\w+$/, '.jpg'), { type: 'image/jpeg' }) : file),
-        'image/jpeg',
-        1.0,
-      );
-    };
-    img.onerror = () => { URL.revokeObjectURL(url); resolve(file); };
-    img.src = url;
-  });
-}
-
 interface Props {
   listingId: string;
   initialPhotos: string[];
@@ -64,17 +37,23 @@ export default function PhotoManager({ listingId, initialPhotos }: Props) {
       if (!user) throw new Error('Not signed in');
 
       for (let i = 0; i < toUpload.length; i++) {
-        setUploadProgress(`Compressing ${i + 1} of ${toUpload.length}…`);
-        const compressed = await compressImage(toUpload[i]);
         setUploadProgress(`Uploading ${i + 1} of ${toUpload.length}…`);
-        const path = `${user.id}/${Date.now()}-${Math.random().toString(36).slice(2)}.jpg`;
+        const rawPath = `${user.id}/originals/${Date.now()}-${Math.random().toString(36).slice(2)}`;
         const { error: uploadErr } = await supabase.storage
           .from('listing-photos')
-          .upload(path, compressed, { contentType: 'image/jpeg', upsert: false });
+          .upload(rawPath, toUpload[i], { upsert: false });
         if (uploadErr) { skipped.push(toUpload[i].name); continue; }
-        const { data: { publicUrl } } = supabase.storage.from('listing-photos').getPublicUrl(path);
 
-        newUrls.push(publicUrl);
+        setUploadProgress(`Processing ${i + 1} of ${toUpload.length}…`);
+        const token = await getToken();
+        const res = await fetch('/api/process-image', {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ path: rawPath }),
+        });
+        const data = await res.json();
+        if (!res.ok) { skipped.push(toUpload[i].name); continue; }
+        newUrls.push(data.medium);
       }
 
       if (newUrls.length === 0) {

@@ -4,28 +4,25 @@ import { useRef, useState } from 'react';
 import { getToken } from '@/lib/landlord/client';
 import { supabase } from '@/lib/supabase';
 
-const MAX_PX = 1200;
-const JPEG_QUALITY = 0.75;
 const MAX_PHOTOS = 25;
 const MIN_PHOTOS = 1;
 
+// Convert any format (HEIC, PNG, WebP, etc.) to JPEG without resizing.
+// Full original resolution is preserved; only the container format changes.
 function compressImage(file: File): Promise<File> {
   return new Promise((resolve) => {
     const img = document.createElement('img');
     const url = URL.createObjectURL(file);
     img.onload = () => {
       URL.revokeObjectURL(url);
-      const scale = Math.min(1, MAX_PX / Math.max(img.width, img.height));
-      const w = Math.round(img.width * scale);
-      const h = Math.round(img.height * scale);
       const canvas = document.createElement('canvas');
-      canvas.width = w;
-      canvas.height = h;
-      canvas.getContext('2d')!.drawImage(img, 0, 0, w, h);
+      canvas.width = img.width;
+      canvas.height = img.height;
+      canvas.getContext('2d')!.drawImage(img, 0, 0);
       canvas.toBlob(
         (blob) => resolve(blob ? new File([blob], file.name.replace(/\.\w+$/, '.jpg'), { type: 'image/jpeg' }) : file),
         'image/jpeg',
-        JPEG_QUALITY,
+        1.0,
       );
     };
     img.onerror = () => { URL.revokeObjectURL(url); resolve(file); };

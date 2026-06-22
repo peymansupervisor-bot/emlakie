@@ -36,34 +36,6 @@ const AMENITIES_LIST = [
 
 type Step = 1 | 2 | 3 | 4;
 
-// Compress a photo in the browser before upload so the multipart body stays
-// well under Vercel's 4.5 MB serverless request limit. The server runs sharp
-// again for final quality tuning, but this pre-pass is what prevents 413s.
-async function compressBrowser(file: File): Promise<File> {
-  const MAX_PX = 1920;
-  const QUALITY = 0.82;
-  return new Promise((resolve) => {
-    const img = new Image();
-    const url = URL.createObjectURL(file);
-    img.onload = () => {
-      URL.revokeObjectURL(url);
-      const scale = Math.min(1, MAX_PX / Math.max(img.width, img.height));
-      const w = Math.round(img.width * scale);
-      const h = Math.round(img.height * scale);
-      const canvas = document.createElement('canvas');
-      canvas.width = w;
-      canvas.height = h;
-      canvas.getContext('2d')!.drawImage(img, 0, 0, w, h);
-      canvas.toBlob(
-        (blob) => resolve(blob ? new File([blob], file.name, { type: 'image/jpeg' }) : file),
-        'image/jpeg',
-        QUALITY,
-      );
-    };
-    img.onerror = () => { URL.revokeObjectURL(url); resolve(file); };
-    img.src = url;
-  });
-}
 
 interface FormData {
   address: string;
@@ -271,47 +243,71 @@ export default function NewPropertyPage() {
     }));
   }
 
+  const MAX_PHOTOS = 20;
+
+  async function processOnePhoto(f: File, preview: string, user: { id: string }) {
+    try {
+      const rawPath = `${user.id}/originals/${Date.now()}-${Math.random().toString(36).slice(2)}`;
+      const { error: upErr } = await supabase.storage
+        .from('listing-photos')
+        .upload(rawPath, f, { upsert: false });
+      if (upErr) throw new Error(upErr.message);
+
+      const token = await getToken();
+      const res = await fetch('/api/process-image', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ path: rawPath }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? 'Processing failed');
+
+      URL.revokeObjectURL(preview);
+      setPhotoItems((prev) => prev.map((p) =>
+        p.preview === preview ? { preview: data.medium, medium: data.medium, uploading: false } : p,
+      ));
+    } catch (err) {
+      URL.revokeObjectURL(preview);
+      setPhotoItems((prev) => prev.map((p) =>
+        p.preview === preview ? { ...p, uploading: false, error: (err as Error).message } : p,
+      ));
+    }
+  }
+
   async function addPhotos(files: FileList | null) {
     if (!files) return;
-    const newFiles = Array.from(files).filter(
+
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) { setError('You must be signed in to upload photos.'); return; }
+
+    const accepted = Array.from(files).filter(
       (f) => f.type.startsWith('image/') || /\.(heic|heif)$/i.test(f.name),
     );
-    for (const f of newFiles) {
-      const preview = URL.createObjectURL(f);
-      const placeholder: PhotoItem = { preview, medium: '', uploading: true };
-      setPhotoItems((prev) => [...prev, placeholder]);
 
-      try {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) throw new Error('Not signed in');
+    // Enforce cap
+    const slotsLeft = MAX_PHOTOS - photoItems.filter((p) => !p.error).length;
+    const toProcess = accepted.slice(0, slotsLeft);
 
-        // Upload raw file to storage — server will process it
-        const rawPath = `${user.id}/originals/${Date.now()}-${Math.random().toString(36).slice(2)}`;
-        const { error: upErr } = await supabase.storage
-          .from('listing-photos')
-          .upload(rawPath, f, { upsert: false });
-        if (upErr) throw new Error(upErr.message);
+    if (toProcess.length === 0) {
+      setError(`Maximum ${MAX_PHOTOS} photos allowed.`);
+      return;
+    }
 
-        // Server-side processing: HEIC decode, resize variants, EXIF rotation
-        const token = await getToken();
-        const res = await fetch('/api/process-image', {
-          method: 'POST',
-          headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
-          body: JSON.stringify({ path: rawPath }),
-        });
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error ?? 'Processing failed');
+    // Add all placeholders immediately so the user sees spinners
+    const placeholders: PhotoItem[] = toProcess.map((f) => ({
+      preview: URL.createObjectURL(f),
+      medium: '',
+      uploading: true,
+    }));
+    setPhotoItems((prev) => [...prev, ...placeholders]);
 
-        URL.revokeObjectURL(preview);
-        setPhotoItems((prev) => prev.map((p) =>
-          p.preview === preview ? { preview: data.medium, medium: data.medium, uploading: false } : p,
-        ));
-      } catch (err) {
-        URL.revokeObjectURL(preview);
-        setPhotoItems((prev) => prev.map((p) =>
-          p.preview === preview ? { ...p, uploading: false, error: (err as Error).message } : p,
-        ));
-      }
+    // Process up to 3 at a time (concurrency limit)
+    const CONCURRENCY = 3;
+    for (let i = 0; i < toProcess.length; i += CONCURRENCY) {
+      const batch = toProcess.slice(i, i + CONCURRENCY);
+      await Promise.all(
+        batch.map((f, bi) => processOnePhoto(f, placeholders[i + bi].preview, user))
+      );
     }
   }
 
@@ -716,7 +712,7 @@ export default function NewPropertyPage() {
                 d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
             </svg>
             <span className="font-semibold">Click or drag photos here</span>
-            <span className="text-xs">JPG, PNG — up to 20 photos</span>
+            <span className="text-xs">JPG, PNG, HEIC (iPhone) — up to 20 photos</span>
           </button>
           <input ref={fileRef} type="file" accept="image/*" multiple className="hidden"
             onChange={(e) => addPhotos(e.target.files)} />
@@ -735,7 +731,8 @@ export default function NewPropertyPage() {
                     </div>
                   ) : item.error ? (
                     <div className="flex h-full w-full flex-col items-center justify-center gap-1 p-2 text-center">
-                      <span className="text-xs text-red-500">Failed</span>
+                      <span className="text-[10px] font-semibold text-red-500">Failed</span>
+                      <span className="text-[9px] text-red-400 leading-tight line-clamp-3">{item.error}</span>
                     </div>
                   ) : (
                     /* eslint-disable-next-line @next/next/no-img-element */

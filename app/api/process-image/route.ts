@@ -19,20 +19,19 @@ function isHeic(buf: Buffer): boolean {
   return ftyp === 'ftyp' && /heic|heis|hevc|hevx|mif1|msf1/i.test(brand)
 }
 
-async function toProcessableBuffer(raw: Buffer): Promise<Buffer> {
-  // Try sharp directly first — on Linux (Vercel) the prebuilt binary statically
-  // links libde265, so HEIC decodes natively. Falls back to heic-convert WASM
-  // for environments where the native HEVC decoder isn't available.
+// Returns a JPEG-safe buffer. Tries Sharp directly first (works on most formats).
+// For HEIC/HEIF, Sharp's prebuilt binary lacks the HEVC decoder, so we fall back
+// to heic-convert which bundles its own WebAssembly libheif with the decoder.
+async function toJpegReadyBuffer(raw: Buffer): Promise<Buffer> {
   try {
     await sharp(raw, { failOn: 'none' }).metadata()
     return raw
   } catch {
-    // Sharp can't read this file — try heic-convert if it looks like HEIC/HEIF
-    if (!isHeic(raw)) throw new Error('Unsupported image format')
+    if (!isHeic(raw)) throw new Error('Unsupported image format — only JPEG, PNG, WebP, TIFF, and HEIC are accepted')
     // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const heicConvert = require('heic-convert') as (opts: { buffer: Buffer; format: 'JPEG'; quality: number }) => Promise<ArrayBuffer | Buffer>
-    const result = await heicConvert({ buffer: raw, format: 'JPEG', quality: 1 })
-    return Buffer.from(result)
+    const heicConvert = require('heic-convert') as (o: { buffer: Buffer; format: 'JPEG'; quality: number }) => Promise<ArrayBuffer>
+    const ab: ArrayBuffer = await heicConvert({ buffer: raw, format: 'JPEG', quality: 1 })
+    return Buffer.from(new Uint8Array(ab))
   }
 }
 
@@ -45,8 +44,9 @@ export async function POST(req: NextRequest) {
     const { data: { user }, error: authErr } = await supabase.auth.getUser()
     if (authErr || !user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-    const { path } = await req.json() as { path: string }
-    if (!path) return NextResponse.json({ error: 'Missing path' }, { status: 400 })
+    const body = await req.json() as { path?: string }
+    if (!body.path) return NextResponse.json({ error: 'Missing path' }, { status: 400 })
+    const { path } = body
 
     const adminStorage = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -55,7 +55,7 @@ export async function POST(req: NextRequest) {
 
     const { data: rawData, error: downloadErr } = await adminStorage.from('listing-photos').download(path)
     if (downloadErr || !rawData) {
-      return NextResponse.json({ error: `Failed to download original: ${downloadErr?.message}` }, { status: 500 })
+      return NextResponse.json({ error: `Download failed: ${downloadErr?.message ?? 'no data'}` }, { status: 500 })
     }
 
     const rawBuffer = Buffer.from(await rawData.arrayBuffer())
@@ -65,43 +65,51 @@ export async function POST(req: NextRequest) {
 
     let inputBuffer: Buffer
     try {
-      inputBuffer = await toProcessableBuffer(rawBuffer)
+      inputBuffer = await toJpegReadyBuffer(rawBuffer)
     } catch (e) {
-      return NextResponse.json({ error: `Image decode failed: ${(e as Error).message}` }, { status: 500 })
+      return NextResponse.json({ error: `Decode failed: ${(e as Error).message}` }, { status: 422 })
     }
+
+    // Build clean variant paths: {userId}/{variant}/{filename}.jpg
+    // Raw path is e.g. "abc123/originals/1700000000000-xyz" — no extension
+    const userId = path.split('/')[0]
+    const rawName = path.split('/').pop()!
+    const baseName = rawName.replace(/\.[^.]+$/, '') // strip extension if present
 
     const urls: Record<string, string> = {}
 
     for (const variant of VARIANTS) {
-      let pipeline = sharp(inputBuffer, { failOn: 'none' })
-        .rotate()
-        .toFormat('jpeg', { quality: 95, mozjpeg: true })
+      const pipeline = sharp(inputBuffer, { failOn: 'none' })
+        .rotate()                                                          // honour EXIF orientation
+        .toFormat('jpeg', { quality: 95, mozjpeg: true })                 // lossless-quality JPEG
 
       if (variant.width) {
-        pipeline = pipeline.resize(variant.width, null, { withoutEnlargement: true, fit: 'inside' })
+        pipeline.resize(variant.width, null, { withoutEnlargement: true, fit: 'inside' })
       }
 
       let processed: Buffer
       try {
         processed = await pipeline.toBuffer()
       } catch (e) {
-        return NextResponse.json({ error: `Sharp encode failed (${variant.name}): ${(e as Error).message}` }, { status: 500 })
+        return NextResponse.json({ error: `Encode failed (${variant.name}): ${(e as Error).message}` }, { status: 500 })
       }
 
-      const variantPath = path.replace(/^([^/]+)\//, `$1/${variant.name}/`).replace(/\.[^.]+$/, '.jpg') + (path.includes('.') ? '' : '.jpg')
+      const variantPath = `${userId}/${variant.name}/${baseName}.jpg`
 
       const { error: uploadErr } = await adminStorage
         .from('listing-photos')
         .upload(variantPath, processed, { contentType: 'image/jpeg', upsert: true })
 
       if (uploadErr) {
-        return NextResponse.json({ error: `Failed to upload ${variant.name}: ${uploadErr.message}` }, { status: 500 })
+        return NextResponse.json({ error: `Upload failed (${variant.name}): ${uploadErr.message}` }, { status: 500 })
       }
 
       urls[variant.name] = adminStorage.from('listing-photos').getPublicUrl(variantPath).data.publicUrl
     }
 
+    // Delete the raw original now that variants are stored
     await adminStorage.from('listing-photos').remove([path])
+
     return NextResponse.json(urls)
   } catch (e) {
     return NextResponse.json({ error: `Unexpected error: ${(e as Error).message}` }, { status: 500 })

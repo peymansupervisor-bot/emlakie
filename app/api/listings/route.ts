@@ -3,7 +3,6 @@ import { createSupabaseWithToken } from '@/lib/supabase-server'
 import { createClient } from '@supabase/supabase-js'
 import { generateListingSlug } from '@/lib/format'
 import { geocodeAddress } from '@/lib/geocode'
-import { compressImage } from '@/lib/compress-image'
 // Route segment config — tells Next.js/Vercel this route needs extended body size
 // (up to 20 photos × 10 MB each before server-side compression)
 export const runtime = 'nodejs'
@@ -68,32 +67,11 @@ export async function POST(req: NextRequest) {
 
   // Parse multipart form
   const formData = await req.formData()
-  const photoFiles = formData.getAll('photos') as File[]
 
-  const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/heic'];
-  const MAX_SIZE = 10 * 1024 * 1024; // 10MB raw upload limit (compressed output will be far smaller)
-
-  // Upload photos to Supabase Storage
-  const photoUrls: string[] = []
-  for (const file of photoFiles) {
-    if (!ALLOWED_TYPES.includes(file.type)) continue;
-    if (file.size > MAX_SIZE) continue;
-    const raw = Buffer.from(await file.arrayBuffer())
-    const { buffer, contentType } = await compressImage(raw, file.type)
-    const ext = contentType === 'image/webp' ? 'webp' : 'jpg'
-    const path = `${user.id}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
-
-    const { error: uploadErr } = await supabase.storage
-      .from('listing-photos')
-      .upload(path, buffer, { contentType, upsert: false })
-
-    if (!uploadErr) {
-      const { data: { publicUrl } } = supabase.storage
-        .from('listing-photos')
-        .getPublicUrl(path)
-      photoUrls.push(publicUrl)
-    }
-  }
+  // Photos are now uploaded directly from the browser to Supabase Storage.
+  // The route receives only the resulting public URLs — no binary data,
+  // no body-size pressure, no 413 regardless of how many photos.
+  const photoUrls = formData.getAll('photoUrl').map(String).filter(Boolean)
 
   const amenities = JSON.parse(formData.get('amenities') as string ?? '[]')
 

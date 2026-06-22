@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { useRef, useState } from 'react';
 import { createListing } from '@/lib/landlord/client';
+import { supabase } from '@/lib/supabase';
 
 const PROPERTY_TYPES = [
   { value: 'house',     label: 'House' },
@@ -333,8 +334,21 @@ export default function NewPropertyPage() {
       if (form.isBroker && form.licenseNumber.trim()) fd.append('licenseNumber', form.licenseNumber.trim());
       if (form.ownershipType) fd.append('ownershipType', form.ownershipType);
       if (form.virtualTourUrl.trim()) fd.append('virtualTourUrl', form.virtualTourUrl.trim());
-      const compressed = await Promise.all(photos.map(compressBrowser));
-      compressed.forEach((f) => fd.append('photos', f));
+      // Upload photos directly to Supabase Storage from the browser so the
+      // listing API route only receives small URL strings — no binary data,
+      // no serverless body-size limit, no 413 regardless of photo count.
+      const { data: { user } } = await supabase.auth.getUser();
+      const uid = user?.id ?? 'anon';
+      const photoUrls = await Promise.all(photos.map(async (file) => {
+        const blob = await compressBrowser(file);
+        const path = `${uid}/${Date.now()}-${Math.random().toString(36).slice(2)}.jpg`;
+        const { error: upErr } = await supabase.storage
+          .from('listing-photos')
+          .upload(path, blob, { contentType: 'image/jpeg', upsert: false });
+        if (upErr) throw new Error(`Photo upload failed: ${upErr.message}`);
+        return supabase.storage.from('listing-photos').getPublicUrl(path).data.publicUrl;
+      }));
+      photoUrls.forEach((url) => fd.append('photoUrl', url));
       await createListing(fd);
       router.push('/landlord?created=1');
     } catch (e) {

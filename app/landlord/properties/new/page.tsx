@@ -5,7 +5,13 @@ import { useRef, useState } from 'react';
 import { createListing } from '@/lib/landlord/client';
 import { supabase } from '@/lib/supabase';
 
-function convertToJpeg(file: File): Promise<File> {
+async function convertToJpeg(file: File): Promise<File> {
+  const isHeic = file.type === 'image/heic' || file.type === 'image/heif' || /\.(heic|heif)$/i.test(file.name);
+  if (isHeic) {
+    const heic2any = (await import('heic2any')).default;
+    const blob = await heic2any({ blob: file, toType: 'image/jpeg', quality: 1 }) as Blob;
+    return new File([blob], file.name.replace(/\.\w+$/, '.jpg'), { type: 'image/jpeg' });
+  }
   return new Promise((resolve) => {
     const img = document.createElement('img');
     const url = URL.createObjectURL(file);

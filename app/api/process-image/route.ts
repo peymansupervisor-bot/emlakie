@@ -39,7 +39,13 @@ export async function POST(req: NextRequest) {
   }
 
   const rawBuffer = Buffer.from(await rawData.arrayBuffer())
-  console.log('[process-image] downloaded bytes:', rawBuffer.length, '| first 12:', rawBuffer.slice(0, 12).toString('hex'))
+  const byteLen = rawBuffer.length
+  const first16 = rawBuffer.slice(0, 16).toString('hex')
+  const first16str = rawBuffer.slice(0, 16).toString('utf8').replace(/[^\x20-\x7e]/g, '?')
+
+  if (byteLen === 0) {
+    return NextResponse.json({ error: `Buffer is empty — Supabase returned 0 bytes for path: ${path}` }, { status: 500 })
+  }
 
   const urls: Record<string, string> = {}
 
@@ -52,7 +58,15 @@ export async function POST(req: NextRequest) {
       pipeline = pipeline.resize(variant.width, null, { withoutEnlargement: true, fit: 'inside' })
     }
 
-    const processed = await pipeline.toBuffer()
+    let processed: Buffer
+    try {
+      processed = await pipeline.toBuffer()
+    } catch (sharpErr) {
+      return NextResponse.json({
+        error: `Sharp failed on variant ${variant.name}: ${(sharpErr as Error).message}`,
+        debug: { byteLen, first16, first16str },
+      }, { status: 500 })
+    }
     const variantPath = path.replace(/^([^/]+)\//, `$1/${variant.name}/`).replace(/\.[^.]+$/, '.jpg')
 
     const { error: uploadErr } = await adminStorage
@@ -60,7 +74,7 @@ export async function POST(req: NextRequest) {
       .upload(variantPath, processed, { contentType: 'image/jpeg', upsert: true })
 
     if (uploadErr) {
-      return NextResponse.json({ error: `Failed to upload ${variant.name}: ${uploadErr.message}` }, { status: 500 })
+      return NextResponse.json({ error: `Failed to upload ${variant.name}: ${uploadErr.message}`, debug: { byteLen, first16, first16str } }, { status: 500 })
     }
 
     urls[variant.name] = adminStorage.from('listing-photos').getPublicUrl(variantPath).data.publicUrl

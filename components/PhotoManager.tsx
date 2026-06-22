@@ -1,6 +1,7 @@
 'use client';
 
 import { useRef, useState } from 'react';
+import Image from 'next/image';
 import { getToken } from '@/lib/landlord/client';
 import { supabase } from '@/lib/supabase';
 
@@ -177,7 +178,7 @@ export default function PhotoManager({ listingId, initialPhotos }: Props) {
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
           {photos.map((url, i) => (
             <div key={url} className="group relative aspect-[4/3] overflow-hidden rounded-xl bg-gray-100">
-              <img src={url} alt={`Photo ${i + 1}`} className="absolute inset-0 h-full w-full object-cover" />
+              <Image src={url} alt={`Photo ${i + 1}`} fill sizes="(max-width: 640px) 50vw, 33vw" className="object-cover" />
               <div className="absolute inset-0 bg-black/0 transition group-hover:bg-black/30" />
               <button
                 onClick={() => handleDelete(url)}

@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { getMyListings, updateListing } from '@/lib/landlord/client';
@@ -186,7 +187,7 @@ function LandlordBuildingGroup({
                     <Link href={`/landlord/properties/${listing.id}`} className="flex items-center gap-3">
                       <span className="relative block h-12 w-16 shrink-0 overflow-hidden rounded-lg bg-gray-100">
                         {listing.photos?.[0] && (
-                          <img src={listing.photos[0]} alt="" className="absolute inset-0 h-full w-full object-cover" loading="lazy" />
+                          <Image src={listing.photos[0]} alt="" fill sizes="64px" className="object-cover" />
                         )}
                       </span>
                       <span>
@@ -396,7 +397,7 @@ export default function PropertiesPage() {
                             <Link href={`/landlord/properties/${listing.id}`} className="flex items-center gap-3">
                               <span className="relative block h-12 w-16 shrink-0 overflow-hidden rounded-lg bg-gray-100">
                                 {listing.photos?.[0] && (
-                                  <img src={listing.photos[0]} alt="" className="absolute inset-0 h-full w-full object-cover" loading="lazy" />
+                                  <Image src={listing.photos[0]} alt="" fill sizes="64px" className="object-cover" />
                                 )}
                               </span>
                               <span>

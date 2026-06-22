@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { deactivateListing, extendListing, getApplications, getMyListing, markRented, updateApplicationStatus, sendMessageToTenant, deleteApplication } from '@/lib/landlord/client';
@@ -160,7 +161,7 @@ export default function PropertyDashboardPage() {
       <div className="mt-4 flex items-center gap-4">
         <span className="relative block h-20 w-28 shrink-0 overflow-hidden rounded-xl bg-gray-100">
           {listing.photos?.[0] && (
-            <img src={listing.photos[0]} alt="" className="absolute inset-0 h-full w-full object-cover" />
+            <Image src={listing.photos[0]} alt="" fill sizes="112px" className="object-cover" />
           )}
         </span>
         <div>

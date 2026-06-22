@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { getListings } from '@/lib/api';
 
 export default async function RecentListings() {
@@ -16,7 +17,7 @@ export default async function RecentListings() {
         >
           <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-lg bg-gray-100">
             {l.photos?.[0] ? (
-              <img src={l.photos[0]} alt={`${l.city} rental`} className="absolute inset-0 h-full w-full object-cover" loading="lazy" />
+              <Image src={l.photos[0]} alt={`${l.city} rental`} fill sizes="56px" className="object-cover" />
             ) : (
               <div className="flex h-full w-full items-center justify-center">
                 <svg className="h-6 w-6 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">

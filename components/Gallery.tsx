@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
+import Image from 'next/image';
 
 interface Props {
   photos: string[];
@@ -92,10 +93,13 @@ export default function Gallery({ photos, title }: Props) {
           {failedIndices.has(activeIndex) ? (
             <PhotoPlaceholder />
           ) : (
-            <img
+            <Image
               src={photos[activeIndex]}
               alt={`${title} — photo ${activeIndex + 1}`}
-              className="absolute inset-0 h-full w-full object-cover"
+              fill
+              sizes="(max-width: 1280px) 100vw, 1280px"
+              className="object-cover"
+              priority={activeIndex === 0}
               onError={() => markFailed(activeIndex)}
             />
           )}
@@ -162,7 +166,7 @@ export default function Gallery({ photos, title }: Props) {
                 {failedIndices.has(i) ? (
                   <PhotoPlaceholder />
                 ) : (
-                  <img src={photo} alt={`Thumbnail ${i + 1}`} className="absolute inset-0 h-full w-full object-cover" loading="lazy" onError={() => markFailed(i)} />
+                  <Image src={photo} alt={`Thumbnail ${i + 1}`} fill sizes="96px" className="object-cover" onError={() => markFailed(i)} />
                 )}
               </button>
             ))}
@@ -219,10 +223,12 @@ export default function Gallery({ photos, title }: Props) {
               {failedIndices.has(activeIndex) ? (
                 <PhotoPlaceholder />
               ) : (
-                <img
+                <Image
                   src={photos[activeIndex]}
                   alt={`${title} — photo ${activeIndex + 1}`}
-                  className="absolute inset-0 h-full w-full object-contain"
+                  fill
+                  sizes="100vw"
+                  className="object-contain"
                   onError={() => markFailed(activeIndex)}
                 />
               )}
@@ -271,7 +277,7 @@ export default function Gallery({ photos, title }: Props) {
                   {failedIndices.has(i) ? (
                     <PhotoPlaceholder />
                   ) : (
-                    <img src={photo} alt={`Thumbnail ${i + 1}`} className="absolute inset-0 h-full w-full object-cover" loading="lazy" onError={() => markFailed(i)} />
+                    <Image src={photo} alt={`Thumbnail ${i + 1}`} fill sizes="96px" className="object-cover" onError={() => markFailed(i)} />
                   )}
                 </button>
               ))}

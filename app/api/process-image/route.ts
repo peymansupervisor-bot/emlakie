@@ -39,6 +39,8 @@ export async function POST(req: NextRequest) {
   }
 
   const rawBuffer = Buffer.from(await rawData.arrayBuffer())
+  console.log('[process-image] downloaded bytes:', rawBuffer.length, '| first 12:', rawBuffer.slice(0, 12).toString('hex'))
+
   const urls: Record<string, string> = {}
 
   for (const variant of VARIANTS) {

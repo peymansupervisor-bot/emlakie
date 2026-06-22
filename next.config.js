@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   experimental: {
-    serverComponentsExternalPackages: ['axe-core', 'jsdom', 'sharp'],
+    serverComponentsExternalPackages: ['axe-core', 'jsdom', 'sharp', 'heic-convert'],
         // Allow large multipart uploads for photo-heavy listings (up to 20 × 10 MB)
         serverActions: {
                 bodySizeLimit: '50mb',

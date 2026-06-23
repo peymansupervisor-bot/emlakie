@@ -28,6 +28,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
     { href: '/135265826/health', label: '⬤ Health', badge: null },
     { href: '/135265826/landlords', label: 'Landlords', badge: missingIdCount > 0 ? missingIdCount : null },
     { href: '/135265826/moderators', label: 'Moderators', badge: null },
+    { href: '/135265826/diagnostics', label: 'Diagnostics', badge: null },
   ];
 
   return (

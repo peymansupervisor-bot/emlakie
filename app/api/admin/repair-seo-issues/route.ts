@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getModeratorSession, adminClient } from '@/lib/moderator';
 import { cureSeoIssues } from '@/lib/seo-cure';
+import { logError } from '@/lib/log-error';
 
 export const maxDuration = 300;
 
@@ -31,6 +32,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(result);
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e);
+    await logError('SEO Cure', msg, e instanceof Error ? e.stack : undefined);
     return NextResponse.json({ error: msg }, { status: 500 });
   }
 }

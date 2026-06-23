@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getModeratorSession } from '@/lib/moderator';
+import { logError } from '@/lib/log-error';
 
 export const maxDuration = 300;
 
@@ -16,6 +17,11 @@ export async function POST(req: NextRequest) {
     headers: { Authorization: `Bearer ${secret}` },
   });
 
-  if (!res.ok) return NextResponse.json({ error: 'SEO audit failed' }, { status: 502 });
+  if (!res.ok) {
+    let body = '';
+    try { body = await res.text(); } catch {}
+    await logError('SEO Audit', `Audit cron returned ${res.status}`, body || undefined);
+    return NextResponse.json({ error: 'SEO audit failed', details: body }, { status: 502 });
+  }
   return NextResponse.json({ ok: true });
 }

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getModeratorSession, adminClient } from '@/lib/moderator';
 import { cureViolations } from '@/lib/ada-cure';
+import { logError } from '@/lib/log-error';
 
 export async function POST(req: NextRequest) {
   const session = await getModeratorSession();
@@ -24,6 +25,12 @@ export async function POST(req: NextRequest) {
     .select('page_path, violations, violation_count')
     .eq('run_id', latestRecord.run_id);
 
-  const result = await cureViolations(records ?? []);
-  return NextResponse.json(result);
+  try {
+    const result = await cureViolations(records ?? []);
+    return NextResponse.json(result);
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : String(e);
+    await logError('ADA Cure', msg, e instanceof Error ? e.stack : undefined);
+    return NextResponse.json({ error: msg }, { status: 500 });
+  }
 }

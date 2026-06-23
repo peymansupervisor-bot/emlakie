@@ -2,11 +2,11 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 
 export const metadata: Metadata = {
-  title: 'How EMLAKIE Works — Find & List Rentals Without a Broker',
-  description: 'EMLAKIE connects renters directly with landlords — no broker, no middleman, no fees. Learn how to search for a rental, apply online, and list your property for free in under 5 minutes.',
+  title: 'How EMLAKIE Works — Rent Direct, No Broker Fees',
+  description: 'EMLAKIE connects renters directly with landlords — no broker, no fees. Search rentals, apply online, and list your property for free in under 5 minutes.',
   alternates: { canonical: 'https://emlakie.com/how-it-works' },
   openGraph: {
-    title: 'How EMLAKIE Works — Find & List Rentals Without a Broker',
+    title: 'How EMLAKIE Works — Rent Direct, No Broker Fees',
     description: 'EMLAKIE connects renters and landlords directly. No broker fees, no commissions. Here\'s how it works.',
     type: 'website',
     url: 'https://emlakie.com/how-it-works',
@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'How EMLAKIE Works — Find & List Rentals Without a Broker',
+    title: 'How EMLAKIE Works — Rent Direct, No Broker Fees',
     description: 'EMLAKIE connects renters and landlords directly. No broker fees, no commissions.',
     images: ['/og-image.png'],
   },

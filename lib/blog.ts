@@ -2256,6 +2256,67 @@ export const posts: Post[] = [
 <p><em>This article is for informational purposes only and does not constitute legal, licensing, or real estate advice. Consult Washington DSHS directly for current AFH licensing requirements, and consult a licensed attorney before entering into any long-term lease agreement.</em></p>
     `.trim(),
   },
+  {
+    slug: 'apartment-safety-hazards-insurance-liability-2026',
+    title: '5 Apartment Safety Issues That Cost Insurance Companies a Fortune',
+    description: 'From pool gate latches to uneven pavement — the most preventable premises liability hazards in multifamily residential properties, and what they cost when ignored.',
+    date: '2026-06-22',
+    category: 'Landlord Tips',
+    readTime: 6,
+    content: `
+<p>Every year, insurance companies pay out billions of dollars on premises liability claims — and a significant chunk of those payouts trace back to the same handful of preventable hazards in multifamily residential properties. The frustrating part? Most of these risks are well-known, inexpensive to fix, and still ignored until someone gets hurt.</p>
+
+<p>If you manage or own an apartment complex, here are five safety issues that should be on your radar today.</p>
+
+<h2>1. Swimming Pool Gates Without Self-Closing, Self-Latching Hardware</h2>
+<p>A pool without a proper self-closing, self-latching gate is one of the most serious liability exposures a property can carry. If a child wanders through a propped-open or broken gate and drowns or is injured, the legal consequences are severe — and the insurance payout can be catastrophic.</p>
+
+<p>Most jurisdictions require pool barriers to meet specific code standards: gates must swing closed and latch automatically without human assistance, and the latch must be positioned out of reach of young children. Despite this, many properties operate with gates that are broken, propped open, or never upgraded to compliant hardware in the first place.</p>
+
+<p>The fix is straightforward. Self-closing hinges and self-latching mechanisms are affordable, widely available, and install in under an hour. Pool fencing inspections should be part of every monthly property walkthrough — not just an annual checklist item.</p>
+
+<p>From an insurance standpoint, a single drowning claim can result in a settlement in the millions. The gate hardware costs less than $300.</p>
+
+<h2>2. Unmarked Step Edges on Stairs and Elevated Walkways</h2>
+<p>Falls on stairs are one of the most common causes of serious injury in apartment communities. One of the most effective and inexpensive deterrents is also one of the most overlooked: high-visibility nosing strips on the leading edge of each step.</p>
+
+<p>The bright yellow or contrasting-color tape or rubber nosing strips serve a simple but critical function — they define where one step ends and the next begins, especially in low-light conditions, for elderly residents, or for anyone carrying groceries or a child. Without them, steps blur together visually, and a misjudged step can result in a severe fall, a fractured hip, or a traumatic brain injury.</p>
+
+<p>Property managers should audit every staircase on the property: interior, exterior, parking structure, and pool deck stairs alike. Worn or peeling strips should be replaced immediately — a damaged strip can actually increase trip risk compared to no strip at all.</p>
+
+<p>Premises liability attorneys look for unmarked steps and worn nosing strips as evidence of negligence in slip-and-fall cases. It is difficult to argue reasonable care when the corrective measure costs less than $50 per staircase.</p>
+
+<h2>3. Inadequate Lighting in Common Areas</h2>
+<p>Poor lighting is an invisible hazard that contributes to two distinct categories of risk: slip-and-fall accidents and criminal incidents. Both carry significant insurance consequences.</p>
+
+<p>Parking lots, walkways, laundry rooms, mailbox areas, trash enclosures, and stairwells that are dimly lit after dark create conditions where residents cannot see uneven pavement, water puddles, steps, or other hazards. They also create conditions where crimes of opportunity are more likely to occur — which opens the door to negligent security claims, a growing area of premises liability law.</p>
+
+<p>A proper lighting audit should assess every exterior common area for adequate foot-candle levels, check that all fixtures are functional (burned-out bulbs in common areas should never wait for a complaint to get replaced), and confirm that motion-sensor or timed lighting is working correctly.</p>
+
+<p>LED retrofits have made this one of the lowest-cost, highest-impact safety investments a property can make. The ongoing energy savings often pay back the installation cost within two years.</p>
+
+<h2>4. Uneven and Cracked Pavement</h2>
+<p>Uneven pavement is a tripping hazard hiding in plain sight. Sidewalk sections that have lifted or settled, cracked asphalt in the parking lot, deteriorating concrete near building entrances, and heaved pavers around pool decks or landscaping — all of these create documented trip hazards.</p>
+
+<p>What makes these claims particularly expensive from an insurance perspective is the documentation they generate. A plaintiff's attorney will photograph every crack, request your maintenance logs, and ask when the hazard was first reported. If a resident submitted a complaint and the hazard went unaddressed for months, that paper trail becomes evidence of conscious disregard for safety.</p>
+
+<p>Property inspections should include pavement condition assessments at least twice a year, with attention paid after freeze-thaw cycles, heavy rain, or tree root activity. Temporary measures like filling cracks with sealant or placing warning cones are acceptable short-term responses — but they only buy time, not immunity. Permanent repairs should be scheduled and documented.</p>
+
+<h2>5. Why This Matters Beyond the Individual Claim</h2>
+<p>Insurance carriers track loss history closely. A property with repeated slip-and-fall claims, premises liability suits, or pool incidents will face higher premiums at renewal — sometimes dramatically so. Some carriers will decline to renew coverage entirely, forcing the property owner into a surplus lines market with even steeper rates and fewer protections.</p>
+
+<p>Proactive safety management is not just a moral obligation. It is a financial strategy. The cost of fixing these hazard categories across a typical apartment community is measured in the low thousands of dollars. The average premises liability settlement is measured in the tens or hundreds of thousands — and that is before legal defense costs, which regularly exceed the settlement amount.</p>
+
+<p>The properties that maintain the best insurance relationships are the ones that can document a consistent, verifiable safety program. Inspection logs, maintenance records, vendor invoices, and photographic evidence of completed repairs all tell an underwriter that this is a well-managed property — and well-managed properties get better rates.</p>
+
+<h2>The Bottom Line</h2>
+<p>Self-closing pool gates. High-visibility stair nosing. Adequate common area lighting. Level, well-maintained pavement. These are not exotic safety engineering challenges. They are basic property maintenance items that a surprising number of apartment communities still get wrong — until a claim makes it impossible to ignore.</p>
+
+<p>Fix them now. Document that you fixed them. And review them again next quarter.</p>
+
+<p><em>This article is intended for general informational purposes and does not constitute legal or insurance advice. Consult a licensed insurance professional or attorney regarding your specific property and jurisdiction.</em></p>
+    `.trim(),
+  },
 ];
 
 export function getPost(slug: string): Post | undefined {

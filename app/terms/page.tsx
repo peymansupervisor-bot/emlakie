@@ -47,6 +47,7 @@ export default function TermsPage() {
             'User Accounts',
             'Acceptable Use Policy',
             'User-Generated Content',
+            'Listing Moderation and Removal',
             'Identity Verification',
             'No Guarantee of Results',
             'Intellectual Property',
@@ -170,7 +171,28 @@ export default function TermsPage() {
         </section>
 
         <section id="section-7">
-          <h2 className="text-xl font-bold text-gray-900">7. Identity Verification</h2>
+          <h2 className="text-xl font-bold text-gray-900">7. Listing Moderation and Removal</h2>
+          <p className="mt-2">
+            EMLAKIE LLC reserves the right, at its sole discretion and without prior notice, to delete, suspend,
+            or revise any listing posted on the platform at any time and for any reason, including but not limited
+            to violations of these Terms, inaccurate or misleading content, safety concerns, complaints from other
+            users, or any other circumstances EMLAKIE determines to be inconsistent with the integrity of the
+            platform.
+          </p>
+          <p className="mt-2">
+            Landlords whose listings are removed or suspended will not be entitled to any refund, compensation, or
+            advance notice. EMLAKIE's exercise of this right does not constitute a waiver of any other rights or
+            remedies available to EMLAKIE under these Terms or applicable law.
+          </p>
+          <p className="mt-2">
+            By posting a listing on EMLAKIE, you acknowledge and agree that EMLAKIE has no obligation to maintain,
+            display, or preserve any listing and may take down or modify any listing at any time without liability
+            to you.
+          </p>
+        </section>
+
+        <section id="section-9">
+          <h2 className="text-xl font-bold text-gray-900">9. Identity Verification</h2>
           <p className="mt-2">
             Landlords who list properties on EMLAKIE are required to complete identity verification through Stripe
             Identity before their listing is published. This process requires submission of a government-issued
@@ -184,8 +206,8 @@ export default function TermsPage() {
           </p>
         </section>
 
-        <section id="section-8">
-          <h2 className="text-xl font-bold text-gray-900">8. No Guarantee of Results</h2>
+        <section id="section-10">
+          <h2 className="text-xl font-bold text-gray-900">10. No Guarantee of Results</h2>
           <p className="mt-2">
             EMLAKIE does not guarantee any specific outcome from using the Services, including:
           </p>
@@ -200,8 +222,8 @@ export default function TermsPage() {
           </p>
         </section>
 
-        <section id="section-9">
-          <h2 className="text-xl font-bold text-gray-900">9. Intellectual Property</h2>
+        <section id="section-11">
+          <h2 className="text-xl font-bold text-gray-900">11. Intellectual Property</h2>
           <p className="mt-2">
             All original content on the Services — including text, graphics, logos, software, and design — is the
             property of EMLAKIE LLC and is protected by applicable intellectual property laws. You may not
@@ -214,8 +236,8 @@ export default function TermsPage() {
           </p>
         </section>
 
-        <section id="section-10">
-          <h2 className="text-xl font-bold text-gray-900">10. Copyright / DMCA Policy</h2>
+        <section id="section-12">
+          <h2 className="text-xl font-bold text-gray-900">12. Copyright / DMCA Policy</h2>
           <p className="mt-2">
             All original content on this platform — including text, graphics, city guides, blog articles, and software — is the
             property of EMLAKIE LLC and is protected under the U.S. Copyright Act. EMLAKIE&apos;s copyright is registered with
@@ -236,8 +258,8 @@ export default function TermsPage() {
           </p>
         </section>
 
-        <section id="section-12">
-          <h2 className="text-xl font-bold text-gray-900">11. Third-Party Services</h2>
+        <section id="section-13">
+          <h2 className="text-xl font-bold text-gray-900">13. Third-Party Services</h2>
           <p className="mt-2">
             The Services integrate with third-party providers including Stripe Identity (identity verification),
             Supabase (authentication and database), Vercel (hosting), and OpenStreetMap/Nominatim (address lookup).
@@ -250,8 +272,8 @@ export default function TermsPage() {
           </p>
         </section>
 
-        <section id="section-12">
-          <h2 className="text-xl font-bold text-gray-900">12. Disclaimers</h2>
+        <section id="section-14">
+          <h2 className="text-xl font-bold text-gray-900">14. Disclaimers</h2>
           <p className="mt-2">
             THE SERVICES ARE PROVIDED &quot;AS IS&quot; AND &quot;AS AVAILABLE&quot; WITHOUT WARRANTIES OF ANY KIND, EXPRESS OR
             IMPLIED, INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE,
@@ -264,8 +286,8 @@ export default function TermsPage() {
           </p>
         </section>
 
-        <section id="section-13">
-          <h2 className="text-xl font-bold text-gray-900">13. Limitation of Liability</h2>
+        <section id="section-15">
+          <h2 className="text-xl font-bold text-gray-900">15. Limitation of Liability</h2>
           <p className="mt-2">
             TO THE FULLEST EXTENT PERMITTED BY APPLICABLE LAW, EMLAKIE LLC, ITS OWNER(S), OFFICERS, EMPLOYEES,
             AGENTS, AND AFFILIATES SHALL NOT BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL,
@@ -282,8 +304,8 @@ export default function TermsPage() {
           </p>
         </section>
 
-        <section id="section-14">
-          <h2 className="text-xl font-bold text-gray-900">14. Indemnification</h2>
+        <section id="section-16">
+          <h2 className="text-xl font-bold text-gray-900">16. Indemnification</h2>
           <p className="mt-2">
             You agree to defend, indemnify, and hold harmless EMLAKIE LLC, its owner(s), officers, employees,
             agents, affiliates, successors, and assigns from and against any and all claims, damages, losses,
@@ -298,8 +320,8 @@ export default function TermsPage() {
           </ul>
         </section>
 
-        <section id="section-15">
-          <h2 className="text-xl font-bold text-gray-900">15. Arbitration and Class Action Waiver</h2>
+        <section id="section-17">
+          <h2 className="text-xl font-bold text-gray-900">17. Arbitration and Class Action Waiver</h2>
           <p className="mt-2">
             <strong>Please read this section carefully. It affects your legal rights.</strong>
           </p>
@@ -325,8 +347,8 @@ export default function TermsPage() {
           </p>
         </section>
 
-        <section id="section-16">
-          <h2 className="text-xl font-bold text-gray-900">16. Governing Law</h2>
+        <section id="section-18">
+          <h2 className="text-xl font-bold text-gray-900">18. Governing Law</h2>
           <p className="mt-2">
             These Terms shall be governed by and construed in accordance with the laws of the State of California,
             without regard to its conflict-of-law provisions. For any disputes not subject to arbitration, you
@@ -334,8 +356,8 @@ export default function TermsPage() {
           </p>
         </section>
 
-        <section id="section-17">
-          <h2 className="text-xl font-bold text-gray-900">17. Termination</h2>
+        <section id="section-19">
+          <h2 className="text-xl font-bold text-gray-900">19. Termination</h2>
           <p className="mt-2">
             We reserve the right to suspend or terminate your access to the Services at any time, with or without
             notice, for any reason, including if we believe you have violated these Terms. Upon termination, all
@@ -347,8 +369,8 @@ export default function TermsPage() {
           </p>
         </section>
 
-        <section id="section-18">
-          <h2 className="text-xl font-bold text-gray-900">18. Changes to These Terms</h2>
+        <section id="section-20">
+          <h2 className="text-xl font-bold text-gray-900">20. Changes to These Terms</h2>
           <p className="mt-2">
             We may update these Terms at any time. When we do, we will post the revised Terms with an updated
             effective date. Your continued use of the Services after any changes constitutes your acceptance of the
@@ -356,8 +378,8 @@ export default function TermsPage() {
           </p>
         </section>
 
-        <section id="section-19">
-          <h2 className="text-xl font-bold text-gray-900">19. Contact Information</h2>
+        <section id="section-21">
+          <h2 className="text-xl font-bold text-gray-900">21. Contact Information</h2>
           <p className="mt-2">If you have questions about these Terms, please contact us:</p>
           <div className="mt-4 space-y-1">
             <p>EMLAKIE LLC</p>

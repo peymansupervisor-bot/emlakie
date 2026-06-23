@@ -2,11 +2,11 @@ import Link from 'next/link';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'List Your Rental Property Free — EMLAKIE for Landlords',
+  title: 'List Your Rental Free — EMLAKIE for Landlords',
   description: 'Post your rental listing free on EMLAKIE. Reach thousands of local renters, manage applications, and fill vacancies faster — no broker fees ever.',
   alternates: { canonical: 'https://emlakie.com/landlords' },
   openGraph: {
-    title: 'List Your Rental Property Free | EMLAKIE',
+    title: 'List Your Rental Free | EMLAKIE for Landlords',
     description: 'Reach thousands of local renters. No broker fees, no commissions. Takes under 5 minutes.',
     type: 'website',
     url: 'https://emlakie.com/landlords',
@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'List Your Rental Property Free | EMLAKIE',
+    title: 'List Your Rental Free | EMLAKIE for Landlords',
     description: 'Reach thousands of local renters. No broker fees, no commissions. Takes under 5 minutes.',
     images: ['/og-image.png'],
   },

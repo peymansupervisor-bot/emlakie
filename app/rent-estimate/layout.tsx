@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Free Rent Estimate — What Should I Charge? | EMLAKIE',
-  description: "Get a free rent estimate for your property. See what similar homes rent for in your area — powered by real listings data. Perfect for landlords pricing a new rental.",
+  title: 'Free Rent Estimate for Landlords | EMLAKIE',
+  description: "Get a free rent estimate for your property. See what similar homes rent for in your area — powered by real listings data. Perfect for landlords pricing a rental.",
   alternates: { canonical: 'https://emlakie.com/rent-estimate' },
   openGraph: {
     title: 'Free Rent Estimate for Landlords | EMLAKIE',

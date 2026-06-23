@@ -1,32 +1,40 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getListings } from '@/lib/api'
 
+import { logError } from '@/lib/log-error'
 export async function GET(req: NextRequest) {
-  const { searchParams } = new URL(req.url)
-  const city = searchParams.get('city')?.trim()
-  const bedrooms = searchParams.get('bedrooms')
-  const propertyType = searchParams.get('propertyType') || undefined
+  try {
+    const { searchParams } = new URL(req.url)
+    const city = searchParams.get('city')?.trim()
+    const bedrooms = searchParams.get('bedrooms')
+    const propertyType = searchParams.get('propertyType') || undefined
 
-  if (!city || !bedrooms) {
-    return NextResponse.json({ error: 'city and bedrooms are required' }, { status: 400 })
-  }
-
-  const { listings } = await getListings({ city, bedrooms, propertyType })
-  const active = listings.filter(l => l.status === 'active' && l.price > 0)
-
-  if (active.length < 3) {
-    // Try without propertyType filter for a broader sample
-    const { listings: broader } = await getListings({ city, bedrooms })
-    const broaderActive = broader.filter(l => l.status === 'active' && l.price > 0)
-
-    if (broaderActive.length < 3) {
-      return NextResponse.json({ insufficient: true, count: broaderActive.length })
+    if (!city || !bedrooms) {
+      return NextResponse.json({ error: 'city and bedrooms are required' }, { status: 400 })
     }
 
-    return buildResponse(broaderActive, true)
-  }
+    const { listings } = await getListings({ city, bedrooms, propertyType })
+    const active = listings.filter(l => l.status === 'active' && l.price > 0)
 
-  return buildResponse(active, false)
+    if (active.length < 3) {
+      // Try without propertyType filter for a broader sample
+      const { listings: broader } = await getListings({ city, bedrooms })
+      const broaderActive = broader.filter(l => l.status === 'active' && l.price > 0)
+
+      if (broaderActive.length < 3) {
+        return NextResponse.json({ insufficient: true, count: broaderActive.length })
+      }
+
+      return buildResponse(broaderActive, true)
+    }
+
+    return buildResponse(active, false)
+  } catch (_err) {
+    const _msg = _err instanceof Error ? _err.message : String(_err);
+    const _stack = _err instanceof Error ? _err.stack : undefined;
+    await logError({ source: 'Rent-check', message: _msg, details: _stack, endpoint: 'GET /api/rent-check', http_status: 500 });
+    return NextResponse.json({ error: _msg }, { status: 500 });
+  }
 }
 
 function buildResponse(listings: { price: number; address: string; city: string; state?: string; slug?: string | null; id: string }[], broadened: boolean) {

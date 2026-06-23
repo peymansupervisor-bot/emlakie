@@ -5,6 +5,7 @@ import { randomUUID } from 'crypto';
 import { getAllSlugs } from '@/lib/blog';
 import { getAllCities } from '@/lib/api';
 
+import { logError } from '@/lib/log-error'
 export const maxDuration = 300;
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://emlakie.com';
@@ -269,172 +270,179 @@ async function sendAlertEmail(newIssues: SeoPageResult[], totalErrors: number) {
 }
 
 export async function GET(req: NextRequest) {
-  const authHeader = req.headers.get('authorization');
-  if (authHeader?.replace('Bearer ', '') !== process.env.CRON_SECRET) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
-
-  const runId = randomUUID();
-  const pagesToAudit = await buildPageList();
-  const database = sb();
-  const results: SeoPageResult[] = [];
-
-  for (const path of pagesToAudit) {
-    try {
-      const result = await auditPage(path);
-      results.push(result);
-
-      await database.from('seo_audit_log').insert({
-        run_id: runId,
-        page_path: path,
-        page_url: result.url,
-        title: result.title,
-        title_length: result.titleLength,
-        description: result.description,
-        description_length: result.descriptionLength,
-        has_canonical: result.hasCanonical,
-        canonical_url: result.canonicalUrl,
-        canonical_matches: result.canonicalMatches,
-        og_title: result.ogTitle,
-        og_description: result.ogDescription,
-        og_image: result.ogImage,
-        h1_count: result.h1Count,
-        has_noindex: result.hasNoindex,
-        has_json_ld: result.hasJsonLd,
-        json_ld_types: result.jsonLdTypes,
-        response_time_ms: result.responseTimeMs,
-        issues: result.issues,
-        issue_count: result.issues.length,
-        error_count: result.errorCount,
-        warning_count: result.warningCount,
-        scanned_at: new Date().toISOString(),
-      });
-    } catch (err: unknown) {
-      const errResult: SeoPageResult = {
-        path,
-        url: `${SITE_URL}${path}`,
-        title: null,
-        titleLength: 0,
-        description: null,
-        descriptionLength: 0,
-        hasCanonical: false,
-        canonicalUrl: null,
-        canonicalMatches: false,
-        ogTitle: false,
-        ogDescription: false,
-        ogImage: false,
-        h1Count: 0,
-        hasNoindex: false,
-        hasJsonLd: false,
-        jsonLdTypes: [],
-        responseTimeMs: 0,
-        issues: [{ code: 'scan-error', severity: 'error', message: String(err) }],
-        errorCount: 1,
-        warningCount: 0,
-        error: String(err),
-      };
-      results.push(errResult);
-
-      await database.from('seo_audit_log').insert({
-        run_id: runId,
-        page_path: path,
-        page_url: `${SITE_URL}${path}`,
-        issues: errResult.issues,
-        issue_count: 1,
-        error_count: 1,
-        warning_count: 0,
-        scanned_at: new Date().toISOString(),
-      });
+  try {
+    const authHeader = req.headers.get('authorization');
+    if (authHeader?.replace('Bearer ', '') !== process.env.CRON_SECRET) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
-  }
 
-  // Check for duplicate titles and descriptions (site-wide issue)
-  const titleMap = new Map<string, string[]>();
-  const descMap = new Map<string, string[]>();
-  for (const r of results) {
-    if (r.title) {
-      const pages = titleMap.get(r.title) ?? [];
-      pages.push(r.path);
-      titleMap.set(r.title, pages);
-    }
-    if (r.description) {
-      const pages = descMap.get(r.description) ?? [];
-      pages.push(r.path);
-      descMap.set(r.description, pages);
-    }
-  }
+    const runId = randomUUID();
+    const pagesToAudit = await buildPageList();
+    const database = sb();
+    const results: SeoPageResult[] = [];
 
-  // Store duplicate warnings as a separate summary record
-  const dupIssues: SeoIssue[] = [];
-  for (const [title, pages] of Array.from(titleMap.entries())) {
-    if (pages.length > 1) {
-      dupIssues.push({ code: 'duplicate-title', severity: 'warning', message: `Duplicate title "${title.slice(0, 60)}…" used on ${pages.length} pages: ${pages.join(', ')}` });
-    }
-  }
-  for (const [desc, pages] of Array.from(descMap.entries())) {
-    if (pages.length > 1) {
-      dupIssues.push({ code: 'duplicate-description', severity: 'warning', message: `Duplicate meta description used on ${pages.length} pages: ${pages.join(', ')}` });
-    }
-  }
+    for (const path of pagesToAudit) {
+      try {
+        const result = await auditPage(path);
+        results.push(result);
 
-  if (dupIssues.length > 0) {
-    await database.from('seo_audit_log').insert({
-      run_id: runId,
-      page_path: '/_site_wide',
-      page_url: SITE_URL,
-      issues: dupIssues,
-      issue_count: dupIssues.length,
-      error_count: 0,
-      warning_count: dupIssues.length,
-      scanned_at: new Date().toISOString(),
-    });
-  }
+        await database.from('seo_audit_log').insert({
+          run_id: runId,
+          page_path: path,
+          page_url: result.url,
+          title: result.title,
+          title_length: result.titleLength,
+          description: result.description,
+          description_length: result.descriptionLength,
+          has_canonical: result.hasCanonical,
+          canonical_url: result.canonicalUrl,
+          canonical_matches: result.canonicalMatches,
+          og_title: result.ogTitle,
+          og_description: result.ogDescription,
+          og_image: result.ogImage,
+          h1_count: result.h1Count,
+          has_noindex: result.hasNoindex,
+          has_json_ld: result.hasJsonLd,
+          json_ld_types: result.jsonLdTypes,
+          response_time_ms: result.responseTimeMs,
+          issues: result.issues,
+          issue_count: result.issues.length,
+          error_count: result.errorCount,
+          warning_count: result.warningCount,
+          scanned_at: new Date().toISOString(),
+        });
+      } catch (err: unknown) {
+        const errResult: SeoPageResult = {
+          path,
+          url: `${SITE_URL}${path}`,
+          title: null,
+          titleLength: 0,
+          description: null,
+          descriptionLength: 0,
+          hasCanonical: false,
+          canonicalUrl: null,
+          canonicalMatches: false,
+          ogTitle: false,
+          ogDescription: false,
+          ogImage: false,
+          h1Count: 0,
+          hasNoindex: false,
+          hasJsonLd: false,
+          jsonLdTypes: [],
+          responseTimeMs: 0,
+          issues: [{ code: 'scan-error', severity: 'error', message: String(err) }],
+          errorCount: 1,
+          warningCount: 0,
+          error: String(err),
+        };
+        results.push(errResult);
 
-  // Record run in system_health
-  const totalErrors = results.reduce((n, r) => n + r.errorCount, 0);
-  const totalWarnings = results.reduce((n, r) => n + r.warningCount, 0);
-  const scanErrors = results.filter((r) => r.error).length;
-
-  await database.from('system_health').insert({
-    service: 'SEO Audit',
-    status: totalErrors > 0 || scanErrors > 0 ? 'degraded' : 'ok',
-    message: `Run ${runId} — ${pagesToAudit.length} pages — ${totalErrors} errors, ${totalWarnings} warnings`,
-  });
-
-  // Email alert only for new issues (compare against previous run)
-  const withIssues = results.filter((r) => r.issues.length > 0 && !r.error);
-  if (totalErrors > 0 || totalWarnings > 0) {
-    const { data: prevRows } = await database
-      .from('seo_audit_log')
-      .select('page_path, issues')
-      .neq('run_id', runId)
-      .gt('issue_count', 0)
-      .order('scanned_at', { ascending: false })
-      .limit(pagesToAudit.length + 1);
-
-    const prevKeys = new Set<string>();
-    for (const row of prevRows ?? []) {
-      for (const issue of (row.issues ?? []) as SeoIssue[]) {
-        prevKeys.add(`${row.page_path}:${issue.code}`);
+        await database.from('seo_audit_log').insert({
+          run_id: runId,
+          page_path: path,
+          page_url: `${SITE_URL}${path}`,
+          issues: errResult.issues,
+          issue_count: 1,
+          error_count: 1,
+          warning_count: 0,
+          scanned_at: new Date().toISOString(),
+        });
       }
     }
 
-    const newIssues = withIssues
-      .map((r) => ({ ...r, issues: r.issues.filter((i) => !prevKeys.has(`${r.path}:${i.code}`)) }))
-      .filter((r) => r.issues.length > 0);
-
-    const newErrors = newIssues.reduce((n, r) => n + r.errorCount, 0);
-    if (newIssues.length > 0) {
-      await sendAlertEmail(newIssues, newErrors);
+    // Check for duplicate titles and descriptions (site-wide issue)
+    const titleMap = new Map<string, string[]>();
+    const descMap = new Map<string, string[]>();
+    for (const r of results) {
+      if (r.title) {
+        const pages = titleMap.get(r.title) ?? [];
+        pages.push(r.path);
+        titleMap.set(r.title, pages);
+      }
+      if (r.description) {
+        const pages = descMap.get(r.description) ?? [];
+        pages.push(r.path);
+        descMap.set(r.description, pages);
+      }
     }
-  }
 
-  return NextResponse.json({
-    run_id: runId,
-    pages: results.length,
-    total_errors: totalErrors,
-    total_warnings: totalWarnings,
-    duplicate_issues: dupIssues.length,
-    scan_errors: scanErrors,
-  });
+    // Store duplicate warnings as a separate summary record
+    const dupIssues: SeoIssue[] = [];
+    for (const [title, pages] of Array.from(titleMap.entries())) {
+      if (pages.length > 1) {
+        dupIssues.push({ code: 'duplicate-title', severity: 'warning', message: `Duplicate title "${title.slice(0, 60)}…" used on ${pages.length} pages: ${pages.join(', ')}` });
+      }
+    }
+    for (const [desc, pages] of Array.from(descMap.entries())) {
+      if (pages.length > 1) {
+        dupIssues.push({ code: 'duplicate-description', severity: 'warning', message: `Duplicate meta description used on ${pages.length} pages: ${pages.join(', ')}` });
+      }
+    }
+
+    if (dupIssues.length > 0) {
+      await database.from('seo_audit_log').insert({
+        run_id: runId,
+        page_path: '/_site_wide',
+        page_url: SITE_URL,
+        issues: dupIssues,
+        issue_count: dupIssues.length,
+        error_count: 0,
+        warning_count: dupIssues.length,
+        scanned_at: new Date().toISOString(),
+      });
+    }
+
+    // Record run in system_health
+    const totalErrors = results.reduce((n, r) => n + r.errorCount, 0);
+    const totalWarnings = results.reduce((n, r) => n + r.warningCount, 0);
+    const scanErrors = results.filter((r) => r.error).length;
+
+    await database.from('system_health').insert({
+      service: 'SEO Audit',
+      status: totalErrors > 0 || scanErrors > 0 ? 'degraded' : 'ok',
+      message: `Run ${runId} — ${pagesToAudit.length} pages — ${totalErrors} errors, ${totalWarnings} warnings`,
+    });
+
+    // Email alert only for new issues (compare against previous run)
+    const withIssues = results.filter((r) => r.issues.length > 0 && !r.error);
+    if (totalErrors > 0 || totalWarnings > 0) {
+      const { data: prevRows } = await database
+        .from('seo_audit_log')
+        .select('page_path, issues')
+        .neq('run_id', runId)
+        .gt('issue_count', 0)
+        .order('scanned_at', { ascending: false })
+        .limit(pagesToAudit.length + 1);
+
+      const prevKeys = new Set<string>();
+      for (const row of prevRows ?? []) {
+        for (const issue of (row.issues ?? []) as SeoIssue[]) {
+          prevKeys.add(`${row.page_path}:${issue.code}`);
+        }
+      }
+
+      const newIssues = withIssues
+        .map((r) => ({ ...r, issues: r.issues.filter((i) => !prevKeys.has(`${r.path}:${i.code}`)) }))
+        .filter((r) => r.issues.length > 0);
+
+      const newErrors = newIssues.reduce((n, r) => n + r.errorCount, 0);
+      if (newIssues.length > 0) {
+        await sendAlertEmail(newIssues, newErrors);
+      }
+    }
+
+    return NextResponse.json({
+      run_id: runId,
+      pages: results.length,
+      total_errors: totalErrors,
+      total_warnings: totalWarnings,
+      duplicate_issues: dupIssues.length,
+      scan_errors: scanErrors,
+    });
+  } catch (_err) {
+    const _msg = _err instanceof Error ? _err.message : String(_err);
+    const _stack = _err instanceof Error ? _err.stack : undefined;
+    await logError({ source: 'Cron › Seo-audit', message: _msg, details: _stack, endpoint: 'GET /api/cron/seo-audit', http_status: 500 });
+    return NextResponse.json({ error: _msg }, { status: 500 });
+  }
 }

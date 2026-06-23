@@ -3,6 +3,7 @@ import Anthropic from '@anthropic-ai/sdk';
 import { tools, runTool, ToolName } from '@/lib/support-tools';
 
 
+import { logError } from '@/lib/log-error'
 const SYSTEM = `You are the EMLAKIE technical support assistant. EMLAKIE is a rental listing platform at emlakie.com where landlords post rental listings and tenants browse and send inquiries.
 
 Your ONLY job is to help users with technical issues related to using the EMLAKIE website. You have tools to look up account data and fix issues directly.
@@ -36,64 +37,71 @@ Guidelines:
 - Never speculate about the company, its owners, or any individuals`;
 
 export async function POST(req: NextRequest) {
-  const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
-  const { message, email } = await req.json();
+  try {
+    const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+    const { message, email } = await req.json();
 
-  if (!message?.trim()) {
-    return NextResponse.json({ error: 'Message required' }, { status: 400 });
-  }
+    if (!message?.trim()) {
+      return NextResponse.json({ error: 'Message required' }, { status: 400 });
+    }
 
-  if (typeof message !== 'string' || message.length > 2000) {
-    return NextResponse.json({ error: 'Message too long.' }, { status: 400 });
-  }
-  if (email !== undefined && (typeof email !== 'string' || email.length > 200)) {
-    return NextResponse.json({ error: 'Invalid email.' }, { status: 400 });
-  }
+    if (typeof message !== 'string' || message.length > 2000) {
+      return NextResponse.json({ error: 'Message too long.' }, { status: 400 });
+    }
+    if (email !== undefined && (typeof email !== 'string' || email.length > 200)) {
+      return NextResponse.json({ error: 'Invalid email.' }, { status: 400 });
+    }
 
-  const userMessage = email
-    ? `User email: ${email}\n\nUser message: ${message}`
-    : message;
+    const userMessage = email
+      ? `User email: ${email}\n\nUser message: ${message}`
+      : message;
 
-  const messages: Anthropic.MessageParam[] = [
-    { role: 'user', content: userMessage },
-  ];
+    const messages: Anthropic.MessageParam[] = [
+      { role: 'user', content: userMessage },
+    ];
 
-  let response = await client.messages.create({
-    model: 'claude-sonnet-4-6',
-    max_tokens: 1024,
-    system: SYSTEM,
-    tools: tools as unknown as Anthropic.Tool[],
-    messages,
-  });
-
-  // Agentic loop — keep running until Claude stops using tools
-  while (response.stop_reason === 'tool_use') {
-    const toolUseBlocks = response.content.filter(
-      (b): b is Anthropic.ToolUseBlock => b.type === 'tool_use'
-    );
-
-    const toolResults: Anthropic.ToolResultBlockParam[] = await Promise.all(
-      toolUseBlocks.map(async (block) => ({
-        type: 'tool_result' as const,
-        tool_use_id: block.id,
-        content: await runTool(block.name as ToolName, block.input as Record<string, unknown>),
-      }))
-    );
-
-    messages.push({ role: 'assistant', content: response.content });
-    messages.push({ role: 'user', content: toolResults });
-
-    response = await client.messages.create({
+    let response = await client.messages.create({
       model: 'claude-sonnet-4-6',
       max_tokens: 1024,
       system: SYSTEM,
       tools: tools as unknown as Anthropic.Tool[],
       messages,
     });
+
+    // Agentic loop — keep running until Claude stops using tools
+    while (response.stop_reason === 'tool_use') {
+      const toolUseBlocks = response.content.filter(
+        (b): b is Anthropic.ToolUseBlock => b.type === 'tool_use'
+      );
+
+      const toolResults: Anthropic.ToolResultBlockParam[] = await Promise.all(
+        toolUseBlocks.map(async (block) => ({
+          type: 'tool_result' as const,
+          tool_use_id: block.id,
+          content: await runTool(block.name as ToolName, block.input as Record<string, unknown>),
+        }))
+      );
+
+      messages.push({ role: 'assistant', content: response.content });
+      messages.push({ role: 'user', content: toolResults });
+
+      response = await client.messages.create({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 1024,
+        system: SYSTEM,
+        tools: tools as unknown as Anthropic.Tool[],
+        messages,
+      });
+    }
+
+    const textBlock = response.content.find((b): b is Anthropic.TextBlock => b.type === 'text');
+    const answer = textBlock?.text ?? 'I was unable to process your request. Please try again.';
+
+    return NextResponse.json({ answer });
+  } catch (_err) {
+    const _msg = _err instanceof Error ? _err.message : String(_err);
+    const _stack = _err instanceof Error ? _err.stack : undefined;
+    await logError({ source: 'Support', message: _msg, details: _stack, endpoint: 'POST /api/support', http_status: 500 });
+    return NextResponse.json({ error: _msg }, { status: 500 });
   }
-
-  const textBlock = response.content.find((b): b is Anthropic.TextBlock => b.type === 'text');
-  const answer = textBlock?.text ?? 'I was unable to process your request. Please try again.';
-
-  return NextResponse.json({ answer });
 }

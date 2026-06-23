@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { Resend } from 'resend';
 
+import { logError } from '@/lib/log-error'
 function supabase() {
   return createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -26,56 +27,63 @@ function buildLabel(filters: Record<string, string>): string {
 }
 
 export async function POST(req: NextRequest) {
-  const { email, filters } = await req.json();
+  try {
+    const { email, filters } = await req.json();
 
-  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    return NextResponse.json({ error: 'Valid email required' }, { status: 400 });
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return NextResponse.json({ error: 'Valid email required' }, { status: 400 });
+    }
+
+    const sb = supabase();
+    const label = buildLabel(filters ?? {});
+    const safeLabel = escapeHtml(label);
+
+    // Check for existing unverified duplicate
+    const { data: existing } = await sb
+      .from('saved_searches')
+      .select('id, verified')
+      .eq('email', email)
+      .eq('filters', JSON.stringify(filters))
+      .single();
+
+    if (existing?.verified) {
+      return NextResponse.json({ error: 'You already have this search saved.' }, { status: 409 });
+    }
+
+    // Upsert — resend verification if already exists but unverified
+    const { data, error } = existing
+      ? await sb.from('saved_searches').select('verify_token').eq('id', existing.id).single()
+      : await sb.from('saved_searches').insert({ email, filters, label }).select('verify_token').single();
+
+    if (error || !data) {
+      return NextResponse.json({ error: 'Failed to save search' }, { status: 500 });
+    }
+
+    const verifyUrl = `${process.env.NEXT_PUBLIC_SITE_URL ?? 'https://emlakie.com'}/api/saved-searches/verify?token=${data.verify_token}`;
+
+    const resend = new Resend(process.env.RESEND_API_KEY);
+    await resend.emails.send({
+      from: 'EMLAKIE Alerts <alerts@emlakie.com>',
+      to: email,
+      subject: `Confirm your rental alert: ${safeLabel}`,
+      html: `
+        <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;max-width:520px;margin:0 auto;padding:32px 16px">
+          <p style="font-size:22px;font-weight:900;color:#16a34a;margin:0 0 24px">EMLAKIE</p>
+          <h1 style="font-size:20px;font-weight:800;color:#111827;margin:0 0 8px">Confirm your alert</h1>
+          <p style="font-size:15px;color:#374151;margin:0 0 8px">You're one click away from getting notified when new homes matching <strong>${safeLabel}</strong> are listed.</p>
+          <a href="${verifyUrl}" style="display:inline-block;margin:24px 0;background:#16a34a;color:#fff;text-decoration:none;font-size:15px;font-weight:700;padding:14px 32px;border-radius:10px">
+            Confirm Alert
+          </a>
+          <p style="font-size:12px;color:#9ca3af;margin:24px 0 0">If you didn't request this, ignore this email.</p>
+        </div>
+      `,
+    });
+
+    return NextResponse.json({ ok: true });
+  } catch (_err) {
+    const _msg = _err instanceof Error ? _err.message : String(_err);
+    const _stack = _err instanceof Error ? _err.stack : undefined;
+    await logError({ source: 'Saved-searches', message: _msg, details: _stack, endpoint: 'POST /api/saved-searches', http_status: 500 });
+    return NextResponse.json({ error: _msg }, { status: 500 });
   }
-
-  const sb = supabase();
-  const label = buildLabel(filters ?? {});
-  const safeLabel = escapeHtml(label);
-
-  // Check for existing unverified duplicate
-  const { data: existing } = await sb
-    .from('saved_searches')
-    .select('id, verified')
-    .eq('email', email)
-    .eq('filters', JSON.stringify(filters))
-    .single();
-
-  if (existing?.verified) {
-    return NextResponse.json({ error: 'You already have this search saved.' }, { status: 409 });
-  }
-
-  // Upsert — resend verification if already exists but unverified
-  const { data, error } = existing
-    ? await sb.from('saved_searches').select('verify_token').eq('id', existing.id).single()
-    : await sb.from('saved_searches').insert({ email, filters, label }).select('verify_token').single();
-
-  if (error || !data) {
-    return NextResponse.json({ error: 'Failed to save search' }, { status: 500 });
-  }
-
-  const verifyUrl = `${process.env.NEXT_PUBLIC_SITE_URL ?? 'https://emlakie.com'}/api/saved-searches/verify?token=${data.verify_token}`;
-
-  const resend = new Resend(process.env.RESEND_API_KEY);
-  await resend.emails.send({
-    from: 'EMLAKIE Alerts <alerts@emlakie.com>',
-    to: email,
-    subject: `Confirm your rental alert: ${safeLabel}`,
-    html: `
-      <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;max-width:520px;margin:0 auto;padding:32px 16px">
-        <p style="font-size:22px;font-weight:900;color:#16a34a;margin:0 0 24px">EMLAKIE</p>
-        <h1 style="font-size:20px;font-weight:800;color:#111827;margin:0 0 8px">Confirm your alert</h1>
-        <p style="font-size:15px;color:#374151;margin:0 0 8px">You're one click away from getting notified when new homes matching <strong>${safeLabel}</strong> are listed.</p>
-        <a href="${verifyUrl}" style="display:inline-block;margin:24px 0;background:#16a34a;color:#fff;text-decoration:none;font-size:15px;font-weight:700;padding:14px 32px;border-radius:10px">
-          Confirm Alert
-        </a>
-        <p style="font-size:12px;color:#9ca3af;margin:24px 0 0">If you didn't request this, ignore this email.</p>
-      </div>
-    `,
-  });
-
-  return NextResponse.json({ ok: true });
 }

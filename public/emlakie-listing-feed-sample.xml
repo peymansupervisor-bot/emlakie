@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  EMLAKIE Listing Feed — MITS 4.1 / Trulia Dev Guide Format
+  Submit to: feeds@zumper.com
+  Contact: peter@emlakie.com | (818) 000-0000
+  Feed URL: https://emlakie.com/api/listhub
+  Generated: 2026-06-22
+-->
+<PhysicalProperty>
+
+  <Property>
+    <PropertyID>
+      <Identification IDValue="EMK-001" OrganizationName="EMLAKIE" IDType="PropertyCode"/>
+    </PropertyID>
+    <ILS_Identification ILS_IdentificationType="Apartment" RentalType="Market Rate"/>
+    <Information>
+      <Title>3BD/2BA Single Family Home – Mid-City Los Angeles</Title>
+      <LongDescription>Bright and spacious 3-bedroom home in the heart of Mid-City LA. Updated kitchen with stainless steel appliances, hardwood floors throughout, private backyard, and in-unit laundry. Close to shopping, dining, and major freeways. Available immediately. Pets considered on a case-by-case basis.</LongDescription>
+    </Information>
+    <Address>
+      <AddressLine1>1842 Oak Grove Dr</AddressLine1>
+      <City>Los Angeles</City>
+      <State>CA</State>
+      <PostalCode>90019</PostalCode>
+      <Country>US</Country>
+    </Address>
+    <ILS_Unit>
+      <Units>
+        <Unit>
+          <MarketingName>3BR/2BA Home – Mid-City</MarketingName>
+          <UnitBedrooms>3</UnitBedrooms>
+          <UnitBathrooms>2</UnitBathrooms>
+          <MinSquareFeet>1450</MinSquareFeet>
+          <MaxSquareFeet>1450</MaxSquareFeet>
+          <EffectiveRent>
+            <EffectiveRentTerm EffectiveRentTermValue="Monthly">
+              <EffectiveRentValue>3200</EffectiveRentValue>
+            </EffectiveRentTerm>
+          </EffectiveRent>
+          <Availability>
+            <VacancyClass>Vacant</VacancyClass>
+            <MadeReadyDate>2026-06-22</MadeReadyDate>
+          </Availability>
+          <UnitAmenity>
+            <Description>Hardwood Floors</Description>
+          </UnitAmenity>
+          <UnitAmenity>
+            <Description>In-Unit Laundry</Description>
+          </UnitAmenity>
+          <UnitAmenity>
+            <Description>Private Backyard</Description>
+          </UnitAmenity>
+          <UnitAmenity>
+            <Description>Updated Kitchen</Description>
+          </UnitAmenity>
+        </Unit>
+      </Units>
+    </ILS_Unit>
+    <Photo>
+      <MediaContent Type="Photo" Active="true" primary="true">
+        <Url>https://emlakie.com/images/listings/EMK-001-01.jpg</Url>
+        <Caption>Living Room</Caption>
+        <Rank>1</Rank>
+      </MediaContent>
+      <MediaContent Type="Photo" Active="true">
+        <Url>https://emlakie.com/images/listings/EMK-001-02.jpg</Url>
+        <Caption>Kitchen</Caption>
+        <Rank>2</Rank>
+      </MediaContent>
+      <MediaContent Type="Photo" Active="true">
+        <Url>https://emlakie.com/images/listings/EMK-001-03.jpg</Url>
+        <Caption>Backyard</Caption>
+        <Rank>3</Rank>
+      </MediaContent>
+    </Photo>
+    <ILS_Contact>
+      <Contact ContactType="listing-agent">
+        <Name>
+          <FirstName>Peter</FirstName>
+          <LastName>Karami</LastName>
+        </Name>
+        <Email>peter@emlakie.com</Email>
+        <Phone PhoneType="office">8180000000</Phone>
+        <Website>https://emlakie.com/listings/EMK-001</Website>
+      </Contact>
+    </ILS_Contact>
+  </Property>
+
+  <Property>
+    <PropertyID>
+      <Identification IDValue="EMK-002" OrganizationName="EMLAKIE" IDType="PropertyCode"/>
+    </PropertyID>
+    <ILS_Identification ILS_IdentificationType="Apartment" RentalType="Market Rate"/>
+    <Information>
+      <Title>1BD/1BA Modern Condo – Miracle Mile / Wilshire</Title>
+      <LongDescription>Modern 1-bedroom condo on the Miracle Mile corridor. Features high ceilings, in-unit laundry, rooftop deck access, and one secured parking space. Walking distance to LACMA and the best restaurants on Wilshire Blvd. Cat friendly with deposit.</LongDescription>
+    </Information>
+    <Address>
+      <AddressLine1>5510 Wilshire Blvd</AddressLine1>
+      <AddressLine2>Unit 408</AddressLine2>
+      <City>Los Angeles</City>
+      <State>CA</State>
+      <PostalCode>90036</PostalCode>
+      <Country>US</Country>
+    </Address>
+    <ILS_Unit>
+      <Units>
+        <Unit>
+          <MarketingName>1BR/1BA Condo – Miracle Mile</MarketingName>
+          <UnitBedrooms>1</UnitBedrooms>
+          <UnitBathrooms>1</UnitBathrooms>
+          <MinSquareFeet>780</MinSquareFeet>
+          <MaxSquareFeet>780</MaxSquareFeet>
+          <EffectiveRent>
+            <EffectiveRentTerm EffectiveRentTermValue="Monthly">
+              <EffectiveRentValue>2450</EffectiveRentValue>
+            </EffectiveRentTerm>
+          </EffectiveRent>
+          <Availability>
+            <VacancyClass>Vacant</VacancyClass>
+            <MadeReadyDate>2026-06-22</MadeReadyDate>
+          </Availability>
+          <UnitAmenity>
+            <Description>In-Unit Laundry</Description>
+          </UnitAmenity>
+          <UnitAmenity>
+            <Description>Rooftop Deck</Description>
+          </UnitAmenity>
+          <UnitAmenity>
+            <Description>Secured Parking</Description>
+          </UnitAmenity>
+          <UnitAmenity>
+            <Description>High Ceilings</Description>
+          </UnitAmenity>
+        </Unit>
+      </Units>
+    </ILS_Unit>
+    <Photo>
+      <MediaContent Type="Photo" Active="true" primary="true">
+        <Url>https://emlakie.com/images/listings/EMK-002-01.jpg</Url>
+        <Caption>Living Area</Caption>
+        <Rank>1</Rank>
+      </MediaContent>
+      <MediaContent Type="Photo" Active="true">
+        <Url>https://emlakie.com/images/listings/EMK-002-02.jpg</Url>
+        <Caption>Rooftop Deck</Caption>
+        <Rank>2</Rank>
+      </MediaContent>
+    </Photo>
+    <ILS_Contact>
+      <Contact ContactType="listing-agent">
+        <Name>
+          <FirstName>Peter</FirstName>
+          <LastName>Karami</LastName>
+        </Name>
+        <Email>peter@emlakie.com</Email>
+        <Phone PhoneType="office">8180000000</Phone>
+        <Website>https://emlakie.com/listings/EMK-002</Website>
+      </Contact>
+    </ILS_Contact>
+  </Property>
+
+  <Property>
+    <PropertyID>
+      <Identification IDValue="EMK-003" OrganizationName="EMLAKIE" IDType="PropertyCode"/>
+    </PropertyID>
+    <ILS_Identification ILS_IdentificationType="Apartment" RentalType="Market Rate"/>
+    <Information>
+      <Title>2BD/1BA Apartment – Hancock Park Adjacent</Title>
+      <LongDescription>Charming 2-bedroom apartment in a quiet Hancock Park adjacent building. Period architectural details, updated bathroom, on-site laundry, and street parking. Minutes from Larchmont Village restaurants and shops. Pet friendly with deposit. Freshly painted and move-in ready.</LongDescription>
+    </Information>
+    <Address>
+      <AddressLine1>320 N Rossmore Ave</AddressLine1>
+      <AddressLine2>Apt 12</AddressLine2>
+      <City>Los Angeles</City>
+      <State>CA</State>
+      <PostalCode>90004</PostalCode>
+      <Country>US</Country>
+    </Address>
+    <ILS_Unit>
+      <Units>
+        <Unit>
+          <MarketingName>2BR/1BA Apt – Hancock Park Area</MarketingName>
+          <UnitBedrooms>2</UnitBedrooms>
+          <UnitBathrooms>1</UnitBathrooms>
+          <MinSquareFeet>950</MinSquareFeet>
+          <MaxSquareFeet>950</MaxSquareFeet>
+          <EffectiveRent>
+            <EffectiveRentTerm EffectiveRentTermValue="Monthly">
+              <EffectiveRentValue>1950</EffectiveRentValue>
+            </EffectiveRentTerm>
+          </EffectiveRent>
+          <Availability>
+            <VacancyClass>Vacant</VacancyClass>
+            <MadeReadyDate>2026-06-22</MadeReadyDate>
+          </Availability>
+          <UnitAmenity>
+            <Description>On-Site Laundry</Description>
+          </UnitAmenity>
+          <UnitAmenity>
+            <Description>Pet Friendly</Description>
+          </UnitAmenity>
+          <UnitAmenity>
+            <Description>Updated Bathroom</Description>
+          </UnitAmenity>
+        </Unit>
+      </Units>
+    </ILS_Unit>
+    <Photo>
+      <MediaContent Type="Photo" Active="true" primary="true">
+        <Url>https://emlakie.com/images/listings/EMK-003-01.jpg</Url>
+        <Caption>Living Room</Caption>
+        <Rank>1</Rank>
+      </MediaContent>
+      <MediaContent Type="Photo" Active="true">
+        <Url>https://emlakie.com/images/listings/EMK-003-02.jpg</Url>
+        <Caption>Bedroom</Caption>
+        <Rank>2</Rank>
+      </MediaContent>
+    </Photo>
+    <ILS_Contact>
+      <Contact ContactType="listing-agent">
+        <Name>
+          <FirstName>Peter</FirstName>
+          <LastName>Karami</LastName>
+        </Name>
+        <Email>peter@emlakie.com</Email>
+        <Phone PhoneType="office">8180000000</Phone>
+        <Website>https://emlakie.com/listings/EMK-003</Website>
+      </Contact>
+    </ILS_Contact>
+  </Property>
+
+</PhysicalProperty>

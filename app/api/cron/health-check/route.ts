@@ -3,6 +3,7 @@ import { createClient } from '@supabase/supabase-js';
 import { RekognitionClient, ListCollectionsCommand } from '@aws-sdk/client-rekognition';
 import { Resend } from 'resend';
 
+import { logError } from '@/lib/log-error'
 type Status = 'ok' | 'degraded' | 'down';
 interface CheckResult { service: string; status: Status; message: string }
 
@@ -392,48 +393,55 @@ async function sendAlertEmail(failures: CheckResult[]) {
 // ─── main handler ─────────────────────────────────────────────────────────────
 
 export async function GET(req: NextRequest) {
-  const authHeader = req.headers.get('authorization');
-  const secret = authHeader?.replace('Bearer ', '');
-  if (!secret || secret !== process.env.CRON_SECRET) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  try {
+    const authHeader = req.headers.get('authorization');
+    const secret = authHeader?.replace('Bearer ', '');
+    if (!secret || secret !== process.env.CRON_SECRET) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const checks = await Promise.allSettled([
+      checkSupabase(),
+      checkRekognition(),
+      checkInmanRSS(),
+      checkGoogleMaps(),
+      checkResend(),
+      checkStripe(),
+      checkBridge(),
+      checkRapidAPI(),
+      checkAppleSignIn(),
+      checkGoogleSignIn(),
+      checkFacebookSignIn(),
+      checkPhotoSystem(),
+      checkADAAudit(),
+      checkDailyCron(),
+      checkSmartDescriptions(),
+    ]);
+
+    const results: CheckResult[] = checks.map((c) =>
+      c.status === 'fulfilled' ? c.value : { service: 'Unknown', status: 'down' as Status, message: String(c.reason) }
+    );
+
+    // Store all results
+    const sb = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_KEY ?? process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    );
+    await sb.from('system_health').insert(
+      results.map((r) => ({ service: r.service, status: r.status, message: r.message }))
+    );
+
+    // Alert on failures
+    const failures = results.filter((r) => r.status !== 'ok');
+    if (failures.length > 0) {
+      await sendAlertEmail(failures);
+    }
+
+    return NextResponse.json({ checked: results.length, failures: failures.length, results });
+  } catch (_err) {
+    const _msg = _err instanceof Error ? _err.message : String(_err);
+    const _stack = _err instanceof Error ? _err.stack : undefined;
+    await logError({ source: 'Cron › Health-check', message: _msg, details: _stack, endpoint: 'GET /api/cron/health-check', http_status: 500 });
+    return NextResponse.json({ error: _msg }, { status: 500 });
   }
-
-  const checks = await Promise.allSettled([
-    checkSupabase(),
-    checkRekognition(),
-    checkInmanRSS(),
-    checkGoogleMaps(),
-    checkResend(),
-    checkStripe(),
-    checkBridge(),
-    checkRapidAPI(),
-    checkAppleSignIn(),
-    checkGoogleSignIn(),
-    checkFacebookSignIn(),
-    checkPhotoSystem(),
-    checkADAAudit(),
-    checkDailyCron(),
-    checkSmartDescriptions(),
-  ]);
-
-  const results: CheckResult[] = checks.map((c) =>
-    c.status === 'fulfilled' ? c.value : { service: 'Unknown', status: 'down' as Status, message: String(c.reason) }
-  );
-
-  // Store all results
-  const sb = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_KEY ?? process.env.SUPABASE_SERVICE_ROLE_KEY!,
-  );
-  await sb.from('system_health').insert(
-    results.map((r) => ({ service: r.service, status: r.status, message: r.message }))
-  );
-
-  // Alert on failures
-  const failures = results.filter((r) => r.status !== 'ok');
-  if (failures.length > 0) {
-    await sendAlertEmail(failures);
-  }
-
-  return NextResponse.json({ checked: results.length, failures: failures.length, results });
 }

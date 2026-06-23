@@ -6,6 +6,7 @@ import { cureViolations } from '@/lib/ada-cure';
 import { getAllSlugs } from '@/lib/blog';
 import { getAllCities } from '@/lib/api';
 
+import { logError } from '@/lib/log-error'
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://emlakie.com';
 const ADMIN_EMAIL = 'peymansupervisor@gmail.com';
 
@@ -146,117 +147,124 @@ async function sendAlertEmail(newViolations: { path: string; violations: Violati
 }
 
 export async function GET(req: NextRequest) {
-  const authHeader = req.headers.get('authorization');
-  if (authHeader?.replace('Bearer ', '') !== process.env.CRON_SECRET) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
-
-  const runId = randomUUID();
-  const pagesToAudit = await buildPageList();
-  const axeCore = await import('axe-core');
-  const axeVersion: string = axeCore.version;
-  const database = sb();
-  const results: Array<{ path: string; violations: Violation[]; passes: number; incomplete: number; error?: string }> = [];
-
-  for (const path of pagesToAudit) {
-    try {
-      const { violations, passes, incomplete } = await auditPage(path);
-      results.push({ path, violations, passes, incomplete });
-
-      // Insert immutable audit record
-      await database.from('ada_audit_log').insert({
-        run_id: runId,
-        page_path: path,
-        page_url: `${SITE_URL}${path}`,
-        violation_count: violations.length,
-        critical_count: violations.filter((v) => v.impact === 'critical').length,
-        serious_count: violations.filter((v) => v.impact === 'serious').length,
-        passes,
-        incomplete,
-        violations,
-        axe_version: axeVersion,
-        scanned_at: new Date().toISOString(),
-      });
-    } catch (err: unknown) {
-      results.push({ path, violations: [], passes: 0, incomplete: 0, error: String(err) });
-      // Log failure as a record too so the gap is visible in court logs
-      await database.from('ada_audit_log').insert({
-        run_id: runId,
-        page_path: path,
-        page_url: `${SITE_URL}${path}`,
-        violation_count: -1,
-        critical_count: 0,
-        serious_count: 0,
-        passes: 0,
-        incomplete: 0,
-        violations: [{ id: 'scan-error', impact: 'critical', description: String(err), helpUrl: '', nodes: 0 }],
-        axe_version: axeVersion,
-        scanned_at: new Date().toISOString(),
-      });
+  try {
+    const authHeader = req.headers.get('authorization');
+    if (authHeader?.replace('Bearer ', '') !== process.env.CRON_SECRET) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
-  }
 
-  // Record this successful run in system_health so the health probe can track it
-  await database.from('system_health').insert({
-    service: 'ADA Audit',
-    status: results.every((r) => !r.error) ? 'ok' : 'degraded',
-    message: `Run ${runId} — ${pagesToAudit.length} pages scanned`,
-  });
+    const runId = randomUUID();
+    const pagesToAudit = await buildPageList();
+    const axeCore = await import('axe-core');
+    const axeVersion: string = axeCore.version;
+    const database = sb();
+    const results: Array<{ path: string; violations: Violation[]; passes: number; incomplete: number; error?: string }> = [];
 
-  // Send alert if any critical or serious violations found
-  const withViolations = results.filter((r) => r.violations.length > 0 && !r.error);
-  const totalCritical = withViolations.reduce((n, r) => n + r.violations.filter((v) => v.impact === 'critical').length, 0);
-  const totalSerious = withViolations.reduce((n, r) => n + r.violations.filter((v) => v.impact === 'serious').length, 0);
+    for (const path of pagesToAudit) {
+      try {
+        const { violations, passes, incomplete } = await auditPage(path);
+        results.push({ path, violations, passes, incomplete });
 
-  // Auto-cure any real violations found in this run
-  let cureResult = { fixed: 0, skipped: 0, summary: [] as string[] };
-  if (withViolations.length > 0) {
-    const cureRecords = withViolations.map((r) => ({
-      page_path: r.path,
-      violations: r.violations,
-      violation_count: r.violations.length,
-    }));
-    cureResult = await cureViolations(cureRecords);
-  }
-
-  // Only email about violations that are NEW (not present in the previous run)
-  if (totalCritical > 0 || totalSerious > 0) {
-    const { data: prevRows } = await database
-      .from('ada_audit_log')
-      .select('page_path, violations')
-      .neq('run_id', runId)
-      .gt('violation_count', 0)
-      .order('scanned_at', { ascending: false })
-      .limit(pagesToAudit.length);
-
-    // Build a set of "page:violation_id" from the previous run
-    const prevKeys = new Set<string>();
-    for (const row of prevRows ?? []) {
-      for (const v of (row.violations ?? []) as Violation[]) {
-        prevKeys.add(`${row.page_path}:${v.id}`);
+        // Insert immutable audit record
+        await database.from('ada_audit_log').insert({
+          run_id: runId,
+          page_path: path,
+          page_url: `${SITE_URL}${path}`,
+          violation_count: violations.length,
+          critical_count: violations.filter((v) => v.impact === 'critical').length,
+          serious_count: violations.filter((v) => v.impact === 'serious').length,
+          passes,
+          incomplete,
+          violations,
+          axe_version: axeVersion,
+          scanned_at: new Date().toISOString(),
+        });
+      } catch (err: unknown) {
+        results.push({ path, violations: [], passes: 0, incomplete: 0, error: String(err) });
+        // Log failure as a record too so the gap is visible in court logs
+        await database.from('ada_audit_log').insert({
+          run_id: runId,
+          page_path: path,
+          page_url: `${SITE_URL}${path}`,
+          violation_count: -1,
+          critical_count: 0,
+          serious_count: 0,
+          passes: 0,
+          incomplete: 0,
+          violations: [{ id: 'scan-error', impact: 'critical', description: String(err), helpUrl: '', nodes: 0 }],
+          axe_version: axeVersion,
+          scanned_at: new Date().toISOString(),
+        });
       }
     }
 
-    const newViolations = withViolations
-      .map((r) => ({
-        ...r,
-        violations: r.violations.filter((v) => !prevKeys.has(`${r.path}:${v.id}`)),
-      }))
-      .filter((r) => r.violations.length > 0);
+    // Record this successful run in system_health so the health probe can track it
+    await database.from('system_health').insert({
+      service: 'ADA Audit',
+      status: results.every((r) => !r.error) ? 'ok' : 'degraded',
+      message: `Run ${runId} — ${pagesToAudit.length} pages scanned`,
+    });
 
-    const newCritical = newViolations.reduce((n, r) => n + r.violations.filter((v) => v.impact === 'critical').length, 0);
+    // Send alert if any critical or serious violations found
+    const withViolations = results.filter((r) => r.violations.length > 0 && !r.error);
+    const totalCritical = withViolations.reduce((n, r) => n + r.violations.filter((v) => v.impact === 'critical').length, 0);
+    const totalSerious = withViolations.reduce((n, r) => n + r.violations.filter((v) => v.impact === 'serious').length, 0);
 
-    if (newViolations.length > 0) {
-      await sendAlertEmail(newViolations, newCritical);
+    // Auto-cure any real violations found in this run
+    let cureResult = { fixed: 0, skipped: 0, summary: [] as string[] };
+    if (withViolations.length > 0) {
+      const cureRecords = withViolations.map((r) => ({
+        page_path: r.path,
+        violations: r.violations,
+        violation_count: r.violations.length,
+      }));
+      cureResult = await cureViolations(cureRecords);
     }
-  }
 
-  return NextResponse.json({
-    run_id: runId,
-    pages: results.length,
-    total_violations: withViolations.reduce((n, r) => n + r.violations.length, 0),
-    total_critical: totalCritical,
-    axe_version: axeVersion,
-    cure: cureResult,
-  });
+    // Only email about violations that are NEW (not present in the previous run)
+    if (totalCritical > 0 || totalSerious > 0) {
+      const { data: prevRows } = await database
+        .from('ada_audit_log')
+        .select('page_path, violations')
+        .neq('run_id', runId)
+        .gt('violation_count', 0)
+        .order('scanned_at', { ascending: false })
+        .limit(pagesToAudit.length);
+
+      // Build a set of "page:violation_id" from the previous run
+      const prevKeys = new Set<string>();
+      for (const row of prevRows ?? []) {
+        for (const v of (row.violations ?? []) as Violation[]) {
+          prevKeys.add(`${row.page_path}:${v.id}`);
+        }
+      }
+
+      const newViolations = withViolations
+        .map((r) => ({
+          ...r,
+          violations: r.violations.filter((v) => !prevKeys.has(`${r.path}:${v.id}`)),
+        }))
+        .filter((r) => r.violations.length > 0);
+
+      const newCritical = newViolations.reduce((n, r) => n + r.violations.filter((v) => v.impact === 'critical').length, 0);
+
+      if (newViolations.length > 0) {
+        await sendAlertEmail(newViolations, newCritical);
+      }
+    }
+
+    return NextResponse.json({
+      run_id: runId,
+      pages: results.length,
+      total_violations: withViolations.reduce((n, r) => n + r.violations.length, 0),
+      total_critical: totalCritical,
+      axe_version: axeVersion,
+      cure: cureResult,
+    });
+  } catch (_err) {
+    const _msg = _err instanceof Error ? _err.message : String(_err);
+    const _stack = _err instanceof Error ? _err.stack : undefined;
+    await logError({ source: 'Cron › Ada-audit', message: _msg, details: _stack, endpoint: 'GET /api/cron/ada-audit', http_status: 500 });
+    return NextResponse.json({ error: _msg }, { status: 500 });
+  }
 }

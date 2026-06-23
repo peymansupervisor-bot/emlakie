@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { fetchBridgeListings, mapBridgePropertyType, BridgeListing } from '@/lib/bridge';
 
+import { logError } from '@/lib/log-error'
 function supabaseAdmin() {
   return createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -49,63 +50,70 @@ async function uploadPhotos(sb: ReturnType<typeof supabaseAdmin>, listing: Bridg
 }
 
 export async function GET(req: Request) {
-  const authHeader = req.headers.get('authorization');
-  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
-
-  const apiKey = process.env.BRIDGE_API_KEY;
-  const dataset = process.env.BRIDGE_DATASET;
-
-  if (!apiKey || !dataset) {
-    return NextResponse.json({ error: 'Bridge API credentials not configured' }, { status: 500 });
-  }
-
-  const sb = supabaseAdmin();
-  let imported = 0;
-  let skipped = 0;
-  let page = 0;
-  let total = Infinity;
-
-  while (imported + skipped < total) {
-    const { listings, total: t } = await fetchBridgeListings(dataset, apiKey, page);
-    total = t;
-    if (listings.length === 0) break;
-
-    for (const listing of listings) {
-      try {
-        const photoUrls = await uploadPhotos(sb, listing);
-
-        const { error } = await sb.from('listings').upsert({
-          mls_number: listing.ListingId,
-          address: listing.UnparsedAddress,
-          city: listing.City,
-          state: listing.StateOrProvince,
-          zip: listing.PostalCode,
-          price: listing.ListPrice,
-          bedrooms: listing.BedroomsTotal ?? 0,
-          bathrooms: listing.BathroomsTotalInteger ?? 0,
-          sqft: listing.LivingArea ?? null,
-          property_type: mapBridgePropertyType(listing.PropertyType, listing.PropertySubType),
-          description: listing.PublicRemarks ?? '',
-          photos: photoUrls,
-          lat: listing.Latitude ?? null,
-          lng: listing.Longitude ?? null,
-          status: 'active',
-          source: 'bridge',
-          available_from: listing.AvailabilityDate ?? null,
-        }, { onConflict: 'mls_number' });
-
-        if (error) { skipped++; } else { imported++; }
-      } catch {
-        skipped++;
-      }
+  try {
+    const authHeader = req.headers.get('authorization');
+    if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    page++;
-    if (listings.length < 200) break;
-  }
+    const apiKey = process.env.BRIDGE_API_KEY;
+    const dataset = process.env.BRIDGE_DATASET;
 
-  console.log(`[bridge-sync] imported=${imported} skipped=${skipped} total=${total}`);
-  return NextResponse.json({ imported, skipped, total });
+    if (!apiKey || !dataset) {
+      return NextResponse.json({ error: 'Bridge API credentials not configured' }, { status: 500 });
+    }
+
+    const sb = supabaseAdmin();
+    let imported = 0;
+    let skipped = 0;
+    let page = 0;
+    let total = Infinity;
+
+    while (imported + skipped < total) {
+      const { listings, total: t } = await fetchBridgeListings(dataset, apiKey, page);
+      total = t;
+      if (listings.length === 0) break;
+
+      for (const listing of listings) {
+        try {
+          const photoUrls = await uploadPhotos(sb, listing);
+
+          const { error } = await sb.from('listings').upsert({
+            mls_number: listing.ListingId,
+            address: listing.UnparsedAddress,
+            city: listing.City,
+            state: listing.StateOrProvince,
+            zip: listing.PostalCode,
+            price: listing.ListPrice,
+            bedrooms: listing.BedroomsTotal ?? 0,
+            bathrooms: listing.BathroomsTotalInteger ?? 0,
+            sqft: listing.LivingArea ?? null,
+            property_type: mapBridgePropertyType(listing.PropertyType, listing.PropertySubType),
+            description: listing.PublicRemarks ?? '',
+            photos: photoUrls,
+            lat: listing.Latitude ?? null,
+            lng: listing.Longitude ?? null,
+            status: 'active',
+            source: 'bridge',
+            available_from: listing.AvailabilityDate ?? null,
+          }, { onConflict: 'mls_number' });
+
+          if (error) { skipped++; } else { imported++; }
+        } catch {
+          skipped++;
+        }
+      }
+
+      page++;
+      if (listings.length < 200) break;
+    }
+
+    console.log(`[bridge-sync] imported=${imported} skipped=${skipped} total=${total}`);
+    return NextResponse.json({ imported, skipped, total });
+  } catch (_err) {
+    const _msg = _err instanceof Error ? _err.message : String(_err);
+    const _stack = _err instanceof Error ? _err.stack : undefined;
+    await logError({ source: 'Cron › Bridge-sync', message: _msg, details: _stack, endpoint: 'GET /api/cron/bridge-sync', http_status: 500 });
+    return NextResponse.json({ error: _msg }, { status: 500 });
+  }
 }

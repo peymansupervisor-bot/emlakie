@@ -4,6 +4,8 @@ import { createClient } from '@supabase/supabase-js'
 import sharp from 'sharp'
 import { logError } from '@/lib/log-error'
 
+export const dynamic = 'force-dynamic'
+
 export const runtime = 'nodejs'
 export const maxDuration = 60
 

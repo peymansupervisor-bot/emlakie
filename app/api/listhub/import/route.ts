@@ -3,6 +3,8 @@ import { createClient } from '@supabase/supabase-js';
 import { geocodeAddress } from '@/lib/geocode';
 
 import { logError } from '@/lib/log-error'
+
+export const dynamic = 'force-dynamic'
 function supabaseAdmin() {
   return createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,

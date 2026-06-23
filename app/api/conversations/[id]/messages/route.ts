@@ -3,6 +3,8 @@ import { Resend } from 'resend';
 import { createSupabaseWithToken, createSupabaseAdmin } from '@/lib/supabase-server';
 
 import { logError } from '@/lib/log-error'
+
+export const dynamic = 'force-dynamic'
 // POST /api/conversations/[id]/messages — landlord sends a message, emails tenant
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {

@@ -4,6 +4,8 @@ import { createClient } from '@supabase/supabase-js'
 import { generateListingSlug } from '@/lib/format'
 import { geocodeAddress } from '@/lib/geocode'
 import { logError } from '@/lib/log-error'
+
+export const dynamic = 'force-dynamic'
 // Route segment config — tells Next.js/Vercel this route needs extended body size
 // (up to 20 photos × 10 MB each before server-side compression)
 export const runtime = 'nodejs'

@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { filterListingContent, getViolationMessage } from '@/lib/content-filter'
 
 import { logError } from '@/lib/log-error'
+
+export const dynamic = 'force-dynamic'
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json()

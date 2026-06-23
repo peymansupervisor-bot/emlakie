@@ -3,6 +3,8 @@ import { createSupabaseAdmin, createSupabaseWithToken } from '@/lib/supabase-ser
 import { generateListingSlug } from '@/lib/format'
 import { logError } from '@/lib/log-error'
 
+export const dynamic = 'force-dynamic'
+
 // PUT /api/listings/[id] — update status, title, price, etc.
 export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params

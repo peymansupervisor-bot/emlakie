@@ -3,6 +3,8 @@ import { createSupabaseWithToken } from '@/lib/supabase-server'
 import { compressImage } from '@/lib/compress-image'
 import { logError } from '@/lib/log-error'
 
+export const dynamic = 'force-dynamic'
+
 const MAX_PHOTOS = 25;
 const MIN_PHOTOS = 1;
 

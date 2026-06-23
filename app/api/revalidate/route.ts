@@ -2,6 +2,8 @@ import { revalidatePath } from 'next/cache';
 import { NextRequest, NextResponse } from 'next/server';
 
 import { logError } from '@/lib/log-error'
+
+export const dynamic = 'force-dynamic'
 // Called by the backend whenever a listing is created or updated.
 // Triggers immediate ISR regeneration of the affected city page.
 export async function POST(req: NextRequest) {

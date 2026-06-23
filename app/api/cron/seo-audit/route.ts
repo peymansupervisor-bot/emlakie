@@ -6,6 +6,8 @@ import { getAllSlugs } from '@/lib/blog';
 import { getAllCities } from '@/lib/api';
 
 import { logError } from '@/lib/log-error'
+
+export const dynamic = 'force-dynamic'
 export const maxDuration = 300;
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://emlakie.com';

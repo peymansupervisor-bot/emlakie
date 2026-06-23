@@ -3,6 +3,8 @@ import { Resend } from 'resend';
 import { createSupabaseWithToken, createSupabaseAdmin } from '@/lib/supabase-server';
 
 import { logError } from '@/lib/log-error'
+
+export const dynamic = 'force-dynamic'
 // POST /api/welcome — send a one-time welcome email to a landlord after profile setup
 export async function POST(req: NextRequest) {
   try {

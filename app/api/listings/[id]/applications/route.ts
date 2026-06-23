@@ -3,6 +3,8 @@ import { Resend } from 'resend';
 import { createSupabaseWithToken, createSupabaseAdmin } from '@/lib/supabase-server';
 
 import { logError } from '@/lib/log-error'
+
+export const dynamic = 'force-dynamic'
 // GET /api/listings/[id]/applications — fetch all applicants for a listing the landlord owns
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {

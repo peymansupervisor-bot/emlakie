@@ -3,6 +3,8 @@ import { createSupabaseServer } from '@/lib/supabase-server';
 import { adminClient } from '@/lib/moderator';
 
 import { logError } from '@/lib/log-error'
+
+export const dynamic = 'force-dynamic'
 export async function POST() {
   try {
     const sb = await createSupabaseServer();

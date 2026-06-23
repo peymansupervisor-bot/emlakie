@@ -4,6 +4,8 @@ import { RekognitionClient, ListCollectionsCommand } from '@aws-sdk/client-rekog
 import { Resend } from 'resend';
 
 import { logError } from '@/lib/log-error'
+
+export const dynamic = 'force-dynamic'
 type Status = 'ok' | 'degraded' | 'down';
 interface CheckResult { service: string; status: Status; message: string }
 

@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getModeratorSession } from '@/lib/moderator';
 import { logError } from '@/lib/log-error';
 
+export const dynamic = 'force-dynamic'
+
 export async function POST(req: NextRequest) {
   const session = await getModeratorSession();
   if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });

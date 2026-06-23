@@ -4,6 +4,8 @@ import { tools, runTool, ToolName } from '@/lib/support-tools';
 
 
 import { logError } from '@/lib/log-error'
+
+export const dynamic = 'force-dynamic'
 const SYSTEM = `You are the EMLAKIE technical support assistant. EMLAKIE is a rental listing platform at emlakie.com where landlords post rental listings and tenants browse and send inquiries.
 
 Your ONLY job is to help users with technical issues related to using the EMLAKIE website. You have tools to look up account data and fix issues directly.

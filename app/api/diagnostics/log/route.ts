@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { logError } from '@/lib/log-error';
 
+export const dynamic = 'force-dynamic'
+
 // Rate-limit: max 20 client errors per IP per minute (in-memory, resets on cold start)
 const ipCounts = new Map<string, { count: number; reset: number }>();
 

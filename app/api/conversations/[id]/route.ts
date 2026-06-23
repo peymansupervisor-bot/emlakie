@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createSupabaseWithToken, createSupabaseAdmin } from '@/lib/supabase-server';
 
 import { logError } from '@/lib/log-error'
+
+export const dynamic = 'force-dynamic'
 // GET /api/conversations/[id] — get a conversation with all its messages
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {

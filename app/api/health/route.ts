@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
 import { logError } from '@/lib/log-error'
+
+export const dynamic = 'force-dynamic'
 // Lightweight public health endpoint — checks only critical features.
 // Returns 200 if everything is ok, 500 if any critical check fails.
 // Safe to expose publicly (no secrets in response).

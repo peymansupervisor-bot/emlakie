@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createSupabaseWithToken } from '@/lib/supabase-server';
 
 import { logError } from '@/lib/log-error'
+
+export const dynamic = 'force-dynamic'
 // GET /api/applications — fetch all applications across all landlord's listings in one query
 export async function GET(req: NextRequest) {
   try {

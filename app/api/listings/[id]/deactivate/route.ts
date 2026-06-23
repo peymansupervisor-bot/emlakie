@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createSupabaseWithToken } from '@/lib/supabase-server'
 
 import { logError } from '@/lib/log-error'
+
+export const dynamic = 'force-dynamic'
 // POST /api/listings/[id]/deactivate
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {

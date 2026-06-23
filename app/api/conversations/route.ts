@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createSupabaseWithToken, createSupabaseAdmin } from '@/lib/supabase-server';
 
 import { logError } from '@/lib/log-error'
+
+export const dynamic = 'force-dynamic'
 // GET /api/conversations — list all conversations for the logged-in landlord
 export async function GET(req: NextRequest) {
   try {

@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getListings } from '@/lib/api'
 
 import { logError } from '@/lib/log-error'
+
+export const dynamic = 'force-dynamic'
 export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url)

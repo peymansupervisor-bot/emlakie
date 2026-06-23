@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getModeratorSession, adminClient } from '@/lib/moderator';
 
 import { logError } from '@/lib/log-error'
+
+export const dynamic = 'force-dynamic'
 async function auth() {
   const session = await getModeratorSession();
   if (!session) return null;

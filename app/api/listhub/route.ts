@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 import { logError } from '@/lib/log-error'
+
+export const dynamic = 'force-dynamic'
 const LISTHUB_TOKEN_URL = 'https://auth.listhub.com/oauth2/token';
 const LISTHUB_API_URL = 'https://api.listhub.com/odata/listings';
 

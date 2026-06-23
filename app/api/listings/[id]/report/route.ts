@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
 import { logError } from '@/lib/log-error'
+
+export const dynamic = 'force-dynamic'
 const VALID_REASONS = [
   'Scam or fraud',
   'Inaccurate listing information',

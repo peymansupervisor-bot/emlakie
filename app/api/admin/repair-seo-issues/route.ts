@@ -3,6 +3,8 @@ import { getModeratorSession, adminClient } from '@/lib/moderator';
 import { cureSeoIssues } from '@/lib/seo-cure';
 import { logError } from '@/lib/log-error';
 
+export const dynamic = 'force-dynamic'
+
 export const maxDuration = 300;
 
 export async function POST(req: NextRequest) {

@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { RekognitionClient, DetectModerationLabelsCommand } from '@aws-sdk/client-rekognition';
 
 import { logError } from '@/lib/log-error'
+
+export const dynamic = 'force-dynamic'
 const AWS_REGION = process.env.AWS_REGION ?? 'us-west-2';
 const AWS_ACCESS_KEY = process.env.AWS_ACCESS_KEY_ID ?? '';
 const AWS_SECRET_KEY = process.env.AWS_SECRET_ACCESS_KEY ?? '';

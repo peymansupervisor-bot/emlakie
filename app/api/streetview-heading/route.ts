@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 import { logError } from '@/lib/log-error'
+
+export const dynamic = 'force-dynamic'
 export async function GET(req: NextRequest) {
   try {
     const lat = req.nextUrl.searchParams.get('lat');

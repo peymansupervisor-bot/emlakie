@@ -7,6 +7,8 @@ import { getAllSlugs } from '@/lib/blog';
 import { getAllCities } from '@/lib/api';
 
 import { logError } from '@/lib/log-error'
+
+export const dynamic = 'force-dynamic'
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://emlakie.com';
 const ADMIN_EMAIL = 'peymansupervisor@gmail.com';
 

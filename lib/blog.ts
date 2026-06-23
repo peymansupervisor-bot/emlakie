@@ -2258,15 +2258,15 @@ export const posts: Post[] = [
   },
   {
     slug: 'apartment-safety-hazards-insurance-liability-2026',
-    title: '5 Apartment Safety Issues That Cost Insurance Companies a Fortune',
-    description: 'From pool gate latches to uneven pavement — the most preventable premises liability hazards in multifamily residential properties, and what they cost when ignored.',
+    title: '7 Apartment Safety Issues That Cost Insurance Companies a Fortune',
+    description: 'From pool gate latches to expired fire extinguishers — the most preventable premises liability hazards in multifamily residential properties, and what they cost when ignored.',
     date: '2026-06-22',
     category: 'Landlord Tips',
-    readTime: 6,
+    readTime: 8,
     content: `
 <p>Every year, insurance companies pay out billions of dollars on premises liability claims — and a significant chunk of those payouts trace back to the same handful of preventable hazards in multifamily residential properties. The frustrating part? Most of these risks are well-known, inexpensive to fix, and still ignored until someone gets hurt.</p>
 
-<p>If you manage or own an apartment complex, here are five safety issues that should be on your radar today.</p>
+<p>If you manage or own an apartment complex, here are seven safety issues that should be on your radar today.</p>
 
 <h2>1. Swimming Pool Gates Without Self-Closing, Self-Latching Hardware</h2>
 <p>A pool without a proper self-closing, self-latching gate is one of the most serious liability exposures a property can carry. If a child wanders through a propped-open or broken gate and drowns or is injured, the legal consequences are severe — and the insurance payout can be catastrophic.</p>
@@ -2302,7 +2302,28 @@ export const posts: Post[] = [
 
 <p>Property inspections should include pavement condition assessments at least twice a year, with attention paid after freeze-thaw cycles, heavy rain, or tree root activity. Temporary measures like filling cracks with sealant or placing warning cones are acceptable short-term responses — but they only buy time, not immunity. Permanent repairs should be scheduled and documented.</p>
 
-<h2>5. Why This Matters Beyond the Individual Claim</h2>
+<h2>5. Expired or Missing Fire Extinguishers</h2>
+<p>Fire extinguishers are one of the most commonly neglected items on apartment property maintenance checklists — and one of the most consequential. An extinguisher that is expired, discharged, or simply missing from its designated location is not just a code violation; it is potential evidence of gross negligence if a fire results in injury or property loss.</p>
+
+<p>Fire extinguishers must be inspected monthly (a visual check that the unit is present, accessible, and the pressure gauge reads in the green zone) and serviced annually by a licensed fire protection company. Units that have been discharged — even partially — must be recharged immediately. Most extinguishers have a useful life of 6–12 years and must be replaced or hydrostatically tested at end of life. Every extinguisher should display a current inspection tag with the date and technician signature.</p>
+
+<p>In a fire-related liability claim, the first thing an investigator looks for is whether the extinguishers were current and accessible. A missing inspection tag or an expired unit hands the plaintiff's attorney exactly what they need.</p>
+
+<h2>6. Faulty or Absent Fire Alarm Systems</h2>
+<p>Smoke detectors and fire alarm systems are required by code in virtually every residential building in the United States — but compliance is not the same as function. A smoke detector with a dead battery, a fire alarm panel with a persistent fault, or an interconnected system where only some units receive an alert can all contribute to delayed evacuation and catastrophic loss of life.</p>
+
+<p>Property managers must test smoke detectors and carbon monoxide alarms in every unit at least annually — and document that testing. Common area alarms, pull stations, and the central fire alarm panel should be tested and inspected by a licensed fire alarm contractor at least annually, or as required by local code. Batteries should be replaced on a scheduled basis, not reactively when a detector starts chirping.</p>
+
+<p>A fire fatality or serious injury in a building with a non-functional alarm system is among the most expensive outcomes in premises liability law. Punitive damages — which go beyond compensating the victim and punish the property owner for conscious disregard of safety — are regularly awarded in these cases.</p>
+
+<h2>7. Fire Hoses and Standpipe Systems Left Uninspected</h2>
+<p>In mid-rise and high-rise apartment buildings, interior standpipe systems and hose cabinets are a critical component of fire suppression infrastructure. These systems — the pipes, valves, and hose connections that firefighters and trained building staff use to fight fires from inside the building — must be inspected and flow-tested regularly. A standpipe valve that has seized shut, a hose that has rotted, or a cabinet door that has been painted shut can turn a containable fire into a catastrophe.</p>
+
+<p>NFPA 25 (the Standard for the Inspection, Testing, and Maintenance of Water-Based Fire Protection Systems) sets the baseline requirements: visual inspections quarterly, flow tests and full system inspections annually. Many jurisdictions require these inspections to be performed by a licensed contractor and the results filed with the local fire marshal.</p>
+
+<p>Fire hose cabinets are also frequently misused by residents — hoses are removed, cabinets are used for storage, or the area in front of them is blocked. Regular walkthroughs should confirm every cabinet is clear, accessible, and undisturbed.</p>
+
+<h2>8. Why This Matters Beyond the Individual Claim</h2>
 <p>Insurance carriers track loss history closely. A property with repeated slip-and-fall claims, premises liability suits, or pool incidents will face higher premiums at renewal — sometimes dramatically so. Some carriers will decline to renew coverage entirely, forcing the property owner into a surplus lines market with even steeper rates and fewer protections.</p>
 
 <p>Proactive safety management is not just a moral obligation. It is a financial strategy. The cost of fixing these hazard categories across a typical apartment community is measured in the low thousands of dollars. The average premises liability settlement is measured in the tens or hundreds of thousands — and that is before legal defense costs, which regularly exceed the settlement amount.</p>
@@ -2310,7 +2331,7 @@ export const posts: Post[] = [
 <p>The properties that maintain the best insurance relationships are the ones that can document a consistent, verifiable safety program. Inspection logs, maintenance records, vendor invoices, and photographic evidence of completed repairs all tell an underwriter that this is a well-managed property — and well-managed properties get better rates.</p>
 
 <h2>The Bottom Line</h2>
-<p>Self-closing pool gates. High-visibility stair nosing. Adequate common area lighting. Level, well-maintained pavement. These are not exotic safety engineering challenges. They are basic property maintenance items that a surprising number of apartment communities still get wrong — until a claim makes it impossible to ignore.</p>
+<p>Self-closing pool gates. High-visibility stair nosing. Adequate common area lighting. Level, well-maintained pavement. Current fire extinguishers. Functioning fire alarms. Inspected standpipes and hose cabinets. None of these are exotic safety engineering challenges. They are basic property maintenance items that a surprising number of apartment communities still get wrong — until a claim makes it impossible to ignore.</p>
 
 <p>Fix them now. Document that you fixed them. And review them again next quarter.</p>
 

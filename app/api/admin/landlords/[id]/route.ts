@@ -45,7 +45,10 @@ export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ 
   // Delete all their listings first
   await sb.from('listings').delete().eq('landlord_id', id);
 
-  // Delete the auth user (cascades to profiles via FK if set up, otherwise deletes auth record)
+  // Delete the profile row (not cascaded automatically)
+  await sb.from('profiles').delete().eq('id', id);
+
+  // Delete the auth user
   const { error } = await sb.auth.admin.deleteUser(id);
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 

@@ -83,7 +83,7 @@ export const posts: Post[] = [
   },
   {
     slug: 'how-to-apply-rental-los-angeles',
-    title: 'How to Apply for a Rental in Los Angeles: A Step-by-Step Guide',
+    title: 'How to Apply for a Rental in Los Angeles: A Step-by-Step…',
     description: 'Everything you need to know to submit a strong rental application in LA\'s competitive market — documents, timelines, and red flags to watch.',
     date: '2026-06-05',
     category: 'Renter Tips',
@@ -170,7 +170,7 @@ export const posts: Post[] = [
   // ── National city articles ──────────────────────────────────────────────
   {
     slug: 'average-rent-seattle-2026',
-    title: 'Average Rent in Seattle in 2026: Neighborhood-by-Neighborhood Breakdown',
+    title: 'Average Rent in Seattle in 2026: Neighborhood-by-Neighborho…',
     description: 'Seattle rents have stabilized after years of rapid growth. Here\'s what to budget across Capitol Hill, Ballard, SLU, and beyond.',
     date: '2026-06-12',
     category: 'Market Trends',
@@ -212,7 +212,7 @@ export const posts: Post[] = [
   },
   {
     slug: 'average-rent-new-york-city-2026',
-    title: 'Average Rent in New York City in 2026: Manhattan, Brooklyn, Queens & Beyond',
+    title: 'Average Rent in New York City in 2026: Manhattan,…',
     description: 'NYC rents hit record highs in 2026. Here\'s a borough-by-borough breakdown of what you\'ll pay and where to find value.',
     date: '2026-06-11',
     category: 'Market Trends',
@@ -259,7 +259,7 @@ export const posts: Post[] = [
   },
   {
     slug: 'average-rent-chicago-2026',
-    title: 'Average Rent in Chicago in 2026: The Most Affordable Major City?',
+    title: 'Average Rent in Chicago in 2026: The Most Affordable Major…',
     description: 'Chicago offers more square footage per dollar than almost any other major US city. Here\'s what renters pay across Lincoln Park, Wicker Park, Logan Square, and more.',
     date: '2026-06-10',
     category: 'Market Trends',
@@ -300,7 +300,7 @@ export const posts: Post[] = [
   },
   {
     slug: 'average-rent-austin-2026',
-    title: 'Average Rent in Austin in 2026: Has the Market Finally Cooled?',
+    title: 'Average Rent in Austin in 2026: Has the Market Finally…',
     description: 'After years of explosive rent growth, Austin\'s market has softened. Here\'s what renters are paying today across East Austin, South Congress, and the suburbs.',
     date: '2026-06-09',
     category: 'Market Trends',
@@ -592,7 +592,7 @@ export const posts: Post[] = [
   },
   {
     slug: 'average-rent-kansas-city-2026',
-    title: 'Average Rent in Kansas City, MO in 2026: Midwest Value at Its Best',
+    title: 'Average Rent in Kansas City, MO in 2026: Midwest Value at…',
     description: 'Kansas City offers some of the most affordable rents of any major US metro. Here\'s what renters pay across the Plaza, Crossroads, Midtown, and beyond.',
     date: '2026-06-02',
     category: 'Market Trends',
@@ -635,7 +635,7 @@ export const posts: Post[] = [
   },
   {
     slug: 'average-rent-omaha-nebraska-2026',
-    title: 'Average Rent in Omaha, Nebraska in 2026: Affordable Living in the Heartland',
+    title: 'Average Rent in Omaha, Nebraska in 2026: Affordable Living…',
     description: 'Omaha is one of the most underrated rental markets in the US — stable, affordable, and growing. Here\'s what renters pay across Midtown, Benson, Dundee, and more.',
     date: '2026-06-01',
     category: 'Market Trends',
@@ -726,7 +726,7 @@ export const posts: Post[] = [
   },
   {
     slug: 'average-rent-boston-2026',
-    title: 'Average Rent in Boston in 2026: College Town Prices Year-Round',
+    title: 'Average Rent in Boston in 2026: College Town Prices…',
     description: 'Boston is one of the most expensive rental markets in the Northeast, driven by universities, healthcare, and tech. Here\'s a neighborhood breakdown for 2026.',
     date: '2026-06-19',
     category: 'Market Trends',
@@ -1037,7 +1037,7 @@ export const posts: Post[] = [
   {
     slug: 'how-to-screen-tenants',
     title: 'How to Screen Tenants: A Landlord\'s Complete Guide',
-    description: 'A step-by-step framework for screening rental applicants, running background checks, and choosing the right tenant while staying compliant with fair housing laws.',
+    description: 'A step-by-step framework for screening rental applicants, running background checks, and choosing the right tenant while staying compliant with fair housing…',
     date: '2026-06-13',
     category: 'Landlord Tips',
     readTime: 6,
@@ -1100,8 +1100,8 @@ export const posts: Post[] = [
   },
   {
     slug: 'moving-checklist-renters',
-    title: 'The Ultimate Moving Checklist for Renters (8 Weeks to Move-In Day)',
-    description: 'A week-by-week checklist for renters to stay organized from lease signing to move-in — covering logistics, utilities, address changes, and move-in documentation.',
+    title: 'The Ultimate Moving Checklist for Renters (8 Weeks to…',
+    description: 'A week-by-week checklist for renters to stay organized from lease signing to move-in — covering logistics, utilities, address changes, and move-in…',
     date: '2026-06-12',
     category: 'Renter Tips',
     readTime: 5,
@@ -1174,7 +1174,7 @@ export const posts: Post[] = [
   },
   {
     slug: 'renting-with-pets-guide',
-    title: 'Renting With Pets: How to Find Pet-Friendly Rentals and Win Over Landlords',
+    title: 'Renting With Pets: How to Find Pet-Friendly Rentals and…',
     description: 'A practical guide for pet owners navigating the rental market — from finding pet-friendly listings to writing a pet résumé that gets landlords to say yes.',
     date: '2026-06-11',
     category: 'Renter Tips',
@@ -1346,7 +1346,7 @@ export const posts: Post[] = [
   },
   {
     slug: 'how-to-write-rental-listing',
-    title: 'How to Write a Rental Listing That Gets Qualified Tenants Fast',
+    title: 'How to Write a Rental Listing That Gets Qualified Tenants…',
     description: 'A landlord\'s guide to writing compelling rental listings — what information to include, how to price, and how to write a description that filters in the right tenants.',
     date: '2026-06-08',
     category: 'Landlord Tips',
@@ -1540,7 +1540,7 @@ export const posts: Post[] = [
   },
   {
     slug: 'average-rent-portland-2026',
-    title: 'Average Rent in Portland, OR in 2026: Is the Market Finally Cooling?',
+    title: 'Average Rent in Portland, OR in 2026: Is the Market…',
     description: 'Portland\'s rental market has softened considerably from its pandemic-era highs. Here\'s what renters pay across NE, SE, the Pearl District, and East Portland.',
     date: '2026-06-05',
     category: 'Market Trends',
@@ -1639,7 +1639,7 @@ export const posts: Post[] = [
 
   {
     slug: 'out-of-state-landlord-guide-kansas-city',
-    title: 'Out-of-State Landlord Guide to Kansas City, MO: Why Investors Are Moving Their Money Here',
+    title: 'Out-of-State Landlord Guide to Kansas City, MO: Why…',
     description: 'Kansas City is one of the top Midwest markets for out-of-state rental property investors. Here\'s why — and how to list your Kansas City rental for free.',
     date: '2026-06-21',
     category: 'Landlord Tips',
@@ -1748,7 +1748,7 @@ export const posts: Post[] = [
 
   {
     slug: 'out-of-state-landlord-guide-cleveland',
-    title: 'Out-of-State Landlord Guide to Cleveland, OH: The Highest-Yield Rental Market in the Midwest',
+    title: 'Out-of-State Landlord Guide to Cleveland, OH: The…',
     description: 'Cleveland, Ohio offers some of the highest rental yields of any US city. Here\'s what out-of-state landlords need to know before investing — and how to list your Cleveland property free.',
     date: '2026-06-21',
     category: 'Landlord Tips',
@@ -1864,7 +1864,7 @@ export const posts: Post[] = [
 
   {
     slug: 'la-rso-rent-increase-2026-tenant-guide',
-    title: 'LA Rent Increase 2026: What Tenants Need to Know About the New RSO Rules',
+    title: 'LA Rent Increase 2026: What Tenants Need to Know About the…',
     description: 'Los Angeles changed its Rent Stabilization Ordinance in 2026. Here\'s what the new rules mean for your rent — what your landlord can charge, what was eliminated, and when changes take effect.',
     date: '2026-06-21',
     category: 'Renter Tips',
@@ -1915,7 +1915,7 @@ export const posts: Post[] = [
 
   {
     slug: 'la-rso-rent-increase-2026-landlord-guide',
-    title: 'LA RSO Changes 2026: What Los Angeles Landlords Need to Know Before July 1',
+    title: 'LA RSO Changes 2026: What Los Angeles Landlords Need to…',
     description: 'The Los Angeles RSO rent increase formula changed significantly in 2026. Here\'s what LA landlords can and cannot charge — new caps, eliminated add-ons, and key deadlines.',
     date: '2026-06-21',
     category: 'Landlord Tips',
@@ -1981,7 +1981,7 @@ export const posts: Post[] = [
 
   {
     slug: 'la-rso-vs-ab1482-2026',
-    title: 'LA Rent Control 2026: RSO vs. AB 1482 — Which Law Applies to Your Rental?',
+    title: 'LA Rent Control 2026: RSO vs. AB 1482 — Which Law Applies…',
     description: 'Not all LA rentals fall under the RSO. Here\'s how to tell whether your unit is covered by the LA RSO or California\'s AB 1482 — and what each law allows in 2026.',
     date: '2026-06-21',
     category: 'Renter Tips',
@@ -2063,8 +2063,8 @@ export const posts: Post[] = [
 
   {
     slug: 'la-right-to-counsel-notice-landlord-requirements-2026',
-    title: 'LA Landlords: LAHD Updated the Right to Counsel Notice in June 2026 — Are You Compliant?',
-    description: 'The Los Angeles Housing Department updated its Right to Counsel (RTC) notice forms on June 11, 2026. LA landlords must use the new forms immediately or risk losing eviction cases.',
+    title: 'LA Landlords: LAHD Updated the Right to Counsel Notice in…',
+    description: 'The Los Angeles Housing Department updated its Right to Counsel (RTC) notice forms on June 11, 2026. LA landlords must use the new forms immediately or risk…',
     date: '2026-06-21',
     category: 'Landlord Tips',
     readTime: 5,
@@ -2130,7 +2130,7 @@ export const posts: Post[] = [
 
   {
     slug: 'la-right-to-counsel-tenant-guide-2026',
-    title: 'Free Legal Help for LA Tenants Facing Eviction: The Right to Counsel Program Explained',
+    title: 'Free Legal Help for LA Tenants Facing Eviction: The Right…',
     description: 'If you receive an eviction notice in Los Angeles, you may qualify for free legal representation under the City\'s Right to Counsel program. Here\'s how it works and how to apply.',
     date: '2026-06-21',
     category: 'Renter Tips',
@@ -2194,7 +2194,7 @@ export const posts: Post[] = [
   },
   {
     slug: 'adult-family-homes-federal-way-wa',
-    title: 'Long-Term Leases and Adult Family Homes: What Landlords, Investors, and Operators Need to Know',
+    title: 'Long-Term Leases and Adult Family Homes: What Landlords,…',
     description: 'AFH operators in Washington routinely sign 10- to 20-year leases to secure a licensed property. Here\'s how that dynamic works — and what it means for landlords, investors, and care providers in Federal Way and South King County.',
     date: '2026-06-21',
     category: 'Market Trends',
@@ -2320,8 +2320,8 @@ export const posts: Post[] = [
   },
   {
     slug: 'apartment-safety-hazards-insurance-liability-2026',
-    title: '7 Apartment Safety Issues That Cost Insurance Companies a Fortune',
-    description: 'From pool gate latches to expired fire extinguishers — the most preventable premises liability hazards in multifamily residential properties, and what they cost when ignored.',
+    title: '7 Apartment Safety Issues That Cost Insurance Companies a…',
+    description: 'From pool gate latches to expired fire extinguishers — the most preventable premises liability hazards in multifamily residential properties, and what they…',
     date: '2026-06-22',
     category: 'Landlord Tips',
     readTime: 8,

@@ -20,9 +20,29 @@ export const metadata: Metadata = {
   },
 };
 
+const webPageSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  name: 'Contact Us | EMLAKIE',
+  url: 'https://emlakie.com/contact',
+  description:
+    'Contact EMLAKIE for help with your account, listing questions, or partnership inquiries. We\'re here for renters and landlords alike.',
+  breadcrumb: {
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://emlakie.com' },
+      { '@type': 'ListItem', position: 2, name: 'Contact', item: 'https://emlakie.com/contact' },
+    ],
+  },
+};
+
 export default function ContactPage() {
   return (
     <div className="mx-auto max-w-2xl px-4 py-12 sm:px-6">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageSchema) }}
+      />
       <p className="text-xs font-semibold uppercase tracking-widest text-brand-600">Support</p>
       <h1 className="mt-2 text-3xl font-extrabold text-gray-900">How can we help?</h1>
       <p className="mt-2 text-gray-500">We typically respond within one business day.</p>

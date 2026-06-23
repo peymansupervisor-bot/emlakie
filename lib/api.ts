@@ -124,7 +124,8 @@ export async function getListings(filters: ListingFilters = {}): Promise<Listing
           (row.virtual_tour_url ? 20 : 0) +
           Math.min((row.view_count as number | null) ?? 0, 80) * 0.5 +
           Math.min(amenityCount, 10) * 2 +
-          freshness;
+          freshness +
+          Math.random() * 30;
         return { row, score };
       })
       .sort((a, b) => b.score - a.score);

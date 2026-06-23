@@ -1,4 +1,5 @@
 import { adminClient } from '@/lib/moderator';
+import ClearButton from './ClearButton';
 
 export const dynamic = 'force-dynamic';
 
@@ -100,6 +101,8 @@ export default async function DiagnosticsPage({ searchParams }: { searchParams: 
             Platform-wide error log — API failures, client errors, and system operations.
           </p>
         </div>
+        <div className="flex gap-2 items-center">
+          <ClearButton source={filterSource} count={rows.length} />
         <form method="GET" className="flex gap-2">
           <input
             name="q"
@@ -112,6 +115,7 @@ export default async function DiagnosticsPage({ searchParams }: { searchParams: 
             Search
           </button>
         </form>
+        </div>
       </div>
 
       {/* Source filter chips */}

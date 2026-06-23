@@ -2257,6 +2257,68 @@ export const posts: Post[] = [
     `.trim(),
   },
   {
+    slug: 'renters-insurance-why-every-tenant-needs-it-2026',
+    title: "Renter's Insurance: Why Every Tenant Needs It and Smart Landlords Require It",
+    description: "A leaking roof or a sewer backup can wipe out a tenant's belongings overnight. Renter's insurance — often just a few dollars a month — is the safety net most renters don't know they're missing.",
+    date: '2026-06-22',
+    category: 'Renter Tips',
+    readTime: 5,
+    content: `
+<p>Most renters assume their landlord's insurance covers them. It doesn't. A landlord's policy protects the building — the walls, the roof, the plumbing. Your furniture, electronics, clothing, and personal belongings? Those are entirely your responsibility. And when something goes wrong, it usually goes wrong fast and without warning.</p>
+
+<p>Renter's insurance is one of the most underutilized financial safety nets available to tenants — and one of the least expensive. Here's what it covers, why it matters more than most people think, and why landlords are increasingly requiring it as a condition of the lease.</p>
+
+<h2>When Disaster Strikes When You Least Expect It</h2>
+<p>The scenarios that trigger the biggest renter losses are almost never the dramatic ones. They're the quiet, mundane failures that escalate overnight:</p>
+<ul>
+  <li>A roof that develops a slow leak after a storm, and by the time it's discovered, water has soaked through the ceiling into the bedroom, ruining a mattress, a dresser, a laptop, and a closet full of clothing.</li>
+  <li>A sewer line that backs up without warning, flooding a ground-floor apartment with sewage and destroying flooring, furniture, and everything stored at floor level.</li>
+  <li>An upstairs neighbor whose washing machine hose fails at 2am, sending water cascading through the ceiling into the unit below.</li>
+</ul>
+<p>In each of these situations, the landlord's policy may cover the structural repair. But the tenant's personal property loss — often thousands of dollars — falls entirely on the tenant unless they have their own policy.</p>
+
+<h2>What Renter's Insurance Actually Covers</h2>
+<p>A standard renter's insurance policy typically covers three things:</p>
+<ul>
+  <li><strong>Personal property:</strong> Your belongings — furniture, electronics, clothing, kitchen appliances, bicycles — up to the policy limit, against covered perils like fire, water damage, theft, and vandalism.</li>
+  <li><strong>Liability:</strong> If a guest is injured in your apartment, or if you accidentally cause damage to another unit (say, your bathtub overflows into the unit below), liability coverage pays for legal costs and damages.</li>
+  <li><strong>Additional living expenses (ALE):</strong> If your unit becomes uninhabitable due to a covered event and you need to stay in a hotel or short-term rental while repairs are made, ALE coverage reimburses those costs.</li>
+</ul>
+<p>Some policies also cover theft of belongings from your car, or personal property while traveling — coverage that goes well beyond the four walls of your apartment.</p>
+
+<h2>How Much Does It Cost?</h2>
+<p>This is where most renters are surprised. Renter's insurance is remarkably affordable — typically <strong>$10–$25 per month</strong> depending on your location, the coverage amount, and your deductible. For most renters, that's less than a streaming subscription.</p>
+
+<p>Among the more affordable options currently available, <strong>Lemonade</strong> stands out as one of the lowest-cost providers on the market, with basic policies starting as low as $5–$10 per month in many states. Their app-based model and AI-powered claims process means renters can often get a policy in minutes and file a claim the same day an incident occurs. Other well-regarded providers include State Farm, Allstate, and Progressive — all worth comparing for your specific zip code and coverage needs.</p>
+
+<h2>How It Helps Landlords Too</h2>
+<p>Many property owners don't realize that requiring renter's insurance isn't just good for tenants — it directly benefits them as well.</p>
+
+<p>When a tenant has their own policy, their insurance company becomes the first line of response for tenant property claims. This reduces the likelihood that a tenant will pursue the landlord for damages that fall into a gray area of responsibility. It also reduces the number of claims filed against the landlord's own policy — which matters because frequent claims can raise premiums or trigger non-renewal at the next policy anniversary.</p>
+
+<p>Perhaps most importantly, many landlord protection insurance plans now offer <strong>premium discounts to property owners who enforce renter's insurance as a lease requirement</strong>. The logic is straightforward: a building where every tenant carries their own policy is statistically a lower-risk building. Underwriters reward that. The discount varies by carrier and market, but it can meaningfully offset the administrative effort of verifying tenant coverage.</p>
+
+<h2>How Landlords Can Implement a Renter's Insurance Requirement</h2>
+<p>Adding a renter's insurance requirement to a lease is straightforward. The lease clause should specify:</p>
+<ul>
+  <li>The minimum liability coverage amount required (typically $100,000)</li>
+  <li>That the landlord must be listed as an additional interested party on the policy</li>
+  <li>That proof of coverage must be provided before or at move-in, and renewed annually</li>
+  <li>Consequences for failing to maintain coverage (typically treated as a lease violation)</li>
+</ul>
+<p>Listing the landlord as an interested party means the landlord receives automatic notification if the policy lapses or is cancelled — removing the burden of chasing renewals.</p>
+
+<h2>The Bottom Line</h2>
+<p>Renter's insurance is one of the few financial products where the cost is genuinely low and the potential benefit is genuinely high. A $15/month policy can cover $30,000 in personal property losses. A sewer backup, a kitchen fire, or a roof leak can wipe out years of accumulated belongings in a single incident — and none of those events are predictable.</p>
+
+<p>If you're a tenant and you don't have renter's insurance, getting a quote takes less than five minutes. If you're a landlord and you don't require it, talk to your insurance agent about whether a lease requirement could lower your own premiums.</p>
+
+<p>It is one of the simplest, most cost-effective steps both tenants and landlords can take to protect themselves — and each other.</p>
+
+<p><em>This article is for general informational purposes only and does not constitute insurance or legal advice. Coverage terms, exclusions, and pricing vary by provider and state. Always read your policy documents carefully and consult a licensed insurance professional for guidance specific to your situation.</em></p>
+    `.trim(),
+  },
+  {
     slug: 'apartment-safety-hazards-insurance-liability-2026',
     title: '7 Apartment Safety Issues That Cost Insurance Companies a Fortune',
     description: 'From pool gate latches to expired fire extinguishers — the most preventable premises liability hazards in multifamily residential properties, and what they cost when ignored.',

@@ -11,7 +11,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   if (!await auth()) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   const { id } = await params;
   const body = await req.json();
-  const allowed = ['status', 'title', 'description', 'monthly_rent', 'address', 'city', 'state', 'zip', 'bedrooms', 'bathrooms', 'sqft', 'available_from', 'property_type', 'pets_allowed', 'parking'];
+  const allowed = ['status', 'title', 'description', 'monthly_rent', 'address', 'city', 'state', 'zip', 'bedrooms', 'bathrooms', 'sqft', 'available_date', 'property_type'];
   const update: Record<string, unknown> = {};
   for (const key of allowed) { if (body[key] !== undefined) update[key] = body[key]; }
   if (Object.keys(update).length === 0) return NextResponse.json({ error: 'Nothing to update' }, { status: 400 });

@@ -16,9 +16,7 @@ interface Listing {
   sqft: number;
   status: string;
   property_type: string;
-  available_from: string;
-  pets_allowed: boolean;
-  parking: string;
+  available_date: string;
   landlord_id: string;
   slug: string;
 }
@@ -38,9 +36,7 @@ export default function EditListingForm({ listing }: { listing: Listing }) {
     sqft: listing.sqft ?? '',
     status: listing.status ?? 'active',
     property_type: listing.property_type ?? 'apartment',
-    available_from: listing.available_from ? listing.available_from.slice(0, 10) : '',
-    pets_allowed: listing.pets_allowed ?? false,
-    parking: listing.parking ?? '',
+    available_date: listing.available_date ? listing.available_date.slice(0, 10) : '',
   });
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
@@ -79,7 +75,7 @@ export default function EditListingForm({ listing }: { listing: Listing }) {
     }
   }
 
-  function set(k: string, v: string | boolean) {
+  function set(k: string, v: string) {
     setForm(f => ({ ...f, [k]: v }));
     setSuccess(false);
   }
@@ -176,21 +172,7 @@ export default function EditListingForm({ listing }: { listing: Listing }) {
           </div>
           <div>
             <label className={label}>Available From</label>
-            <input className={field} type="date" value={form.available_from} onChange={e => set('available_from', e.target.value)} />
-          </div>
-          <div>
-            <label className={label}>Parking</label>
-            <input className={field} value={form.parking} onChange={e => set('parking', e.target.value)} placeholder="e.g. 1 garage, street" />
-          </div>
-          <div className="flex items-center gap-3 mt-4">
-            <input
-              id="pets"
-              type="checkbox"
-              checked={form.pets_allowed}
-              onChange={e => set('pets_allowed', e.target.checked)}
-              className="w-4 h-4 accent-green-500"
-            />
-            <label htmlFor="pets" className="text-sm text-gray-300">Pets Allowed</label>
+            <input className={field} type="date" value={form.available_date} onChange={e => set('available_date', e.target.value)} />
           </div>
         </div>
       </div>

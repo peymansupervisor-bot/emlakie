@@ -11,7 +11,7 @@ export default async function EditListingPage({ params }: { params: Promise<{ id
 
   const { data: listing } = await sb
     .from('listings')
-    .select('id, title, description, address, city, state, zip, monthly_rent, bedrooms, bathrooms, sqft, status, property_type, available_from, pets_allowed, parking, landlord_id, slug')
+    .select('id, title, description, address, city, state, zip, monthly_rent, bedrooms, bathrooms, sqft, status, property_type, available_date, landlord_id, slug')
     .eq('id', id)
     .maybeSingle();
 

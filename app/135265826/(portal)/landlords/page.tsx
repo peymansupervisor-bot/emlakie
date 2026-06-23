@@ -17,7 +17,8 @@ export default async function LandlordsPage({ searchParams }: { searchParams: Pr
 
   const { data: listingCounts } = await sb
     .from('listings')
-    .select('landlord_id, status');
+    .select('landlord_id, status')
+    .limit(10000);
 
   const countMap: Record<string, { total: number; active: number }> = {};
   for (const l of listingCounts ?? []) {

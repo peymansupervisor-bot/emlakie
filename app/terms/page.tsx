@@ -36,12 +36,6 @@ export default function TermsPage() {
         </p>
       </div>
 
-      <div className="mt-6 rounded-lg border border-brand-200 bg-brand-50 px-5 py-4 text-sm text-brand-800">
-        <strong>By using this website, you agree to these Terms and Conditions.</strong> This includes, without
-        limitation, EMLAKIE&apos;s right to delete, suspend, or revise any listing at any time and without prior
-        notice. Continued use of this site following any updates to these Terms constitutes your acceptance of
-        the revised Terms.
-      </div>
 
       {/* Table of contents */}
       <nav className="mt-8 rounded-2xl border border-gray-200 bg-gray-50 p-6">

@@ -5,6 +5,8 @@ import { randomUUID } from 'crypto';
 import { getAllSlugs } from '@/lib/blog';
 import { getAllCities } from '@/lib/api';
 
+export const maxDuration = 300;
+
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://emlakie.com';
 const ADMIN_EMAIL = 'peymansupervisor@gmail.com';
 

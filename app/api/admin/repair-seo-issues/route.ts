@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getModeratorSession, adminClient } from '@/lib/moderator';
 import { cureSeoIssues } from '@/lib/seo-cure';
 
+export const maxDuration = 300;
+
 export async function POST(req: NextRequest) {
   const session = await getModeratorSession();
   if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });

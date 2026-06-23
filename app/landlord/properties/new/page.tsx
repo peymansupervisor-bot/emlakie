@@ -243,7 +243,8 @@ export default function NewPropertyPage() {
     }));
   }
 
-  const MAX_PHOTOS = 20;
+  const MAX_PHOTOS = 25;
+  const MAX_PHOTO_BYTES = 25 * 1024 * 1024;
 
   async function processOnePhoto(f: File, preview: string, user: { id: string }) {
     try {
@@ -284,12 +285,18 @@ export default function NewPropertyPage() {
       (f) => f.type.startsWith('image/') || /\.(heic|heif)$/i.test(f.name),
     );
 
+    const oversized = accepted.filter((f) => f.size > MAX_PHOTO_BYTES);
+    if (oversized.length > 0) {
+      setError(`${oversized.length} photo${oversized.length > 1 ? 's' : ''} exceed the 25 MB size limit and were skipped.`);
+    }
+    const sized = accepted.filter((f) => f.size <= MAX_PHOTO_BYTES);
+
     // Enforce cap
     const slotsLeft = MAX_PHOTOS - photoItems.filter((p) => !p.error).length;
-    const toProcess = accepted.slice(0, slotsLeft);
+    const toProcess = sized.slice(0, slotsLeft);
 
     if (toProcess.length === 0) {
-      setError(`Maximum ${MAX_PHOTOS} photos allowed.`);
+      if (oversized.length === 0) setError(`Maximum ${MAX_PHOTOS} photos allowed.`);
       return;
     }
 
@@ -333,7 +340,10 @@ export default function NewPropertyPage() {
       if (form.description.length < 30) return 'Description must be at least 30 characters.';
       if (filterWarnings.length > 0) return 'Please remove the flagged language before continuing.';
     }
-    // photo minimum temporarily disabled for debugging
+    if (step === 3) {
+      const ready = photoItems.filter((p) => !p.uploading && !p.error && p.medium);
+      if (ready.length < 1) return 'Please add at least 1 photo before continuing.';
+    }
     return '';
   }
 

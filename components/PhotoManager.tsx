@@ -7,6 +7,7 @@ import { supabase } from '@/lib/supabase';
 
 const MAX_PHOTOS = 25;
 const MIN_PHOTOS = 1;
+const MAX_PHOTO_BYTES = 25 * 1024 * 1024;
 
 interface Props {
   listingId: string;
@@ -27,8 +28,12 @@ export default function PhotoManager({ listingId, initialPhotos }: Props) {
     if (!files.length) return;
     const remaining = MAX_PHOTOS - photos.length;
     if (remaining <= 0) { setMsg(`Maximum ${MAX_PHOTOS} photos allowed.`); return; }
-    const toUpload = files.slice(0, remaining);
-    if (toUpload.length < files.length) setMsg(`Only ${remaining} slot${remaining > 1 ? 's' : ''} remaining — uploading first ${toUpload.length}.`);
+    const oversized = files.filter((f) => f.size > MAX_PHOTO_BYTES);
+    if (oversized.length > 0) setMsg(`${oversized.length} photo${oversized.length > 1 ? 's exceed' : ' exceeds'} the 25 MB limit and ${oversized.length > 1 ? 'were' : 'was'} skipped.`);
+    const sized = files.filter((f) => f.size <= MAX_PHOTO_BYTES);
+    const toUpload = sized.slice(0, remaining);
+    if (toUpload.length === 0) return;
+    if (toUpload.length < sized.length) setMsg(`Only ${remaining} slot${remaining > 1 ? 's' : ''} remaining — uploading first ${toUpload.length}.`);
     setUploading(true);
     const newUrls: string[] = [];
     const skipped: string[] = [];

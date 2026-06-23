@@ -12,6 +12,8 @@ const VARIANTS = [
   { name: 'full',   width: null },
 ] as const
 
+const MAX_FILE_BYTES = 25 * 1024 * 1024 // 25 MB
+
 function isHeic(buf: Buffer): boolean {
   if (buf.length < 12) return false
   const ftyp = buf.slice(4, 8).toString('ascii')
@@ -65,6 +67,10 @@ export async function POST(req: NextRequest) {
     if (rawBuffer.length === 0) {
       return NextResponse.json({ error: 'Downloaded file is empty' }, { status: 500 })
     }
+    if (rawBuffer.length > MAX_FILE_BYTES) {
+      await adminStorage.from('listing-photos').remove([path])
+      return NextResponse.json({ error: 'Photo exceeds the 25 MB size limit.' }, { status: 413 })
+    }
 
     let inputBuffer: Buffer
     try {
@@ -84,7 +90,7 @@ export async function POST(req: NextRequest) {
     for (const variant of VARIANTS) {
       const pipeline = sharp(inputBuffer, { failOn: 'none' })
         .rotate()                                                          // honour EXIF orientation
-        .toFormat('jpeg', { quality: 95, mozjpeg: true })                 // lossless-quality JPEG
+        .toFormat('webp', { quality: 85 })                                // WebP — 30-50% smaller than JPEG at equal quality
 
       if (variant.width) {
         pipeline.resize(variant.width, null, { withoutEnlargement: true, fit: 'inside' })
@@ -97,11 +103,11 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: `Encode failed (${variant.name}): ${(e as Error).message}` }, { status: 500 })
       }
 
-      const variantPath = `${userId}/${variant.name}/${baseName}.jpg`
+      const variantPath = `${userId}/${variant.name}/${baseName}.webp`
 
       const { error: uploadErr } = await adminStorage
         .from('listing-photos')
-        .upload(variantPath, processed, { contentType: 'image/jpeg', upsert: true })
+        .upload(variantPath, processed, { contentType: 'image/webp', upsert: true })
 
       if (uploadErr) {
         return NextResponse.json({ error: `Upload failed (${variant.name}): ${uploadErr.message}` }, { status: 500 })

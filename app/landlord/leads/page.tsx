@@ -5,6 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';
 import { getAllApplications, deleteApplication, sendMessageToTenant, openConversation } from '@/lib/landlord/client';
 import { Application, LandlordListing } from '@/lib/landlord/types';
+import ScreeningModal from '../screening/ScreeningModal';
 
 type Filter = 'all' | 'pending' | 'approved' | 'rejected';
 
@@ -56,6 +57,8 @@ function ApplicantDrawer({ lead, onClose, onDelete }: {
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
   const [sendError, setSendError] = useState('');
+  const [showScreening, setShowScreening] = useState(false);
+  const [screeningSent, setScreeningSent] = useState(false);
 
   useEffect(() => {
     closeRef.current?.focus();
@@ -222,6 +225,18 @@ function ApplicantDrawer({ lead, onClose, onDelete }: {
           {lead.listingId && (
             <OpenInMessagesButton listingId={lead.listingId} applicationId={lead.id} />
           )}
+          {screeningSent ? (
+            <div className="w-full rounded-xl border border-green-200 bg-green-50 py-2 text-center text-sm font-semibold text-green-700">
+              ✓ Screening Request Sent
+            </div>
+          ) : (
+            <button
+              onClick={() => setShowScreening(true)}
+              className="w-full rounded-xl border border-green-300 bg-green-50 py-2 text-sm font-semibold text-green-700 transition hover:bg-green-100"
+            >
+              🔍 Screen Tenant
+            </button>
+          )}
           <button
             onClick={() => { if (confirm('Delete this inquiry? This cannot be undone.')) onDelete(lead.id); }}
             className="w-full rounded-xl border border-red-200 py-2 text-sm font-semibold text-red-600 transition hover:bg-red-50"
@@ -230,6 +245,17 @@ function ApplicantDrawer({ lead, onClose, onDelete }: {
           </button>
         </div>
       </div>
+
+      {showScreening && lead.listingId && (
+        <ScreeningModal
+          applicationId={lead.id}
+          listingId={lead.listingId}
+          listingAddress={lead.listingAddress ?? ''}
+          tenantName={lead.tenant_name ?? 'Applicant'}
+          onClose={() => setShowScreening(false)}
+          onSuccess={() => { setShowScreening(false); setScreeningSent(true); }}
+        />
+      )}
     </>
   );
 }

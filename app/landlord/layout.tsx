@@ -12,6 +12,7 @@ const TABS = [
   { href: '/landlord/leads',    label: 'Inquiries'      },
   { href: '/landlord/messages', label: 'Messages'       },
   { href: '/landlord/alerts',   label: 'Notifications'  },
+  { href: '/landlord/screening', label: 'Screening'      },
   { href: '/landlord/payments', label: '⚡ Boost'        },
   { href: '/landlord/profile',  label: 'Profile'        },
 ];

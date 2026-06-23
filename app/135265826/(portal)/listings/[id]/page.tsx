@@ -9,13 +9,29 @@ export default async function EditListingPage({ params }: { params: Promise<{ id
   const { id } = await params;
   const sb = adminClient();
 
-  const { data: listing } = await sb
+  const { data: listing, error: listingError } = await sb
     .from('listings')
     .select('id, title, description, address, city, state, zip, monthly_rent, bedrooms, bathrooms, sqft, status, property_type, available_date, landlord_id, slug')
     .eq('id', id)
     .maybeSingle();
 
-  if (!listing) notFound();
+  if (listingError || !listing) {
+    return (
+      <div className="max-w-3xl">
+        <div className="mb-6">
+          <Link href="/135265826/landlords" className="text-xs text-gray-400 hover:text-white transition">
+            ← Back to Landlords
+          </Link>
+        </div>
+        <div className="rounded-2xl border border-red-800 bg-red-950/40 p-6 text-sm text-red-300">
+          <p className="font-bold text-red-200 mb-2">Could not load listing</p>
+          <p>ID: <span className="font-mono">{id}</span></p>
+          {listingError && <p className="mt-1">Error: {listingError.message}</p>}
+          {!listing && !listingError && <p className="mt-1">No listing found with this ID.</p>}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-3xl">

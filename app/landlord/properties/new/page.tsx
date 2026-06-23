@@ -722,7 +722,7 @@ export default function NewPropertyPage() {
                 d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
             </svg>
             <span className="font-semibold">Click or drag photos here</span>
-            <span className="text-xs">JPG, PNG, HEIC (iPhone) — up to 20 photos</span>
+            <span className="text-xs">JPG, PNG, HEIC · Tap multiple times to add up to 25 photos</span>
           </button>
           <input ref={fileRef} type="file" accept="image/*" multiple className="hidden"
             onChange={(e) => addPhotos(e.target.files)} />

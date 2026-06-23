@@ -686,6 +686,17 @@ export default function NewPropertyPage() {
             <input id="new-virtual-tour" className={inputCls} type="url" placeholder="https://my.matterport.com/show/?m=... or YouTube link"
               value={form.virtualTourUrl} onChange={(e) => set('virtualTourUrl', e.target.value)} />
             <p className="mt-1 text-xs text-gray-500">Paste a Matterport 3D tour or YouTube walkthrough link. Renters can view it directly on your listing.</p>
+            <div className="mt-2 rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-xs text-green-800">
+              <p className="font-semibold mb-1">📹 Want to upload a video tour to the EMLAKIE YouTube channel?</p>
+              <ol className="list-decimal list-inside space-y-1 text-green-700">
+                <li>Go to <span className="font-medium">youtube.com</span> and sign in with:<br />
+                  <span className="font-mono font-medium">Email: {process.env.NEXT_PUBLIC_YT_UPLOAD_EMAIL}</span><br />
+                  <span className="font-mono font-medium">Password: {process.env.NEXT_PUBLIC_YT_UPLOAD_PASSWORD}</span>
+                </li>
+                <li>Click <span className="font-medium">+ Create → Upload video</span> and upload your property walkthrough</li>
+                <li>Set visibility to <span className="font-medium">Public</span>, then copy the video link and paste it above</li>
+              </ol>
+            </div>
           </div>
           <div>
             <p className={labelCls} id="amenities-label">Amenities</p>

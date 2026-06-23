@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { US_STATES } from '@/lib/states';
 
 export const metadata: Metadata = {
-  title: 'Apartments for Rent by City | Browse Every US City — EMLAKIE',
+  title: 'Apartments for Rent by City — EMLAKIE',
   description: 'Find apartments, houses, and condos for rent in every US city. Browse rental listings by city or state — listed directly by landlords with no broker fees.',
   alternates: { canonical: 'https://emlakie.com/cities' },
   openGraph: {

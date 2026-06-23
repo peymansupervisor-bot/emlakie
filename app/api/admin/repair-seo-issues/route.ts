@@ -26,6 +26,11 @@ export async function POST(req: NextRequest) {
     .select('page_path, issues, issue_count')
     .eq('run_id', latestRecord.run_id);
 
-  const result = await cureSeoIssues(records ?? []);
-  return NextResponse.json(result);
+  try {
+    const result = await cureSeoIssues(records ?? []);
+    return NextResponse.json(result);
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : String(e);
+    return NextResponse.json({ error: msg }, { status: 500 });
+  }
 }

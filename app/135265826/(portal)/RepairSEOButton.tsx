@@ -12,10 +12,12 @@ export default function RepairSEOButton({ hasIssues }: { hasIssues: boolean }) {
   const [status, setStatus] = useState<'idle' | 'running' | 'done' | 'error'>('idle');
   const [result, setResult] = useState<CureResult | null>(null);
   const [showResult, setShowResult] = useState(false);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   async function repair() {
     setStatus('running');
     setResult(null);
+    setErrorMsg(null);
     try {
       const res = await fetch('/api/admin/repair-seo-issues', { method: 'POST' });
       const data = await res.json();
@@ -24,12 +26,14 @@ export default function RepairSEOButton({ hasIssues }: { hasIssues: boolean }) {
         setStatus('done');
         setShowResult(true);
       } else {
+        setErrorMsg(data?.error ?? `HTTP ${res.status}`);
         setStatus('error');
-        setTimeout(() => setStatus('idle'), 5000);
+        setShowResult(true);
       }
-    } catch {
+    } catch (e) {
+      setErrorMsg(e instanceof Error ? e.message : 'Network error');
       setStatus('error');
-      setTimeout(() => setStatus('idle'), 5000);
+      setShowResult(true);
     }
   }
 
@@ -52,6 +56,16 @@ export default function RepairSEOButton({ hasIssues }: { hasIssues: boolean }) {
          status === 'error'   ? '❌ Failed' :
                                 '🔧 Cure SEO Issues'}
       </button>
+
+      {showResult && status === 'error' && errorMsg && (
+        <div className="absolute right-0 top-12 z-50 w-80 rounded-2xl border border-red-700 bg-gray-900 shadow-2xl p-4">
+          <div className="flex items-center justify-between mb-2">
+            <p className="text-sm font-bold text-red-400">SEO Repair Failed</p>
+            <button onClick={() => { setShowResult(false); setStatus('idle'); }} className="text-gray-500 hover:text-gray-300 text-xs">✕</button>
+          </div>
+          <p className="text-xs text-gray-300 break-words">{errorMsg}</p>
+        </div>
+      )}
 
       {showResult && result && (
         <div className="absolute right-0 top-12 z-50 w-80 rounded-2xl border border-gray-700 bg-gray-900 shadow-2xl p-4">

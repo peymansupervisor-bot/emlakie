@@ -19,7 +19,7 @@ export default async function RecentListings() {
 
   return (
     <div className="flex flex-col gap-3">
-      <p className="text-xs font-semibold uppercase tracking-widest text-gray-500">Sponsored listings</p>
+      <p className="text-center text-xs font-semibold uppercase tracking-widest text-gray-500">Sponsored listings</p>
       {cards.map((l) => {
         const href = l.slug ? `/rentals/${l.slug}` : `/rentals/${l.id}`;
         return (

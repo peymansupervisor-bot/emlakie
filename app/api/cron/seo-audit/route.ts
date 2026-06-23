@@ -118,6 +118,93 @@ function extractJsonLdTypes(html: string): string[] {
   return types;
 }
 
+// Core Web Vitals thresholds (Google's published values)
+const CWV_THRESHOLDS = {
+  lcp:  { good: 2500, poor: 4000 },  // ms
+  cls:  { good: 0.1,  poor: 0.25 },  // unitless
+  inp:  { good: 200,  poor: 500  },  // ms
+  fcp:  { good: 1800, poor: 3000 },  // ms
+  ttfb: { good: 800,  poor: 1800 },  // ms
+};
+
+interface CwvResult {
+  lcp?: number; cls?: number; inp?: number; fcp?: number; ttfb?: number;
+  mobileScore?: number; desktopScore?: number;
+}
+
+async function fetchCoreWebVitals(url: string): Promise<CwvResult | null> {
+  const apiKey = process.env.PAGESPEED_API_KEY;
+  if (!apiKey) return null;
+
+  try {
+    const [mobileRes, desktopRes] = await Promise.all([
+      fetch(`https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${encodeURIComponent(url)}&strategy=mobile&key=${apiKey}`, { signal: AbortSignal.timeout(30000) }),
+      fetch(`https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${encodeURIComponent(url)}&strategy=desktop&key=${apiKey}`, { signal: AbortSignal.timeout(30000) }),
+    ]);
+
+    if (!mobileRes.ok && !desktopRes.ok) return null;
+
+    const extract = (data: Record<string, unknown>, id: string): number | undefined => {
+      try {
+        const audits = (data as { lighthouseResult?: { audits?: Record<string, { numericValue?: number }> } }).lighthouseResult?.audits;
+        return audits?.[id]?.numericValue;
+      } catch { return undefined; }
+    };
+
+    const mobileData = mobileRes.ok ? await mobileRes.json() : null;
+    const desktopData = desktopRes.ok ? await desktopRes.json() : null;
+    const src = mobileData ?? desktopData;
+
+    return {
+      lcp:  extract(src, 'largest-contentful-paint'),
+      cls:  extract(src, 'cumulative-layout-shift'),
+      inp:  extract(src, 'interaction-to-next-paint') ?? extract(src, 'total-blocking-time'),
+      fcp:  extract(src, 'first-contentful-paint'),
+      ttfb: extract(src, 'server-response-time'),
+      mobileScore:  mobileData ? (mobileData as { lighthouseResult?: { categories?: { performance?: { score?: number } } } }).lighthouseResult?.categories?.performance?.score : undefined,
+      desktopScore: desktopData ? (desktopData as { lighthouseResult?: { categories?: { performance?: { score?: number } } } }).lighthouseResult?.categories?.performance?.score : undefined,
+    };
+  } catch { return null; }
+}
+
+function cwvIssues(cwv: CwvResult): SeoIssue[] {
+  const issues: SeoIssue[] = [];
+
+  if (cwv.lcp !== undefined) {
+    if (cwv.lcp > CWV_THRESHOLDS.lcp.poor)
+      issues.push({ code: 'cwv-lcp-poor', severity: 'error', message: `LCP ${(cwv.lcp/1000).toFixed(1)}s — poor (>4s). Largest Contentful Paint is a Core Web Vital Google uses for ranking.` });
+    else if (cwv.lcp > CWV_THRESHOLDS.lcp.good)
+      issues.push({ code: 'cwv-lcp-needs-improvement', severity: 'warning', message: `LCP ${(cwv.lcp/1000).toFixed(1)}s — needs improvement (>2.5s). Target: under 2.5s.` });
+  }
+  if (cwv.cls !== undefined) {
+    if (cwv.cls > CWV_THRESHOLDS.cls.poor)
+      issues.push({ code: 'cwv-cls-poor', severity: 'error', message: `CLS ${cwv.cls.toFixed(3)} — poor (>0.25). Cumulative Layout Shift causes content to jump; hurts ranking.` });
+    else if (cwv.cls > CWV_THRESHOLDS.cls.good)
+      issues.push({ code: 'cwv-cls-needs-improvement', severity: 'warning', message: `CLS ${cwv.cls.toFixed(3)} — needs improvement (>0.1). Target: under 0.1.` });
+  }
+  if (cwv.inp !== undefined) {
+    if (cwv.inp > CWV_THRESHOLDS.inp.poor)
+      issues.push({ code: 'cwv-inp-poor', severity: 'error', message: `INP ${cwv.inp.toFixed(0)}ms — poor (>500ms). Interaction to Next Paint replaced FID as a Core Web Vital in 2024.` });
+    else if (cwv.inp > CWV_THRESHOLDS.inp.good)
+      issues.push({ code: 'cwv-inp-needs-improvement', severity: 'warning', message: `INP ${cwv.inp.toFixed(0)}ms — needs improvement (>200ms). Target: under 200ms.` });
+  }
+  if (cwv.fcp !== undefined && cwv.fcp > CWV_THRESHOLDS.fcp.poor)
+    issues.push({ code: 'cwv-fcp-slow', severity: 'warning', message: `FCP ${(cwv.fcp/1000).toFixed(1)}s — slow (>3s). First Contentful Paint affects perceived load speed.` });
+  if (cwv.ttfb !== undefined && cwv.ttfb > CWV_THRESHOLDS.ttfb.poor)
+    issues.push({ code: 'cwv-ttfb-slow', severity: 'warning', message: `TTFB ${cwv.ttfb.toFixed(0)}ms — slow (>1.8s). Server response time is too high; check server/CDN performance.` });
+
+  const score = cwv.mobileScore;
+  if (score !== undefined && score < 0.5)
+    issues.push({ code: 'cwv-mobile-score-poor', severity: 'error', message: `Mobile PageSpeed score: ${Math.round(score * 100)}/100 — poor. Google mobile-first indexing makes this critical.` });
+  else if (score !== undefined && score < 0.9)
+    issues.push({ code: 'cwv-mobile-score-fair', severity: 'warning', message: `Mobile PageSpeed score: ${Math.round(score * 100)}/100 — needs improvement. Target: 90+.` });
+
+  return issues;
+}
+
+// Pages to run CWV checks on — key landing pages only (API has rate limits)
+const CWV_PAGES = ['/', '/rentals', '/rent-check', '/rent-estimate', '/contact', '/landlords', '/blog'];
+
 async function auditPage(path: string): Promise<SeoPageResult> {
   const url = `${SITE_URL}${path}`;
   const t0 = Date.now();
@@ -188,6 +275,12 @@ async function auditPage(path: string): Promise<SeoPageResult> {
   if (!hasJsonLd) issues.push({ code: 'missing-json-ld', severity: 'warning', message: 'No JSON-LD structured data found — structured data improves rich results in Google' });
   if (jsonLdTypes.includes('invalid-json')) issues.push({ code: 'invalid-json-ld', severity: 'error', message: 'JSON-LD structured data contains invalid JSON' });
   if (responseTimeMs > 3000) issues.push({ code: 'slow-response', severity: 'warning', message: `Page responded in ${responseTimeMs}ms — Google recommends under 3s` });
+
+  // Core Web Vitals — only for key pages to stay within API rate limits
+  if (CWV_PAGES.includes(path)) {
+    const cwv = await fetchCoreWebVitals(url);
+    if (cwv) issues.push(...cwvIssues(cwv));
+  }
 
   return {
     path,

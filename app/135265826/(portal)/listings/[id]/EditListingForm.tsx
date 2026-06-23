@@ -13,7 +13,7 @@ interface Listing {
   monthly_rent: number;
   bedrooms: number;
   bathrooms: number;
-  sqft: number;
+  living_area_sqft: number;
   status: string;
   property_type: string;
   available_date: string;
@@ -33,7 +33,7 @@ export default function EditListingForm({ listing }: { listing: Listing }) {
     monthly_rent: listing.monthly_rent ?? '',
     bedrooms: listing.bedrooms ?? '',
     bathrooms: listing.bathrooms ?? '',
-    sqft: listing.sqft ?? '',
+    living_area_sqft: listing.living_area_sqft ?? '',
     status: listing.status ?? 'active',
     property_type: listing.property_type ?? 'apartment',
     available_date: listing.available_date ? listing.available_date.slice(0, 10) : '',
@@ -58,7 +58,7 @@ export default function EditListingForm({ listing }: { listing: Listing }) {
           monthly_rent: Number(form.monthly_rent) || null,
           bedrooms: Number(form.bedrooms) || null,
           bathrooms: Number(form.bathrooms) || null,
-          sqft: Number(form.sqft) || null,
+          living_area_sqft: Number(form.living_area_sqft) || null,
         }),
       });
       if (!res.ok) {
@@ -138,7 +138,7 @@ export default function EditListingForm({ listing }: { listing: Listing }) {
           </div>
           <div>
             <label className={label}>Sq Ft</label>
-            <input className={field} type="number" value={form.sqft} onChange={e => set('sqft', e.target.value)} />
+            <input className={field} type="number" value={form.living_area_sqft} onChange={e => set('living_area_sqft', e.target.value)} />
           </div>
         </div>
       </div>

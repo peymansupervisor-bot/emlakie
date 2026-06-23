@@ -85,15 +85,64 @@ export async function cureSeoIssues(
     return { fixed: 0, skipped: 0, summary: ['No actionable SEO issues found.'] };
   }
 
-  const issueText = actionable
-    .map((r) =>
-      `Page: ${r.page_path}\n` +
-      r.issues.map((i) => `  - [${i.severity}] ${i.code}: ${i.message}`).join('\n')
-    )
-    .join('\n\n');
-
   const client = new Anthropic();
   const fileCache: Record<string, { content: string; sha: string }> = {};
+  const summary: string[] = [];
+  let fixed = 0;
+  let skipped = 0;
+
+  // Process in batches of 5 pages to avoid overloading the API
+  const BATCH_SIZE = 5;
+  for (let batchStart = 0; batchStart < actionable.length; batchStart += BATCH_SIZE) {
+    const batch = actionable.slice(batchStart, batchStart + BATCH_SIZE);
+    const batchIssueText = batch
+      .map((r) =>
+        `Page: ${r.page_path}\n` +
+        r.issues.map((i) => `  - [${i.severity}] ${i.code}: ${i.message}`).join('\n')
+      )
+      .join('\n\n');
+
+    const batchResult = await runCureBatch(client, fileCache, token, batchIssueText);
+    fixed += batchResult.fixed;
+    skipped += batchResult.skipped;
+    summary.push(...batchResult.summary);
+
+    // Brief pause between batches to avoid overload
+    if (batchStart + BATCH_SIZE < actionable.length) {
+      await new Promise((r) => setTimeout(r, 2000));
+    }
+  }
+
+  return { fixed, skipped, summary };
+}
+
+async function createMessageWithRetry(
+  client: Anthropic,
+  params: Parameters<Anthropic['messages']['create']>[0],
+  retries = 4
+): Promise<Anthropic.Message> {
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    try {
+      return await client.messages.create(params) as Anthropic.Message;
+    } catch (e: unknown) {
+      const status = (e as { status?: number })?.status;
+      if ((status === 529 || status === 503) && attempt < retries) {
+        const delay = Math.pow(2, attempt) * 3000;
+        await new Promise((r) => setTimeout(r, delay));
+        continue;
+      }
+      throw e;
+    }
+  }
+  throw new Error('Max retries exceeded');
+}
+
+async function runCureBatch(
+  client: Anthropic,
+  fileCache: Record<string, { content: string; sha: string }>,
+  token: string,
+  issueText: string,
+): Promise<SeoCureResult> {
   const summary: string[] = [];
   let fixed = 0;
   let skipped = 0;
@@ -132,7 +181,7 @@ SEO issues to fix:\n\n${issueText}`,
   ];
 
   for (let turn = 0; turn < 20; turn++) {
-    const response = await client.messages.create({
+    const response = await createMessageWithRetry(client, {
       model: 'claude-sonnet-4-6',
       max_tokens: 8096,
       tools: TOOLS,

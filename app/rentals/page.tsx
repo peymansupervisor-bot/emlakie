@@ -30,6 +30,23 @@ export const metadata: Metadata = {
   },
 };
 
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  name: 'Homes & Apartments for Rent | EMLAKIE',
+  description:
+    'Search houses, apartments, condos, and townhomes for rent directly from landlords. Filter by price, bedrooms, and property type.',
+  url: 'https://emlakie.com/rentals',
+  isPartOf: { '@type': 'WebSite', name: 'EMLAKIE', url: 'https://emlakie.com' },
+  breadcrumb: {
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://emlakie.com' },
+      { '@type': 'ListItem', position: 2, name: 'Rentals', item: 'https://emlakie.com/rentals' },
+    ],
+  },
+};
+
 export default async function RentalsPage({
   searchParams,
 }: {
@@ -50,6 +67,11 @@ export default async function RentalsPage({
 
   return (
     <div className="flex flex-col">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+
       {/* Filters bar — relative + z-index so dropdown overlays the overflow-hidden RentalsClient below */}
       <div className="relative z-20 border-b border-gray-100 bg-white px-4 py-3 sm:px-6">
         <Suspense>

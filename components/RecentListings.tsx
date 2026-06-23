@@ -14,7 +14,8 @@ export default async function RecentListings() {
     )
     .slice(0, 3);
 
-  const cards = featured.length >= 2 ? featured : listings.slice(0, 3);
+  const pool = featured.length >= 2 ? featured : listings;
+  const cards = [...pool].sort((a, b) => b.price - a.price).slice(0, 3);
 
   return (
     <div className="flex flex-col gap-3">

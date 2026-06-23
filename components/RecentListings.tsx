@@ -12,10 +12,10 @@ export default async function RecentListings() {
       ? new Date((l as unknown as Record<string, unknown>).featured_until as string).getTime() > now
       : false
     )
-    .slice(0, 3);
+    .slice(0, 2);
 
   const pool = featured.length >= 2 ? featured : listings;
-  const cards = [...pool].sort((a, b) => b.price - a.price).slice(0, 3);
+  const cards = [...pool].sort((a, b) => b.price - a.price).slice(0, 2);
 
   return (
     <div className="flex flex-col gap-3">

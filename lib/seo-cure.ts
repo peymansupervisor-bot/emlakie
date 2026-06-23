@@ -68,18 +68,24 @@ export async function cureSeoIssues(
 
   interface SeoIssue { code: string; severity: string; message: string }
 
+  const UNFIXABLE = new Set(['slow-response', 'duplicate-title', 'duplicate-description', 'scan-error']);
+
   const actionable = records
     .filter((r) => r.issue_count > 0 && r.page_path !== '/_site_wide')
     .map((r) => ({
       page_path: r.page_path,
       issues: ((r.issues ?? []) as SeoIssue[]).filter(
-        (i) => i.severity === 'error' || i.severity === 'warning'
-      ).filter(
-        // Skip issues Claude can't fix in source files
-        (i) => !['slow-response', 'duplicate-title', 'duplicate-description', 'scan-error'].includes(i.code)
+        (i) => (i.severity === 'error' || i.severity === 'warning') && !UNFIXABLE.has(i.code)
       ),
     }))
-    .filter((r) => r.issues.length > 0);
+    .filter((r) => r.issues.length > 0)
+    // Errors first, then warnings; cap at 10 pages per run to avoid API overload
+    .sort((a, b) => {
+      const aHasError = a.issues.some((i) => i.severity === 'error') ? 0 : 1;
+      const bHasError = b.issues.some((i) => i.severity === 'error') ? 0 : 1;
+      return aHasError - bHasError;
+    })
+    .slice(0, 10);
 
   if (actionable.length === 0) {
     return { fixed: 0, skipped: 0, summary: ['No actionable SEO issues found.'] };
@@ -91,8 +97,8 @@ export async function cureSeoIssues(
   let fixed = 0;
   let skipped = 0;
 
-  // Process in batches of 5 pages to avoid overloading the API
-  const BATCH_SIZE = 5;
+  // Process in small batches to avoid Anthropic API overload
+  const BATCH_SIZE = 2;
   for (let batchStart = 0; batchStart < actionable.length; batchStart += BATCH_SIZE) {
     const batch = actionable.slice(batchStart, batchStart + BATCH_SIZE);
     const batchIssueText = batch
@@ -107,9 +113,9 @@ export async function cureSeoIssues(
     skipped += batchResult.skipped;
     summary.push(...batchResult.summary);
 
-    // Brief pause between batches to avoid overload
+    // Pause between batches to avoid Anthropic rate limits
     if (batchStart + BATCH_SIZE < actionable.length) {
-      await new Promise((r) => setTimeout(r, 2000));
+      await new Promise((r) => setTimeout(r, 8000));
     }
   }
 
@@ -127,7 +133,7 @@ async function createMessageWithRetry(
     } catch (e: unknown) {
       const status = (e as { status?: number })?.status;
       if ((status === 529 || status === 503) && attempt < retries) {
-        const delay = Math.pow(2, attempt) * 3000;
+        const delay = Math.pow(2, attempt) * 8000; // 8s, 16s, 32s, 64s
         await new Promise((r) => setTimeout(r, delay));
         continue;
       }

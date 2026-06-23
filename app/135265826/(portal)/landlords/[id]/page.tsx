@@ -114,7 +114,7 @@ export default async function LandlordProfilePage({ params }: { params: Promise<
                 <th className="px-4 py-3 text-left">Rent</th>
                 <th className="px-4 py-3 text-left">Status</th>
                 <th className="px-4 py-3 text-left">Added</th>
-                <th className="px-4 py-3 text-left">View</th>
+                <th className="px-4 py-3 text-left">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-800">
@@ -139,15 +139,23 @@ export default async function LandlordProfilePage({ params }: { params: Promise<
                     {new Date(l.created_at).toLocaleDateString()}
                   </td>
                   <td className="px-4 py-3">
-                    {l.slug && (
+                    <div className="flex items-center gap-3">
                       <Link
-                        href={`/rentals/${l.slug}`}
-                        target="_blank"
-                        className="text-xs text-green-400 hover:text-green-300 transition"
+                        href={`/135265826/listings/${l.id}`}
+                        className="rounded-lg bg-green-700 hover:bg-green-600 px-3 py-1 text-xs font-semibold text-white transition"
                       >
-                        Listing ↗
+                        Edit
                       </Link>
-                    )}
+                      {l.slug && (
+                        <Link
+                          href={`/rentals/${l.slug}`}
+                          target="_blank"
+                          className="text-xs text-gray-400 hover:text-white transition"
+                        >
+                          View ↗
+                        </Link>
+                      )}
+                    </div>
                   </td>
                 </tr>
               ))}

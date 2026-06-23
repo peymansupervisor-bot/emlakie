@@ -51,6 +51,16 @@ export default function Footer() {
 
         <div className="mt-10 space-y-6 border-t border-gray-200 pt-6 text-xs text-gray-500">
 
+          {/* Terms acceptance notice */}
+          <p className="rounded-lg border border-gray-200 bg-white px-4 py-3 text-xs text-gray-600">
+            <strong className="text-gray-800">By using this website, you agree to our{' '}
+            <Link href="/terms" className="underline hover:text-brand-600">Terms and Conditions</Link>,{' '}
+            <Link href="/privacy" className="underline hover:text-brand-600">Privacy Policy</Link>, and{' '}
+            <Link href="/disclaimer" className="underline hover:text-brand-600">Disclaimer</Link>.</strong>{' '}
+            This includes EMLAKIE&apos;s right to delete, suspend, or revise any listing at any time without prior
+            notice. Continued use of this site constitutes your acceptance of these terms.
+          </p>
+
           {/* Platform disclaimer */}
           <p>
             EMLAKIE is a direct-rental platform connecting property owners and tenants without the need for a

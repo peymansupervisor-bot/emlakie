@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createSupabaseAdmin, createSupabaseWithToken } from '@/lib/supabase-server'
 import { generateListingSlug } from '@/lib/format'
+import { logError } from '@/lib/log-error'
 
 // PUT /api/listings/[id] — update status, title, price, etc.
 export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
@@ -71,7 +72,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
     .eq('landlord_id', user.id)
 
   if (error) {
-    console.error('[PUT /api/listings/:id]', error.message, error.details)
+    await logError({ source: 'Listing Update', message: error.message, user_id: user.id, endpoint: `PUT /api/listings/${id}`, http_status: 500, context: { listing_id: id, fields: Object.keys(dbPayload) } });
     return NextResponse.json({ error: error.message ?? 'Something went wrong' }, { status: 500 })
   }
   return NextResponse.json({ ok: true, slug: dbPayload.slug ?? null })
@@ -105,7 +106,7 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
     .eq('id', id)
 
   if (error) {
-    console.error('[DELETE /api/listings/:id]', error.message)
+    await logError({ source: 'Listing Delete', message: error.message, user_id: user.id, endpoint: `DELETE /api/listings/${id}`, http_status: 500, context: { listing_id: id } });
     return NextResponse.json({ error: error.message ?? 'Something went wrong' }, { status: 500 })
   }
   return NextResponse.json({ ok: true })

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createSupabaseWithToken } from '@/lib/supabase-server'
 import { compressImage } from '@/lib/compress-image'
+import { logError } from '@/lib/log-error'
 
 const MAX_PHOTOS = 25;
 const MIN_PHOTOS = 1;
@@ -36,7 +37,9 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     const { error: uploadErr } = await supabase.storage
       .from('listing-photos')
       .upload(path, buffer, { contentType, upsert: false })
-    if (!uploadErr) {
+    if (uploadErr) {
+      await logError({ source: 'Photo Upload', message: uploadErr.message, user_id: user.id, endpoint: `POST /api/listings/${id}/photos`, http_status: 500, context: { listing_id: id, file_type: file.type, file_size: file.size } });
+    } else {
       const { data: { publicUrl } } = supabase.storage.from('listing-photos').getPublicUrl(path)
       newUrls.push(publicUrl)
     }
@@ -47,7 +50,10 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   const updatedPhotos = [...existingPhotos, ...newUrls].slice(0, MAX_PHOTOS)
 
   const { error } = await supabase.from('listings').update({ photos: updatedPhotos }).eq('id', id).eq('landlord_id', user.id)
-  if (error) return NextResponse.json({ error: 'Something went wrong' }, { status: 500 })
+  if (error) {
+    await logError({ source: 'Photo Upload', message: error.message, user_id: user.id, endpoint: `POST /api/listings/${id}/photos`, http_status: 500, context: { listing_id: id } });
+    return NextResponse.json({ error: 'Something went wrong' }, { status: 500 })
+  }
 
   return NextResponse.json({ photos: updatedPhotos })
 }

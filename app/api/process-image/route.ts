@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createSupabaseWithToken } from '@/lib/supabase-server'
 import { createClient } from '@supabase/supabase-js'
 import sharp from 'sharp'
+import { logError } from '@/lib/log-error'
 
 export const runtime = 'nodejs'
 export const maxDuration = 60
@@ -121,6 +122,9 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(urls)
   } catch (e) {
-    return NextResponse.json({ error: `Unexpected error: ${(e as Error).message}` }, { status: 500 })
+    const msg = `Unexpected error: ${(e as Error).message}`;
+    // user may not be available here if auth failed early, but we still log the error
+    await logError({ source: 'Photo Processing', message: msg, details: (e as Error).stack, endpoint: 'POST /api/process-image', http_status: 500 });
+    return NextResponse.json({ error: msg }, { status: 500 })
   }
 }

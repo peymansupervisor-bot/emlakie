@@ -4,6 +4,7 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import CookieBanner from '@/components/CookieBanner';
 import { Analytics } from '@vercel/analytics/next';
+import ErrorReporter from '@/components/ErrorReporter';
 import './globals.css';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
@@ -66,6 +67,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <main id="main-content" className="min-h-[60vh]">{children}</main>
         <Footer />
         <CookieBanner />
+        <ErrorReporter />
         <Analytics />
       </body>
     </html>

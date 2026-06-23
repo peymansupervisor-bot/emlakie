@@ -3,6 +3,7 @@ import { createSupabaseWithToken } from '@/lib/supabase-server'
 import { createClient } from '@supabase/supabase-js'
 import { generateListingSlug } from '@/lib/format'
 import { geocodeAddress } from '@/lib/geocode'
+import { logError } from '@/lib/log-error'
 // Route segment config — tells Next.js/Vercel this route needs extended body size
 // (up to 20 photos × 10 MB each before server-side compression)
 export const runtime = 'nodejs'
@@ -130,7 +131,10 @@ export async function POST(req: NextRequest) {
     .select()
     .single()
 
-  if (error) return NextResponse.json({ error: 'Something went wrong' }, { status: 500 })
+  if (error) {
+    await logError({ source: 'Listing Create', message: error.message, user_id: user.id, endpoint: 'POST /api/listings', http_status: 500, context: { address, city, state } });
+    return NextResponse.json({ error: 'Something went wrong' }, { status: 500 })
+  }
 
   // Geocode address to lat/lng so nearby scores & schools always show
   const coords = await geocodeAddress(address, city, state, zip)

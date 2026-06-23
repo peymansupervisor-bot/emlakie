@@ -5,6 +5,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { getProfile, isSignedIn, signOut } from '@/lib/landlord/client';
 import { LandlordProfile } from '@/lib/landlord/types';
+import ErrorReporter from '@/components/ErrorReporter';
 
 const TABS = [
   { href: '/landlord', exact: true, label: 'My Listings' },
@@ -117,6 +118,7 @@ export default function LandlordLayout({ children }: { children: React.ReactNode
       <main className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
         {children}
       </main>
+      <ErrorReporter userId={profile?.account_id ?? undefined} />
     </div>
   );
 }

@@ -4,6 +4,7 @@ import { createClient } from '@supabase/supabase-js'
 import { generateListingSlug } from '@/lib/format'
 import { geocodeAddress } from '@/lib/geocode'
 import { logError } from '@/lib/log-error'
+import { getOrProvisionVirtualPhone } from '@/lib/twilio'
 
 export const dynamic = 'force-dynamic'
 // Route segment config — tells Next.js/Vercel this route needs extended body size
@@ -143,6 +144,10 @@ export async function POST(req: NextRequest) {
   if (coords) {
     await supabase.from('listings').update({ lat: coords.lat, lng: coords.lng }).eq('id', data.id)
   }
+
+  // Provision a virtual phone for the landlord if they don't have one yet (fire and forget)
+  // Only runs when landlord has at least one active listing — which is now true since we just inserted one
+  getOrProvisionVirtualPhone(user.id).catch(() => {});
 
   return NextResponse.json(data, { status: 201 })
 }

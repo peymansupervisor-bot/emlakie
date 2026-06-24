@@ -2565,6 +2565,172 @@ export const posts: Post[] = [
 <p><em>This article is intended for general informational purposes and does not constitute legal or insurance advice. Consult a licensed insurance professional or attorney regarding your specific property and jurisdiction.</em></p>
     `.trim(),
   },
+  {
+    slug: 'average-rent-west-hollywood-2026',
+    title: 'Average Rent in West Hollywood in 2026: What Renters Are Paying',
+    description: 'A neighborhood-by-neighborhood look at what apartments and homes rent for in West Hollywood in 2026 — including RSO-covered units, the Sunset Strip, and East WeHo.',
+    date: '2026-06-24',
+    category: 'Market Trends',
+    readTime: 5,
+    citySlug: 'west-hollywood',
+    lastUpdated: '2026-06-24',
+    sources: [
+      { label: 'U.S. Census Bureau — American Community Survey (ACS)', url: 'https://www.census.gov/programs-surveys/acs' },
+      { label: 'HUD Fair Market Rents', url: 'https://www.huduser.gov/portal/datasets/fmr.html' },
+      { label: 'West Hollywood Rent Stabilization Program', url: 'https://www.weho.org/city-government/city-departments/rent-stabilization' },
+    ],
+    content: `
+<p>West Hollywood is one of the most sought-after rental markets in the Los Angeles area — a compact, walkable city with a vibrant street life, strong tenant protections, and a location that puts the Sunset Strip, Beverly Hills, and Hollywood all within minutes. What you pay depends heavily on when your building was built and how close you are to the action.</p>
+
+<h2>West Hollywood Rent Overview</h2>
+<p>Rents in West Hollywood in 2026 run roughly:</p>
+<ul>
+  <li><strong>Studio:</strong> $1,600–$2,600/mo</li>
+  <li><strong>1-bedroom:</strong> $2,000–$3,200/mo</li>
+  <li><strong>2-bedroom:</strong> $2,800–$4,500/mo</li>
+  <li><strong>Single-family house:</strong> $4,500–$8,000+/mo</li>
+</ul>
+<p>RSO-covered units (pre-1979 buildings) typically rent at the lower end of these ranges because rent increases have been capped for decades. Newer luxury buildings along Santa Monica Boulevard and the Sunset Strip corridor command the highest rents.</p>
+
+<h2>Rent by Area</h2>
+<ul>
+  <li><strong>Sunset Strip / West WeHo:</strong> $2,400–$3,500/mo (1BR) — highest prices, proximity to entertainment venues and hotel row.</li>
+  <li><strong>Santa Monica Boulevard Corridor:</strong> $2,000–$3,000/mo (1BR) — mix of older RSO buildings and newer luxury units.</li>
+  <li><strong>Norma Triangle / Design District:</strong> $2,200–$3,200/mo (1BR) — quieter residential streets, walkable to everything.</li>
+  <li><strong>East WeHo (near La Brea):</strong> $1,800–$2,600/mo (1BR) — more affordable end of the market, older building stock.</li>
+</ul>
+
+<h2>The RSO Advantage</h2>
+<p>West Hollywood's Rent Stabilization Ordinance (RSO) covers most apartments built before July 1, 1979. Tenants in RSO units benefit from annual rent increase limits tied to CPI — in practice, increases of 1–4% rather than the market-rate 8–15% a landlord might otherwise attempt. If you find an RSO unit at a good base rent, staying long-term can yield significant savings over time.</p>
+<p>To check if a unit is RSO-covered, use the <a href="https://www.weho.org/city-government/city-departments/rent-stabilization" rel="noopener noreferrer" target="_blank">West Hollywood Rent Stabilization database</a> before signing.</p>
+
+<h2>What's Driving West Hollywood Rents</h2>
+<p>WeHo is only 1.9 square miles — extremely limited supply. The city has restricted large-scale development to protect its neighborhood character, which keeps rental inventory tight. Demand has stayed strong from entertainment industry workers, LGBTQ+ residents drawn by the city's community programming, and remote workers who value walkability over a car-dependent suburban commute.</p>
+
+<h2>Renter Tips</h2>
+<ul>
+  <li><strong>Ask about RSO status before touring.</strong> RSO units are significantly more renter-friendly long-term.</li>
+  <li><strong>Parking costs extra.</strong> Most buildings charge $100–$200/mo for a parking space. Factor this into your budget.</li>
+  <li><strong>Move fast.</strong> Decent units at fair prices get multiple applications within 48 hours, especially anything under $2,500/mo.</li>
+  <li><strong>Check what utilities are included.</strong> Older WeHo buildings sometimes include water/trash. Electricity and gas are almost always tenant-paid.</li>
+</ul>
+
+<p><a href="/rentals/city/west-hollywood">Browse current West Hollywood rentals on EMLAKIE</a> — all listed directly by landlords, no broker fees.</p>
+    `.trim(),
+  },
+
+  {
+    slug: 'average-rent-beverly-hills-2026',
+    title: 'Average Rent in Beverly Hills in 2026: What You\'ll Actually Pay',
+    description: 'Beverly Hills has some of the most prestigious (and expensive) rentals in California. Here\'s a realistic breakdown of what apartments and homes rent for in 2026.',
+    date: '2026-06-24',
+    category: 'Market Trends',
+    readTime: 5,
+    citySlug: 'beverly-hills',
+    lastUpdated: '2026-06-24',
+    sources: [
+      { label: 'U.S. Census Bureau — American Community Survey (ACS)', url: 'https://www.census.gov/programs-surveys/acs' },
+      { label: 'HUD Fair Market Rents', url: 'https://www.huduser.gov/portal/datasets/fmr.html' },
+      { label: 'Bureau of Labor Statistics — Consumer Price Index', url: 'https://www.bls.gov/cpi/' },
+    ],
+    content: `
+<p>Beverly Hills is one of the most recognizable addresses in the world — and its rental market reflects that. As an independent city entirely surrounded by Los Angeles, Beverly Hills combines excellent schools, manicured streets, world-class dining, and proximity to major employment centers. Rents here are among the highest in Southern California, but the range is wider than most people expect.</p>
+
+<h2>Beverly Hills Rent Overview</h2>
+<p>What renters are paying in Beverly Hills in 2026:</p>
+<ul>
+  <li><strong>Studio:</strong> $1,900–$3,000/mo</li>
+  <li><strong>1-bedroom:</strong> $2,500–$4,500/mo</li>
+  <li><strong>2-bedroom:</strong> $3,500–$7,000/mo</li>
+  <li><strong>Single-family home:</strong> $6,000–$25,000+/mo</li>
+  <li><strong>Gated estates / Trousdale:</strong> $15,000–$75,000+/mo</li>
+</ul>
+<p>The most affordable Beverly Hills rentals tend to be apartments near the Santa Monica Boulevard corridor in the south of the city — close to West Hollywood — where older multi-family buildings offer studios and 1-bedrooms under $3,000/mo.</p>
+
+<h2>Rent by Area</h2>
+<ul>
+  <li><strong>Beverly Hills Flats (south of Sunset):</strong> $2,800–$5,000/mo (1BR) — classic residential streets, walking distance to Rodeo Drive and Canon Park.</li>
+  <li><strong>Wilshire Boulevard / Santa Monica Blvd Corridor:</strong> $2,200–$3,800/mo (1BR) — more apartment buildings, most accessible price point in BH.</li>
+  <li><strong>North Beverly Hills / Coldwater Canyon:</strong> $5,000–$15,000+/mo — larger homes on hillside lots, gated driveways, panoramic views.</li>
+  <li><strong>Trousdale Estates:</strong> $15,000–$75,000+/mo — ultra-luxury mid-century homes, typically fully furnished executive rentals.</li>
+  <li><strong>Beverly Hills Post Office (BHPO):</strong> $4,500–$12,000+/mo — technically a Los Angeles address with a Beverly Hills zip code; large homes, not subject to Beverly Hills city regulations.</li>
+</ul>
+
+<h2>Why Beverly Hills Doesn't Have Rent Control</h2>
+<p>Unlike Los Angeles and West Hollywood, Beverly Hills does not have a local rent stabilization ordinance. California's statewide AB 1482 applies to qualifying buildings over 15 years old, capping annual rent increases at 5% + local CPI (maximum 10%). But newer buildings and single-family homes are exempt. This means rents can — and do — increase more aggressively at lease renewal than in neighboring rent-controlled jurisdictions.</p>
+
+<h2>What You Get for the Money</h2>
+<p>Beverly Hills commands a premium for good reasons. The Beverly Hills Unified School District is consistently ranked among the top public school systems in California. The city has its own police department with a notably low crime rate. Streets are clean, well-lit, and maintained. Cedars-Sinai Medical Center — one of the nation's top hospitals — is minutes away.</p>
+<p>For renters with school-age children, families, or professionals who value the school district and safety, Beverly Hills rents can represent genuine value relative to comparable private school and security costs elsewhere.</p>
+
+<h2>Renter Tips</h2>
+<ul>
+  <li><strong>Income requirements are strict.</strong> Most Beverly Hills landlords require documented income of 3×–4× the monthly rent. Have your most recent pay stubs and bank statements ready.</li>
+  <li><strong>Act quickly on anything under $3,500/mo.</strong> Affordable Beverly Hills units attract multiple applications within days.</li>
+  <li><strong>Ask about parking and utilities.</strong> Many buildings include 1–2 parking spaces. Utilities are usually separate.</li>
+  <li><strong>Negotiate before signing.</strong> Despite the prestige, Beverly Hills landlords are often willing to offer a free month or cover move-in costs on longer-term leases.</li>
+</ul>
+
+<p><a href="/rentals/city/beverly-hills">Browse current Beverly Hills rentals on EMLAKIE</a> — all listed directly by landlords, no broker fees, no commissions.</p>
+    `.trim(),
+  },
+
+  {
+    slug: 'average-rent-bakersfield-2026',
+    title: 'Average Rent in Bakersfield, CA in 2026: California Affordability at Its Best',
+    description: 'Bakersfield offers some of the lowest rental prices of any major California city. Here\'s a neighborhood-by-neighborhood breakdown of what houses and apartments cost to rent in 2026.',
+    date: '2026-06-24',
+    category: 'Market Trends',
+    readTime: 5,
+    citySlug: 'bakersfield',
+    lastUpdated: '2026-06-24',
+    sources: [
+      { label: 'U.S. Census Bureau — American Community Survey (ACS)', url: 'https://www.census.gov/programs-surveys/acs' },
+      { label: 'HUD Fair Market Rents — Kern County', url: 'https://www.huduser.gov/portal/datasets/fmr.html' },
+      { label: 'Bureau of Labor Statistics — Consumer Price Index', url: 'https://www.bls.gov/cpi/' },
+    ],
+    content: `
+<p>Bakersfield is one of the best-kept secrets in California real estate. The ninth-largest city in the state — and the county seat of Kern County — Bakersfield offers house-sized space, private yards, and suburban amenities at prices that seem impossible by coastal California standards. If you're relocating from Los Angeles, the Bay Area, or anywhere with coastal rents, you'll find Bakersfield genuinely disorienting in the best way.</p>
+
+<h2>Bakersfield Rent Overview</h2>
+<p>What renters are paying in Bakersfield in 2026:</p>
+<ul>
+  <li><strong>Studio / 1-bedroom apartment:</strong> $800–$1,300/mo</li>
+  <li><strong>2-bedroom apartment:</strong> $1,100–$1,600/mo</li>
+  <li><strong>2-bedroom house:</strong> $1,200–$1,700/mo</li>
+  <li><strong>3-bedroom house:</strong> $1,400–$2,100/mo</li>
+  <li><strong>4-bedroom house:</strong> $1,700–$2,500/mo</li>
+</ul>
+<p>To put this in context: a 3-bedroom house with a yard and garage in Northwest Bakersfield rents for roughly what a 1-bedroom studio-sized apartment costs in West Hollywood or Silver Lake.</p>
+
+<h2>Rent by Neighborhood</h2>
+<ul>
+  <li><strong>Northwest Bakersfield (Seven Oaks, Riverlakes):</strong> $1,600–$2,200/mo (3BR) — the most desirable area, with newer construction, top-rated schools, and suburban amenities. Home to most of the city's newer tract homes and upscale apartment complexes.</li>
+  <li><strong>Southwest Bakersfield (Stockdale, Gosford):</strong> $1,500–$2,000/mo (3BR) — established neighborhoods with good schools and quiet streets. Popular with families and professionals.</li>
+  <li><strong>Rosedale:</strong> $1,700–$2,300/mo (3BR) — northwest of downtown, newer developments, good freeway access to SR-99 and CA-58.</li>
+  <li><strong>Central / Downtown Bakersfield:</strong> $900–$1,400/mo (1–2BR) — older building stock, up-and-coming restaurant and arts scene. Most affordable area for apartments.</li>
+  <li><strong>East Bakersfield / Oildale:</strong> $800–$1,300/mo (2–3BR) — most affordable area in the metro. Older homes and apartments, proximity to Highway 99 and industrial employers.</li>
+  <li><strong>Oleander / Westchester:</strong> $1,100–$1,600/mo (2BR) — mid-city neighborhood with mature trees, bungalow-style homes, and proximity to Bakersfield College.</li>
+</ul>
+
+<h2>What Drives Bakersfield's Affordability</h2>
+<p>Bakersfield's economy is anchored by agriculture (the southern San Joaquin Valley is among the most productive farmland in the world), oil extraction, healthcare, logistics, and distribution. These industries attract workers who are price-conscious — which keeps landlord pricing competitive. The local housing stock also skews toward single-family homes rather than dense apartments, which means renters often get a full house with a garage and yard for the price of a studio elsewhere.</p>
+
+<h2>Who Rents in Bakersfield</h2>
+<p>Bakersfield draws renters from several groups: workers employed in agriculture, oil, and logistics; healthcare and education professionals at CSUB and Kern Medical; students at California State University Bakersfield (CSUB) and Bakersfield College; and an increasing number of remote workers and retirees relocating from the LA metro and Bay Area seeking lower costs while staying within driving distance of family or the coast.</p>
+
+<h2>Renter Tips</h2>
+<ul>
+  <li><strong>Air conditioning is non-negotiable.</strong> Bakersfield summers regularly exceed 100°F. Confirm AC is included and functional before signing any lease.</li>
+  <li><strong>Northwest is worth paying extra for.</strong> The school quality difference between Northwest Bakersfield and other areas is significant for families.</li>
+  <li><strong>No broker fees here.</strong> Bakersfield landlords list directly — no agent commissions in either direction. What you see on EMLAKIE is what you pay.</li>
+  <li><strong>Negotiate on move-in costs.</strong> Bakersfield has one of the least competitive rental markets in California. Landlords are often willing to reduce or waive the security deposit for qualified tenants with strong credit.</li>
+  <li><strong>AB 1482 applies.</strong> California's statewide rent cap (5% + CPI, max 10% per year) applies to qualifying buildings in Bakersfield. The city has no local rent control ordinance.</li>
+</ul>
+
+<p><a href="/rentals/city/bakersfield">Browse current Bakersfield rentals on EMLAKIE</a> — all posted directly by landlords. No broker fees, no commissions, no middlemen.</p>
+    `.trim(),
+  },
 ];
 
 export function getPost(slug: string): Post | undefined {

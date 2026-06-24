@@ -42,7 +42,7 @@ export default function ScreeningModal({ applicationId, listingId, listingAddres
 
   async function submit() {
     if (!email) { setError('Please enter the applicant\'s email.'); return; }
-    if (!selected.length) { setError('Select at least one report.'); return; }
+    if (!bundle) { setError('Select at least one report.'); return; }
     setLoading(true);
     setError('');
     try {

@@ -20,12 +20,12 @@ export const revalidate = 60;
 export const metadata: Metadata = {
   title: 'EMLAKIE — Find Your Next Rental Home',
   description: 'Browse houses, apartments, and condos for rent directly from landlords. No broker fees, no middlemen. Search rentals by city, ZIP, price, and more.',
-  alternates: { canonical: 'https://emlakie.com' },
+  alternates: { canonical: 'https://emlakie.com/' },
   openGraph: {
     title: 'EMLAKIE — Find Your Next Rental Home',
     description: 'Browse houses, apartments, and condos for rent directly from landlords. No broker fees, no middlemen.',
     type: 'website',
-    url: 'https://emlakie.com',
+    url: 'https://emlakie.com/',
     images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'EMLAKIE — Find Your Next Rental Home' }],
   },
   twitter: {
@@ -40,7 +40,7 @@ const websiteSchema = {
   '@context': 'https://schema.org',
   '@type': 'WebSite',
   name: 'EMLAKIE',
-  url: 'https://emlakie.com',
+  url: 'https://emlakie.com/',
   description: 'Browse houses, apartments, and condos for rent. EMLAKIE connects renters directly with landlords.',
   potentialAction: {
     '@type': 'SearchAction',
@@ -53,7 +53,7 @@ const organizationSchema = {
   '@context': 'https://schema.org',
   '@type': 'Organization',
   name: 'EMLAKIE',
-  url: 'https://emlakie.com',
+  url: 'https://emlakie.com/',
   logo: 'https://emlakie.com/logo.png',
   contactPoint: { '@type': 'ContactPoint', email: 'support@emlakie.com', contactType: 'customer service' },
 };

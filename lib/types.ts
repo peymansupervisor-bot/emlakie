@@ -27,6 +27,7 @@ export interface Listing {
   virtual_tour_url?: string | null;
   slug?: string | null;
   user_id?: string | null;
+  landlord_id?: string | null;
 }
 
 export interface ListingFilters {

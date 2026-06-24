@@ -40,7 +40,8 @@ function rowToListing(row: Record<string, unknown>): Listing {
     license_number: row.license_number as string | null | undefined,
     virtual_tour_url: row.virtual_tour_url as string | null | undefined,
     slug: row.slug as string | null | undefined,
-    user_id: row.user_id as string | null | undefined,
+    user_id: (row.landlord_id ?? row.user_id) as string | null | undefined,
+    landlord_id: row.landlord_id as string | null | undefined,
   };
 }
 

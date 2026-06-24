@@ -16,7 +16,8 @@ export async function POST(req: NextRequest) {
     return new NextResponse(twiml(msg), xmlHeaders());
   }
 
-  const e164 = realPhone.startsWith('+') ? realPhone : `+1${realPhone.replace(/\D/g, '')}`;
+  const digits = realPhone.replace(/\D/g, '');
+  const e164 = realPhone.startsWith('+') ? realPhone : `+1${digits.length === 11 ? digits.slice(1) : digits}`;
 
   const xml = `<Response>
   <Dial callerId="${toNumber}" timeout="30">

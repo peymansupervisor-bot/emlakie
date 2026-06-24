@@ -54,6 +54,8 @@ interface FormData {
   amenities: string[];
   isBroker: boolean | null;
   licenseNumber: string;
+  agentName: string;
+  officeName: string;
   virtualTourUrl: string;
 }
 
@@ -65,6 +67,8 @@ const empty: FormData = {
   title: '', description: '', amenities: [],
   isBroker: null,
   licenseNumber: '',
+  agentName: '',
+  officeName: '',
   virtualTourUrl: '',
 };
 
@@ -328,6 +332,8 @@ export default function NewPropertyPage() {
       if (form.isBroker) {
         const parts = form.licenseNumber.trim().split(' ');
         if (parts.length < 2 || !parts[0] || !parts[1]) return 'Please select your license state and enter your license number.';
+        if (!form.agentName.trim()) return 'Please enter your name as the agent or broker.';
+        if (!form.officeName.trim()) return 'Please enter your brokerage or office name.';
       }
       if (!form.address.trim()) return 'Address is required.';
       if (!form.city.trim()) return 'City is required.';
@@ -386,6 +392,8 @@ export default function NewPropertyPage() {
       fd.append('amenities', JSON.stringify(form.amenities));
       fd.append('listingSource', form.isBroker ? 'broker' : 'owner');
       if (form.isBroker && form.licenseNumber.trim()) fd.append('licenseNumber', form.licenseNumber.trim());
+      if (form.isBroker && form.agentName.trim()) fd.append('agentName', form.agentName.trim());
+      if (form.isBroker && form.officeName.trim()) fd.append('officeName', form.officeName.trim());
       if (form.ownershipType) fd.append('ownershipType', form.ownershipType);
       if (form.virtualTourUrl.trim()) fd.append('virtualTourUrl', form.virtualTourUrl.trim());
       photoUrls.forEach((url) => fd.append('photoUrl', url));
@@ -510,6 +518,28 @@ export default function NewPropertyPage() {
                     />
                   </div>
                   <p className="mt-1 text-[11px] text-blue-600">Displayed on your listing as required by law — e.g. CA 01726653</p>
+                </div>
+                <div>
+                  <p className="text-xs font-semibold text-blue-800 mb-1">Your name (agent/broker) *</p>
+                  <input
+                    type="text"
+                    value={form.agentName}
+                    onChange={(e) => set('agentName', e.target.value)}
+                    placeholder="Jane Smith"
+                    aria-label="Agent name"
+                    className="w-full rounded-lg border border-blue-200 bg-white px-3 py-2 text-sm text-gray-800 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-200 placeholder-gray-400"
+                  />
+                </div>
+                <div>
+                  <p className="text-xs font-semibold text-blue-800 mb-1">Brokerage / office name *</p>
+                  <input
+                    type="text"
+                    value={form.officeName}
+                    onChange={(e) => set('officeName', e.target.value)}
+                    placeholder="ABC Real Estate Group"
+                    aria-label="Office name"
+                    className="w-full rounded-lg border border-blue-200 bg-white px-3 py-2 text-sm text-gray-800 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-200 placeholder-gray-400"
+                  />
                 </div>
               </div>
             )}

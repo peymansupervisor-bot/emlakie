@@ -24,6 +24,8 @@ export interface Listing {
   domStartDate?: string | null;
   listing_source?: 'owner' | 'broker' | 'mls';
   license_number?: string | null;
+  agent_name?: string | null;
+  office_name?: string | null;
   virtual_tour_url?: string | null;
   slug?: string | null;
   user_id?: string | null;

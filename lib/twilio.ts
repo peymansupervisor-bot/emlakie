@@ -53,7 +53,11 @@ export async function getOrProvisionVirtualPhone(userId: string): Promise<string
 /** Look up the real phone number for an inbound virtual number. */
 export async function getRealPhoneForVirtual(virtualPhone: string): Promise<string | null> {
   try {
-    const db = adminClient();
+    // Use anon key — call_routing_lookup RLS policy allows SELECT where virtual_phone IS NOT NULL
+    const db = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    );
     const { data } = await db.from('profiles').select('phone').eq('virtual_phone', virtualPhone).single();
     return data?.phone ?? null;
   } catch (err) {

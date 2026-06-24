@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import SupportChat from '@/components/SupportChat';
 
 export const metadata: Metadata = {
-  title: 'Support | EMLAKIE',
+  title: 'Support',
   description: 'Get instant help with your EMLAKIE account. Our AI support agent can diagnose listing issues, billing questions, and account problems — available 24/7.',
   alternates: { canonical: 'https://emlakie.com/support' },
   openGraph: {

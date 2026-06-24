@@ -4,7 +4,7 @@ import { getModeratorSession, adminClient } from '@/lib/moderator';
 import AdminSignOut from './AdminSignOut';
 import ChangePasswordButton from './ChangePasswordButton';
 
-export const metadata = { title: 'Moderator Dashboard — EMLAKIE', robots: { index: false } };
+export const metadata = { title: { absolute: 'Moderator Dashboard — EMLAKIE' }, robots: { index: false } };
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const session = await getModeratorSession();

@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import ContactFlow from '@/components/ContactFlow';
 
 export const metadata: Metadata = {
-  title: 'Contact Us | EMLAKIE',
+  title: 'Contact Us',
   description: 'Contact EMLAKIE for help with your account, listing questions, or partnership inquiries. We\'re here for renters and landlords alike — reach us anytime.',
   alternates: { canonical: 'https://emlakie.com/contact' },
   openGraph: {

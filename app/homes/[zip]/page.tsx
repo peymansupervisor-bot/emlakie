@@ -41,7 +41,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { city, state } = info;
   const label = `${city}, ${state} ${params.zip}`;
   return {
-    title: `Homes for Rent in ${label} | EMLAKIE`,
+    title: `Homes for Rent in ${label}`,
     description: `Browse rentals in ${label}. Find apartments, houses, condos, and townhomes for rent on EMLAKIE — no broker fees, direct from landlords.`,
     alternates: { canonical: `https://emlakie.com/homes/${params.zip}` },
     openGraph: {

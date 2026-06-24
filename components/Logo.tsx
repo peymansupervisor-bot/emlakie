@@ -11,7 +11,7 @@ export default function Logo({ className = 'h-8' }: { className?: string }) {
         className="h-full w-auto rounded-md"
         priority
       />
-      <span className="text-2xl font-extrabold tracking-tight text-gray-900">
+      <span className="text-2xl font-extrabold tracking-tight text-gray-900 whitespace-nowrap">
         EMLAK<span className="text-brand-600">IE</span>
       </span>
     </span>

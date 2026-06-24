@@ -2,7 +2,7 @@ import Link from 'next/link';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'List Your Rental Free — EMLAKIE for Landlords',
+  title: { absolute: 'List Your Rental Free — EMLAKIE for Landlords' },
   description: 'Post your rental listing free on EMLAKIE. Reach thousands of local renters, manage applications, and fill vacancies faster — no broker fees ever.',
   alternates: { canonical: 'https://emlakie.com/landlords' },
   openGraph: {

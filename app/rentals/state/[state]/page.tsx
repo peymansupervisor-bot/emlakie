@@ -24,10 +24,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!result) return { title: 'State not found' };
 
   const { name, abbr } = result.state;
+  const hasListings = result.total > 0;
   return {
-    title: `Houses & Apartments for Rent in ${name} | EMLAKIE`,
-    description: `Browse ${result.total > 0 ? result.total + ' ' : ''}rental homes in ${name} — apartments, houses, condos, and townhomes listed directly by landlords. No broker fees.`,
+    title: `Houses & Apartments for Rent in ${name}`,
+    description: `Browse ${hasListings ? result.total + ' ' : ''}rental homes in ${name} — apartments, houses, condos, and townhomes listed directly by landlords. No broker fees.`,
     alternates: { canonical: `https://emlakie.com/rentals/state/${slug}` },
+    robots: hasListings ? { index: true, follow: true } : { index: false, follow: true },
     openGraph: {
       title: `Homes for Rent in ${name} (${abbr}) | EMLAKIE`,
       description: `Find your next rental home in ${name}. Search directly from landlords — no middlemen, no fees.`,
@@ -59,7 +61,7 @@ export default async function StatePage({ params }: Props) {
 
   const stateFaqs = [
     { q: `How many rentals are available in ${name}?`, a: total > 0 ? `There are currently ${total} rental homes listed in ${name} on EMLAKIE, including apartments, houses, and condos.` : `EMLAKIE lists rental homes across ${name} posted directly by landlords. New listings are added daily.` },
-    { q: `What is the average rent in ${name}?`, a: avgRent ? `The average rent in ${name} is ${formatPrice(avgRent)}/month, with listings ranging from ${formatPrice(minRent ?? 0)} to ${formatPrice(maxRent ?? 0)}/month.` : `Rental prices in ${name} vary by city and property type. Browse current listings on EMLAKIE to find up-to-date pricing.` },
+    { q: `What is the average rent in ${name}?`, a: avgRent ? `The average rent in ${name} is ${formatPrice(avgRent)}, with listings ranging from ${formatPrice(minRent ?? 0)} to ${formatPrice(maxRent ?? 0)}.` : `Rental prices in ${name} vary by city and property type. Browse current listings on EMLAKIE to find up-to-date pricing.` },
     { q: `How do I find a rental in ${name} without broker fees?`, a: `All listings on EMLAKIE are posted directly by landlords — there are no broker fees or middlemen. Browse homes in ${name}, message the landlord directly, and apply in minutes.` },
     { q: `Can landlords in ${name} list for free on EMLAKIE?`, a: `Yes. Landlords in ${name} can post rental listings for free on EMLAKIE. Reach thousands of qualified renters without paying broker commissions.` },
   ];
@@ -120,7 +122,7 @@ export default async function StatePage({ params }: Props) {
       {hasListings && avgRent && minRent && maxRent && (
         <div className="mt-6 grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-gray-200 bg-gray-200 sm:grid-cols-4">
           {[
-            { label: 'Avg. Rent', value: `${formatPrice(avgRent)}/mo` },
+            { label: 'Avg. Rent', value: formatPrice(avgRent) },
             { label: 'Price Range', value: `${formatPrice(minRent)}–${formatPrice(maxRent)}` },
             { label: 'Listings', value: String(total) },
             { label: 'Cities', value: String(cities.length) },
@@ -211,7 +213,7 @@ export default async function StatePage({ params }: Props) {
         <h2 className="text-xl font-bold text-gray-900">Rental Market in {name}</h2>
         <p className="mt-3 leading-relaxed text-gray-600">
           {hasListings && avgRent
-            ? `${name} currently has ${total} active rental ${total === 1 ? 'listing' : 'listings'} on EMLAKIE across ${cities.length} ${cities.length === 1 ? 'city' : 'cities'}. The average asking rent is ${formatPrice(avgRent)}/month, with prices ranging from ${formatPrice(minRent!)} to ${formatPrice(maxRent!)}. Browse listings above and contact landlords directly — no broker, no fees.`
+            ? `${name} currently has ${total} active rental ${total === 1 ? 'listing' : 'listings'} on EMLAKIE across ${cities.length} ${cities.length === 1 ? 'city' : 'cities'}. The average asking rent is ${formatPrice(avgRent)}, with prices ranging from ${formatPrice(minRent!)} to ${formatPrice(maxRent!)}. Browse listings above and contact landlords directly — no broker, no fees.`
             : `${name} is an active rental market. EMLAKIE connects renters directly with landlords across the state — no broker fees, no middlemen. As landlords list homes here, live prices and availability will appear on this page. List your property on EMLAKIE to reach renters searching in ${name} today.`}
         </p>
         <div className="mt-4 flex flex-wrap gap-3">

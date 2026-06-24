@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Legal Disclaimer | EMLAKIE',
+  title: 'Legal Disclaimer',
   description: 'Read the EMLAKIE legal disclaimer before using our platform. Covers listing accuracy, third-party content, liability limitations, and terms of use for renters and landlords.',
   alternates: { canonical: 'https://emlakie.com/disclaimer' },
   robots: { index: true, follow: false },

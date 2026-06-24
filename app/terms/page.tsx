@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Terms of Service | EMLAKIE',
+  title: 'Terms of Service',
   description: 'Read EMLAKIE\'s Terms of Service. These terms govern your use of our rental platform, listing services, tenant applications, and mobile app as a renter or landlord.',
   alternates: { canonical: 'https://emlakie.com/terms' },
   robots: { index: true, follow: false },

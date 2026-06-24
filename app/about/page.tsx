@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 
 export const metadata: Metadata = {
-  title: 'About EMLAKIE — Our Mission to Make Renting Simple',
+  title: { absolute: 'About EMLAKIE — Our Mission to Make Renting Simple' },
   description: 'EMLAKIE is a rental marketplace that connects renters directly with landlords — no broker fees, no middlemen. Learn about our mission, how we work, and why landlords and renters choose EMLAKIE.',
   alternates: { canonical: 'https://emlakie.com/about' },
   openGraph: {

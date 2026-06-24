@@ -3,7 +3,7 @@ import Image from 'next/image';
 import AppBadges from '@/components/AppBadges';
 
 export const metadata: Metadata = {
-  title: 'Get the EMLAKIE App',
+  title: { absolute: 'Get the EMLAKIE App' },
   description:
     'Search rentals, chat with landlords, and apply in minutes. EMLAKIE is coming soon to the App Store and Google Play.',
   alternates: { canonical: 'https://emlakie.com/app' },

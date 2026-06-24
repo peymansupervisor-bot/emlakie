@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Privacy Policy | EMLAKIE',
+  title: 'Privacy Policy',
   description: 'Read EMLAKIE\'s Privacy Policy to learn how we collect, use, store, and protect your personal information when you use our rental platform and mobile app.',
   alternates: { canonical: 'https://emlakie.com/privacy' },
   robots: { index: true, follow: false },

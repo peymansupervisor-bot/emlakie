@@ -133,7 +133,7 @@ export default async function CityPage({ params }: Props) {
       {hasListings && avgPrice && minPrice && maxPrice && (
         <div className="mt-6 grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-gray-200 bg-gray-200 sm:grid-cols-4">
           {[
-            { label: 'Avg. Rent', value: `${formatPrice(avgPrice)}/mo` },
+            { label: 'Avg. Rent', value: formatPrice(avgPrice) },
             { label: 'Price Range', value: `${formatPrice(minPrice)}–${formatPrice(maxPrice)}` },
             { label: 'Listings', value: String(total) },
             { label: 'Avg. Bedrooms', value: avgBeds === 0 ? 'Studio' : `${avgBeds} bed` },
@@ -228,7 +228,7 @@ export default async function CityPage({ params }: Props) {
         <h2 className="text-xl font-bold text-gray-900">Rental Market in {label}</h2>
         <p className="mt-3 leading-relaxed text-gray-600">
           {hasListings && avgPrice
-            ? `There ${total === 1 ? 'is' : 'are'} currently ${total} rental ${total === 1 ? 'home' : 'homes'} listed in ${label}. The average asking rent is ${formatPrice(avgPrice)}/month, with prices ranging from ${formatPrice(minPrice!)} to ${formatPrice(maxPrice!)}. Apply directly to any listing through EMLAKIE — no broker, no fees.`
+            ? `There ${total === 1 ? 'is' : 'are'} currently ${total} rental ${total === 1 ? 'home' : 'homes'} listed in ${label}. The average asking rent is ${formatPrice(avgPrice)}, with prices ranging from ${formatPrice(minPrice!)} to ${formatPrice(maxPrice!)}. Apply directly to any listing through EMLAKIE — no broker, no fees.`
             : `${label} is an active rental market. As landlords list homes here, live prices and availability will appear on this page automatically. List your property on EMLAKIE to reach renters searching in ${city} right now.`}
         </p>
         <div className="mt-4 flex gap-3">

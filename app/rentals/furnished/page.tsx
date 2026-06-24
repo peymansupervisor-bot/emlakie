@@ -4,7 +4,7 @@ import { getListings } from '@/lib/api';
 import ListingCard from '@/components/ListingCard';
 
 export const metadata: Metadata = {
-  title: 'Furnished Rentals — Move-In Ready Homes | EMLAKIE',
+  title: 'Furnished Rentals — Move-In Ready Homes',
   description: 'Browse furnished apartments and houses for rent. Move in with just your suitcase — ideal for relocations, travel nurses, and short-term stays.',
   alternates: { canonical: 'https://emlakie.com/rentals/furnished' },
   openGraph: {

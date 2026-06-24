@@ -18,7 +18,7 @@ import { getListings } from '@/lib/api';
 export const revalidate = 60;
 
 export const metadata: Metadata = {
-  title: 'EMLAKIE — Find Your Next Rental Home',
+  title: { absolute: 'EMLAKIE — Find Your Next Rental Home' },
   description: 'Browse houses, apartments, and condos for rent directly from landlords. No broker fees, no middlemen. Search rentals by city, ZIP, price, and more.',
   alternates: { canonical: 'https://emlakie.com/' },
   openGraph: {

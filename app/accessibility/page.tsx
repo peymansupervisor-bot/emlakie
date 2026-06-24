@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Accessibility Statement | EMLAKIE',
+  title: 'Accessibility Statement',
   description: 'EMLAKIE is committed to WCAG 2.1 AA accessibility. Learn about our efforts to make the rental platform fully accessible to people with disabilities.',
   alternates: { canonical: 'https://emlakie.com/accessibility' },
   robots: { index: true, follow: false },

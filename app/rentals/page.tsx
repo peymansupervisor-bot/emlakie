@@ -61,9 +61,17 @@ export default async function RentalsPage({
 
   const searchTerm = searchParams.q || searchParams.city;
   const isZipSearch = searchTerm && /^\d{5}$/.test(searchTerm.trim());
+  const propertyTypeHeadings: Record<string, string> = {
+    apartment: 'Apartments for Rent',
+    house: 'Houses for Rent',
+    condo: 'Condos for Rent',
+    townhouse: 'Townhomes for Rent',
+    studio: 'Studios for Rent',
+  };
   const heading = searchTerm
     ? `Rentals in ${isZipSearch ? 'ZIP ' : ''}${searchTerm}`
-    : 'All rentals';
+    : (searchParams.propertyType && propertyTypeHeadings[searchParams.propertyType as string])
+    ?? 'Homes & Apartments for Rent';
 
   return (
     <div className="flex flex-col">

@@ -19,9 +19,12 @@ export async function POST(req: NextRequest) {
   const digits = realPhone.replace(/\D/g, '');
   const e164 = realPhone.startsWith('+') ? realPhone : `+1${digits.length === 11 ? digits.slice(1) : digits}`;
 
-  const xml = `<Response>
+  const whisperUrl = 'https://emlakie.com/api/calls/whisper';
+
+  const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<Response>
   <Dial callerId="${toNumber}" timeout="30">
-    <Number>${e164}</Number>
+    <Number url="${whisperUrl}" method="POST">${e164}</Number>
   </Dial>
 </Response>`;
 

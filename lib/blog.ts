@@ -7,6 +7,8 @@ export interface Post {
   readTime: number; // minutes
   content: string; // HTML
   citySlug?: string;
+  lastUpdated?: string; // ISO — shown as "Updated" date when different from date
+  sources?: { label: string; url: string }[]; // cited references
 }
 
 export const posts: Post[] = [
@@ -18,6 +20,12 @@ export const posts: Post[] = [
     category: 'Market Trends',
     readTime: 5,
     citySlug: 'los-angeles',
+    lastUpdated: '2026-06-24',
+    sources: [
+      { label: 'U.S. Census Bureau — American Community Survey (ACS)', url: 'https://www.census.gov/programs-surveys/acs' },
+      { label: 'HUD Fair Market Rents', url: 'https://www.huduser.gov/portal/datasets/fmr.html' },
+      { label: 'Bureau of Labor Statistics — Consumer Price Index', url: 'https://www.bls.gov/cpi/' },
+    ],
     content: `
 <p>Los Angeles remains one of the most competitive rental markets in the United States. Whether you're moving from out of state or relocating within the city, understanding what rents look like in 2026 can save you time and help you negotiate confidently.</p>
 
@@ -176,6 +184,12 @@ export const posts: Post[] = [
     category: 'Market Trends',
     readTime: 5,
     citySlug: 'seattle',
+    lastUpdated: '2026-06-24',
+    sources: [
+      { label: 'U.S. Census Bureau — American Community Survey (ACS)', url: 'https://www.census.gov/programs-surveys/acs' },
+      { label: 'HUD Fair Market Rents', url: 'https://www.huduser.gov/portal/datasets/fmr.html' },
+      { label: 'Bureau of Labor Statistics — Consumer Price Index', url: 'https://www.bls.gov/cpi/' },
+    ],
     content: `
 <p>Seattle's rental market has cooled from its pandemic-era peaks but remains one of the pricier markets in the country, driven by tech industry employment at Amazon, Microsoft, and a dense startup ecosystem. Here's what renters are paying in 2026.</p>
 
@@ -218,6 +232,12 @@ export const posts: Post[] = [
     category: 'Market Trends',
     readTime: 6,
     citySlug: 'new-york',
+    lastUpdated: '2026-06-24',
+    sources: [
+      { label: 'U.S. Census Bureau — American Community Survey (ACS)', url: 'https://www.census.gov/programs-surveys/acs' },
+      { label: 'HUD Fair Market Rents', url: 'https://www.huduser.gov/portal/datasets/fmr.html' },
+      { label: 'Bureau of Labor Statistics — Consumer Price Index', url: 'https://www.bls.gov/cpi/' },
+    ],
     content: `
 <p>New York City remains the most expensive rental market in the United States, with median rents in Manhattan consistently above $4,000/month for a one-bedroom. But borough-by-borough differences are massive — here's what renters are paying across the five boroughs in 2026.</p>
 
@@ -265,6 +285,12 @@ export const posts: Post[] = [
     category: 'Market Trends',
     readTime: 5,
     citySlug: 'chicago',
+    lastUpdated: '2026-06-24',
+    sources: [
+      { label: 'U.S. Census Bureau — American Community Survey (ACS)', url: 'https://www.census.gov/programs-surveys/acs' },
+      { label: 'HUD Fair Market Rents', url: 'https://www.huduser.gov/portal/datasets/fmr.html' },
+      { label: 'Bureau of Labor Statistics — Consumer Price Index', url: 'https://www.bls.gov/cpi/' },
+    ],
     content: `
 <p>Chicago is one of the best-kept secrets in the US rental market. It's a world-class city — lakefront access, world-class dining, excellent public transit — at a fraction of the cost of New York, LA, or San Francisco. Here's what renters are paying in 2026.</p>
 
@@ -306,6 +332,12 @@ export const posts: Post[] = [
     category: 'Market Trends',
     readTime: 5,
     citySlug: 'austin',
+    lastUpdated: '2026-06-24',
+    sources: [
+      { label: 'U.S. Census Bureau — American Community Survey (ACS)', url: 'https://www.census.gov/programs-surveys/acs' },
+      { label: 'HUD Fair Market Rents', url: 'https://www.huduser.gov/portal/datasets/fmr.html' },
+      { label: 'Bureau of Labor Statistics — Consumer Price Index', url: 'https://www.bls.gov/cpi/' },
+    ],
     content: `
 <p>Austin experienced one of the most dramatic rent spikes in US history between 2020 and 2023 — some neighborhoods saw rents rise 40% in a single year. In 2026, a wave of new apartment supply has brought prices back down to earth. Here's where things stand.</p>
 
@@ -348,6 +380,12 @@ export const posts: Post[] = [
     category: 'Market Trends',
     readTime: 5,
     citySlug: 'miami',
+    lastUpdated: '2026-06-24',
+    sources: [
+      { label: 'U.S. Census Bureau — American Community Survey (ACS)', url: 'https://www.census.gov/programs-surveys/acs' },
+      { label: 'HUD Fair Market Rents', url: 'https://www.huduser.gov/portal/datasets/fmr.html' },
+      { label: 'Bureau of Labor Statistics — Consumer Price Index', url: 'https://www.bls.gov/cpi/' },
+    ],
     content: `
 <p>Miami has transformed from a regional city into a major financial and tech hub over the past five years, drawing transplants from New York, California, and Latin America. The result: rents that have more than doubled since 2020 in some neighborhoods. Here's the 2026 picture.</p>
 
@@ -390,6 +428,12 @@ export const posts: Post[] = [
     category: 'Market Trends',
     readTime: 4,
     citySlug: 'phoenix',
+    lastUpdated: '2026-06-24',
+    sources: [
+      { label: 'U.S. Census Bureau — American Community Survey (ACS)', url: 'https://www.census.gov/programs-surveys/acs' },
+      { label: 'HUD Fair Market Rents', url: 'https://www.huduser.gov/portal/datasets/fmr.html' },
+      { label: 'Bureau of Labor Statistics — Consumer Price Index', url: 'https://www.bls.gov/cpi/' },
+    ],
     content: `
 <p>Phoenix was one of the hottest rental markets in the country in 2021–2022, with rents rising over 30% in some areas. A wave of new apartment construction has since brought prices back down significantly, making it one of the best markets for renters in 2026.</p>
 
@@ -430,6 +474,12 @@ export const posts: Post[] = [
     category: 'Market Trends',
     readTime: 5,
     citySlug: 'denver',
+    lastUpdated: '2026-06-24',
+    sources: [
+      { label: 'U.S. Census Bureau — American Community Survey (ACS)', url: 'https://www.census.gov/programs-surveys/acs' },
+      { label: 'HUD Fair Market Rents', url: 'https://www.huduser.gov/portal/datasets/fmr.html' },
+      { label: 'Bureau of Labor Statistics — Consumer Price Index', url: 'https://www.bls.gov/cpi/' },
+    ],
     content: `
 <p>Denver has grown dramatically over the past decade, driven by the outdoor recreation lifestyle, a booming tech scene, and cannabis legalization drawing residents from across the country. Rents have risen steadily, though a recent construction surge has eased pressure slightly.</p>
 
@@ -472,6 +522,12 @@ export const posts: Post[] = [
     category: 'Market Trends',
     readTime: 5,
     citySlug: 'atlanta',
+    lastUpdated: '2026-06-24',
+    sources: [
+      { label: 'U.S. Census Bureau — American Community Survey (ACS)', url: 'https://www.census.gov/programs-surveys/acs' },
+      { label: 'HUD Fair Market Rents', url: 'https://www.huduser.gov/portal/datasets/fmr.html' },
+      { label: 'Bureau of Labor Statistics — Consumer Price Index', url: 'https://www.bls.gov/cpi/' },
+    ],
     content: `
 <p>Atlanta has emerged as one of the most important cities in the American South, driven by the film industry (it's the third-largest film production market in the world), a booming tech scene, and a steady flow of residents from higher-cost cities. Here's what renters are paying in 2026.</p>
 
@@ -514,6 +570,12 @@ export const posts: Post[] = [
     category: 'Market Trends',
     readTime: 4,
     citySlug: 'houston',
+    lastUpdated: '2026-06-24',
+    sources: [
+      { label: 'U.S. Census Bureau — American Community Survey (ACS)', url: 'https://www.census.gov/programs-surveys/acs' },
+      { label: 'HUD Fair Market Rents', url: 'https://www.huduser.gov/portal/datasets/fmr.html' },
+      { label: 'Bureau of Labor Statistics — Consumer Price Index', url: 'https://www.bls.gov/cpi/' },
+    ],
     content: `
 <p>Houston's lack of zoning laws has long kept housing costs among the lowest of any major American city. Combined with no state income tax, it remains one of the most financially attractive cities for renters in the country.</p>
 
@@ -556,6 +618,12 @@ export const posts: Post[] = [
     category: 'Market Trends',
     readTime: 4,
     citySlug: 'las-vegas',
+    lastUpdated: '2026-06-24',
+    sources: [
+      { label: 'U.S. Census Bureau — American Community Survey (ACS)', url: 'https://www.census.gov/programs-surveys/acs' },
+      { label: 'HUD Fair Market Rents', url: 'https://www.huduser.gov/portal/datasets/fmr.html' },
+      { label: 'Bureau of Labor Statistics — Consumer Price Index', url: 'https://www.bls.gov/cpi/' },
+    ],
     content: `
 <p>Las Vegas has grown far beyond its casino and entertainment roots. With no state income tax, a lower cost of living than neighboring California, and a booming sports scene (NFL Raiders, NHL Golden Knights, NBA Aces, and Formula 1), Las Vegas is attracting permanent residents in record numbers. Here's what renters are paying in 2026.</p>
 
@@ -598,6 +666,12 @@ export const posts: Post[] = [
     category: 'Market Trends',
     readTime: 4,
     citySlug: 'kansas-city',
+    lastUpdated: '2026-06-24',
+    sources: [
+      { label: 'U.S. Census Bureau — American Community Survey (ACS)', url: 'https://www.census.gov/programs-surveys/acs' },
+      { label: 'HUD Fair Market Rents', url: 'https://www.huduser.gov/portal/datasets/fmr.html' },
+      { label: 'Bureau of Labor Statistics — Consumer Price Index', url: 'https://www.bls.gov/cpi/' },
+    ],
     content: `
 <p>Kansas City, Missouri consistently ranks among the most affordable large metros in the United States. With a vibrant arts scene, a world-famous BBQ culture, a booming tech and healthcare sector, and rents that are a fraction of coastal cities, KC is increasingly attracting remote workers and young professionals priced out of bigger markets.</p>
 
@@ -641,6 +715,12 @@ export const posts: Post[] = [
     category: 'Market Trends',
     readTime: 4,
     citySlug: 'omaha',
+    lastUpdated: '2026-06-24',
+    sources: [
+      { label: 'U.S. Census Bureau — American Community Survey (ACS)', url: 'https://www.census.gov/programs-surveys/acs' },
+      { label: 'HUD Fair Market Rents', url: 'https://www.huduser.gov/portal/datasets/fmr.html' },
+      { label: 'Bureau of Labor Statistics — Consumer Price Index', url: 'https://www.bls.gov/cpi/' },
+    ],
     content: `
 <p>Omaha, Nebraska doesn't make many national headlines, but it consistently ranks near the top of livability surveys — low unemployment, low cost of living, strong job market, and a surprisingly vibrant food and arts scene. For renters, it's one of the best-value cities in the country in 2026.</p>
 
@@ -684,6 +764,12 @@ export const posts: Post[] = [
     category: 'Market Trends',
     readTime: 5,
     citySlug: 'san-francisco',
+    lastUpdated: '2026-06-24',
+    sources: [
+      { label: 'U.S. Census Bureau — American Community Survey (ACS)', url: 'https://www.census.gov/programs-surveys/acs' },
+      { label: 'HUD Fair Market Rents', url: 'https://www.huduser.gov/portal/datasets/fmr.html' },
+      { label: 'Bureau of Labor Statistics — Consumer Price Index', url: 'https://www.bls.gov/cpi/' },
+    ],
     content: `
 <p>San Francisco's rental market defies easy summary. Rents famously spiked during the tech boom, fell sharply during the pandemic, and have since partially recovered — but the city remains one of the most expensive rental markets in the world. Here's what you'll actually pay in 2026.</p>
 
@@ -732,6 +818,12 @@ export const posts: Post[] = [
     category: 'Market Trends',
     readTime: 5,
     citySlug: 'boston',
+    lastUpdated: '2026-06-24',
+    sources: [
+      { label: 'U.S. Census Bureau — American Community Survey (ACS)', url: 'https://www.census.gov/programs-surveys/acs' },
+      { label: 'HUD Fair Market Rents', url: 'https://www.huduser.gov/portal/datasets/fmr.html' },
+      { label: 'Bureau of Labor Statistics — Consumer Price Index', url: 'https://www.bls.gov/cpi/' },
+    ],
     content: `
 <p>Boston's rental market is shaped by an enormous student and young-professional population, a world-class medical and biotech sector, and a chronically limited housing supply. Rents have risen steadily, making Boston one of the ten most expensive cities to rent in the United States.</p>
 
@@ -786,6 +878,12 @@ export const posts: Post[] = [
     category: 'Market Trends',
     readTime: 4,
     citySlug: 'nashville',
+    lastUpdated: '2026-06-24',
+    sources: [
+      { label: 'U.S. Census Bureau — American Community Survey (ACS)', url: 'https://www.census.gov/programs-surveys/acs' },
+      { label: 'HUD Fair Market Rents', url: 'https://www.huduser.gov/portal/datasets/fmr.html' },
+      { label: 'Bureau of Labor Statistics — Consumer Price Index', url: 'https://www.bls.gov/cpi/' },
+    ],
     content: `
 <p>Nashville's population growth over the last decade has been extraordinary. Driven by corporate relocations, a thriving music and entertainment industry, and no state income tax, the city has transformed from an affordable Sunbelt market into one of the most competitive in the Southeast. Here's what renters are paying in 2026.</p>
 
@@ -1230,6 +1328,13 @@ export const posts: Post[] = [
     date: '2026-06-10',
     category: 'Renter Tips',
     readTime: 7,
+    lastUpdated: '2026-06-24',
+    sources: [
+      { label: 'AB 1482 — Tenant Protection Act of 2019 (California Legislature)', url: 'https://leginfo.legislature.ca.gov/faces/billNavClient.xhtml?bill_id=201920200AB1482' },
+      { label: 'AB 12 — Security Deposit Reform (California Legislature)', url: 'https://leginfo.legislature.ca.gov/faces/billNavClient.xhtml?bill_id=202320240AB12' },
+      { label: 'California Civil Rights Department — Housing Discrimination', url: 'https://calcivilrights.ca.gov/housing/' },
+      { label: 'California Courts Self-Help — Landlord/Tenant', url: 'https://www.courts.ca.gov/selfhelp-housing.htm' },
+    ],
     content: `
 <p>California has some of the strongest tenant protections in the United States. Whether you're a new renter or a longtime resident, understanding your rights can save you thousands of dollars and protect your housing stability. Here's what you need to know in 2026.</p>
 
@@ -1417,6 +1522,14 @@ export const posts: Post[] = [
     date: '2026-06-07',
     category: 'Landlord Tips',
     readTime: 6,
+    lastUpdated: '2026-06-24',
+    sources: [
+      { label: 'AB 12 — California Security Deposit Reform (California Legislature)', url: 'https://leginfo.legislature.ca.gov/faces/billNavClient.xhtml?bill_id=202320240AB12' },
+      { label: 'Texas Property Code § 92.101–92.109 — Security Deposits', url: 'https://statutes.capitol.texas.gov/Docs/PR/htm/PR.92.htm' },
+      { label: 'Florida Statutes § 83.49 — Deposit Money or Advance Rent', url: 'http://www.leg.state.fl.us/statutes/index.cfm?App_mode=Display_Statute&Search_String=&URL=0000-0099/0083/Sections/0083.49.html' },
+      { label: 'New York Real Property Law § 227-e', url: 'https://www.nysenate.gov/legislation/laws/RPP/227-E' },
+      { label: 'Colorado Revised Statutes § 38-12-103', url: 'https://leg.colorado.gov/sites/default/files/images/olls/crs2023-title-38.pdf' },
+    ],
     content: `
 <p>Security deposits are one of the most contested areas of landlord-tenant law. Renters often don't know their rights; landlords sometimes don't know the limits. Here's a practical breakdown of the rules in the most populous states.</p>
 
@@ -1497,6 +1610,12 @@ export const posts: Post[] = [
     category: 'Market Trends',
     readTime: 5,
     citySlug: 'san-diego',
+    lastUpdated: '2026-06-24',
+    sources: [
+      { label: 'U.S. Census Bureau — American Community Survey (ACS)', url: 'https://www.census.gov/programs-surveys/acs' },
+      { label: 'HUD Fair Market Rents', url: 'https://www.huduser.gov/portal/datasets/fmr.html' },
+      { label: 'Bureau of Labor Statistics — Consumer Price Index', url: 'https://www.bls.gov/cpi/' },
+    ],
     content: `
 <p>San Diego's rental market combines California's coastal premium with a strong military presence and a booming biotech sector. Rents have risen steadily even as other Sun Belt markets softened, driven by limited supply and strong demand. Here's what renters are paying in 2026.</p>
 
@@ -1546,6 +1665,12 @@ export const posts: Post[] = [
     category: 'Market Trends',
     readTime: 4,
     citySlug: 'portland',
+    lastUpdated: '2026-06-24',
+    sources: [
+      { label: 'U.S. Census Bureau — American Community Survey (ACS)', url: 'https://www.census.gov/programs-surveys/acs' },
+      { label: 'HUD Fair Market Rents', url: 'https://www.huduser.gov/portal/datasets/fmr.html' },
+      { label: 'Bureau of Labor Statistics — Consumer Price Index', url: 'https://www.bls.gov/cpi/' },
+    ],
     content: `
 <p>Portland experienced some of the most dramatic rent growth in the country during 2020–2022, but aggressive apartment construction and population stabilization have brought significant relief. In 2026, Portland is one of the more renter-friendly markets on the West Coast. Here's what tenants are paying.</p>
 
@@ -1598,6 +1723,12 @@ export const posts: Post[] = [
     category: 'Market Trends',
     readTime: 4,
     citySlug: 'charlotte',
+    lastUpdated: '2026-06-24',
+    sources: [
+      { label: 'U.S. Census Bureau — American Community Survey (ACS)', url: 'https://www.census.gov/programs-surveys/acs' },
+      { label: 'HUD Fair Market Rents', url: 'https://www.huduser.gov/portal/datasets/fmr.html' },
+      { label: 'Bureau of Labor Statistics — Consumer Price Index', url: 'https://www.bls.gov/cpi/' },
+    ],
     content: `
 <p>Charlotte's status as the US banking capital outside New York City has drawn corporate relocations and professional talent at a remarkable pace. The result: a rental market that has grown 30%+ over the past five years — but still remains well below comparable Northeast and West Coast cities. Here's what renters pay in 2026.</p>
 
@@ -1870,6 +2001,12 @@ export const posts: Post[] = [
     category: 'Renter Tips',
     readTime: 5,
     citySlug: 'los-angeles',
+    lastUpdated: '2026-06-24',
+    sources: [
+      { label: 'LA Housing Department — Rent Stabilization Ordinance (RSO)', url: 'https://housing.lacity.gov/residents/rso' },
+      { label: 'LAHD — Allowable Rent Increases', url: 'https://housing.lacity.gov/residents/rso/allowable-rent-increases' },
+      { label: 'LA City Council — RSO Reform Ordinance (2026)', url: 'https://clkrep.lacity.org/onlinedocs/2024/24-0672_misc_06-04-2025.pdf' },
+    ],
     content: `
 <p>Los Angeles just significantly reformed its Rent Stabilization Ordinance (RSO) — and the changes are largely good news for tenants. The LA City Council approved a new formula that lowers the maximum allowable rent increase and eliminates several add-ons that landlords previously used to push rents higher. Here's exactly what changed and what it means for your lease.</p>
 
@@ -1921,6 +2058,12 @@ export const posts: Post[] = [
     category: 'Landlord Tips',
     readTime: 5,
     citySlug: 'los-angeles',
+    lastUpdated: '2026-06-24',
+    sources: [
+      { label: 'LA Housing Department — Rent Stabilization Ordinance (RSO)', url: 'https://housing.lacity.gov/residents/rso' },
+      { label: 'LAHD — Allowable Rent Increases', url: 'https://housing.lacity.gov/residents/rso/allowable-rent-increases' },
+      { label: 'LA City Council — RSO Reform Ordinance (2026)', url: 'https://clkrep.lacity.org/onlinedocs/2024/24-0672_misc_06-04-2025.pdf' },
+    ],
     content: `
 <p>Los Angeles landlords face significantly tightened RSO rules in 2026. The LA City Council passed a reformed Rent Stabilization Ordinance that reduces the maximum allowable annual rent increase and permanently eliminates two previously permitted add-ons. If you own RSO-covered units in Los Angeles, here's exactly what changed and what you need to do before July 1, 2026.</p>
 
@@ -1987,6 +2130,12 @@ export const posts: Post[] = [
     category: 'Renter Tips',
     readTime: 5,
     citySlug: 'los-angeles',
+    lastUpdated: '2026-06-24',
+    sources: [
+      { label: 'LA Housing Department — Rent Stabilization Ordinance (RSO)', url: 'https://housing.lacity.gov/residents/rso' },
+      { label: 'AB 1482 — Tenant Protection Act of 2019 (California Legislature)', url: 'https://leginfo.legislature.ca.gov/faces/billNavClient.xhtml?bill_id=201920200AB1482' },
+      { label: 'California Courts Self-Help — Landlord/Tenant', url: 'https://www.courts.ca.gov/selfhelp-housing.htm' },
+    ],
     content: `
 <p>Los Angeles renters are protected by two separate rent control laws — and they're easy to confuse. The LA Rent Stabilization Ordinance (RSO) and California's statewide AB 1482 tenant protection law have different rules, different buildings they cover, and very different rent increase limits. Here's how to know which one applies to you in 2026.</p>
 
@@ -2069,6 +2218,11 @@ export const posts: Post[] = [
     category: 'Landlord Tips',
     readTime: 5,
     citySlug: 'los-angeles',
+    lastUpdated: '2026-06-24',
+    sources: [
+      { label: 'LAHD — Right to Counsel (RTC) Notice Forms', url: 'https://housing.lacity.gov/RTC' },
+      { label: 'LA City Council — Right to Counsel Ordinance', url: 'https://clkrep.lacity.org/onlinedocs/2021/21-0134_rpt_CAO_07-20-2021.pdf' },
+    ],
     content: `
 <p><em>Legal guidance contributed by <strong>Yong Lee ("David"), Real &amp; Lee, Ltd.</strong>, a Los Angeles landlord-tenant attorney. This article is for informational purposes only and does not constitute legal advice. Consult a licensed attorney for advice specific to your situation.</em></p>
 
@@ -2136,6 +2290,12 @@ export const posts: Post[] = [
     category: 'Renter Tips',
     readTime: 4,
     citySlug: 'los-angeles',
+    lastUpdated: '2026-06-24',
+    sources: [
+      { label: 'LAHD — Right to Counsel (RTC) Notice Forms', url: 'https://housing.lacity.gov/RTC' },
+      { label: 'LA Neighborhood Legal Services', url: 'https://www.lsnc.net/' },
+      { label: 'Inner City Law Center', url: 'https://www.innercitylaw.org/' },
+    ],
     content: `
 <p><em>Legal guidance contributed by <strong>Yong Lee ("David"), Real &amp; Lee, Ltd.</strong>, a Los Angeles landlord-tenant attorney. This article is for informational purposes only and does not constitute legal advice. Consult a licensed attorney for advice specific to your situation.</em></p>
 
@@ -2263,6 +2423,11 @@ export const posts: Post[] = [
     date: '2026-06-22',
     category: 'Renter Tips',
     readTime: 5,
+    lastUpdated: '2026-06-24',
+    sources: [
+      { label: 'California Department of Insurance — Renters Insurance', url: 'https://www.insurance.ca.gov/01-consumers/105-type/95-guides/03-res/renters-ins.cfm' },
+      { label: 'Insurance Information Institute — Renters Insurance', url: 'https://www.iii.org/article/do-you-need-renters-insurance' },
+    ],
     content: `
 <p>Most renters assume their landlord's insurance covers them. It doesn't. A landlord's policy protects the building — the walls, the roof, the plumbing. Your furniture, electronics, clothing, and personal belongings? Those are entirely your responsibility. And when something goes wrong, it usually goes wrong fast and without warning.</p>
 

@@ -92,7 +92,13 @@ export default async function BlogPostPage({ params }: Props) {
           {post.category}
         </span>
         <h1 className="mt-4 text-3xl font-extrabold text-gray-900 sm:text-4xl leading-tight">{post.title}</h1>
-        <p className="mt-3 text-gray-500 text-sm">{formatDate(post.date)} · {post.readTime} min read</p>
+        <p className="mt-3 text-gray-500 text-sm">
+          {formatDate(post.date)}
+          {post.lastUpdated && post.lastUpdated !== post.date && (
+            <> · Updated {formatDate(post.lastUpdated)}</>
+          )}
+          {' '}· {post.readTime} min read
+        </p>
       </div>
 
       {/* Article body */}
@@ -100,6 +106,25 @@ export default async function BlogPostPage({ params }: Props) {
         className="prose prose-gray prose-headings:font-extrabold prose-headings:text-gray-900 prose-a:text-brand-600 prose-a:no-underline hover:prose-a:underline prose-li:text-gray-700 prose-strong:text-gray-900 mt-10 max-w-none"
         dangerouslySetInnerHTML={{ __html: post.content }}
       />
+
+      {/* Sources */}
+      {post.sources && post.sources.length > 0 && (
+        <div className="mt-10 border-t border-gray-100 pt-6">
+          <h2 className="text-xs font-bold uppercase tracking-widest text-gray-500">Sources</h2>
+          <ul className="mt-3 space-y-1">
+            {post.sources.map(s => (
+              <li key={s.url} className="text-xs text-gray-500">
+                <a href={s.url} target="_blank" rel="noopener noreferrer" className="text-brand-600 hover:underline">
+                  {s.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+          {post.lastUpdated && post.lastUpdated !== post.date && (
+            <p className="mt-3 text-xs text-gray-400">Last updated: {new Date(post.lastUpdated).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</p>
+          )}
+        </div>
+      )}
 
       {/* CTA */}
       <div className="mt-12 rounded-2xl bg-brand-600 px-8 py-8 text-center">

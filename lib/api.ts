@@ -80,16 +80,16 @@ export async function getListings(filters: ListingFilters = {}): Promise<Listing
   noStore();
   try {
     const sb = supabaseAdmin();
-    let query = sb.from('listings').select('*', { count: 'exact' }).eq('status', 'active');
+    let query = sb.from('listings').select('*', { count: 'exact' })
+      .eq('status', 'active')
+      .gt('expires_at', new Date().toISOString());
+
     if (filters.q) {
       const q = filters.q.trim();
       if (isZip(q)) {
         query = query.eq('zip', q);
       } else {
-        // Search city, address, and state — OR them with Supabase's or()
-        query = query.or(
-          `city.ilike.%${q}%,address.ilike.%${q}%,state.ilike.%${q}%`
-        );
+        query = query.or(`city.ilike.%${q}%,address.ilike.%${q}%,state.ilike.%${q}%`);
       }
     }
     if (filters.city) {
@@ -106,49 +106,16 @@ export async function getListings(filters: ListingFilters = {}): Promise<Listing
     }
     if (filters.ownerDirect === '1') query = query.eq('listing_source', 'owner');
 
-    const { data, error } = await query.order('created_at', { ascending: false });
+    const { data, error } = await query.order('refreshed_at', { ascending: false });
     if (error) throw error;
-
-    const now = Date.now();
-    const ranked = (data ?? [])
-      .map((row) => {
-        const photoCount = Array.isArray(row.photos) ? row.photos.length : 0;
-        const amenityCount = Array.isArray(row.amenities) ? row.amenities.length : 0;
-        const ageMs = now - new Date(row.created_at as string).getTime();
-        const ageDays = ageMs / 86_400_000;
-        const freshness = ageDays < 7 ? 50 : ageDays < 14 ? 25 : ageDays < 30 ? 10 : 0;
-        const isBoosted = row.boosted_until && new Date(row.boosted_until as string).getTime() > now;
-        const isFeatured = row.featured && row.featured_until && new Date(row.featured_until as string).getTime() > now;
-        const score =
-          (isFeatured ? 1000 : 0) +
-          (isBoosted ? 500 : 0) +
-          Math.min(photoCount, 25) * 4 +
-          (((row.description as string | null)?.length ?? 0) > 50 ? 15 : 0) +
-          (row.virtual_tour_url ? 20 : 0) +
-          Math.min((row.view_count as number | null) ?? 0, 80) * 0.5 +
-          Math.min(amenityCount, 10) * 2 +
-          freshness +
-          Math.random() * 30;
-        return { row, score };
-      })
-      .sort((a, b) => b.score - a.score);
 
     const page = Number(filters.page ?? 1);
     const pageSize = 20;
-    const total = ranked.length;
-    const pageRows = ranked.slice((page - 1) * pageSize, page * pageSize);
-    const listings = pageRows.map(({ row }) => rowToListing(row));
-    const MIN_LISTINGS = 6;
-    if (total >= MIN_LISTINGS) return { listings, total, usingSampleData: false };
-    // Pad with samples when fewer than MIN_LISTINGS real listings exist
-    const allListings = ranked.map(({ row }) => rowToListing(row));
-    const realIds = new Set(allListings.map((l) => l.id));
-    const samples = filterSamples(filters).filter((s) => !realIds.has(s.id));
-    const padded = [...allListings, ...samples].slice(0, Math.max(allListings.length, MIN_LISTINGS));
-    return { listings: padded.slice((page - 1) * pageSize, page * pageSize), total: padded.length, usingSampleData: allListings.length === 0 };
+    const total = data?.length ?? 0;
+    const listings = (data ?? []).slice((page - 1) * pageSize, page * pageSize).map(rowToListing);
+    return { listings, total, usingSampleData: false };
   } catch {
-    const listings = filterSamples(filters);
-    return { listings, total: listings.length, usingSampleData: true };
+    return { listings: [], total: 0, usingSampleData: false };
   }
 }
 
@@ -160,6 +127,7 @@ export async function getAllMappableListings(): Promise<Pick<Listing, 'id' | 'la
       .from('listings')
       .select('id, lat, lng, monthly_rent, address, slug')
       .eq('status', 'active')
+      .gt('expires_at', new Date().toISOString())
       .not('lat', 'is', null)
       .not('lng', 'is', null)
       .limit(1000);
@@ -211,12 +179,11 @@ export async function getAllCities(): Promise<CityLocation[]> {
       .from('listings')
       .select('city, state')
       .eq('status', 'active')
+      .gt('expires_at', new Date().toISOString())
       .not('city', 'is', null);
 
-    if (!data || data.length === 0) throw new Error('no data');
-
     const seen = new Set<string>();
-    return data.reduce<CityLocation[]>((acc, row) => {
+    return (data ?? []).reduce<CityLocation[]>((acc, row) => {
       const city = (row.city as string).trim();
       const state = (row.state as string | null)?.trim() ?? '';
       const key = `${city}|${state}`.toLowerCase();
@@ -227,16 +194,7 @@ export async function getAllCities(): Promise<CityLocation[]> {
       return acc;
     }, []);
   } catch {
-    // Fall back to sample data cities
-    const seen = new Set<string>();
-    return sampleListings.reduce<CityLocation[]>((acc, l) => {
-      const key = `${l.city}|${l.state ?? ''}`.toLowerCase();
-      if (!seen.has(key)) {
-        seen.add(key);
-        acc.push({ city: l.city, state: l.state ?? '', slug: l.city.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '') });
-      }
-      return acc;
-    }, []);
+    return [];
   }
 }
 
@@ -255,13 +213,12 @@ export async function getTrendingCities(limit = 8): Promise<TrendingCity[]> {
       .from('listings')
       .select('city, state, monthly_rent')
       .eq('status', 'active')
+      .gt('expires_at', new Date().toISOString())
       .not('city', 'is', null)
       .limit(500);
 
-    if (!data || data.length === 0) throw new Error('no data');
-
     const map = new Map<string, { city: string; state: string; total: number; count: number }>();
-    for (const row of data) {
+    for (const row of (data ?? [])) {
       const city = (row.city as string).trim();
       const state = ((row.state as string | null) ?? '').trim();
       const key = `${city}|${state}`.toLowerCase();
@@ -282,25 +239,7 @@ export async function getTrendingCities(limit = 8): Promise<TrendingCity[]> {
         avgRent: Math.round(total / count),
       }));
   } catch {
-    // Fallback from sample data
-    const map = new Map<string, { city: string; state: string; total: number; count: number }>();
-    for (const l of sampleListings) {
-      const key = `${l.city}|${l.state ?? ''}`.toLowerCase();
-      const entry = map.get(key) ?? { city: l.city, state: l.state ?? '', total: 0, count: 0 };
-      entry.total += l.price;
-      entry.count += 1;
-      map.set(key, entry);
-    }
-    return Array.from(map.values())
-      .sort((a, b) => b.count - a.count)
-      .slice(0, limit)
-      .map(({ city, state, total, count }) => ({
-        city,
-        state,
-        slug: city.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, ''),
-        count,
-        avgRent: Math.round(total / count),
-      }));
+    return [];
   }
 }
 
@@ -308,8 +247,8 @@ export async function getStats(): Promise<{ listings: number; cities: number; la
   try {
     const sb = supabaseAdmin();
     const [listingsRes, citiesRes, landlordsRes] = await Promise.all([
-      sb.from('listings').select('*', { count: 'exact', head: true }).eq('status', 'active'),
-      sb.from('listings').select('city', { count: 'exact' }).eq('status', 'active').not('city', 'is', null),
+      sb.from('listings').select('*', { count: 'exact', head: true }).eq('status', 'active').gt('expires_at', new Date().toISOString()),
+      sb.from('listings').select('city', { count: 'exact' }).eq('status', 'active').gt('expires_at', new Date().toISOString()).not('city', 'is', null),
       sb.from('profiles').select('*', { count: 'exact', head: true }),
     ]);
     const cities = new Set((citiesRes.data ?? []).map((r: { city: string }) => (r.city as string).toLowerCase())).size;
@@ -350,13 +289,12 @@ export async function getMarketPulse(): Promise<MarketPulse[]> {
       .from('listings')
       .select('bedrooms, monthly_rent')
       .eq('status', 'active')
+      .gt('expires_at', new Date().toISOString())
       .not('monthly_rent', 'is', null)
       .limit(500);
 
-    if (!data || data.length === 0) throw new Error('no data');
-
     const map = new Map<number, { total: number; count: number }>();
-    for (const row of data) {
+    for (const row of (data ?? [])) {
       const bed = Number(row.bedrooms);
       const rent = Number(row.monthly_rent);
       if (!isFinite(bed) || !isFinite(rent) || rent <= 0) continue;
@@ -368,15 +306,7 @@ export async function getMarketPulse(): Promise<MarketPulse[]> {
     }
     return build(map);
   } catch {
-    const map = new Map<number, { total: number; count: number }>();
-    for (const l of sampleListings) {
-      const key = l.bedrooms <= 0 ? 0 : l.bedrooms >= 3 ? 3 : l.bedrooms;
-      const e = map.get(key) ?? { total: 0, count: 0 };
-      e.total += l.price;
-      e.count += 1;
-      map.set(key, e);
-    }
-    return build(map);
+    return [];
   }
 }
 
@@ -407,13 +337,12 @@ export async function getTopStates(limit = 51): Promise<Array<{ name: string; ab
       .from('listings')
       .select('state')
       .eq('status', 'active')
+      .gt('expires_at', new Date().toISOString())
       .not('state', 'is', null)
       .limit(2000);
 
-    if (!data || data.length === 0) throw new Error('no data');
-
     const map = new Map<string, number>();
-    for (const row of data) {
+    for (const row of (data ?? [])) {
       const abbr = ((row.state as string) ?? '').trim().toUpperCase();
       if (!abbr) continue;
       map.set(abbr, (map.get(abbr) ?? 0) + 1);
@@ -428,8 +357,7 @@ export async function getTopStates(limit = 51): Promise<Array<{ name: string; ab
       })
       .filter(Boolean) as Array<{ name: string; abbr: string; slug: string; count: number }>;
   } catch {
-    // Fall back to all 50 states from static list
-    return US_STATES.slice(0, limit).map((s) => ({ ...s, count: 0 }));
+    return [];
   }
 }
 
@@ -444,8 +372,9 @@ export async function getListingsByState(stateSlug: string): Promise<StateListin
       .from('listings')
       .select('*')
       .eq('status', 'active')
+      .gt('expires_at', new Date().toISOString())
       .ilike('state', stateInfo.abbr)
-      .order('created_at', { ascending: false })
+      .order('refreshed_at', { ascending: false })
       .limit(100);
 
     const listings = (data ?? []).map(rowToListing);
@@ -474,17 +403,9 @@ export async function getListingsByState(stateSlug: string): Promise<StateListin
     const minRent = prices.length ? Math.min(...prices) : null;
     const maxRent = prices.length ? Math.max(...prices) : null;
 
-    if (listings.length < 3) {
-      // Pad with sample data filtered by state abbr
-      const samples = sampleListings.filter((l) => l.state?.toUpperCase() === stateInfo.abbr);
-      const merged = [...listings, ...samples].slice(0, 12);
-      return { listings: merged, total: merged.length, state: stateInfo, cities, avgRent, minRent, maxRent, usingSampleData: listings.length === 0 };
-    }
-
     return { listings, total: listings.length, state: stateInfo, cities, avgRent, minRent, maxRent, usingSampleData: false };
   } catch {
-    const samples = sampleListings.filter((l) => l.state?.toUpperCase() === stateInfo.abbr);
-    return { listings: samples, total: samples.length, state: stateInfo, cities: [], avgRent: null, minRent: null, maxRent: null, usingSampleData: true };
+    return { listings: [], total: 0, state: stateInfo, cities: [], avgRent: null, minRent: null, maxRent: null, usingSampleData: false };
   }
 }
 

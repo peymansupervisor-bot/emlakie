@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createSupabaseAdmin, createSupabaseWithToken } from '@/lib/supabase-server'
 import { generateListingSlug } from '@/lib/format'
 import { logError } from '@/lib/log-error'
+import { maybeReleaseVirtualPhone } from '@/lib/twilio'
 
 export const dynamic = 'force-dynamic'
 
@@ -77,6 +78,13 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
     await logError({ source: 'Listing Update', message: error.message, user_id: user.id, endpoint: `PUT /api/listings/${id}`, http_status: 500, context: { listing_id: id, fields: Object.keys(dbPayload) } });
     return NextResponse.json({ error: error.message ?? 'Something went wrong' }, { status: 500 })
   }
+
+  // If status changed away from active, release the virtual phone if no active listings remain
+  const inactiveStatuses = new Set(['rented', 'inactive', 'deactivated', 'lease_in_progress', 'coming_soon'])
+  if (typeof dbPayload.status === 'string' && inactiveStatuses.has(dbPayload.status)) {
+    maybeReleaseVirtualPhone(user.id).catch(() => {});
+  }
+
   return NextResponse.json({ ok: true, slug: dbPayload.slug ?? null })
 }
 
@@ -111,5 +119,9 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
     await logError({ source: 'Listing Delete', message: error.message, user_id: user.id, endpoint: `DELETE /api/listings/${id}`, http_status: 500, context: { listing_id: id } });
     return NextResponse.json({ error: error.message ?? 'Something went wrong' }, { status: 500 })
   }
+
+  // Release virtual phone if no active listings remain after deletion
+  maybeReleaseVirtualPhone(user.id).catch(() => {});
+
   return NextResponse.json({ ok: true })
 }

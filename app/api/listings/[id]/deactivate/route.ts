@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createSupabaseWithToken } from '@/lib/supabase-server'
-
 import { logError } from '@/lib/log-error'
+import { maybeReleaseVirtualPhone } from '@/lib/twilio'
 
 export const dynamic = 'force-dynamic'
 // POST /api/listings/[id]/deactivate
@@ -22,6 +22,9 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       .eq('landlord_id', user.id)
 
     if (error) return NextResponse.json({ error: 'Something went wrong' }, { status: 500 })
+
+    maybeReleaseVirtualPhone(user.id).catch(() => {});
+
     return NextResponse.json({ success: true })
   } catch (_err) {
     const _msg = _err instanceof Error ? _err.message : String(_err);

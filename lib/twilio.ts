@@ -76,6 +76,44 @@ export async function getOrProvisionVirtualPhone(userId: string, postalCode?: st
   }
 }
 
+/**
+ * Release the landlord's virtual phone number if they have no remaining active listings.
+ * Called after a listing status change or deletion.
+ */
+export async function maybeReleaseVirtualPhone(userId: string): Promise<void> {
+  try {
+    const db = adminClient();
+
+    // Check if any active listings remain
+    const { count } = await db
+      .from('listings')
+      .select('id', { count: 'exact', head: true })
+      .eq('landlord_id', userId)
+      .eq('status', 'active');
+
+    if ((count ?? 0) > 0) return; // still has active listings — keep the number
+
+    // Fetch their virtual number
+    const { data: profile } = await db
+      .from('profiles')
+      .select('virtual_phone')
+      .eq('id', userId)
+      .single();
+
+    if (!profile?.virtual_phone) return;
+
+    // Release from Twilio
+    const client = twilioClient();
+    const numbers = await client.incomingPhoneNumbers.list({ phoneNumber: profile.virtual_phone });
+    if (numbers[0]) await client.incomingPhoneNumbers(numbers[0].sid).remove();
+
+    // Clear from profile
+    await db.from('profiles').update({ virtual_phone: null }).eq('id', userId);
+  } catch (err) {
+    console.error('[twilio] maybeReleaseVirtualPhone error for', userId, err);
+  }
+}
+
 /** Look up the real phone number for an inbound virtual number. */
 export async function getRealPhoneForVirtual(virtualPhone: string): Promise<string | null> {
   try {

@@ -181,7 +181,7 @@ export default async function StatePage({ params }: Props) {
                 href={`/rentals?q=${encodeURIComponent(abbr)}`}
                 className="inline-block rounded-xl bg-brand-600 px-8 py-3 font-semibold text-white hover:bg-brand-700"
               >
-                View all {total} rentals in {abbr} →
+                Search all {total} rentals in {name} →
               </Link>
             </div>
           )}

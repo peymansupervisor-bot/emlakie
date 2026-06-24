@@ -170,7 +170,7 @@ export default async function CityPage({ params }: Props) {
               href={`/rentals?city=${encodeURIComponent(city)}`}
               className="text-sm font-semibold text-brand-600 hover:text-brand-700"
             >
-              Filter & sort →
+              Search all rentals in {city} →
             </Link>
           </div>
           <div className="mt-4 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">

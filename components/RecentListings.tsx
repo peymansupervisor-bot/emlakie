@@ -67,7 +67,7 @@ export default async function RecentListings() {
       })}
 
       <Link href="/rentals" className="text-center text-xs font-semibold text-brand-600 hover:text-brand-700">
-        View all listings →
+        Browse all rental listings →
       </Link>
     </div>
   );

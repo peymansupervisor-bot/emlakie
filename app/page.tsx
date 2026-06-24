@@ -152,7 +152,7 @@ export default async function HomePage() {
             <p className="mt-1 text-gray-600">Fresh listings, updated daily</p>
           </div>
           <Link href="/rentals" className="text-sm font-semibold text-brand-600 hover:text-brand-700">
-            View all →
+            Browse all rental listings →
           </Link>
         </div>
         <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">

@@ -95,6 +95,7 @@ export default async function ListingPage({ params }: Props) {
     getPropertyData(fullAddress),
     listing.user_id && !isUnavailable ? getOrProvisionVirtualPhone(listing.user_id) : Promise.resolve(null),
   ]);
+  console.log('[listing] user_id:', listing.user_id, 'landlord_id:', listing.landlord_id, 'virtualPhone:', virtualPhone);
   const similarActive = similar.filter((l) => l.id !== listing.id && l.status === 'active').slice(0, 3);
 
   const breadcrumbSchema = {

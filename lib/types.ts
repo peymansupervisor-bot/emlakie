@@ -26,6 +26,7 @@ export interface Listing {
   license_number?: string | null;
   virtual_tour_url?: string | null;
   slug?: string | null;
+  user_id?: string | null;
 }
 
 export interface ListingFilters {

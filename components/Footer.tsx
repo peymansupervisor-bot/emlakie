@@ -18,12 +18,17 @@ export default function Footer() {
             <div>
               <p className="font-serif text-base font-bold tracking-tight text-gray-900">Renters</p>
               <ul className="mt-4 space-y-3 text-sm text-gray-500">
-                <li><Link href="/rentals" className="transition hover:text-brand-600">Browse rentals</Link></li>
-                <li><Link href="/rent-check" className="transition hover:text-brand-600">Is my rent fair?</Link></li>
+                <li><Link href="/rentals" className="transition hover:text-brand-600">Browse all rentals</Link></li>
+                <li><Link href="/rentals/apartments" className="transition hover:text-brand-600">Apartments for rent</Link></li>
+                <li><Link href="/rentals/houses" className="transition hover:text-brand-600">Houses for rent</Link></li>
+                <li><Link href="/rentals/condos" className="transition hover:text-brand-600">Condos for rent</Link></li>
+                <li><Link href="/rentals/townhomes" className="transition hover:text-brand-600">Townhomes for rent</Link></li>
+                <li><Link href="/rentals/studios" className="transition hover:text-brand-600">Studios for rent</Link></li>
                 <li><Link href="/rentals/pet-friendly" className="transition hover:text-brand-600">Pet-friendly rentals</Link></li>
                 <li><Link href="/rentals/furnished" className="transition hover:text-brand-600">Furnished rentals</Link></li>
                 <li><Link href="/rentals/short-term" className="transition hover:text-brand-600">Short-term rentals</Link></li>
                 <li><Link href="/rentals/section-8" className="transition hover:text-brand-600">Section 8 rentals</Link></li>
+                <li><Link href="/rent-check" className="transition hover:text-brand-600">Is my rent fair?</Link></li>
                 <li><Link href="/app" className="transition hover:text-brand-600">Download the app</Link></li>
               </ul>
             </div>

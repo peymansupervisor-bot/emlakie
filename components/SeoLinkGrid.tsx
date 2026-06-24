@@ -7,11 +7,11 @@ interface Props {
 }
 
 const PROPERTY_TYPE_LINKS = [
-  { href: '/rentals?propertyType=apartment', label: 'Apartments for Rent' },
-  { href: '/rentals?propertyType=house', label: 'Houses for Rent' },
-  { href: '/rentals?propertyType=condo', label: 'Condos for Rent' },
-  { href: '/rentals?propertyType=townhouse', label: 'Townhouses for Rent' },
-  { href: '/rentals?propertyType=studio', label: 'Studios for Rent' },
+  { href: '/rentals/apartments', label: 'Apartments for Rent' },
+  { href: '/rentals/houses', label: 'Houses for Rent' },
+  { href: '/rentals/condos', label: 'Condos for Rent' },
+  { href: '/rentals/townhomes', label: 'Townhomes for Rent' },
+  { href: '/rentals/studios', label: 'Studios for Rent' },
   { href: '/rentals?bedrooms=1', label: '1-Bedroom Rentals' },
   { href: '/rentals?bedrooms=2', label: '2-Bedroom Rentals' },
   { href: '/rentals?bedrooms=3', label: '3-Bedroom Rentals' },

@@ -202,17 +202,6 @@ export default async function ListingPage({ params }: Props) {
             <ReportButton listingId={listing.id} />
           </div>
 
-          {listing.listing_source === 'broker' && (listing.agent_name || listing.office_name || listing.license_number) && (
-            <div className="mt-4 flex items-center gap-2 rounded-xl border border-blue-100 bg-blue-50 px-4 py-3 text-sm text-blue-800">
-              <span className="text-base">🪪</span>
-              <span>
-                Listed by{listing.agent_name ? ` ${listing.agent_name}` : ''}
-                {listing.office_name ? ` · ${listing.office_name}` : ''}
-                {listing.license_number ? ` · Lic# ${listing.license_number}` : ''}
-              </span>
-            </div>
-          )}
-
           {listing.description && (
             <div className="mt-8 rounded-2xl border border-gray-100 bg-gray-50 px-6 py-5">
               <h2 className="text-lg font-bold text-gray-900">Home highlights</h2>
@@ -236,6 +225,17 @@ export default async function ListingPage({ params }: Props) {
                 ))}
               </ul>
             </>
+          )}
+
+          {listing.listing_source === 'broker' && (listing.agent_name || listing.office_name || listing.license_number) && (
+            <div className="mt-8 flex items-center gap-2 rounded-xl border border-blue-100 bg-blue-50 px-4 py-3 text-sm text-blue-800">
+              <span className="text-base">🪪</span>
+              <span>
+                Listed by{listing.agent_name ? ` ${listing.agent_name}` : ''}
+                {listing.office_name ? ` · ${listing.office_name}` : ''}
+                {listing.license_number ? ` · Lic# ${listing.license_number}` : ''}
+              </span>
+            </div>
           )}
 
           {/* Virtual tour embed */}

@@ -4,7 +4,10 @@ import { NextResponse } from 'next/server';
 export async function POST() {
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <Response>
-  <Say voice="Polly.Joanna">You have an incoming call from someone who saw your listing on Emlakie.</Say>
+  <Gather numDigits="1" action="https://emlakie.com/api/calls/whisper/accept" method="POST" timeout="10">
+    <Say voice="Polly.Joanna">You have an incoming call from someone who saw your listing on Emlakie. Press any key to connect.</Say>
+  </Gather>
+  <Hangup/>
 </Response>`;
 
   return new NextResponse(xml, {

@@ -4,8 +4,7 @@ import { NextResponse } from 'next/server';
 export async function POST() {
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <Response>
-  <Say voice="Polly.Joanna">You have an incoming call from someone who saw your listing on Emlakie. Press any key to connect, or hang up to decline.</Say>
-  <Gather numDigits="1" />
+  <Say voice="Polly.Joanna">You have an incoming call from someone who saw your listing on Emlakie.</Say>
 </Response>`;
 
   return new NextResponse(xml, {

@@ -14,7 +14,6 @@ import EValue from '@/components/EValue';
 import { calculateEValue } from '@/lib/e-value';
 import ApplyForm from '@/components/ApplyForm';
 import CallButton from '@/components/CallButton';
-import { getOrProvisionVirtualPhone } from '@/lib/twilio';
 import VideoEmbed from '@/components/VideoEmbed';
 import NearbyPlaces from '@/components/NearbyPlaces';
 import NeighborhoodScores from '@/components/NeighborhoodScores';
@@ -79,7 +78,7 @@ export default async function ListingPage({ params }: Props) {
   const isUnavailable = isRented || isExpired;
 
   const fullAddress = [listing.address, listing.city, listing.state, listing.zip].filter(Boolean).join(', ');
-  const [eValue, { listings: similar }, propData, virtualPhone] = await Promise.all([
+  const [eValue, { listings: similar }, propData] = await Promise.all([
     calculateEValue({
       id: listing.id,
       city: listing.city,
@@ -93,9 +92,8 @@ export default async function ListingPage({ params }: Props) {
     }),
     getListings({ city: listing.city }),
     getPropertyData(fullAddress),
-    listing.user_id && !isUnavailable ? getOrProvisionVirtualPhone(listing.user_id) : Promise.resolve(null),
   ]);
-  console.log('[listing] user_id:', listing.user_id, 'landlord_id:', listing.landlord_id, 'virtualPhone:', virtualPhone);
+  const virtualPhone = !isUnavailable ? listing.virtual_phone : null;
   const similarActive = similar.filter((l) => l.id !== listing.id && l.status === 'active').slice(0, 3);
 
   const breadcrumbSchema = {

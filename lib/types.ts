@@ -28,6 +28,7 @@ export interface Listing {
   slug?: string | null;
   user_id?: string | null;
   landlord_id?: string | null;
+  virtual_phone?: string | null;
 }
 
 export interface ListingFilters {

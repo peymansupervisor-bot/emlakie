@@ -21,7 +21,7 @@ export async function POST(req: NextRequest) {
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <Response>
-  <Say voice="Polly.Matthew-Neural">Emlakie inquiry incoming. Please leave a message after the beep.</Say>
+  <Say voice="Polly.Matthew-Neural">EMLAKIE connecting you now. Please leave a message after the beep.</Say>
   <Record maxLength="120" playBeep="true" action="https://emlakie.com/api/calls/voicemail" method="POST" />
 </Response>`;
 

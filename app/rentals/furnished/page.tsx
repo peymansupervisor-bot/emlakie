@@ -4,17 +4,17 @@ import { getListings } from '@/lib/api';
 import ListingCard from '@/components/ListingCard';
 
 export const metadata: Metadata = {
-  title: 'Furnished Rentals — Move-In Ready Apartments & Houses',
+  title: 'Furnished Rentals — Move-In Ready Homes | EMLAKIE',
   description: 'Browse furnished apartments and houses for rent. Move in with just your suitcase — ideal for relocations, travel nurses, and short-term stays.',
   alternates: { canonical: 'https://emlakie.com/rentals/furnished' },
   openGraph: {
-    title: 'Furnished Rentals — Move-In Ready Apartments & Houses',
+    title: 'Furnished Rentals — Move-In Ready Homes | EMLAKIE',
     description: 'Browse furnished apartments and houses for rent. Move in with just your suitcase — ideal for relocations, travel nurses, and short-term stays.',
     type: 'website',
     url: 'https://emlakie.com/rentals/furnished',
     images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'EMLAKIE Furnished Rentals' }],
   },
-  twitter: { card: 'summary_large_image', title: 'Furnished Rentals — Move-In Ready Apartments & Houses', description: 'Browse furnished apartments and houses for rent. Move in with just your suitcase — ideal for relocations, travel nurses, and short-term stays.', images: ['/og-image.png'] },
+  twitter: { card: 'summary_large_image', title: 'Furnished Rentals — Move-In Ready Homes | EMLAKIE', description: 'Browse furnished apartments and houses for rent. Move in with just your suitcase — ideal for relocations, travel nurses, and short-term stays.', images: ['/og-image.png'] },
 };
 
 const schema = {

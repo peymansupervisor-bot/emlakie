@@ -119,7 +119,7 @@ export async function GET(req: NextRequest) {
 
     if (error) throw error;
 
-    const xml = buildXml(data ?? []);
+    const xml = buildXml((data ?? []) as unknown as Record<string, unknown>[]);
 
     return new NextResponse(xml, {
       headers: {

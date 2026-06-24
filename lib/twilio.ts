@@ -44,7 +44,8 @@ export async function getOrProvisionVirtualPhone(userId: string): Promise<string
     if (data.virtual_phone) return data.virtual_phone;
 
     return await provisionNumber(userId);
-  } catch {
+  } catch (err) {
+    console.error('[twilio] getOrProvisionVirtualPhone error for', userId, err);
     return null;
   }
 }
@@ -55,7 +56,8 @@ export async function getRealPhoneForVirtual(virtualPhone: string): Promise<stri
     const db = adminClient();
     const { data } = await db.from('profiles').select('phone').eq('virtual_phone', virtualPhone).single();
     return data?.phone ?? null;
-  } catch {
+  } catch (err) {
+    console.error('[twilio] getRealPhoneForVirtual error for', virtualPhone, err);
     return null;
   }
 }

@@ -147,7 +147,7 @@ export async function POST(req: NextRequest) {
 
   // Provision a virtual phone for the landlord if they don't have one yet (fire and forget)
   // Only runs when landlord has at least one active listing — which is now true since we just inserted one
-  getOrProvisionVirtualPhone(user.id).catch(() => {});
+  getOrProvisionVirtualPhone(user.id, zip).catch(() => {});
 
   return NextResponse.json(data, { status: 201 })
 }

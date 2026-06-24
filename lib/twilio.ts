@@ -16,9 +16,19 @@ function twilioClient() {
 }
 
 /** Buy a new US local number and assign it to a landlord profile. */
-async function provisionNumber(userId: string): Promise<string> {
+async function provisionNumber(userId: string, postalCode?: string): Promise<string> {
   const client = twilioClient();
-  const [available] = await client.availablePhoneNumbers('US').local.list({ limit: 1 });
+
+  let available = null;
+  if (postalCode) {
+    const local = await client.availablePhoneNumbers('US').local.list({ inPostalCode: postalCode, limit: 1 });
+    available = local[0] ?? null;
+  }
+  // Fall back to any US local number if none found near the zip code
+  if (!available) {
+    const local = await client.availablePhoneNumbers('US').local.list({ limit: 1 });
+    available = local[0] ?? null;
+  }
   if (!available) throw new Error('No phone numbers available');
 
   const purchased = await client.incomingPhoneNumbers.create({
@@ -34,7 +44,7 @@ async function provisionNumber(userId: string): Promise<string> {
 }
 
 /** Return the landlord's virtual number, provisioning one if needed. */
-export async function getOrProvisionVirtualPhone(userId: string): Promise<string | null> {
+export async function getOrProvisionVirtualPhone(userId: string, postalCode?: string): Promise<string | null> {
   try {
     const db = adminClient();
     const { data } = await db.from('profiles').select('virtual_phone, phone').eq('id', userId).single();
@@ -43,7 +53,7 @@ export async function getOrProvisionVirtualPhone(userId: string): Promise<string
     if (!data?.phone) return null;
     if (data.virtual_phone) return data.virtual_phone;
 
-    return await provisionNumber(userId);
+    return await provisionNumber(userId, postalCode);
   } catch (err) {
     console.error('[twilio] getOrProvisionVirtualPhone error for', userId, err);
     return null;

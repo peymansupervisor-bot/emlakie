@@ -5,15 +5,13 @@ import { logError } from '@/lib/log-error';
 export const dynamic = 'force-dynamic';
 
 const PACKAGE_LABELS: Record<string, string> = {
-  credit: 'Credit Report',
-  background: 'Background Check',
-  eviction: 'Eviction History',
+  premium: 'SmartCheck Premium',
+  standard: 'SmartCheck Non-Criminal Standard',
 };
 
 const PACKAGE_PRICES: Record<string, number> = {
-  credit: 14,
-  background: 14,
-  eviction: 7,
+  premium: 48,
+  standard: 38,
 };
 
 export async function POST(req: NextRequest) {
@@ -68,9 +66,9 @@ export async function POST(req: NextRequest) {
       .single();
 
     const address = listing ? `${listing.address}, ${listing.city}, ${listing.state}` : 'the property';
-    const packageList = packages.map((p: string) => `• ${PACKAGE_LABELS[p] ?? p} ($${PACKAGE_PRICES[p] ?? '?'})`).join('\n');
+    const packageList = packages.map((p: string) => `• ${PACKAGE_LABELS[p] ?? p} — $${PACKAGE_PRICES[p] ?? '?'}`).join('\n');
     const totalCost = packages.reduce((sum: number, p: string) => sum + (PACKAGE_PRICES[p] ?? 0), 0);
-    const screeningUrl = `https://www.mysmartmove.com/SmartMove/login.go`;
+    const screeningUrl = `https://rentals-secure.mysmartmove.com/landlord/firstscreening/step-one`;
 
     // Send email to tenant via Supabase email function (or fallback to a simple fetch)
     try {
@@ -95,12 +93,7 @@ export async function POST(req: NextRequest) {
     <p><strong>Reports requested:</strong></p>
     <pre style="font-family:sans-serif;color:#374151;">${packageList}</pre>
     <p style="color:#6b7280;">Total cost paid by ${paid_by === 'applicant' ? 'you (the applicant)' : 'the landlord'}: <strong>$${totalCost}</strong></p>
-    <p>Please complete your screening through TransUnion SmartMove — a trusted, secure screening service used by landlords nationwide. Your landlord will receive the report directly.</p>
-    <div style="text-align:center;margin:32px 0;">
-      <a href="${screeningUrl}" style="background:#16a34a;color:white;padding:14px 28px;border-radius:8px;text-decoration:none;font-weight:bold;font-size:16px;">
-        Complete My Screening →
-      </a>
-    </div>
+    <p>Your landlord will initiate the screening through TransUnion SmartMove — a trusted, secure service used by landlords nationwide. You will receive a separate email from TransUnion SmartMove with a link to complete your screening. Your landlord will receive the report directly.</p>
     <p style="color:#6b7280;font-size:13px;">Your personal information and SSN are entered directly on TransUnion's secure site — EMLAKIE never sees or stores them.</p>
     <hr style="border:0;border-top:1px solid #e5e7eb;margin:24px 0;"/>
     <p style="color:#9ca3af;font-size:12px;">EMLAKIE · emlakie.com · Questions? Contact us at support@emlakie.com</p>

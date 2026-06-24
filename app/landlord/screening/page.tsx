@@ -18,9 +18,8 @@ interface ScreeningRequest {
 }
 
 const PACKAGE_LABELS: Record<string, string> = {
-  credit: 'Credit',
-  background: 'Background',
-  eviction: 'Eviction',
+  premium: 'SmartCheck Premium ($48)',
+  standard: 'SmartCheck Standard ($38)',
 };
 
 const STATUS_STYLES: Record<string, string> = {

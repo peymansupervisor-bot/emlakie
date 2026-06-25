@@ -1,13 +1,21 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { getProfile, updateProfile } from '@/lib/landlord/client';
 
-const inputCls = 'w-full rounded-xl border border-gray-300 px-4 py-3 text-sm outline-none focus:border-brand-600 focus:ring-0';
 const disabledCls = 'w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-500';
 const labelCls = 'block text-sm font-semibold text-gray-700 mb-1';
+
+function fieldCls(value: string, required = true) {
+  const empty = required && !value.trim();
+  return `w-full rounded-xl border px-4 py-3 text-sm outline-none focus:ring-0 transition ${
+    empty
+      ? 'border-red-400 bg-red-50 focus:border-red-500'
+      : 'border-gray-300 focus:border-brand-600'
+  }`;
+}
 
 function formatPhone(raw: string) {
   let digits = raw.replace(/\D/g, '');
@@ -21,6 +29,7 @@ function formatPhone(raw: string) {
 
 export default function ProfilePage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [form, setForm] = useState({ first_name: '', last_name: '', phone: '' });
   const [email, setEmail] = useState('');
   const [accountId, setAccountId] = useState('');
@@ -96,10 +105,10 @@ export default function ProfilePage() {
       </p>
 
       {missingFields.length > 0 && (
-        <div className="mt-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3">
-          <p className="text-sm font-semibold text-amber-800">Profile incomplete</p>
-          <p className="text-sm text-amber-700 mt-0.5">
-            Missing: {missingFields.join(', ')}.
+        <div className="mt-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3">
+          <p className="text-sm font-semibold text-red-800">Complete your profile to continue</p>
+          <p className="text-sm text-red-700 mt-0.5">
+            The fields highlighted in red are required before you can list or manage properties.
           </p>
         </div>
       )}
@@ -143,7 +152,7 @@ export default function ProfilePage() {
             <label htmlFor="profile-first-name" className={labelCls}>First name *</label>
             <input
               id="profile-first-name"
-              className={inputCls}
+              className={fieldCls(form.first_name)}
               value={form.first_name}
               onChange={(e) => setForm((f) => ({ ...f, first_name: e.target.value }))}
               onBlur={(e) => setForm((f) => ({ ...f, first_name: e.target.value.trim().replace(/\b\w/g, (c) => c.toUpperCase()) }))}
@@ -154,7 +163,7 @@ export default function ProfilePage() {
             <label htmlFor="profile-last-name" className={labelCls}>Last name *</label>
             <input
               id="profile-last-name"
-              className={inputCls}
+              className={fieldCls(form.last_name)}
               value={form.last_name}
               onChange={(e) => setForm((f) => ({ ...f, last_name: e.target.value }))}
               onBlur={(e) => setForm((f) => ({ ...f, last_name: e.target.value.trim().replace(/\b\w/g, (c) => c.toUpperCase()) }))}
@@ -167,13 +176,13 @@ export default function ProfilePage() {
           <label htmlFor="profile-phone" className={labelCls}>Phone number *</label>
           <input
             id="profile-phone"
-            className={inputCls}
+            className={fieldCls(form.phone)}
             type="tel"
             value={form.phone}
             onChange={(e) => setForm((f) => ({ ...f, phone: formatPhone(e.target.value) }))}
             placeholder="(555) 000-0000"
           />
-          <p className="mt-1 text-xs text-gray-500">Shown to tenants who inquire about your listings.</p>
+          <p className="mt-1 text-xs text-gray-500">Used to contact you about your listings.</p>
         </div>
 
         <button

@@ -38,8 +38,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       ? listing.description.slice(0, 155).replace(/\s+\S*$/, '') + '…'
       : listing.description
     : `${formatBeds(listing.bedrooms)}, ${formatBaths(listing.bathrooms)} ${formatPropertyType(listing.property_type)} for rent at ${formatPrice(listing.price)}/mo in ${listing.city}, ${listing.state}. Contact the landlord directly on EMLAKIE — no broker fees.`;
-  const ogImage = listing.photos?.[0]
-    ? [{ url: listing.photos[0], width: 1200, height: 630, alt: listing.title }]
+  const ogPhotoUrl = listing.photos?.[0]
+    ? listing.photos[0].replace(
+        /\/storage\/v1\/object\/public\//,
+        '/storage/v1/render/image/public/'
+      ) + '?width=1200&height=630&resize=cover&format=jpeg&quality=85'
+    : null;
+  const ogImage = ogPhotoUrl
+    ? [{ url: ogPhotoUrl, width: 1200, height: 630, alt: listing.title }]
     : [{ url: '/og-image.png', width: 1200, height: 630, alt: 'EMLAKIE' }];
   const isUnavailableForIndex = listing.status === 'rented' || listing.status === 'expired';
   return {
@@ -58,7 +64,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       card: 'summary_large_image',
       title: `${listing.title} — ${formatPrice(listing.price)}`,
       description: shortDesc,
-      images: listing.photos?.[0] ? [listing.photos[0]] : ['/og-image.png'],
+      images: ogPhotoUrl ? [ogPhotoUrl] : ['/og-image.png'],
     },
   };
 }

@@ -5,6 +5,7 @@ import ListingCard from '@/components/ListingCard';
 import SearchBar from '@/components/SearchBar';
 import BlogTeaser from '@/components/BlogTeaser';
 import AppBadges from '@/components/AppBadges';
+import LandlordBanner from '@/components/LandlordBanner';
 import { getListings, getStats } from '@/lib/api';
 
 export const revalidate = 60;
@@ -137,6 +138,9 @@ export default async function HomePage() {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }} />
+
+      {/* ── Sticky landlord banner ────────────────────────────────────────────── */}
+      <LandlordBanner />
 
       {/* ── Hero ─────────────────────────────────────────────────────────────── */}
       <section
@@ -403,29 +407,48 @@ export default async function HomePage() {
       <section className="bg-gray-950 py-24">
         <div className="mx-auto max-w-3xl px-4 text-center sm:px-6">
           <div className="inline-flex items-center gap-2 rounded-full border border-green-500/30 bg-green-500/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-green-400">
-            Free forever
+            Average listing time: under 5 minutes
           </div>
           <h2 className="mt-6 font-serif text-3xl font-bold text-white sm:text-4xl lg:text-5xl">
-            Ready to fill your vacancy?
+            List Your Rental FREE Today
           </h2>
           <p className="mt-4 text-lg text-gray-400">
-            Create your free account and publish your first listing in under 5 minutes.
-            No credit card. No broker fees. No catches.
+            No listing fees. No commissions. Direct tenant inquiries sent straight to you.
           </p>
+
+          {/* Trust signals */}
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
+            {[
+              'Free to list',
+              'Direct tenant inquiries',
+              'AI listing descriptions',
+              'Mobile-friendly dashboard',
+              'No broker commission',
+            ].map((t) => (
+              <span key={t} className="flex items-center gap-1.5 text-sm text-gray-400">
+                <svg viewBox="0 0 16 16" className="h-4 w-4 shrink-0 fill-brand-500" aria-hidden="true">
+                  <path fillRule="evenodd" d="M12.416 3.376a.75.75 0 0 1 .208 1.04l-5 7.5a.75.75 0 0 1-1.154.114l-3-3a.75.75 0 0 1 1.06-1.06l2.353 2.353 4.493-6.74a.75.75 0 0 1 1.04-.207Z" clipRule="evenodd" />
+                </svg>
+                {t}
+              </span>
+            ))}
+          </div>
+
           <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link
               href="/landlord/login"
               className="w-full rounded-xl bg-brand-600 px-8 py-4 text-base font-bold text-white shadow-lg shadow-brand-600/25 transition hover:bg-brand-500 sm:w-auto"
             >
-              List My Property Free
+              Start Free Listing
             </Link>
             <Link
-              href="/for-landlords"
-              className="w-full rounded-xl border border-white/20 bg-white/5 px-8 py-4 text-base font-semibold text-white transition hover:bg-white/10 sm:w-auto"
+              href="/landlord/login"
+              className="text-sm font-semibold text-gray-400 hover:text-gray-300 transition"
             >
-              Learn More
+              I already have an account →
             </Link>
           </div>
+          <p className="mt-4 text-xs text-gray-600">No credit card required · Free forever</p>
         </div>
       </section>
 

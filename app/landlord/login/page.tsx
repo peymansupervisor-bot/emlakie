@@ -1,7 +1,7 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useState, Suspense } from 'react';
 import { signInWithPassword, signUpWithPassword, resetPassword, signInWithOAuth, updateProfile } from '@/lib/landlord/client';
 
 type Step = 'login' | 'signup' | 'forgot' | 'forgot-sent';
@@ -32,8 +32,10 @@ function formatPhone(raw: string) {
   return '';
 }
 
-export default function LandlordLoginPage() {
+function LandlordLoginInner() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const nextPath = searchParams.get('next') ?? '/landlord';
   const [step, setStep] = useState<Step>('login');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -50,7 +52,7 @@ export default function LandlordLoginPage() {
     setBusy(true); setError('');
     try {
       await signInWithPassword(email.trim().toLowerCase(), password);
-      router.push('/landlord');
+      router.push(nextPath);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Invalid email or password.');
     } finally { setBusy(false); }
@@ -324,5 +326,13 @@ export default function LandlordLoginPage() {
       </div>
     </div>
     </>
+  );
+}
+
+export default function LandlordLoginPage() {
+  return (
+    <Suspense>
+      <LandlordLoginInner />
+    </Suspense>
   );
 }

@@ -127,50 +127,76 @@ function useSpeechRecognition(onResult: (text: string) => void) {
   return { supported, listening, error, start, stop, clearError };
 }
 
-// ── Text-to-speech ────────────────────────────────────────────────────────────
-// Use <audio> + server-side TTS instead of speechSynthesis.
-// iOS Safari blocks speechSynthesis from async callbacks entirely; the <audio>
-// element approach works reliably after a one-time gesture-unlock via prime().
-//
-// Silent MP3 (44 bytes) used to unlock the audio session on iOS during tap.
-const SILENT_MP3 =
-  'data:audio/mp3;base64,SUQzBAAAAAABEVRYWFgAAAAtAAADY29tbWVudABCaWdTb3VuZEJhbmsgU291bmQgRWZmZWN0c0xpYnJhcnkAVFhYWAAAACUAAANjb21tZW50AENyZWF0aXZlIENvbW1vbnMgMC4wAFRJVDIAAAARAAAAU2lsZW5jZSAtIDEgc2VjAFRQRTEAAAANAAAAQmlnU291bmRCYW5rAFRDT04AAAAFAAAAT3RoZXIAVEFMQgAAAAsAAABTb3VuZEVmZmVjdAAA//tAxAAABQABmAAAACAAADSAAAAETEFNRTMuMTAwVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVU=';
-
+// ── Text-to-speech via Web Audio API ─────────────────────────────────────────
+// iOS Safari blocks both speechSynthesis and <audio>.play() from async
+// callbacks. Web Audio API (AudioContext) works as long as it was RESUMED
+// during a user gesture — prime() does that on the mic tap.
+// Audio bytes come from /api/voice/tts (server-side TTS proxy).
 function useTTS() {
   const [speaking, setSpeaking] = useState(false);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const ctxRef    = useRef<AudioContext | null>(null);
+  const sourceRef = useRef<AudioBufferSourceNode | null>(null);
 
-  // Call inside a user-gesture handler to unlock iOS audio session.
-  function prime() {
-    if (typeof window === 'undefined') return;
-    if (!audioRef.current) audioRef.current = new Audio();
-    audioRef.current.src = SILENT_MP3;
-    audioRef.current.play().catch(() => {});
+  function getCtx(): AudioContext {
+    if (!ctxRef.current || ctxRef.current.state === 'closed') {
+      const AC = window.AudioContext ?? (window as any).webkitAudioContext;
+      ctxRef.current = new AC();
+    }
+    return ctxRef.current;
   }
 
-  function speak(text: string, onDone?: () => void) {
+  // Call during the mic-button tap to resume the AudioContext on iOS.
+  function prime() {
+    if (typeof window === 'undefined') return;
+    try {
+      const ctx = getCtx();
+      ctx.resume().catch(() => {});
+      // Play a 1-sample silent buffer — fully unlocks the audio session on iOS
+      const buf = ctx.createBuffer(1, 1, 22050);
+      const src = ctx.createBufferSource();
+      src.buffer = buf;
+      src.connect(ctx.destination);
+      src.start(0);
+    } catch { /* AudioContext unavailable */ }
+  }
+
+  async function speak(text: string, onDone?: () => void) {
     if (typeof window === 'undefined') { onDone?.(); return; }
-    if (!audioRef.current) audioRef.current = new Audio();
-
-    const audio = audioRef.current;
-    // Stop any current playback
-    audio.pause();
-    audio.src = `/api/voice/tts?text=${encodeURIComponent(text)}`;
-
-    // Fallback: call onDone even if audio events never fire
-    const fallbackMs = Math.max(4000, text.length * 80);
-    const fallback = setTimeout(() => { setSpeaking(false); onDone?.(); }, fallbackMs);
-
-    audio.onplay  = () => setSpeaking(true);
-    audio.onended = () => { clearTimeout(fallback); setSpeaking(false); onDone?.(); };
-    audio.onerror = () => { clearTimeout(fallback); setSpeaking(false); onDone?.(); };
+    try { sourceRef.current?.stop(); } catch {}
 
     setSpeaking(true);
-    audio.play().catch(() => { clearTimeout(fallback); setSpeaking(false); onDone?.(); });
+    const fallback = setTimeout(
+      () => { setSpeaking(false); onDone?.(); },
+      Math.max(4000, text.length * 80),
+    );
+
+    try {
+      const ctx = getCtx();
+      if (ctx.state === 'suspended') await ctx.resume();
+
+      const res = await fetch(`/api/voice/tts?text=${encodeURIComponent(text)}`);
+      if (!res.ok) throw new Error(`TTS ${res.status}`);
+
+      const arrayBuf = await res.arrayBuffer();
+      const audioBuf = await ctx.decodeAudioData(arrayBuf);
+
+      const source = ctx.createBufferSource();
+      source.buffer = audioBuf;
+      source.connect(ctx.destination);
+      sourceRef.current = source;
+
+      source.onended = () => { clearTimeout(fallback); setSpeaking(false); onDone?.(); };
+      source.start(0);
+    } catch (err) {
+      console.error('[TTS]', err);
+      clearTimeout(fallback);
+      setSpeaking(false);
+      onDone?.();
+    }
   }
 
   function stop() {
-    if (audioRef.current) { audioRef.current.pause(); audioRef.current.src = ''; }
+    try { sourceRef.current?.stop(); } catch {}
     setSpeaking(false);
   }
 

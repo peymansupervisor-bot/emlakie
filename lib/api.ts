@@ -321,7 +321,14 @@ export async function getListingsByCity(citySlug: string): Promise<{ listings: L
     return { ...result, city: match.city, state: match.state };
   }
 
-  // No active listings for this city — derive city name from slug and return empty
+  // No active listings — look up in static US cities list for proper name/state
+  const { US_CITIES_UNIQUE } = await import('./us-cities');
+  const known = US_CITIES_UNIQUE.find(c => c.slug === citySlug);
+  if (known) {
+    return { listings: [], total: 0, city: known.city, state: known.state, usingSampleData: false };
+  }
+
+  // Unknown slug — derive city name from slug and return empty
   const cityName = citySlug
     .split('-')
     .map(w => w.charAt(0).toUpperCase() + w.slice(1))

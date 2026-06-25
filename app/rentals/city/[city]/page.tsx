@@ -7,6 +7,7 @@ import RelatedArticles from '@/components/RelatedArticles';
 import { getAllCities, getListingsByCity, getTrendingCities } from '@/lib/api';
 import { formatPrice } from '@/lib/format';
 import { getCityContent } from '@/lib/city-content';
+import { US_CITIES_UNIQUE } from '@/lib/us-cities';
 
 interface Props {
   params: Promise<{ city: string }>;
@@ -16,8 +17,11 @@ export const revalidate = 300;
 export const dynamicParams = true;
 
 export async function generateStaticParams() {
-  const cities = await getAllCities();
-  return cities.map(c => ({ city: c.slug }));
+  const [activeCities] = await Promise.all([getAllCities()]);
+  const slugs = new Set(activeCities.map(c => c.slug));
+  // Pre-build all major US cities even if they have no active listings yet
+  for (const c of US_CITIES_UNIQUE) slugs.add(c.slug);
+  return Array.from(slugs).map(city => ({ city }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {

@@ -4,6 +4,8 @@ import type { Metadata } from 'next';
 import ListingCard from '@/components/ListingCard';
 import SearchBar from '@/components/SearchBar';
 import TrendingCities from '@/components/TrendingCities';
+import Button from '@/components/ui/Button';
+import SectionHeading from '@/components/ui/SectionHeading';
 import { getListings, getTopStates } from '@/lib/api';
 
 export const revalidate = 60;
@@ -108,7 +110,7 @@ export default async function HomePage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }} />
 
       {/* ── Hero ─────────────────────────────────────────────────────────────── */}
-      <section className="bg-white pb-10 pt-16 sm:pt-20">
+      <section className="bg-white py-14 sm:pt-20">
         <div className="mx-auto max-w-3xl px-4 sm:px-6">
 
           {/* Headline */}
@@ -145,19 +147,9 @@ export default async function HomePage() {
       </section>
 
       {/* ── Featured Rentals ─────────────────────────────────────────────────── */}
-      <section className="border-t border-gray-100 bg-white pb-20 pt-14">
+      <section className="border-t border-gray-100 bg-white py-14">
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
-          <div className="mb-7 flex items-baseline justify-between">
-            <h2 className="font-serif text-2xl font-bold text-gray-900">
-              Latest rentals
-            </h2>
-            <Link
-              href="/rentals"
-              className="text-sm font-semibold text-brand-600 transition hover:text-brand-700"
-            >
-              View all →
-            </Link>
-          </div>
+          <SectionHeading title="Latest rentals" seeAllHref="/rentals" />
 
           {featured.length > 0 ? (
             <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
@@ -168,7 +160,7 @@ export default async function HomePage() {
           ) : (
             <div className="rounded-2xl border border-dashed border-gray-200 py-16 text-center text-gray-400">
               <p className="text-sm">New listings arriving soon.</p>
-              <Link href="/landlord/login" className="mt-3 inline-block text-sm font-semibold text-brand-600 hover:text-brand-700">
+              <Link href="/landlord/login" className="mt-3 inline-block text-sm font-semibold text-brand-600 transition hover:text-brand-700">
                 List your property →
               </Link>
             </div>
@@ -179,12 +171,7 @@ export default async function HomePage() {
       {/* ── Trending Cities ──────────────────────────────────────────────────── */}
       <section className="border-t border-gray-100 bg-gray-50 py-14">
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
-          <div className="mb-6 flex items-baseline justify-between">
-            <h2 className="font-serif text-2xl font-bold text-gray-900">Trending cities</h2>
-            <Link href="/cities" className="text-sm font-semibold text-brand-600 transition hover:text-brand-700">
-              All cities →
-            </Link>
-          </div>
+          <SectionHeading title="Trending cities" seeAllHref="/cities" seeAllLabel="All cities →" />
           <TrendingCities />
         </div>
       </section>
@@ -192,7 +179,7 @@ export default async function HomePage() {
       {/* ── Browse by State ──────────────────────────────────────────────────── */}
       <section className="border-t border-gray-100 bg-white py-14">
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
-          <h2 className="mb-7 font-serif text-2xl font-bold text-gray-900">Browse by state</h2>
+          <SectionHeading title="Browse by state" />
           <div className="grid grid-cols-4 gap-x-4 gap-y-2.5 sm:grid-cols-6 lg:grid-cols-8">
             {BROWSE_STATES.map((s) => (
               <Link
@@ -223,7 +210,7 @@ export default async function HomePage() {
 
             {/* Left: text */}
             <div className="max-w-lg">
-              <p className="text-xs font-bold uppercase tracking-widest text-brand-600">For landlords</p>
+              <p className="mb-2 text-xs font-bold uppercase tracking-widest text-brand-600">For landlords</p>
               <h2 className="mt-2 font-serif text-3xl font-bold text-gray-900">
                 List your rental.<br />Keep every dollar.
               </h2>
@@ -249,18 +236,10 @@ export default async function HomePage() {
 
             {/* Right: CTA */}
             <div className="flex shrink-0 flex-col gap-3">
-              <Link
-                href="/landlord/login"
-                className="rounded-xl bg-brand-600 px-8 py-3.5 text-sm font-bold text-white transition hover:bg-brand-700"
-              >
-                List Property Free
-              </Link>
-              <Link
-                href="/for-landlords"
-                className="text-center text-sm font-medium text-gray-500 transition hover:text-gray-700"
-              >
+              <Button href="/landlord/login" size="xl">List Property Free</Button>
+              <Button href="/for-landlords" variant="ghost" className="text-center text-sm">
                 Learn how it works →
-              </Link>
+              </Button>
             </div>
 
           </div>

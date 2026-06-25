@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import Logo from './Logo';
 import SignInModal from './SignInModal';
+import Button from '@/components/ui/Button';
 import { supabase } from '@/lib/supabase';
 
 type AuthState = 'loading' | 'out' | 'in';
@@ -61,35 +62,17 @@ export default function Navbar() {
           <div className="hidden items-center gap-3 md:flex">
             {auth === 'in' ? (
               <>
-                <Link
-                  href="/landlord"
-                  className="rounded-lg px-4 py-2 text-sm font-medium text-gray-600 transition hover:bg-gray-100 hover:text-gray-900"
-                >
-                  My Rentals
-                </Link>
-                <Link
-                  href="/landlord/properties/new"
-                  className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-700"
-                >
-                  + New Listing
-                </Link>
+                <Button href="/landlord" variant="ghost" size="md">My Rentals</Button>
+                <Button href="/landlord/properties/new" size="md">+ New Listing</Button>
               </>
             ) : (
               <>
-                <button
-                  type="button"
-                  onClick={() => setModal('signin')}
-                  className="text-sm font-medium text-gray-500 transition hover:text-gray-900"
-                >
+                <Button type="button" variant="ghost" size="md" onClick={() => setModal('signin')}>
                   Sign In
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setModal('listing')}
-                  className="rounded-lg bg-brand-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-700"
-                >
+                </Button>
+                <Button type="button" size="lg" onClick={() => setModal('listing')}>
                   List Property FREE
-                </button>
+                </Button>
               </>
             )}
           </div>
@@ -97,20 +80,9 @@ export default function Navbar() {
           {/* Mobile right side */}
           <div className="flex items-center gap-2 md:hidden">
             {auth === 'in' ? (
-              <Link
-                href="/landlord/properties/new"
-                className="rounded-lg bg-brand-600 px-4 py-2 text-xs font-semibold text-white transition hover:bg-brand-700"
-              >
-                + New Listing
-              </Link>
+              <Button href="/landlord/properties/new" size="sm">+ New Listing</Button>
             ) : (
-              <button
-                type="button"
-                onClick={() => setModal('listing')}
-                className="rounded-lg bg-brand-600 px-4 py-2 text-xs font-semibold text-white transition hover:bg-brand-700"
-              >
-                List Free
-              </button>
+              <Button type="button" size="sm" onClick={() => setModal('listing')}>List Free</Button>
             )}
             <button
               type="button"
@@ -150,37 +122,21 @@ export default function Navbar() {
               <div className="mt-3 flex flex-col gap-2 border-t border-gray-100 pt-3">
                 {auth === 'in' ? (
                   <>
-                    <Link
-                      href="/landlord"
-                      onClick={closeMobile}
-                      className="flex w-full items-center justify-center rounded-xl border border-gray-200 px-4 py-3 text-sm font-semibold text-gray-700 transition hover:bg-gray-50"
-                    >
+                    <Button href="/landlord" variant="secondary" size="lg" fullWidth onClick={closeMobile}>
                       My Rentals
-                    </Link>
-                    <Link
-                      href="/landlord/properties/new"
-                      onClick={closeMobile}
-                      className="flex w-full items-center justify-center rounded-xl bg-brand-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-brand-700"
-                    >
+                    </Button>
+                    <Button href="/landlord/properties/new" size="lg" fullWidth onClick={closeMobile}>
                       + New Listing
-                    </Link>
+                    </Button>
                   </>
                 ) : (
                   <>
-                    <button
-                      type="button"
-                      onClick={() => { closeMobile(); setModal('listing'); }}
-                      className="flex w-full items-center justify-center rounded-xl bg-brand-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-brand-700"
-                    >
+                    <Button type="button" size="lg" fullWidth onClick={() => { closeMobile(); setModal('listing'); }}>
                       List Property FREE
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => { closeMobile(); setModal('signin'); }}
-                      className="flex w-full items-center justify-center rounded-xl border border-gray-200 px-4 py-3 text-sm font-semibold text-gray-700 transition hover:bg-gray-50"
-                    >
+                    </Button>
+                    <Button type="button" variant="secondary" size="lg" fullWidth onClick={() => { closeMobile(); setModal('signin'); }}>
                       Sign In
-                    </button>
+                    </Button>
                   </>
                 )}
               </div>

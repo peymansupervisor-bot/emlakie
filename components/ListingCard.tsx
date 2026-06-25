@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { Listing } from '@/lib/types';
 import { formatBaths, formatBeds, formatPrice, formatPropertyType, formatSqft } from '@/lib/format';
+import Badge from '@/components/ui/Badge';
 
 export default function ListingCard({ listing, priority = false }: { listing: Listing; priority?: boolean }) {
   const photo = listing.photos?.[0];
@@ -30,31 +31,23 @@ export default function ListingCard({ listing, priority = false }: { listing: Li
         {/* Badges — top-left */}
         <div className="absolute left-3 top-3 flex gap-1.5">
           {listing.isSample && (
-            <span className="rounded-full bg-gray-900/75 px-2.5 py-1 text-[11px] font-semibold text-white backdrop-blur-sm">
-              Sample
-            </span>
+            <Badge variant="dark" blur>Sample</Badge>
           )}
           {!listing.isSample && listing.listing_source === 'owner' && (
-            <span className="rounded-full bg-brand-600/90 px-2.5 py-1 text-[11px] font-semibold text-white backdrop-blur-sm">
-              By Owner
-            </span>
+            <Badge variant="brand" blur>By Owner</Badge>
           )}
           {!listing.isSample && listing.listing_source === 'broker' && (
-            <span className="rounded-full bg-blue-600/90 px-2.5 py-1 text-[11px] font-semibold text-white backdrop-blur-sm">
-              Broker
-            </span>
+            <Badge variant="blue" blur>Broker</Badge>
           )}
           {!listing.isSample && listing.dom != null && listing.dom <= 6 && (
-            <span className="rounded-full bg-green-500 px-2.5 py-1 text-[11px] font-bold text-white">
-              New
-            </span>
+            <Badge variant="green">New</Badge>
           )}
         </div>
 
         {/* Property type — top-right */}
-        <span className="absolute right-3 top-3 rounded-full bg-black/40 px-2.5 py-1 text-[11px] font-semibold text-white backdrop-blur-sm">
+        <Badge variant="dark" blur className="absolute right-3 top-3">
           {formatPropertyType(listing.property_type)}
-        </span>
+        </Badge>
       </div>
 
       {/* Details */}

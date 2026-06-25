@@ -65,6 +65,15 @@ function useSpeechRecognition(onResult: (text: string) => void) {
     setSupported('SpeechRecognition' in window || 'webkitSpeechRecognition' in window);
   }, []);
 
+  // Auto-clear error when the user grants mic permission without reloading
+  useEffect(() => {
+    if (!error) return;
+    navigator.permissions.query({ name: 'microphone' as PermissionName }).then((status) => {
+      if (status.state === 'granted') setError(null);
+      status.onchange = () => { if (status.state === 'granted') setError(null); };
+    }).catch(() => {});
+  }, [error]);
+
   async function start() {
     if (!supported || listening) return;
     setError(null);
@@ -408,7 +417,7 @@ export default function SearchBar({ large = false }: { large?: boolean }) {
           />
         )}
         {speech.error && (
-          <MicError error={speech.error} onDismiss={speech.clearError} />
+          <MicError error={speech.error} onDismiss={speech.clearError} onRetry={() => { speech.clearError(); speech.start(); }} />
         )}
       </div>
     );
@@ -621,34 +630,50 @@ export default function SearchBar({ large = false }: { large?: boolean }) {
         />
       )}
       {speech.error && (
-        <MicError error={speech.error} onDismiss={speech.clearError} />
+        <MicError error={speech.error} onDismiss={speech.clearError} onRetry={() => { speech.clearError(); speech.start(); }} />
       )}
     </div>
   );
 }
 
 // ── Mic error banner ─────────────────────────────────────────────────────────
-function MicError({ error, onDismiss }: { error: SpeechError; onDismiss: () => void }) {
-  const messages: Record<NonNullable<SpeechError>, string> = {
-    'not-allowed': 'Microphone blocked. Click the lock icon (🔒) in your address bar → Site settings → Microphone → Allow, then reload the page.',
-    'no-speech': 'No speech was detected. Please try again.',
-    'other': 'Voice search failed. Please try again.',
-  };
+function MicError({ error, onDismiss, onRetry }: { error: SpeechError; onDismiss: () => void; onRetry: () => void }) {
   if (!error) return null;
+  const isBlocked = error === 'not-allowed';
   return (
     <div
       role="alert"
-      className="absolute left-0 right-0 top-full z-50 mt-1 flex items-start gap-2.5 rounded-xl border border-red-100 bg-red-50 px-4 py-3 text-sm text-red-700 shadow-sm"
+      className="absolute left-0 right-0 top-full z-50 mt-1 rounded-xl border border-red-100 bg-red-50 px-4 py-3 shadow-sm"
     >
-      <svg viewBox="0 0 20 20" fill="currentColor" className="mt-0.5 h-4 w-4 shrink-0 text-red-400" aria-hidden="true">
-        <path fillRule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clipRule="evenodd" />
-      </svg>
-      <span className="flex-1">{messages[error]}</span>
-      <button type="button" onClick={onDismiss} className="shrink-0 text-red-400 hover:text-red-600" aria-label="Dismiss">
-        <svg viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4">
-          <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
+      <div className="flex items-start gap-2.5">
+        <svg viewBox="0 0 20 20" fill="currentColor" className="mt-0.5 h-4 w-4 shrink-0 text-red-400" aria-hidden="true">
+          <path fillRule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clipRule="evenodd" />
         </svg>
-      </button>
+        <div className="flex-1">
+          <p className="text-sm text-red-700">
+            {isBlocked
+              ? 'Microphone blocked for this site.'
+              : error === 'no-speech' ? 'No speech detected.' : 'Voice search failed.'}
+          </p>
+          {isBlocked && (
+            <p className="mt-0.5 text-xs text-red-500">
+              Click the 🔒 lock icon in your address bar → Site settings → Microphone → Allow, then click the mic button again.
+            </p>
+          )}
+        </div>
+        <div className="flex items-center gap-2 shrink-0">
+          {!isBlocked && (
+            <button type="button" onClick={onRetry} className="text-xs font-semibold text-red-600 hover:text-red-800 underline underline-offset-2">
+              Try again
+            </button>
+          )}
+          <button type="button" onClick={onDismiss} className="text-red-400 hover:text-red-600" aria-label="Dismiss">
+            <svg viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4">
+              <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
+            </svg>
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

@@ -4,7 +4,7 @@ import type { Metadata } from 'next';
 import ListingCard from '@/components/ListingCard';
 import SearchBar from '@/components/SearchBar';
 import TrendingCities from '@/components/TrendingCities';
-import { getListings, getStats, getTopStates } from '@/lib/api';
+import { getListings, getTopStates } from '@/lib/api';
 
 export const revalidate = 60;
 
@@ -49,11 +49,6 @@ const organizationSchema = {
   contactPoint: { '@type': 'ContactPoint', email: 'support@emlakie.com', contactType: 'customer service' },
 };
 
-function fmt(n: number, floor: number): string {
-  const display = Math.max(n, floor);
-  if (display >= 1000) return `${(display / 1000).toFixed(1).replace(/\.0$/, '')}k+`;
-  return `${display}+`;
-}
 
 const PROPERTY_TYPES = [
   { href: '/rentals', label: 'All' },
@@ -102,9 +97,8 @@ const BROWSE_STATES = [
 ];
 
 export default async function HomePage() {
-  const [{ listings }, stats] = await Promise.all([
+  const [{ listings }] = await Promise.all([
     getListings(),
-    getStats(),
   ]);
   const featured = listings.slice(0, 6);
 
@@ -147,19 +141,6 @@ export default async function HomePage() {
             </div>
           </div>
 
-          {/* Stats strip */}
-          <div className="mt-8 flex items-center justify-center gap-6 text-center sm:gap-10">
-            {[
-              { value: fmt(stats.listings, 500), label: 'active listings' },
-              { value: fmt(stats.cities, 80), label: 'cities' },
-              { value: '$0', label: 'to list' },
-            ].map((s) => (
-              <div key={s.label}>
-                <span className="block text-xl font-extrabold text-gray-900 sm:text-2xl">{s.value}</span>
-                <span className="block text-xs text-gray-400">{s.label}</span>
-              </div>
-            ))}
-          </div>
         </div>
       </section>
 

@@ -17,10 +17,13 @@ export default function SearchBar({ large = false }: { large?: boolean }) {
   const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
   const [open, setOpen] = useState(false);
   const [activeIdx, setActiveIdx] = useState(-1);
+  const [mode, setMode] = useState<'location' | 'describe'>('location');
+  const [interpreting, setInterpreting] = useState(false);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    if (mode === 'describe') { setSuggestions([]); setOpen(false); return; }
     if (debounceRef.current) clearTimeout(debounceRef.current);
     if (q.trim().length < 2) { setSuggestions([]); setOpen(false); return; }
     debounceRef.current = setTimeout(async () => {
@@ -35,9 +38,8 @@ export default function SearchBar({ large = false }: { large?: boolean }) {
       }
     }, 220);
     return () => { if (debounceRef.current) clearTimeout(debounceRef.current); };
-  }, [q]);
+  }, [q, mode]);
 
-  // Close on outside click
   useEffect(() => {
     function handleClick(e: MouseEvent) {
       if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
@@ -54,15 +56,47 @@ export default function SearchBar({ large = false }: { large?: boolean }) {
     setQ(val);
     if (s?.type === 'listing' && s.slug) {
       router.push(`/rentals/${s.slug}`);
-    } else if (s?.type === 'city') {
-      router.push(`/rentals?q=${encodeURIComponent(val)}`);
     } else {
       router.push(`/rentals?q=${encodeURIComponent(val)}`);
     }
   }
 
-  function onSubmit(e: React.FormEvent) {
+  async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
+
+    if (mode === 'describe') {
+      const query = q.trim();
+      if (!query) return;
+      setInterpreting(true);
+      try {
+        const res = await fetch('/api/search/interpret', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ query }),
+        });
+        if (res.ok) {
+          const data = await res.json();
+          const params = new URLSearchParams();
+          if (data.city) params.set('city', data.city);
+          if (data.state && !data.city) params.set('q', data.state);
+          if (data.minPrice) params.set('minPrice', String(data.minPrice));
+          if (data.maxPrice) params.set('maxPrice', String(data.maxPrice));
+          if (data.bedrooms) params.set('bedrooms', data.bedrooms);
+          if (data.propertyType) params.set('propertyType', data.propertyType);
+          if (data.amenities?.length) params.set('amenities', data.amenities.join(','));
+          if (!data.city && !data.state) params.set('q', query);
+          router.push(`/rentals?${params.toString()}`);
+        } else {
+          router.push(`/rentals?q=${encodeURIComponent(query)}`);
+        }
+      } catch {
+        router.push(`/rentals?q=${encodeURIComponent(query)}`);
+      } finally {
+        setInterpreting(false);
+      }
+      return;
+    }
+
     const active = activeIdx >= 0 ? suggestions[activeIdx] : undefined;
     const val = (active?.value ?? q).trim();
     if (!val) { router.push('/rentals'); return; }
@@ -83,24 +117,22 @@ export default function SearchBar({ large = false }: { large?: boolean }) {
     }
   }
 
+  const placeholder = mode === 'describe'
+    ? 'e.g. "Pet-friendly 2BR near downtown Austin under $2,000"'
+    : 'City, ZIP, address, or neighborhood';
+
   return (
     <div ref={containerRef} className={`relative w-full ${large ? 'max-w-2xl' : 'max-w-md'}`}>
-      {/* role="search" with aria-label placed directly on the <form> so the
-          landmark and its accessible name are on the same element. Putting
-          role="search" on a <div> that contains a <form> caused the
-          aria-allowed-attr violation because axe resolves the implicit owner
-          as the <div>, which then inherits disallowed ARIA attributes. */}
       <form
         role="search"
         aria-label="Search rental listings"
         onSubmit={onSubmit}
-        className="flex w-full overflow-hidden rounded-xl bg-white shadow-[0_4px_24px_rgba(0,0,0,0.10)] transition-shadow hover:shadow-[0_6px_32px_rgba(0,0,0,0.14)]"
+        className={`flex w-full overflow-hidden rounded-xl bg-white transition-shadow ${
+          mode === 'describe'
+            ? 'shadow-[0_4px_24px_rgba(139,92,246,0.18)] hover:shadow-[0_6px_32px_rgba(139,92,246,0.28)] ring-1 ring-violet-200'
+            : 'shadow-[0_4px_24px_rgba(0,0,0,0.10)] hover:shadow-[0_6px_32px_rgba(0,0,0,0.14)]'
+        }`}
       >
-        {/* The sr-only <label> provides the accessible name for the combobox
-            input via the htmlFor/id pairing. A redundant aria-label on the
-            same <input role="combobox"> triggers an aria-allowed-attr
-            violation because axe flags conflicting naming mechanisms on
-            combobox inputs, so aria-label has been removed here. */}
         <label htmlFor="search-q" className="sr-only">Search rentals</label>
         <input
           id="search-q"
@@ -110,15 +142,15 @@ export default function SearchBar({ large = false }: { large?: boolean }) {
           value={q}
           onChange={(e) => setQ(e.target.value)}
           onKeyDown={onKeyDown}
-          onFocus={() => suggestions.length > 0 && setOpen(true)}
-          placeholder="City, ZIP, address, or neighborhood"
+          onFocus={() => mode === 'location' && suggestions.length > 0 && setOpen(true)}
+          placeholder={placeholder}
           aria-autocomplete="list"
           aria-expanded={open}
           aria-controls="search-suggestions"
           aria-activedescendant={activeIdx >= 0 ? `suggestion-${activeIdx}` : undefined}
-          className={`min-w-0 flex-1 px-5 text-gray-900 placeholder-gray-400 outline-none focus:ring-2 focus:ring-inset focus:ring-brand-500 ${
-            large ? 'py-4 text-lg' : 'py-3 text-base'
-          }`}
+          className={`min-w-0 flex-1 px-5 text-gray-900 placeholder-gray-400 outline-none focus:ring-2 focus:ring-inset ${
+            mode === 'describe' ? 'focus:ring-violet-400' : 'focus:ring-brand-500'
+          } ${large ? 'py-4 text-lg' : 'py-3 text-base'}`}
         />
         {q && (
           <button
@@ -134,20 +166,60 @@ export default function SearchBar({ large = false }: { large?: boolean }) {
         )}
         <button
           type="submit"
-          aria-label="Search"
-          className={`flex items-center gap-2 bg-brand-600 font-semibold text-white transition hover:bg-brand-700 ${
-            large ? 'px-7 text-lg' : 'px-5'
-          }`}
+          aria-label={mode === 'describe' ? 'Search with AI' : 'Search'}
+          disabled={interpreting}
+          className={`flex items-center gap-2 font-semibold text-white transition disabled:opacity-70 ${
+            mode === 'describe' ? 'bg-violet-600 hover:bg-violet-700' : 'bg-brand-600 hover:bg-brand-700'
+          } ${large ? 'px-7 text-lg' : 'px-5'}`}
         >
-          <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2.5">
-            <circle cx="11" cy="11" r="7" />
-            <path d="m20 20-3.5-3.5" strokeLinecap="round" />
-          </svg>
-          <span className="hidden sm:inline">Search</span>
+          {interpreting ? (
+            <>
+              <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+              </svg>
+              <span className="hidden sm:inline">Searching…</span>
+            </>
+          ) : (
+            <>
+              {mode === 'describe' ? (
+                <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09Z" />
+                </svg>
+              ) : (
+                <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true">
+                  <circle cx="11" cy="11" r="7" />
+                  <path d="m20 20-3.5-3.5" strokeLinecap="round" />
+                </svg>
+              )}
+              <span className="hidden sm:inline">Search</span>
+            </>
+          )}
         </button>
       </form>
 
-      {open && suggestions.length > 0 && (
+      {/* Mode toggle — only on large (homepage) variant */}
+      {large && (
+        <div className="mt-3 flex items-center justify-center gap-1.5 text-sm">
+          <span className="text-gray-400">or</span>
+          <button
+            type="button"
+            onClick={() => { setMode((m) => m === 'location' ? 'describe' : 'location'); setQ(''); setSuggestions([]); setOpen(false); }}
+            className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold transition ${
+              mode === 'describe'
+                ? 'bg-violet-100 text-violet-700 hover:bg-violet-200'
+                : 'bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-gray-800'
+            }`}
+          >
+            <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09Z" />
+            </svg>
+            {mode === 'describe' ? 'Switch to location search' : 'Describe your ideal rental'}
+          </button>
+        </div>
+      )}
+
+      {open && suggestions.length > 0 && mode === 'location' && (
         <ul
           id="search-suggestions"
           role="listbox"

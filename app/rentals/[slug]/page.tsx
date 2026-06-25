@@ -348,47 +348,91 @@ export default async function ListingPage({ params }: Props) {
         </aside>
       </div>
 
-      {/* Sales & Price History */}
-      {propData && propData.priceHistory.length > 0 && (
-        <section className="mt-12">
-          <h2 className="mb-4 text-xl font-bold text-gray-900">Sales &amp; Price History</h2>
-          <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-gray-100 bg-gray-50 text-xs text-gray-500">
-                  <th className="px-4 py-3 text-left font-semibold">Date</th>
-                  <th className="px-4 py-3 text-left font-semibold">Event</th>
-                  <th className="px-4 py-3 text-right font-semibold">Price</th>
-                  <th className="hidden sm:table-cell px-4 py-3 text-right font-semibold">$/sqft</th>
-                  <th className="hidden sm:table-cell px-4 py-3 text-left font-semibold">Source</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-100">
-                {propData.priceHistory.map((evt, i) => (
-                  <tr key={i} className="hover:bg-gray-50 transition-colors">
-                    <td className="px-4 py-3 text-gray-600">{evt.date}</td>
-                    <td className="px-4 py-3">
-                      <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${
-                        evt.event === 'Sold' ? 'bg-green-100 text-green-700' :
-                        evt.event === 'Listed for sale' ? 'bg-blue-100 text-blue-700' :
-                        evt.event === 'Price change' ? 'bg-yellow-100 text-yellow-700' :
-                        'bg-gray-100 text-gray-600'
-                      }`}>
-                        {evt.event}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3 text-right font-semibold text-gray-900">
-                      {evt.price ? `$${evt.price.toLocaleString()}` : '—'}
-                    </td>
-                    <td className="hidden sm:table-cell px-4 py-3 text-right text-gray-500">
-                      {evt.pricePerSquareFoot ? `$${evt.pricePerSquareFoot}` : '—'}
-                    </td>
-                    <td className="hidden sm:table-cell px-4 py-3 text-gray-500 text-xs">{evt.source}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+      {/* Property Facts & Sales History */}
+      {propData && (propData.yearBuilt || propData.livingArea || propData.lotSize || propData.zestimate || propData.rentZestimate || propData.priceHistory.length > 0) && (
+        <section className="mt-12 space-y-6">
+          {/* Property Facts */}
+          {(propData.yearBuilt || propData.livingArea || propData.lotSize || propData.zestimate || propData.rentZestimate) && (
+            <div>
+              <h2 className="mb-4 text-xl font-bold text-gray-900">Property Facts</h2>
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+                {propData.yearBuilt && (
+                  <div className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
+                    <p className="text-xs font-medium uppercase tracking-wide text-gray-500">Year Built</p>
+                    <p className="mt-1 text-lg font-bold text-gray-900">{propData.yearBuilt}</p>
+                  </div>
+                )}
+                {propData.livingArea && (
+                  <div className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
+                    <p className="text-xs font-medium uppercase tracking-wide text-gray-500">Living Area</p>
+                    <p className="mt-1 text-lg font-bold text-gray-900">{propData.livingArea.toLocaleString()} sqft</p>
+                  </div>
+                )}
+                {propData.lotSize && (
+                  <div className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
+                    <p className="text-xs font-medium uppercase tracking-wide text-gray-500">Lot Size</p>
+                    <p className="mt-1 text-lg font-bold text-gray-900">{propData.lotSize.toLocaleString()} sqft</p>
+                  </div>
+                )}
+                {propData.zestimate && (
+                  <div className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
+                    <p className="text-xs font-medium uppercase tracking-wide text-gray-500">Zestimate</p>
+                    <p className="mt-1 text-lg font-bold text-gray-900">${propData.zestimate.toLocaleString()}</p>
+                  </div>
+                )}
+                {propData.rentZestimate && (
+                  <div className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
+                    <p className="text-xs font-medium uppercase tracking-wide text-gray-500">Rent Zestimate</p>
+                    <p className="mt-1 text-lg font-bold text-gray-900">${propData.rentZestimate.toLocaleString()}/mo</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Sales & Price History */}
+          {propData.priceHistory.length > 0 && (
+            <div>
+              <h2 className="mb-4 text-xl font-bold text-gray-900">Sales &amp; Price History</h2>
+              <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b border-gray-100 bg-gray-50 text-xs text-gray-500">
+                      <th className="px-4 py-3 text-left font-semibold">Date</th>
+                      <th className="px-4 py-3 text-left font-semibold">Event</th>
+                      <th className="px-4 py-3 text-right font-semibold">Price</th>
+                      <th className="hidden sm:table-cell px-4 py-3 text-right font-semibold">$/sqft</th>
+                      <th className="hidden sm:table-cell px-4 py-3 text-left font-semibold">Source</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-100">
+                    {propData.priceHistory.map((evt, i) => (
+                      <tr key={i} className="hover:bg-gray-50 transition-colors">
+                        <td className="px-4 py-3 text-gray-600">{evt.date}</td>
+                        <td className="px-4 py-3">
+                          <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${
+                            evt.event === 'Sold' ? 'bg-green-100 text-green-700' :
+                            evt.event === 'Listed for sale' ? 'bg-blue-100 text-blue-700' :
+                            evt.event === 'Price change' ? 'bg-yellow-100 text-yellow-700' :
+                            'bg-gray-100 text-gray-600'
+                          }`}>
+                            {evt.event}
+                          </span>
+                        </td>
+                        <td className="px-4 py-3 text-right font-semibold text-gray-900">
+                          {evt.price ? `$${evt.price.toLocaleString()}` : '—'}
+                        </td>
+                        <td className="hidden sm:table-cell px-4 py-3 text-right text-gray-500">
+                          {evt.pricePerSquareFoot ? `$${evt.pricePerSquareFoot}` : '—'}
+                        </td>
+                        <td className="hidden sm:table-cell px-4 py-3 text-gray-500 text-xs">{evt.source}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
         </section>
       )}
 

@@ -156,7 +156,7 @@ export default function Filters() {
       {/* Amenities dropdown */}
       <div className="relative" ref={amenityRef}>
         <button
-          aria-haspopup="listbox"
+          aria-haspopup="true"
           aria-expanded={amenityOpen}
           aria-controls="amenity-listbox"
           onClick={(e) => {
@@ -184,9 +184,8 @@ export default function Filters() {
         {amenityOpen && (
           <div
             id="amenity-listbox"
-            role="listbox"
+            role="group"
             aria-label="Select amenities"
-            aria-multiselectable="true"
             style={{ position: 'fixed', top: dropdownPos.top, right: dropdownPos.right }}
             className="z-[9999] min-w-[340px] rounded-xl border border-gray-200 bg-white p-3 shadow-lg"
           >

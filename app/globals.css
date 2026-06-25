@@ -11,10 +11,10 @@ h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-playfair), var(--font-jakarta), Georgia, serif;
 }
 
-/* Skip navigation link — hidden until focused */
+/* Skip navigation link — visually hidden until focused */
 .skip-link {
-  position: absolute;
-  top: -100%;
+  position: fixed;
+  top: 0;
   left: 1rem;
   z-index: 9999;
   padding: 0.75rem 1.25rem;
@@ -24,10 +24,11 @@ h1, h2, h3, h4, h5, h6 {
   font-size: 0.875rem;
   border-radius: 0 0 0.5rem 0.5rem;
   text-decoration: none;
-  transition: top 0.1s;
+  transform: translateY(-100%);
+  transition: transform 0.1s;
 }
 .skip-link:focus {
-  top: 0;
+  transform: translateY(0);
   outline: 3px solid #fff;
   outline-offset: 2px;
 }

@@ -107,7 +107,7 @@ export default function Navbar() {
         {/* Mobile menu */}
         {mobileOpen && (
           <div className="border-t border-gray-100 bg-white px-4 pb-5 md:hidden">
-            <nav className="flex flex-col gap-1 pt-3">
+            <nav aria-label="Mobile navigation" className="flex flex-col gap-1 pt-3">
               {navLinks.map((l) => (
                 <Link
                   key={l.href}

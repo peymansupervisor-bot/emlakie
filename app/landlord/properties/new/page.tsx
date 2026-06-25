@@ -133,10 +133,17 @@ function AddressField({ onSelect, onType, id }: {
     onSelect(s.address, s.city, s.state, s.zip);
   }
 
+  const listId = id ? `${id}-suggestions` : 'address-suggestions';
+
   return (
     <div className="relative">
       <input
         id={id}
+        role="combobox"
+        aria-autocomplete="list"
+        aria-expanded={open}
+        aria-controls={listId}
+        aria-haspopup="listbox"
         className={inputCls}
         placeholder="123 Main St"
         value={value}
@@ -146,9 +153,11 @@ function AddressField({ onSelect, onType, id }: {
         onFocus={() => { if (suggestions.length) setOpen(true); }}
       />
       {open && suggestions.length > 0 && (
-        <ul className="absolute z-50 mt-1 w-full rounded-xl border border-gray-200 bg-white shadow-lg">
+        <ul id={listId} role="listbox" aria-label="Address suggestions" className="absolute z-50 mt-1 w-full rounded-xl border border-gray-200 bg-white shadow-lg">
           {suggestions.map((s, i) => (
             <li key={i}
+              role="option"
+              aria-selected="false"
               onMouseDown={() => handleSelect(s)}
               className="cursor-pointer px-4 py-2.5 text-sm text-gray-700 hover:bg-green-50 hover:text-green-800 first:rounded-t-xl last:rounded-b-xl">
               <span className="font-medium">{s.address}</span>
@@ -444,7 +453,9 @@ export default function NewPropertyPage() {
     <div className="mx-auto max-w-2xl">
       {/* Back */}
       <button
+        type="button"
         onClick={() => step === 1 ? router.push('/landlord') : setStep((s) => (s - 1) as Step)}
+        aria-label={step === 1 ? 'Back to all properties' : `Back to step ${step - 1}`}
         className="flex items-center gap-1.5 text-sm font-semibold text-gray-500 transition hover:text-brand-600"
       >
         <svg viewBox="0 0 20 20" className="h-4 w-4 fill-current" aria-hidden="true">
@@ -479,7 +490,12 @@ export default function NewPropertyPage() {
             const done = n < step;
             const active = n === step;
             return (
-              <div key={label} className="flex flex-col items-center gap-1.5">
+              <div
+                key={label}
+                className="flex flex-col items-center gap-1.5"
+                aria-label={done ? `Step ${n}: ${label} — complete` : active ? `Step ${n}: ${label} — current` : `Step ${n}: ${label}`}
+                aria-current={active ? 'step' : undefined}
+              >
                 <div className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold transition-all ${
                   done
                     ? 'bg-brand-600 text-white shadow-sm shadow-brand-600/30'
@@ -514,10 +530,12 @@ export default function NewPropertyPage() {
         <div className="mt-8 space-y-5">
           {/* Broker / Owner question */}
           <div className="rounded-xl border border-gray-200 bg-gray-50 p-4">
-            <p className="text-sm font-semibold text-gray-800 mb-3">Are you the property owner or a licensed real estate broker/agent? *</p>
-            <div className="flex gap-3">
+            <p id="role-group-label" className="text-sm font-semibold text-gray-800 mb-3">Are you the property owner or a licensed real estate broker/agent? *</p>
+            <div className="flex gap-3" role="radiogroup" aria-labelledby="role-group-label" aria-required="true">
               <button
                 type="button"
+                role="radio"
+                aria-checked={form.isBroker === false}
                 onClick={() => set('isBroker', false)}
                 className={`flex-1 rounded-xl border-2 px-4 py-3 text-sm font-semibold transition ${
                   form.isBroker === false
@@ -525,11 +543,13 @@ export default function NewPropertyPage() {
                     : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
                 }`}
               >
-                🏠 Property Owner
+                <span aria-hidden="true">🏠</span> Property Owner
                 <span className="block text-xs font-normal mt-0.5 text-current opacity-70">I own this property directly</span>
               </button>
               <button
                 type="button"
+                role="radio"
+                aria-checked={form.isBroker === true}
                 onClick={() => set('isBroker', true)}
                 className={`flex-1 rounded-xl border-2 px-4 py-3 text-sm font-semibold transition ${
                   form.isBroker === true
@@ -537,7 +557,7 @@ export default function NewPropertyPage() {
                     : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
                 }`}
               >
-                🪪 Broker / Agent
+                <span aria-hidden="true">🪪</span> Broker / Agent
                 <span className="block text-xs font-normal mt-0.5 text-current opacity-70">I'm a licensed real estate professional</span>
               </button>
             </div>
@@ -763,13 +783,16 @@ export default function NewPropertyPage() {
               placeholder="Describe the home, neighborhood, nearby transit, any house rules, etc."
               value={form.description}
               onChange={(e) => set('description', e.target.value)}
+              aria-invalid={filterWarnings.length > 0 ? 'true' : 'false'}
+              aria-describedby={filterWarnings.length > 0 ? 'filter-warnings' : undefined}
             />
             <div className="mt-1 flex items-center justify-between">
               <p className="text-xs text-gray-500">{form.description.length} / 30 min characters</p>
-              {filterChecking && <p className="text-xs text-gray-500">Checking content…</p>}
+              {filterChecking && <p className="text-xs text-gray-500" aria-live="polite">Checking content…</p>}
             </div>
+            <div aria-live="polite" aria-atomic="true">
             {filterWarnings.length > 0 && (
-              <div className="mt-3 rounded-xl border border-red-200 bg-red-50 p-4">
+              <div id="filter-warnings" className="mt-3 rounded-xl border border-red-200 bg-red-50 p-4">
                 <p className="text-sm font-semibold text-red-700 mb-2">⚠ Fair Housing Violation Detected</p>
                 <p className="text-xs text-red-600 mb-2">This listing contains language that may violate federal or California fair housing laws. Please remove or rephrase the following:</p>
                 <ul className="space-y-3">
@@ -782,6 +805,7 @@ export default function NewPropertyPage() {
                 </ul>
               </div>
             )}
+            </div>
           </div>
           <div>
             <label htmlFor="new-virtual-tour" className={labelCls}>Virtual tour URL <span className="text-gray-500 font-normal">(optional)</span></label>
@@ -794,6 +818,7 @@ export default function NewPropertyPage() {
             <div className="flex flex-wrap gap-2" role="group" aria-labelledby="amenities-label">
               {AMENITIES_LIST.map((a) => (
                 <button key={a} type="button" onClick={() => toggleAmenity(a)}
+                  aria-pressed={form.amenities.includes(a)}
                   className={`rounded-full border px-3 py-1.5 text-sm font-medium transition ${
                     form.amenities.includes(a)
                       ? 'border-brand-600 bg-brand-50 text-brand-700'
@@ -827,6 +852,7 @@ export default function NewPropertyPage() {
             <span className="text-xs">JPG, PNG, HEIC · Tap multiple times to add up to 25 photos</span>
           </button>
           <input ref={fileRef} type="file" accept="image/*" multiple className="hidden"
+            aria-label="Upload property photos"
             onChange={(e) => addPhotos(e.target.files)} />
 
           {/* Preview grid */}
@@ -927,13 +953,13 @@ export default function NewPropertyPage() {
       {/* Navigation buttons */}
       <div className="mt-8 flex gap-3">
         {step < 4 && (
-          <button onClick={next}
+          <button type="button" onClick={next}
             className="flex-1 rounded-xl bg-brand-600 py-3 font-semibold text-white transition hover:bg-brand-700">
-            Continue →
+            Continue
           </button>
         )}
         {step === 4 && (
-          <button onClick={submit} disabled={busy}
+          <button type="button" onClick={submit} disabled={busy}
             className="flex-1 rounded-xl bg-brand-600 py-3 font-semibold text-white transition hover:bg-brand-700 disabled:opacity-60">
             {busy ? 'Publishing…' : 'Publish listing'}
           </button>

@@ -16,8 +16,8 @@ export default function Footer() {
 
           <nav aria-label="Footer navigation" className="grid grid-cols-2 gap-10 sm:grid-cols-3">
             <div>
-              <p className="font-serif text-base font-bold tracking-tight text-gray-900">Renters</p>
-              <ul className="mt-4 space-y-3 text-sm text-gray-500">
+              <h3 className="font-serif text-base font-bold tracking-tight text-gray-900">Renters</h3>
+              <ul className="mt-4 space-y-3 text-sm text-gray-600">
                 <li><Link href="/rentals" className="transition hover:text-brand-600">Browse all rentals</Link></li>
                 <li><Link href="/rentals/apartments" className="transition hover:text-brand-600">Apartments for rent</Link></li>
                 <li><Link href="/rentals/houses" className="transition hover:text-brand-600">Houses for rent</Link></li>
@@ -33,8 +33,8 @@ export default function Footer() {
               </ul>
             </div>
             <div>
-              <p className="font-serif text-base font-bold tracking-tight text-gray-900">Landlords</p>
-              <ul className="mt-4 space-y-3 text-sm text-gray-500">
+              <h3 className="font-serif text-base font-bold tracking-tight text-gray-900">Landlords</h3>
+              <ul className="mt-4 space-y-3 text-sm text-gray-600">
                 <li><Link href="/for-landlords" className="transition hover:text-brand-600">Why EMLAKIE?</Link></li>
                 <li><Link href="/landlord/login" className="transition hover:text-brand-600">List a property</Link></li>
                 <li><Link href="/rent-estimate" className="transition hover:text-brand-600">E-rent Value™</Link></li>
@@ -42,8 +42,8 @@ export default function Footer() {
               </ul>
             </div>
             <div>
-              <p className="font-serif text-base font-bold tracking-tight text-gray-900">Company</p>
-              <ul className="mt-4 space-y-3 text-sm text-gray-500">
+              <h3 className="font-serif text-base font-bold tracking-tight text-gray-900">Company</h3>
+              <ul className="mt-4 space-y-3 text-sm text-gray-600">
                 <li><Link href="/about" className="transition hover:text-brand-600">About</Link></li>
                 <li><Link href="/blog" className="transition hover:text-brand-600">Blog</Link></li>
                 <li><Link href="/contact" className="transition hover:text-brand-600">Contact</Link></li>

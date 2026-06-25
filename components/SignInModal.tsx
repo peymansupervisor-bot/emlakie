@@ -22,6 +22,7 @@ interface Props {
 }
 
 const inputClass = 'w-full rounded-xl border border-gray-300 px-4 py-3 text-base outline-none focus:border-brand-600 focus:ring-1 focus:ring-brand-600';
+const labelClass = 'block text-sm font-medium text-gray-700 mb-1';
 const btnPrimary = 'w-full rounded-xl bg-brand-600 py-3 text-base font-bold text-white transition hover:bg-brand-700 disabled:opacity-60';
 const btnOutline = 'w-full rounded-xl border border-gray-300 py-3 text-base font-semibold text-gray-700 transition hover:border-gray-400 hover:bg-gray-50 disabled:opacity-60';
 
@@ -100,11 +101,36 @@ export default function SignInModal({
     return () => { document.body.style.overflow = ''; };
   }, [open]);
 
-  // Focus trap — focus first interactive element when modal opens
+  // Focus first element + full focus trap
   useEffect(() => {
     if (!open || !panelRef.current) return;
-    const el = panelRef.current.querySelector<HTMLElement>('button, input, a');
-    el?.focus();
+    const panel = panelRef.current;
+
+    const getFocusable = () => Array.from(
+      panel.querySelectorAll<HTMLElement>(
+        'button:not([disabled]), input:not([disabled]), a[href], select, textarea, [tabindex]:not([tabindex="-1"])'
+      )
+    );
+
+    // Focus first interactive element
+    const first = getFocusable()[0];
+    first?.focus();
+
+    // Trap Tab/Shift-Tab inside the panel
+    function trapFocus(e: KeyboardEvent) {
+      if (e.key !== 'Tab') return;
+      const focusable = getFocusable();
+      const firstEl = focusable[0];
+      const lastEl = focusable[focusable.length - 1];
+      if (e.shiftKey) {
+        if (document.activeElement === firstEl) { e.preventDefault(); lastEl?.focus(); }
+      } else {
+        if (document.activeElement === lastEl) { e.preventDefault(); firstEl?.focus(); }
+      }
+    }
+
+    panel.addEventListener('keydown', trapFocus);
+    return () => panel.removeEventListener('keydown', trapFocus);
   }, [open, step]);
 
   if (!open) return null;
@@ -156,28 +182,29 @@ export default function SignInModal({
     catch (err) { setError(err instanceof Error ? err.message : 'Could not sign in.'); setBusy(false); }
   }
 
-  const PasswordField = ({ autoComplete, placeholder, id }: { autoComplete: string; placeholder: string; id: string }) => (
-    <div className="relative">
-      <input
-        id={id}
-        type={showPassword ? 'text' : 'password'}
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        placeholder={placeholder}
-        aria-label={placeholder}
-        autoComplete={autoComplete}
-        minLength={8}
-        required
-        className={`${inputClass} pr-12`}
-      />
-      <button
-        type="button"
-        onClick={() => setShowPassword((v) => !v)}
-        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-        aria-label={showPassword ? 'Hide password' : 'Show password'}
-      >
-        {showPassword ? <EyeOffIcon /> : <EyeIcon />}
-      </button>
+  const PasswordField = ({ autoComplete, label, id }: { autoComplete: string; label: string; id: string }) => (
+    <div>
+      <label htmlFor={id} className={labelClass}>{label}</label>
+      <div className="relative">
+        <input
+          id={id}
+          type={showPassword ? 'text' : 'password'}
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          autoComplete={autoComplete}
+          minLength={8}
+          required
+          className={`${inputClass} pr-12`}
+        />
+        <button
+          type="button"
+          onClick={() => setShowPassword((v) => !v)}
+          className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+          aria-label={showPassword ? 'Hide password' : 'Show password'}
+        >
+          {showPassword ? <EyeOffIcon /> : <EyeIcon />}
+        </button>
+      </div>
     </div>
   );
 
@@ -210,12 +237,15 @@ export default function SignInModal({
   );
 
   const LegalNote = () => (
-    <p className="mt-3 text-center text-xs text-gray-400">
+    <p className="mt-3 text-center text-xs text-gray-500">
       By continuing, you agree to our{' '}
-      <a href="/terms" className="underline hover:text-gray-600" onClick={onClose}>Terms</a>{' '}and{' '}
-      <a href="/privacy" className="underline hover:text-gray-600" onClick={onClose}>Privacy Policy</a>.
+      <a href="/terms" className="underline hover:text-gray-700" onClick={onClose}>Terms</a>{' '}and{' '}
+      <a href="/privacy" className="underline hover:text-gray-700" onClick={onClose}>Privacy Policy</a>.
     </p>
   );
+
+  // Derive a heading id used for aria-labelledby — stable across all steps
+  const headingId = 'modal-heading';
 
   return (
     <div
@@ -223,7 +253,7 @@ export default function SignInModal({
       className="fixed inset-0 z-[200] flex items-center justify-center p-4"
       role="dialog"
       aria-modal="true"
-      aria-label="Sign in to EMLAKIE"
+      aria-labelledby={headingId}
     >
       {/* Backdrop */}
       <div
@@ -256,10 +286,10 @@ export default function SignInModal({
           {step === 'choice' && (
             <div>
               <div className="mb-6">
-                <h2 className="text-2xl font-extrabold text-gray-900">
+                <h2 id={headingId} className="text-2xl font-extrabold text-gray-900">
                   {title ?? 'Welcome to EMLAKIE'}
                 </h2>
-                <p className="mt-1 text-sm text-gray-500">
+                <p className="mt-1 text-sm text-gray-600">
                   {subtitle ?? 'List your rental for free'}
                 </p>
               </div>
@@ -290,26 +320,27 @@ export default function SignInModal({
           {/* ── Login ───────────────────────────────────────────────────────── */}
           {step === 'login' && (
             <div>
-              <h2 className="mb-1 text-2xl font-extrabold text-gray-900">Landlord Sign In</h2>
-              <p className="mb-6 text-sm text-gray-500">Sign in to manage your listings</p>
+              <h2 id={headingId} className="mb-1 text-2xl font-extrabold text-gray-900">Landlord Sign In</h2>
+              <p className="mb-6 text-sm text-gray-600">Sign in to manage your listings</p>
 
               {message && (
                 <p className="mb-4 rounded-xl bg-brand-50 px-4 py-3 text-sm text-brand-700">{message}</p>
               )}
 
               <form onSubmit={onLogin} className="space-y-4">
-                <input
-                  id="modal-email"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Email address"
-                  aria-label="Email address"
-                  autoComplete="email"
-                  required
-                  className={inputClass}
-                />
-                <PasswordField autoComplete="current-password" placeholder="Password" id="modal-password" />
+                <div>
+                  <label htmlFor="modal-email" className={labelClass}>Email address</label>
+                  <input
+                    id="modal-email"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    autoComplete="email"
+                    required
+                    className={inputClass}
+                  />
+                </div>
+                <PasswordField autoComplete="current-password" label="Password" id="modal-password" />
                 <div className="text-right">
                   <button
                     type="button"
@@ -332,10 +363,10 @@ export default function SignInModal({
               <SocialButtons />
               <LegalNote />
 
-              <p className="mt-5 text-center text-sm text-gray-500">
+              <p className="mt-5 text-center text-sm text-gray-600">
                 No account?{' '}
-                <button onClick={() => go('signup')} className="font-semibold text-brand-600 hover:underline">
-                  Create one free →
+                <button type="button" onClick={() => go('signup')} className="font-semibold text-brand-600 hover:underline">
+                  Create one free
                 </button>
               </p>
             </div>
@@ -344,53 +375,62 @@ export default function SignInModal({
           {/* ── Sign up ─────────────────────────────────────────────────────── */}
           {step === 'signup' && (
             <div>
-              <h2 className="mb-1 text-2xl font-extrabold text-gray-900">Create Account</h2>
-              <p className="mb-6 text-sm text-gray-500">List your rentals on EMLAKIE for free</p>
+              <h2 id={headingId} className="mb-1 text-2xl font-extrabold text-gray-900">Create Account</h2>
+              <p className="mb-6 text-sm text-gray-600">List your rentals on EMLAKIE for free</p>
 
               <form onSubmit={onSignup} className="space-y-4">
                 <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label htmlFor="modal-first-name" className={labelClass}>First name</label>
+                    <input
+                      id="modal-first-name"
+                      type="text"
+                      value={firstName}
+                      onChange={(e) => setFirstName(e.target.value)}
+                      autoComplete="given-name"
+                      required
+                      className={inputClass}
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="modal-last-name" className={labelClass}>Last name</label>
+                    <input
+                      id="modal-last-name"
+                      type="text"
+                      value={lastName}
+                      onChange={(e) => setLastName(e.target.value)}
+                      autoComplete="family-name"
+                      required
+                      className={inputClass}
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label htmlFor="modal-phone" className={labelClass}>Phone number</label>
                   <input
-                    type="text"
-                    value={firstName}
-                    onChange={(e) => setFirstName(e.target.value)}
-                    placeholder="First name *"
-                    aria-label="First name"
-                    autoComplete="given-name"
-                    required
-                    className={inputClass}
-                  />
-                  <input
-                    type="text"
-                    value={lastName}
-                    onChange={(e) => setLastName(e.target.value)}
-                    placeholder="Last name *"
-                    aria-label="Last name"
-                    autoComplete="family-name"
+                    id="modal-phone"
+                    type="tel"
+                    value={phone}
+                    onChange={(e) => setPhone(formatPhone(e.target.value))}
+                    placeholder="(555) 000-0000"
+                    autoComplete="tel"
                     required
                     className={inputClass}
                   />
                 </div>
-                <input
-                  type="tel"
-                  value={phone}
-                  onChange={(e) => setPhone(formatPhone(e.target.value))}
-                  placeholder="Phone (555) 000-0000 *"
-                  aria-label="Phone number"
-                  autoComplete="tel"
-                  required
-                  className={inputClass}
-                />
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Email address *"
-                  aria-label="Email address"
-                  autoComplete="email"
-                  required
-                  className={inputClass}
-                />
-                <PasswordField autoComplete="new-password" placeholder="Password (min 8 characters) *" id="modal-signup-password" />
+                <div>
+                  <label htmlFor="modal-signup-email" className={labelClass}>Email address</label>
+                  <input
+                    id="modal-signup-email"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    autoComplete="email"
+                    required
+                    className={inputClass}
+                  />
+                </div>
+                <PasswordField autoComplete="new-password" label="Password (min 8 characters)" id="modal-signup-password" />
                 <button type="submit" disabled={busy} className={btnPrimary}>
                   {busy ? 'Creating account…' : 'Create Account — It\'s Free'}
                 </button>
@@ -404,10 +444,10 @@ export default function SignInModal({
               <SocialButtons />
               <LegalNote />
 
-              <p className="mt-5 text-center text-sm text-gray-500">
+              <p className="mt-5 text-center text-sm text-gray-600">
                 Already have an account?{' '}
-                <button onClick={() => go('login')} className="font-semibold text-brand-600 hover:underline">
-                  Sign in →
+                <button type="button" onClick={() => go('login')} className="font-semibold text-brand-600 hover:underline">
+                  Sign in
                 </button>
               </p>
             </div>
@@ -416,20 +456,22 @@ export default function SignInModal({
           {/* ── Forgot password ─────────────────────────────────────────────── */}
           {step === 'forgot' && (
             <div>
-              <h2 className="mb-1 text-2xl font-extrabold text-gray-900">Reset Password</h2>
-              <p className="mb-6 text-sm text-gray-500">Enter your email and we'll send you a reset link.</p>
+              <h2 id={headingId} className="mb-1 text-2xl font-extrabold text-gray-900">Reset Password</h2>
+              <p className="mb-6 text-sm text-gray-600">Enter your email and we'll send you a reset link.</p>
 
               <form onSubmit={onForgot} className="space-y-4">
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Email address"
-                  aria-label="Email address"
-                  autoComplete="email"
-                  required
-                  className={inputClass}
-                />
+                <div>
+                  <label htmlFor="modal-forgot-email" className={labelClass}>Email address</label>
+                  <input
+                    id="modal-forgot-email"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    autoComplete="email"
+                    required
+                    className={inputClass}
+                  />
+                </div>
                 <button type="submit" disabled={busy} className={btnPrimary}>
                   {busy ? 'Sending…' : 'Send Reset Link'}
                 </button>
@@ -439,8 +481,8 @@ export default function SignInModal({
                 <p role="alert" className="mt-4 rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700">{error}</p>
               )}
 
-              <p className="mt-5 text-center text-sm text-gray-500">
-                <button onClick={() => go('login')} className="font-semibold text-brand-600 hover:underline">
+              <p className="mt-5 text-center text-sm text-gray-600">
+                <button type="button" onClick={() => go('login')} className="font-semibold text-brand-600 hover:underline">
                   ← Back to sign in
                 </button>
               </p>
@@ -450,14 +492,14 @@ export default function SignInModal({
           {/* ── Forgot sent ─────────────────────────────────────────────────── */}
           {step === 'forgot-sent' && (
             <div className="text-center">
-              <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-brand-50 text-3xl">
+              <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-brand-50 text-3xl" aria-hidden="true">
                 ✉️
               </div>
-              <h2 className="text-2xl font-extrabold text-gray-900">Check your email</h2>
-              <p className="mt-2 text-sm text-gray-500">
+              <h2 id={headingId} className="text-2xl font-extrabold text-gray-900">Check your email</h2>
+              <p className="mt-2 text-sm text-gray-600">
                 We sent a reset link to <strong>{email}</strong>.
               </p>
-              <button onClick={() => go('login')} className="mt-8 font-semibold text-brand-600 hover:underline">
+              <button type="button" onClick={() => go('login')} className="mt-8 font-semibold text-brand-600 hover:underline">
                 ← Back to sign in
               </button>
             </div>

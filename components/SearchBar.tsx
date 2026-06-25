@@ -212,8 +212,8 @@ export default function SearchBar({ large = false }: { large?: boolean }) {
             aria-autocomplete="list"
             aria-expanded={open}
             aria-controls="search-suggestions-sm"
-            aria-activedescendant={activeIdx >= 0 ? `suggestion-sm-${activeIdx}` : undefined}
-            className="min-w-0 flex-1 px-4 py-3 text-base text-gray-900 placeholder-gray-400 outline-none focus:ring-2 focus:ring-inset focus:ring-brand-500"
+            aria-activedescendant={activeIdx >= 0 ? `search-suggestions-sm-${activeIdx}` : undefined}
+            className="min-w-0 flex-1 px-4 py-3 text-base text-gray-900 placeholder-gray-500 outline-none focus:ring-2 focus:ring-inset focus:ring-brand-500"
           />
           <button
             type="submit"
@@ -255,6 +255,7 @@ export default function SearchBar({ large = false }: { large?: boolean }) {
               key={m.id}
               role="tab"
               aria-selected={isActive}
+              aria-controls="search-panel"
               type="button"
               onClick={() => handleModeChange(m.id)}
               className={[
@@ -335,6 +336,7 @@ export default function SearchBar({ large = false }: { large?: boolean }) {
       {/* Search form — hidden only when nearby is loading/erroring */}
       {!isNearby && (
         <form
+          id="search-panel"
           role="search"
           aria-label="Search rental listings"
           onSubmit={onSubmit}
@@ -370,6 +372,7 @@ export default function SearchBar({ large = false }: { large?: boolean }) {
             className={[
               'min-w-0 flex-1 py-4 text-lg text-gray-900 placeholder-gray-300 outline-none',
               isDescribe ? 'px-3 focus:ring-0' : 'px-5 focus:ring-2 focus:ring-inset focus:ring-brand-500',
+              'placeholder-gray-500',
             ].join(' ')}
           />
           {q && (

@@ -117,7 +117,7 @@ export default async function HomePage() {
           <h1 className="text-center font-serif text-4xl font-bold leading-tight tracking-tight text-gray-900 sm:text-5xl">
             Find your next rental home.
           </h1>
-          <p className="mt-3 text-center text-sm text-gray-400 sm:text-base">
+          <p className="mt-3 text-center text-sm text-gray-600 sm:text-base">
             Rentals direct from landlords — no broker fees, no middlemen.
           </p>
 

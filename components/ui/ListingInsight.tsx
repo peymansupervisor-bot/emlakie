@@ -8,7 +8,7 @@ interface ListingInsightProps {
 export default function ListingInsight({ text, className = '' }: ListingInsightProps) {
   return (
     <div className={`rounded-xl bg-brand-50 px-3.5 py-3 ${className}`}>
-      <p className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.1em] text-brand-600">
+      <p className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.1em] text-brand-700">
         <svg
           viewBox="0 0 16 16"
           className="h-3 w-3 shrink-0"

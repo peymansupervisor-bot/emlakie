@@ -187,7 +187,11 @@ export default function ListingCard({
   return (
     <article className="group relative flex flex-col overflow-hidden rounded-2xl bg-white shadow-[0_1px_4px_rgba(0,0,0,0.06),0_4px_16px_rgba(0,0,0,0.05)] transition-all duration-300 hover:shadow-[0_4px_12px_rgba(0,0,0,0.09),0_12px_32px_rgba(0,0,0,0.09)] hover:-translate-y-0.5">
       {/* Stretched link — covers card, z-10 */}
-      <Link href={href} className="absolute inset-0 z-10" aria-label={listing.title} />
+      <Link
+        href={href}
+        className="absolute inset-0 z-10"
+        aria-label={`${isNew ? 'New today — ' : ''}View ${listing.title} — ${formatPrice(listing.price)}/mo in ${listing.city}${listing.state ? `, ${listing.state}` : ''}`}
+      />
 
       {/* ── Photo ──────────────────────────────────────────────────────────── */}
       <div className="relative aspect-[4/3] overflow-hidden bg-gray-100">
@@ -244,9 +248,9 @@ export default function ListingCard({
         <div className="flex items-baseline justify-between gap-2">
           <p className="text-xl font-extrabold leading-tight tracking-tight text-gray-900">
             {formatPrice(listing.price).replace('/mo', '')}
-            <span className="ml-0.5 text-sm font-medium text-gray-400">/mo</span>
+            <span className="ml-0.5 text-sm font-medium text-gray-500">/mo</span>
           </p>
-          <span className="shrink-0 text-[11px] font-medium text-gray-400">
+          <span className="shrink-0 text-[11px] font-medium text-gray-500">
             {formatPropertyType(listing.property_type)}
           </span>
         </div>
@@ -278,7 +282,7 @@ export default function ListingCard({
         </div>
 
         {/* Location */}
-        <p className="mt-1.5 flex items-center gap-1 text-[13px] text-gray-400">
+        <p className="mt-1.5 flex items-center gap-1 text-[13px] text-gray-500">
           <svg viewBox="0 0 16 16" className="h-3 w-3 shrink-0 fill-gray-300" aria-hidden="true">
             <path fillRule="evenodd" d="M8 1.5a4.5 4.5 0 1 0 0 9 4.5 4.5 0 0 0 0-9ZM2 6a6 6 0 1 1 10.174 4.31l3.258 3.259a.75.75 0 0 1-1.06 1.06L10.96 11.37A6 6 0 0 1 2 6Z" clipRule="evenodd" />
           </svg>

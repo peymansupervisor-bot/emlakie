@@ -179,11 +179,13 @@ export default function SearchBar({ large = false }: { large?: boolean }) {
   const handleVoiceResult = useCallback((text: string) => {
     setQ(text);
     if (modeRef.current === 'location') {
-      tts.speak(`Searching for rentals in ${text}`, () => {
-        router.push(`/rentals?q=${encodeURIComponent(text.trim())}`);
-      });
+      // Navigate immediately — don't gate on TTS since iOS Safari requires
+      // speechSynthesis to be called from a direct user gesture.
+      // Speak best-effort; if iOS blocks it the navigation still happens.
+      tts.speak(`Searching for rentals in ${text}`);
+      router.push(`/rentals?q=${encodeURIComponent(text.trim())}`);
     }
-    // Describe mode: populate field; user submits (or we could auto-submit)
+    // Describe mode: populate field; user presses Search to confirm
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -297,7 +299,9 @@ export default function SearchBar({ large = false }: { large?: boolean }) {
           if (data.amenities?.length) parts.push(`with ${(data.amenities as string[]).join(' and ')}`);
           const summary = `Got it. Finding ${parts.join(' ')}.`;
           setInterpreting(false);
-          tts.speak(summary, () => router.push(`/rentals?${params.toString()}`));
+          tts.speak(summary);
+          // Small delay so TTS has a chance to start before navigation kills the page
+          setTimeout(() => router.push(`/rentals?${params.toString()}`), 1800);
         } else {
           router.push(`/rentals?q=${encodeURIComponent(query)}`);
         }

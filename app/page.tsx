@@ -53,13 +53,13 @@ const organizationSchema = {
 
 
 const PROPERTY_TYPES = [
-  { href: '/rentals', label: 'All' },
-  { href: '/rentals/apartments', label: 'Apartments' },
-  { href: '/rentals/houses', label: 'Houses' },
-  { href: '/rentals/condos', label: 'Condos' },
-  { href: '/rentals/studios', label: 'Studios' },
-  { href: '/rentals/townhomes', label: 'Townhomes' },
-  { href: '/rentals/pet-friendly', label: 'Pet-friendly' },
+  { href: '/rentals', label: 'All', icon: '🏠' },
+  { href: '/rentals/apartments', label: 'Apartments', icon: '🏢' },
+  { href: '/rentals/houses', label: 'Houses', icon: '🏡' },
+  { href: '/rentals/condos', label: 'Condos', icon: '🏙️' },
+  { href: '/rentals/studios', label: 'Studios', icon: '🛋️' },
+  { href: '/rentals/townhomes', label: 'Townhomes', icon: '🏘️' },
+  { href: '/rentals/pet-friendly', label: 'Pet-friendly', icon: '🐾' },
 ];
 
 // Top 32 states by renter population for the browse grid
@@ -134,8 +134,9 @@ export default async function HomePage() {
                   <Link
                     key={t.href}
                     href={t.href}
-                    className="shrink-0 rounded-full border border-gray-200 bg-white px-4 py-1.5 text-sm font-medium text-gray-600 transition hover:border-brand-400 hover:bg-brand-50 hover:text-brand-700"
+                    className="shrink-0 flex items-center gap-1.5 rounded-full border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm transition hover:border-brand-500 hover:bg-brand-50 hover:text-brand-700 hover:shadow-md"
                   >
+                    <span className="text-base leading-none">{t.icon}</span>
                     {t.label}
                   </Link>
                 ))}

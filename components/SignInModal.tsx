@@ -13,6 +13,12 @@ interface Props {
   next?: string;
   /** Which step to show first (default: 'choice') */
   initialStep?: Step;
+  /** Custom title shown on the choice screen */
+  title?: string;
+  /** Custom subtitle shown on the choice screen */
+  subtitle?: string;
+  /** Custom label for the primary "create account" button on the choice screen */
+  primaryLabel?: string;
 }
 
 const inputClass = 'w-full rounded-xl border border-gray-300 px-4 py-3 text-base outline-none focus:border-brand-600 focus:ring-1 focus:ring-brand-600';
@@ -46,7 +52,15 @@ function formatPhone(raw: string) {
   return '';
 }
 
-export default function SignInModal({ open, onClose, next = '/landlord', initialStep = 'choice' }: Props) {
+export default function SignInModal({
+  open,
+  onClose,
+  next = '/landlord',
+  initialStep = 'choice',
+  title,
+  subtitle,
+  primaryLabel,
+}: Props) {
   const router = useRouter();
   const [step, setStep] = useState<Step>(initialStep);
   const [email, setEmail] = useState('');
@@ -241,16 +255,13 @@ export default function SignInModal({ open, onClose, next = '/landlord', initial
           {/* ── Account choice ──────────────────────────────────────────────── */}
           {step === 'choice' && (
             <div>
-              <div className="mb-6 flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-600">
-                  <svg viewBox="0 0 24 24" className="h-5 w-5 stroke-white" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /><polyline points="9 22 9 12 15 12 15 22" />
-                  </svg>
-                </div>
-                <div>
-                  <h2 className="text-xl font-extrabold text-gray-900">Welcome to EMLAKIE</h2>
-                  <p className="text-sm text-gray-500">List your rental for free</p>
-                </div>
+              <div className="mb-6">
+                <h2 className="text-2xl font-extrabold text-gray-900">
+                  {title ?? 'Welcome to EMLAKIE'}
+                </h2>
+                <p className="mt-1 text-sm text-gray-500">
+                  {subtitle ?? 'List your rental for free'}
+                </p>
               </div>
 
               <div className="space-y-3">
@@ -259,14 +270,14 @@ export default function SignInModal({ open, onClose, next = '/landlord', initial
                   onClick={() => go('signup')}
                   className={btnPrimary}
                 >
-                  Create Account — It's Free
+                  {primaryLabel ?? 'Create Account — It\'s Free'}
                 </button>
                 <button
                   type="button"
                   onClick={() => go('login')}
                   className={btnOutline}
                 >
-                  I Already Have an Account
+                  Already have an account? Sign In
                 </button>
               </div>
 

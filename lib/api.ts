@@ -315,10 +315,18 @@ export async function getMarketPulse(): Promise<MarketPulse[]> {
 export async function getListingsByCity(citySlug: string): Promise<{ listings: Listing[]; total: number; city: string; state: string; usingSampleData: boolean } | null> {
   const cities = await getAllCities();
   const match = cities.find(c => c.slug === citySlug);
-  if (!match) return null;
 
-  const result = await getListings({ city: match.city });
-  return { ...result, city: match.city, state: match.state };
+  if (match) {
+    const result = await getListings({ city: match.city });
+    return { ...result, city: match.city, state: match.state };
+  }
+
+  // No active listings for this city — derive city name from slug and return empty
+  const cityName = citySlug
+    .split('-')
+    .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(' ');
+  return { listings: [], total: 0, city: cityName, state: '', usingSampleData: false };
 }
 
 export interface StateListingsResult {

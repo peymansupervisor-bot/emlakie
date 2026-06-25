@@ -128,28 +128,59 @@ function useSpeechRecognition(onResult: (text: string) => void) {
 }
 
 // ── Text-to-speech ────────────────────────────────────────────────────────────
+// iOS Safari blocks speechSynthesis unless it's called during a user gesture.
+// Fix: call prime() on the mic button tap to unlock it, then speak() works
+// freely in async callbacks.
 function useTTS() {
   const [speaking, setSpeaking] = useState(false);
+  const primedRef = useRef(false);
+
+  // Must be called inside a user-gesture handler (button onClick) to unlock iOS.
+  function prime() {
+    if (!window.speechSynthesis || primedRef.current) return;
+    const u = new SpeechSynthesisUtterance(' ');
+    u.volume = 0;
+    u.rate = 10;
+    window.speechSynthesis.speak(u);
+    primedRef.current = true;
+  }
 
   function speak(text: string, onDone?: () => void) {
-    if (typeof window === 'undefined' || !window.speechSynthesis) {
-      onDone?.();
-      return;
-    }
+    if (!window.speechSynthesis) { onDone?.(); return; }
     window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.rate = 1.05;
-    utterance.pitch = 1.0;
-    // Prefer a natural English voice if available
-    const voices = window.speechSynthesis.getVoices();
-    const preferred = voices.find(
-      (v) => v.lang.startsWith('en') && (v.name.includes('Samantha') || v.name.includes('Google') || v.name.includes('Natural')),
-    ) ?? voices.find((v) => v.lang.startsWith('en')) ?? null;
-    if (preferred) utterance.voice = preferred;
-    utterance.onstart = () => setSpeaking(true);
-    utterance.onend = () => { setSpeaking(false); onDone?.(); };
-    utterance.onerror = () => { setSpeaking(false); onDone?.(); };
-    window.speechSynthesis.speak(utterance);
+
+    const doSpeak = () => {
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.rate = 1.0;
+      utterance.pitch = 1.0;
+      utterance.volume = 1.0;
+
+      const voices = window.speechSynthesis.getVoices();
+      const preferred =
+        voices.find((v) => v.lang.startsWith('en') && v.localService) ??
+        voices.find((v) => v.lang.startsWith('en')) ??
+        null;
+      if (preferred) utterance.voice = preferred;
+
+      // Fallback timer in case onend never fires (known iOS bug)
+      const fallbackMs = Math.max(3000, text.length * 90);
+      const fallback = setTimeout(() => { setSpeaking(false); onDone?.(); }, fallbackMs);
+
+      utterance.onstart = () => setSpeaking(true);
+      utterance.onend   = () => { clearTimeout(fallback); setSpeaking(false); onDone?.(); };
+      utterance.onerror = () => { clearTimeout(fallback); setSpeaking(false); onDone?.(); };
+
+      window.speechSynthesis.speak(utterance);
+    };
+
+    // Voices may not be loaded on first call — wait for them
+    if (window.speechSynthesis.getVoices().length > 0) {
+      doSpeak();
+    } else {
+      window.speechSynthesis.addEventListener('voiceschanged', doSpeak, { once: true });
+      // Safety: if voiceschanged never fires, speak anyway after 500ms
+      setTimeout(() => { if (window.speechSynthesis.getVoices().length === 0) doSpeak(); }, 500);
+    }
   }
 
   function stop() {
@@ -157,7 +188,7 @@ function useTTS() {
     setSpeaking(false);
   }
 
-  return { speaking, speak, stop };
+  return { speaking, speak, stop, prime };
 }
 
 export default function SearchBar({ large = false }: { large?: boolean }) {
@@ -244,6 +275,7 @@ export default function SearchBar({ large = false }: { large?: boolean }) {
   const speech = useSpeechRecognition(handleVoiceResult);
 
   function startConversation() {
+    tts.prime(); // unlock iOS speechSynthesis during the user tap
     convMessagesRef.current = [];
     setTranscript({});
     setConvActive(true);

@@ -39,11 +39,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       : listing.description
     : `${formatBeds(listing.bedrooms)}, ${formatBaths(listing.bathrooms)} ${formatPropertyType(listing.property_type)} for rent at ${formatPrice(listing.price)}/mo in ${listing.city}, ${listing.state}. Contact the landlord directly on EMLAKIE — no broker fees.`;
   const rawPhoto = listing.photos?.[0] ?? null;
-  // Only use Supabase render API for WebP uploads — MLS photos are already JPEG and render API returns 400 for them
+  // Route all OG images through our /api/og-image proxy which converts any format to JPEG.
+  // Facebook's crawler doesn't support WebP and Supabase's render API only works for specific storage paths.
   const ogPhotoUrl = rawPhoto
-    ? rawPhoto.endsWith('.webp')
-      ? rawPhoto.replace('/storage/v1/object/public/', '/storage/v1/render/image/public/') + '?width=1200&height=630&resize=cover&format=jpeg&quality=85'
-      : rawPhoto
+    ? `https://emlakie.com/api/og-image?url=${encodeURIComponent(rawPhoto)}`
     : null;
   const ogImage = ogPhotoUrl
     ? [{ url: ogPhotoUrl, width: 1200, height: 630, alt: listing.title }]

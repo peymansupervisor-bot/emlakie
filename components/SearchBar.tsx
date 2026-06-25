@@ -48,13 +48,18 @@ const MODES: { id: Mode; label: string; sublabel: string; icon: React.ReactNode 
 ];
 
 // ── Speech recognition (Web Speech API) ──────────────────────────────────────
-// Returns null when the browser doesn't support it — mic button is hidden then.
+// supported is derived in useEffect so SSR and client hydrate identically.
 function useSpeechRecognition(onResult: (text: string) => void) {
+  const [supported, setSupported] = useState(false);
   const [listening, setListening] = useState(false);
   const recogRef = useRef<SpeechRecognition | null>(null);
+  // Keep onResult in a ref so the recognition callback always calls the latest version
+  const onResultRef = useRef(onResult);
+  useEffect(() => { onResultRef.current = onResult; });
 
-  const supported = typeof window !== 'undefined' &&
-    ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window);
+  useEffect(() => {
+    setSupported('SpeechRecognition' in window || 'webkitSpeechRecognition' in window);
+  }, []);
 
   function start() {
     if (!supported || listening) return;
@@ -65,7 +70,7 @@ function useSpeechRecognition(onResult: (text: string) => void) {
     recog.maxAlternatives = 1;
     recog.onresult = (e: SpeechRecognitionEvent) => {
       const text = e.results[0]?.[0]?.transcript ?? '';
-      if (text) onResult(text);
+      if (text) onResultRef.current(text);
     };
     recog.onend = () => setListening(false);
     recog.onerror = () => setListening(false);

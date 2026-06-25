@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { isAddressQuery } from '@/lib/address-utils';
-import VoiceOrb, { type OrbState } from '@/components/VoiceOrb';
+import VoiceOrb, { type OrbState, type OrbTranscript } from '@/components/VoiceOrb';
 
 interface Suggestion {
   type: 'city' | 'address' | 'listing';
@@ -170,34 +170,103 @@ export default function SearchBar({ large = false }: { large?: boolean }) {
   const [interpreting, setInterpreting] = useState(false);
   const [geoState, setGeoState] = useState<'idle' | 'loading' | 'error'>('idle');
   const [orbState, setOrbState] = useState<OrbState>('idle');
+  const [transcript, setTranscript] = useState<OrbTranscript>({});
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const tts = useTTS();
-  const modeRef = useRef(mode);
-  useEffect(() => { modeRef.current = mode; });
 
-  const handleVoiceResult = useCallback((text: string) => {
-    setQ(text);
-    if (modeRef.current === 'location') {
-      // Navigate immediately — don't gate on TTS since iOS Safari requires
-      // speechSynthesis to be called from a direct user gesture.
-      // Speak best-effort; if iOS blocks it the navigation still happens.
-      tts.speak(`Searching for rentals in ${text}`);
-      router.push(`/rentals?q=${encodeURIComponent(text.trim())}`);
-    }
-    // Describe mode: populate field; user presses Search to confirm
+  // ── Conversation state ────────────────────────────────────────────────────
+  const [convActive, setConvActive] = useState(false);
+  const convActiveRef = useRef(false);
+  useEffect(() => { convActiveRef.current = convActive; }, [convActive]);
+  const convMessagesRef = useRef<Array<{ role: 'user' | 'assistant'; content: string }>>([]);
+
+  // Called after the AI responds — restart listening if still in conversation
+  const continueListening = useCallback(() => {
+    if (!convActiveRef.current) return;
+    setOrbState('listening');
+    speech.start();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const handleVoiceResult = useCallback(async (text: string) => {
+    if (!convActiveRef.current) return;
+
+    setTranscript({ user: text, ai: '' });
+    setOrbState('thinking');
+
+    const messages = [
+      ...convMessagesRef.current,
+      { role: 'user' as const, content: text },
+    ];
+    convMessagesRef.current = messages;
+
+    try {
+      const res = await fetch('/api/voice/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages }),
+      });
+      const data: { speak: string; action?: { type: string; params: Record<string, unknown> } } = await res.json();
+      const aiText = data.speak || "Sorry, I didn't catch that.";
+
+      convMessagesRef.current = [...messages, { role: 'assistant', content: aiText }];
+      setTranscript({ user: text, ai: aiText });
+      setOrbState('speaking');
+
+      if (data.action?.type === 'search') {
+        const p = (data.action.params ?? {}) as Record<string, unknown>;
+        const params = new URLSearchParams();
+        if (p.city) params.set('city', String(p.city));
+        if (p.state && !p.city) params.set('q', String(p.state));
+        if (p.maxPrice) params.set('maxPrice', String(p.maxPrice));
+        if (p.minPrice) params.set('minPrice', String(p.minPrice));
+        if (p.bedrooms) params.set('bedrooms', String(p.bedrooms));
+        if (p.propertyType) params.set('propertyType', String(p.propertyType));
+        if (Array.isArray(p.amenities) && p.amenities.length) params.set('amenities', (p.amenities as string[]).join(','));
+        // Speak then navigate
+        tts.speak(aiText);
+        setTimeout(() => {
+          setConvActive(false);
+          setOrbState('idle');
+          router.push(`/rentals?${params.toString()}`);
+        }, 1800);
+      } else {
+        // Continue conversation after TTS finishes
+        tts.speak(aiText, continueListening);
+      }
+    } catch {
+      tts.speak("Sorry, something went wrong. Try again!", continueListening);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [continueListening]);
+
   const speech = useSpeechRecognition(handleVoiceResult);
 
-  // Sync orb state to listening / thinking / speaking
+  function startConversation() {
+    convMessagesRef.current = [];
+    setTranscript({});
+    setConvActive(true);
+    setOrbState('listening');
+    speech.start();
+  }
+
+  function stopConversation() {
+    setConvActive(false);
+    speech.stop();
+    tts.stop();
+    setOrbState('idle');
+    setTranscript({});
+  }
+
+  // Keep orbState in sync with speech/tts when NOT in conversation mode
   useEffect(() => {
+    if (convActive) return;
     if (!speech.listening && !tts.speaking && !interpreting) setOrbState('idle');
     else if (speech.listening) setOrbState('listening');
     else if (interpreting) setOrbState('thinking');
     else if (tts.speaking) setOrbState('speaking');
-  }, [speech.listening, tts.speaking, interpreting]);
+  }, [speech.listening, tts.speaking, interpreting, convActive]);
 
   useEffect(() => {
     if (mode !== 'location') { setSuggestions([]); setOpen(false); return; }
@@ -342,15 +411,14 @@ export default function SearchBar({ large = false }: { large?: boolean }) {
   const isNearby = mode === 'nearby';
 
   function stopAll() {
-    speech.stop();
-    tts.stop();
+    stopConversation();
   }
 
   // ── Compact (non-homepage) variant ──────────────────────────────────────────
   if (!large) {
     return (
       <div ref={containerRef} className="relative w-full max-w-md">
-        <VoiceOrb state={orbState} onStop={stopAll} />
+        <VoiceOrb state={orbState} transcript={transcript} onStop={stopAll} />
         <form
           role="search"
           aria-label="Search rental listings"
@@ -377,14 +445,14 @@ export default function SearchBar({ large = false }: { large?: boolean }) {
           {speech.supported && (
             <button
               type="button"
-              onClick={speech.listening ? speech.stop : speech.start}
-              aria-label={speech.listening ? 'Stop listening' : 'Search by voice'}
+              onClick={convActive ? stopConversation : startConversation}
+              aria-label={convActive ? 'End voice conversation' : 'Start voice search'}
               className={[
                 'flex items-center justify-center px-3 transition-colors',
-                speech.listening ? 'text-red-500 hover:text-red-600' : 'text-gray-400 hover:text-brand-600',
+                convActive ? 'text-red-500 hover:text-red-600' : 'text-gray-400 hover:text-brand-600',
               ].join(' ')}
             >
-              {speech.listening ? (
+              {convActive ? (
                 <span className="relative flex h-5 w-5 items-center justify-center">
                   <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-400 opacity-60" />
                   <svg viewBox="0 0 24 24" className="h-4 w-4 fill-current" aria-hidden="true">
@@ -577,14 +645,14 @@ export default function SearchBar({ large = false }: { large?: boolean }) {
           {speech.supported && (
             <button
               type="button"
-              onClick={speech.listening ? speech.stop : speech.start}
-              aria-label={speech.listening ? 'Stop listening' : 'Search by voice'}
+              onClick={convActive ? stopConversation : startConversation}
+              aria-label={convActive ? 'End voice conversation' : 'Start voice search'}
               className={[
                 'flex items-center justify-center px-3 transition-colors',
-                speech.listening ? 'text-red-500 hover:text-red-600' : 'text-gray-400 hover:text-brand-600',
+                convActive ? 'text-red-500 hover:text-red-600' : 'text-gray-400 hover:text-brand-600',
               ].join(' ')}
             >
-              {speech.listening ? (
+              {convActive ? (
                 <span className="relative flex h-5 w-5 items-center justify-center">
                   <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-400 opacity-60" />
                   <svg viewBox="0 0 24 24" className="h-4 w-4 fill-current" aria-hidden="true">

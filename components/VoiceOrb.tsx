@@ -4,7 +4,14 @@ import { useEffect } from 'react';
 
 export type OrbState = 'idle' | 'listening' | 'thinking' | 'speaking';
 
-const COLORS: Record<Exclude<OrbState, 'idle'>, { outer: string; mid: string; inner: string; text: string; sub: string }> = {
+export interface OrbTranscript {
+  user?: string;
+  ai?: string;
+}
+
+const COLORS: Record<Exclude<OrbState, 'idle'>, {
+  outer: string; mid: string; inner: string; text: string; sub: string;
+}> = {
   listening: {
     outer: 'from-blue-600 via-indigo-500 to-cyan-400',
     mid:   'from-blue-400 via-sky-300 to-indigo-400',
@@ -30,9 +37,11 @@ const COLORS: Record<Exclude<OrbState, 'idle'>, { outer: string; mid: string; in
 
 export default function VoiceOrb({
   state,
+  transcript = {},
   onStop,
 }: {
   state: OrbState;
+  transcript?: OrbTranscript;
   onStop: () => void;
 }) {
   useEffect(() => {
@@ -51,45 +60,34 @@ export default function VoiceOrb({
       role="dialog"
       aria-modal="true"
       aria-label={c.text}
-      className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-gray-950/80 backdrop-blur-xl"
+      className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-gray-950/85 backdrop-blur-xl"
       onClick={onStop}
     >
-      {/* Orb wrapper — stop click propagation so tapping orb itself doesn't close */}
+      {/* Orb */}
       <div
-        className="orb-fade-in relative flex h-72 w-72 items-center justify-center sm:h-80 sm:w-80"
+        className="orb-fade-in relative flex h-56 w-56 items-center justify-center sm:h-64 sm:w-64"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Far outer halo */}
         <div className={`absolute inset-0 rounded-full bg-gradient-to-br ${c.outer} opacity-20 blur-3xl orb-pulse`} />
-
         {/* Rotating ring */}
         <div className={`absolute inset-3 rounded-full bg-gradient-to-br ${c.outer} opacity-30 orb-spin`}
           style={{ borderRadius: '60% 40% 30% 70% / 60% 30% 70% 40%' }} />
-
         {/* Main morphing blob */}
         <div
           className={`absolute inset-6 bg-gradient-to-br ${c.outer} orb-morph shadow-2xl`}
           style={{ borderRadius: '60% 40% 30% 70% / 60% 30% 70% 40%' }}
         />
-
-        {/* Mid layer — slightly offset morph */}
+        {/* Mid layer */}
         <div
           className={`absolute inset-10 bg-gradient-to-br ${c.mid} opacity-70`}
-          style={{
-            borderRadius: '40% 60% 70% 30% / 30% 50% 50% 70%',
-            animation: 'orb-morph 4s ease-in-out infinite reverse',
-          }}
+          style={{ borderRadius: '40% 60% 70% 30% / 30% 50% 50% 70%', animation: 'orb-morph 4s ease-in-out infinite reverse' }}
         />
-
-        {/* Inner shimmer / highlight */}
-        <div
-          className={`absolute inset-14 rounded-full bg-gradient-to-br ${c.inner} blur-md orb-shimmer`}
-        />
-
+        {/* Inner shimmer */}
+        <div className={`absolute inset-14 rounded-full bg-gradient-to-br ${c.inner} blur-md orb-shimmer`} />
         {/* Center dot */}
         <div className="relative z-10 h-3 w-3 rounded-full bg-white/80 shadow-lg" />
-
-        {/* Ripple rings (only when listening) */}
+        {/* Ripple rings when listening */}
         {state === 'listening' && (
           <>
             <div className="absolute inset-0 rounded-full border border-white/10 orb-pulse" style={{ animationDelay: '0s' }} />
@@ -99,19 +97,40 @@ export default function VoiceOrb({
         )}
       </div>
 
-      {/* Label */}
-      <div className="orb-fade-in mt-10 flex flex-col items-center gap-2 text-center">
-        <p className="text-xl font-semibold tracking-wide text-white">{c.text}</p>
+      {/* State label */}
+      <div className="orb-fade-in mt-8 flex flex-col items-center gap-1 text-center">
+        <p className="text-lg font-semibold tracking-wide text-white">{c.text}</p>
         <p className="text-sm text-white/40">{c.sub}</p>
       </div>
+
+      {/* Conversation transcript */}
+      {(transcript.user || transcript.ai) && (
+        <div
+          className="orb-fade-in mx-6 mt-6 w-full max-w-sm space-y-3 text-center"
+          onClick={(e) => e.stopPropagation()}
+        >
+          {transcript.user && (
+            <div className="rounded-2xl bg-white/10 px-5 py-3">
+              <p className="text-sm text-white/60">You said</p>
+              <p className="mt-0.5 text-sm font-medium text-white/90">"{transcript.user}"</p>
+            </div>
+          )}
+          {transcript.ai && (
+            <div className="rounded-2xl bg-white/[0.07] px-5 py-3">
+              <p className="text-xs text-white/40">EMLAKIE</p>
+              <p className="mt-0.5 text-sm text-white/80">{transcript.ai}</p>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Stop button */}
       <button
         type="button"
         onClick={onStop}
-        className="orb-fade-in mt-10 rounded-full border border-white/20 bg-white/10 px-8 py-3 text-sm font-medium text-white/70 backdrop-blur-sm transition hover:bg-white/20 hover:text-white"
+        className="orb-fade-in mt-8 rounded-full border border-white/20 bg-white/10 px-8 py-3 text-sm font-medium text-white/70 backdrop-blur-sm transition hover:bg-white/20 hover:text-white"
       >
-        {state === 'listening' ? 'Cancel' : 'Stop'}
+        End conversation
       </button>
     </div>
   );

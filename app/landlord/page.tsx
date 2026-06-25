@@ -280,8 +280,50 @@ export default function PropertiesPage() {
   return (
     <div>
       {justCreated && (
-        <div role="status" aria-live="polite" className="mb-6 rounded-xl bg-brand-50 border border-brand-200 px-5 py-4 text-brand-800 font-semibold">
-          ✓ Your listing was published successfully! It may take a few minutes to appear in search results.
+        <div role="status" aria-live="polite" className="mb-8 overflow-hidden rounded-2xl border border-brand-200 bg-gradient-to-br from-brand-50 to-white shadow-card">
+          <div className="flex flex-col items-center gap-4 px-6 py-10 text-center sm:px-10">
+            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-brand-600 text-white shadow-lg shadow-brand-600/30">
+              <svg viewBox="0 0 24 24" className="h-8 w-8" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M20 6 9 17l-5-5" />
+              </svg>
+            </div>
+            <div>
+              <h2 className="text-xl font-extrabold text-gray-900">Your listing is live! 🎉</h2>
+              <p className="mt-1 text-sm text-gray-500">It may take a few minutes to appear in search results.</p>
+            </div>
+            <div className="flex flex-wrap items-center justify-center gap-2">
+              {listings?.[0] && (
+                <Link
+                  href={`/rentals/${listings[0].slug ?? listings[0].id}`}
+                  className="rounded-lg border border-brand-200 bg-white px-4 py-2 text-sm font-semibold text-brand-700 transition hover:bg-brand-50"
+                >
+                  Preview Listing →
+                </Link>
+              )}
+              <a
+                href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent('https://emlakie.com/rentals')}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-700 transition hover:bg-gray-50"
+              >
+                Share on Facebook
+              </a>
+              <a
+                href={`https://twitter.com/intent/tweet?text=${encodeURIComponent('Just listed my rental on EMLAKIE — free, fast, and no broker fees!')}&url=${encodeURIComponent('https://emlakie.com/rentals')}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-700 transition hover:bg-gray-50"
+              >
+                Share on X
+              </a>
+              <Link
+                href="/landlord/properties/new"
+                className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-700"
+              >
+                + Add Another Property
+              </Link>
+            </div>
+          </div>
         </div>
       )}
 

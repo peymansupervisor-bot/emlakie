@@ -35,8 +35,10 @@ export default function Footer() {
             <div>
               <p className="font-serif text-base font-bold tracking-tight text-gray-900">Landlords</p>
               <ul className="mt-4 space-y-3 text-sm text-gray-500">
-                <li><Link href="/rent-estimate" className="transition hover:text-brand-600">E-rent Value™</Link></li>
+                <li><Link href="/for-landlords" className="transition hover:text-brand-600">Why EMLAKIE?</Link></li>
                 <li><Link href="/landlord/login" className="transition hover:text-brand-600">List a property</Link></li>
+                <li><Link href="/rent-estimate" className="transition hover:text-brand-600">E-rent Value™</Link></li>
+                <li><Link href="/landlord" className="transition hover:text-brand-600">Landlord Dashboard</Link></li>
               </ul>
             </div>
             <div>

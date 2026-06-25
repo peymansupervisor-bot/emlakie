@@ -10,16 +10,13 @@ export default async function StatsStrip() {
   const stats = await getStats();
 
   const items = [
-    { value: fmt(stats.listings, 500), label: 'homes target' },
-    { value: fmt(stats.cities, 80), label: 'cities target' },
-    { value: fmt(stats.landlords, 200), label: 'landlords target' },
+    { value: fmt(stats.listings, 500), label: 'Active Listings' },
+    { value: fmt(stats.cities, 80), label: 'Cities' },
+    { value: fmt(stats.landlords, 200), label: 'Landlords' },
   ];
 
   return (
     <div className="mt-5 w-full max-w-2xl mx-auto">
-      <div className="flex items-center justify-center gap-1 mb-2">
-        <span className="text-xs font-semibold uppercase tracking-widest text-brand-600">Our 2026 growth targets</span>
-      </div>
       <div className="grid grid-cols-3 divide-x divide-gray-200 rounded-2xl border border-gray-200 bg-white shadow-card">
         {items.map((item, i) => (
           <div key={i} className="flex flex-col items-center py-4 px-2">

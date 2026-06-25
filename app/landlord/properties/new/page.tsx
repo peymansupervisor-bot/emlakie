@@ -511,33 +511,65 @@ export default function NewPropertyPage() {
   return (
     <div className="mx-auto max-w-2xl">
       {/* Back */}
-      <button onClick={() => step === 1 ? router.push('/landlord') : setStep((s) => (s - 1) as Step)}
-        className="text-sm font-semibold text-brand-600 hover:text-brand-700">
-        ← {step === 1 ? 'All properties' : 'Back'}
+      <button
+        onClick={() => step === 1 ? router.push('/landlord') : setStep((s) => (s - 1) as Step)}
+        className="flex items-center gap-1.5 text-sm font-semibold text-gray-500 transition hover:text-brand-600"
+      >
+        <svg viewBox="0 0 20 20" className="h-4 w-4 fill-current" aria-hidden="true">
+          <path fillRule="evenodd" d="M17 10a.75.75 0 0 1-.75.75H5.612l4.158 3.96a.75.75 0 1 1-1.04 1.08l-5.5-5.25a.75.75 0 0 1 0-1.08l5.5-5.25a.75.75 0 1 1 1.04 1.08L5.612 9.25H16.25A.75.75 0 0 1 17 10Z" clipRule="evenodd" />
+        </svg>
+        {step === 1 ? 'All properties' : 'Back'}
       </button>
 
-      <h1 className="mt-4 text-3xl font-extrabold text-gray-900">Add a property</h1>
+      {/* Progress stepper */}
+      <div className="mt-6 rounded-2xl border border-gray-100 bg-white p-5 shadow-card">
+        <div className="mb-4 flex items-center justify-between">
+          <h1 className="text-lg font-extrabold text-gray-900">Add a property</h1>
+          <span className="text-xs font-semibold text-gray-400">Step {step} of 4</span>
+        </div>
 
-      {/* Step indicator */}
-      <div className="mt-6 flex items-center gap-2">
-        {steps.map((label, i) => {
-          const n = (i + 1) as Step;
-          const done = n < step;
-          const active = n === step;
-          return (
-            <div key={label} className="flex items-center gap-2">
-              <div className={`flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold transition ${
-                done ? 'bg-brand-600 text-white' : active ? 'border-2 border-brand-600 text-brand-700' : 'border border-gray-300 text-gray-500'
-              }`}>
-                {done ? '✓' : n}
+        {/* Progress bar */}
+        <div className="mb-5 h-1.5 w-full overflow-hidden rounded-full bg-gray-100">
+          <div
+            className="h-full rounded-full bg-brand-600 transition-all duration-500"
+            style={{ width: `${(step / 4) * 100}%` }}
+            role="progressbar"
+            aria-valuenow={step}
+            aria-valuemin={1}
+            aria-valuemax={4}
+          />
+        </div>
+
+        {/* Step labels */}
+        <div className="grid grid-cols-4 gap-1">
+          {steps.map((label, i) => {
+            const n = (i + 1) as Step;
+            const done = n < step;
+            const active = n === step;
+            return (
+              <div key={label} className="flex flex-col items-center gap-1.5">
+                <div className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold transition-all ${
+                  done
+                    ? 'bg-brand-600 text-white shadow-sm shadow-brand-600/30'
+                    : active
+                    ? 'border-2 border-brand-600 bg-brand-50 text-brand-700'
+                    : 'border border-gray-200 bg-white text-gray-400'
+                }`}>
+                  {done ? (
+                    <svg viewBox="0 0 16 16" className="h-4 w-4 fill-current" aria-hidden="true">
+                      <path d="M12.207 4.793a1 1 0 0 1 0 1.414l-5 5a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L6.5 9.086l4.293-4.293a1 1 0 0 1 1.414 0Z" />
+                    </svg>
+                  ) : n}
+                </div>
+                <span className={`text-center text-[10px] font-semibold leading-tight ${
+                  active ? 'text-brand-700' : done ? 'text-gray-500' : 'text-gray-400'
+                }`}>
+                  {label}
+                </span>
               </div>
-              <span className={`hidden text-xs font-semibold sm:block ${active ? 'text-brand-700' : 'text-gray-500'}`}>
-                {label}
-              </span>
-              {i < steps.length - 1 && <div className="h-px w-6 bg-gray-200" />}
-            </div>
-          );
-        })}
+            );
+          })}
+        </div>
       </div>
 
       {/* Error */}

@@ -260,8 +260,32 @@ export default function SearchBar({ large = false }: { large?: boolean }) {
 
   const speech = useSpeechRecognition(handleVoiceResult);
 
+  function playActivationChime() {
+    try {
+      const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
+      const now = ctx.currentTime;
+      const play = (freq: number, start: number, dur: number) => {
+        const osc  = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.type = 'sine';
+        osc.frequency.value = freq;
+        gain.gain.setValueAtTime(0, start);
+        gain.gain.linearRampToValueAtTime(0.25, start + 0.01);
+        gain.gain.exponentialRampToValueAtTime(0.001, start + dur);
+        osc.start(start);
+        osc.stop(start + dur);
+      };
+      play(523, now,        0.18); // C5
+      play(784, now + 0.13, 0.22); // G5
+      setTimeout(() => ctx.close(), 800);
+    } catch { /* AudioContext not available */ }
+  }
+
   function startConversation() {
-    tts.prime(); // unlock iOS speechSynthesis during the user tap
+    tts.prime(); // unlock iOS audio session during user tap
+    playActivationChime();
     convMessagesRef.current = [];
     setTranscript({});
     setConvActive(true);

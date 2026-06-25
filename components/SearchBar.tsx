@@ -74,19 +74,25 @@ function useSpeechRecognition(onResult: (text: string) => void) {
     }).catch(() => {});
   }, [error]);
 
+  // Track whether mic permission has already been granted this session.
+  // getUserMedia must be called from a user gesture — subsequent starts
+  // (from async TTS callbacks) skip it since iOS blocks it there.
+  const permittedRef = useRef(false);
+
   async function start() {
     if (!supported || listening) return;
     setError(null);
 
-    // Explicitly request mic permission via getUserMedia first.
-    // This triggers the browser's permission dialog even when the site had
-    // previously denied access — the user can reset it in the prompt.
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      stream.getTracks().forEach((t) => t.stop()); // release immediately; SR takes over
-    } catch {
-      setError('not-allowed');
-      return;
+    if (!permittedRef.current) {
+      // First start: trigger permission dialog via getUserMedia (user gesture)
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        stream.getTracks().forEach((t) => t.stop());
+        permittedRef.current = true;
+      } catch {
+        setError('not-allowed');
+        return;
+      }
     }
 
     const SR = (window as any).SpeechRecognition ?? (window as any).webkitSpeechRecognition;

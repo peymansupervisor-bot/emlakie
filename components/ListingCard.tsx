@@ -4,32 +4,37 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { Listing } from '@/lib/types';
 import { formatBaths, formatBeds, formatPrice, formatPropertyType, formatSqft } from '@/lib/format';
+import ListingInsight from '@/components/ui/ListingInsight';
 
-// ── Decision-quality insight derived from listing data ───────────────────────
-// Priority order: highest decision value first.
-// When a stored ai_summary exists on the listing, use that instead (future).
+// ── Insight: one sentence that answers "why should I click this?" ─────────────
+// Priority: most differentiating signal first.
+// Tone: trusted friend, not salesperson. Grounded in real listing data.
+// Future: return listing.ai_summary when the field is populated server-side.
 function deriveInsight(listing: Listing): string | null {
   const a = listing.amenities ?? [];
   const has = (x: string) => a.includes(x);
   const sqft = listing.sqft ?? 0;
 
-  if (listing.dom === 0) return 'Just listed — be among the first to reach out.';
-  if (has('Pet-friendly') && has('Pool')) return 'Resort-style living with no pet restrictions.';
-  if (has('EV charging')) return 'EV charging included — still rare at this price.';
-  if (has('Furnished')) return 'Fully furnished — move in with just your bags.';
-  if (has('In-unit laundry') && sqft >= 1000) return 'Spacious layout with in-unit washer/dryer.';
-  if (listing.listing_source === 'owner') return 'No agent — contact the owner directly.';
-  if (has('Pet-friendly')) return 'Pets welcome — no extra pet fees listed.';
-  if (has('Pool') && has('Gym')) return 'Full resort amenities included in rent.';
-  if (has('Garage')) return 'Private garage — uncommon at this price point.';
-  if (has('Balcony') && listing.bedrooms >= 2) return 'Private outdoor space with a multi-bedroom layout.';
-  if (listing.virtual_tour_url) return 'Virtual tour available — explore before you visit.';
-  if (sqft >= 1500) return 'Above-average square footage for this price.';
+  if (listing.dom === 0) return 'Just listed — you have a real shot at getting here first.';
+  if (has('Pet-friendly') && has('Pool')) return 'Pets allowed and a pool — that combination is harder to find than it sounds.';
+  if (has('EV charging')) return 'Comes with EV charging, which most rentals in this range still don\'t offer.';
+  if (has('Furnished') && has('In-unit laundry')) return 'Fully furnished with in-unit laundry — genuinely move-in ready.';
+  if (has('Furnished')) return 'Fully furnished — you can move in without buying a single thing.';
+  if (has('In-unit laundry') && sqft >= 1000) return 'Spacious layout with washer/dryer in the unit — no laundry runs.';
+  if (listing.listing_source === 'owner') return 'Owner-listed — you\'ll work directly with the person who owns the place.';
+  if (has('Pet-friendly')) return 'Pets are welcome here, which narrows the field more than most people expect.';
+  if (has('Pool') && has('Gym')) return 'Pool and gym both included — no need for a separate gym membership.';
+  if (has('Garage')) return 'Comes with a private garage, which is genuinely rare at this price point.';
+  if (has('Balcony') && listing.bedrooms >= 2) return 'Multiple bedrooms and private outdoor space — that\'s a good combination.';
+  if (listing.virtual_tour_url) return 'Has a virtual tour, so you can walk through it before scheduling a visit.';
+  if (sqft >= 1500) return 'Notably spacious — more square footage than most listings in this price range.';
+  if (has('Hardwood floors') && has('Dishwasher')) return 'Hardwood floors and a dishwasher — small details that add up quickly.';
+  if (has('Air conditioning') && listing.bedrooms >= 2) return 'Central air in a multi-bedroom unit — worth noting in warmer climates.';
   const t = listing.property_type;
-  if (t === 'house') return 'Private home — no shared walls, full outdoor space.';
-  if (t === 'townhouse') return 'Multi-level living with more privacy than an apartment.';
-  if (t === 'studio') return 'Efficient layout — ideal for solo living or remote work.';
-  if (t === 'condo') return 'Condo-quality finishes at rental flexibility.';
+  if (t === 'house') return 'A full home with no shared walls and your own outdoor space.';
+  if (t === 'townhouse') return 'Multi-level layout with more separation between living and sleeping areas.';
+  if (t === 'studio') return 'Compact and efficient — a good fit if you spend most of your time out.';
+  if (t === 'condo') return 'Condo-level finishes and build quality, with rental flexibility.';
   return null;
 }
 
@@ -197,13 +202,8 @@ export default function ListingCard({
           </span>
         </div>
 
-        {/* AI insight */}
-        {insight && (
-          <p className="mt-1.5 flex items-start gap-1.5 text-[13px] leading-snug text-gray-500">
-            <span className="mt-px shrink-0 text-violet-500" aria-hidden="true">✦</span>
-            <span>{insight}</span>
-          </p>
-        )}
+        {/* Why you'll like it */}
+        {insight && <ListingInsight text={insight} className="mt-3" />}
 
         {/* Highlights: beds · baths · sqft */}
         <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1">

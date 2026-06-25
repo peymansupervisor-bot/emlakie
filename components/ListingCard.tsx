@@ -207,19 +207,14 @@ export default function ListingCard({
           </div>
         )}
 
-        {/* Top-left: source badge */}
-        <div className="absolute left-3 top-3 z-20 flex items-center gap-1.5">
-          {listing.isSample && (
+        {/* Top-left: sample badge */}
+        {listing.isSample && (
+          <div className="absolute left-3 top-3 z-20">
             <span className="rounded-full bg-gray-800/70 px-2.5 py-1 text-[11px] font-semibold text-white backdrop-blur-sm">
               Sample
             </span>
-          )}
-          {!listing.isSample && listing.listing_source === 'broker' && (
-            <span className="rounded-full bg-blue-600/85 px-2.5 py-1 text-[11px] font-semibold text-white backdrop-blur-sm">
-              Broker
-            </span>
-          )}
-        </div>
+          </div>
+        )}
 
         {/* Top-right: Save button */}
         <div className="absolute right-3 top-3 z-20">

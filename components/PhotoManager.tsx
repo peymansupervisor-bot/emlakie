@@ -78,8 +78,8 @@ export default function PhotoManager({ listingId, initialPhotos }: Props) {
       if (!res.ok) throw new Error(data.error);
       setPhotos(data.photos);
       const msg = skipped.length > 0
-        ? `${newUrls.length} photo${newUrls.length > 1 ? 's' : ''} uploaded. ${skipped.length} skipped (flagged or failed).`
-        : `${newUrls.length} photo${newUrls.length > 1 ? 's' : ''} uploaded.`;
+        ? `${newUrls.length} photo${newUrls.length > 1 ? 's' : ''} uploaded and saved. ${skipped.length} skipped (flagged or failed).`
+        : `${newUrls.length} photo${newUrls.length > 1 ? 's' : ''} uploaded and saved.`;
       setMsg(msg);
     } catch (err: unknown) {
       setMsg((err as Error).message ?? 'Upload failed.');
@@ -104,7 +104,7 @@ export default function PhotoManager({ listingId, initialPhotos }: Props) {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
       setPhotos(data.photos);
-      setMsg('Cover photo updated.');
+      setMsg('Cover photo saved.');
     } catch (err: unknown) {
       setMsg((err as Error).message ?? 'Failed to update cover.');
     } finally {
@@ -126,7 +126,7 @@ export default function PhotoManager({ listingId, initialPhotos }: Props) {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
       setPhotos(data.photos);
-      setMsg('Photo removed.');
+      setMsg('Photo removed and saved.');
     } catch (err: unknown) {
       setMsg((err as Error).message ?? 'Delete failed.');
     } finally {
@@ -137,7 +137,10 @@ export default function PhotoManager({ listingId, initialPhotos }: Props) {
   return (
     <div className="rounded-2xl border border-gray-200 p-6 shadow-card">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="font-bold text-gray-900">Photos</h2>
+        <div>
+          <h2 className="font-bold text-gray-900">Photos</h2>
+          <p className="text-xs text-gray-400 mt-0.5">Changes save automatically</p>
+        </div>
         {photos.length >= MAX_PHOTOS ? (
           <span className="rounded-lg bg-gray-100 px-4 py-2 text-sm font-semibold text-gray-400">25 photo limit reached</span>
         ) : (

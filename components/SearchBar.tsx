@@ -65,9 +65,21 @@ function useSpeechRecognition(onResult: (text: string) => void) {
     setSupported('SpeechRecognition' in window || 'webkitSpeechRecognition' in window);
   }, []);
 
-  function start() {
+  async function start() {
     if (!supported || listening) return;
     setError(null);
+
+    // Explicitly request mic permission via getUserMedia first.
+    // This triggers the browser's permission dialog even when the site had
+    // previously denied access — the user can reset it in the prompt.
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      stream.getTracks().forEach((t) => t.stop()); // release immediately; SR takes over
+    } catch {
+      setError('not-allowed');
+      return;
+    }
+
     const SR = (window as any).SpeechRecognition ?? (window as any).webkitSpeechRecognition;
     const recog: SpeechRecognition = new SR();
     recog.lang = 'en-US';
@@ -618,7 +630,7 @@ export default function SearchBar({ large = false }: { large?: boolean }) {
 // ── Mic error banner ─────────────────────────────────────────────────────────
 function MicError({ error, onDismiss }: { error: SpeechError; onDismiss: () => void }) {
   const messages: Record<NonNullable<SpeechError>, string> = {
-    'not-allowed': 'Microphone access was denied. Click the lock icon in your browser\'s address bar to allow it, then try again.',
+    'not-allowed': 'Microphone blocked. Click the lock icon (🔒) in your address bar → Site settings → Microphone → Allow, then reload the page.',
     'no-speech': 'No speech was detected. Please try again.',
     'other': 'Voice search failed. Please try again.',
   };

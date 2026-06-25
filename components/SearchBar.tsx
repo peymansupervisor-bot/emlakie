@@ -1,8 +1,9 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { isAddressQuery } from '@/lib/address-utils';
+import VoiceOrb, { type OrbState } from '@/components/VoiceOrb';
 
 interface Suggestion {
   type: 'city' | 'address' | 'listing';
@@ -105,6 +106,39 @@ function useSpeechRecognition(onResult: (text: string) => void) {
   return { supported, listening, error, start, stop, clearError };
 }
 
+// ── Text-to-speech ────────────────────────────────────────────────────────────
+function useTTS() {
+  const [speaking, setSpeaking] = useState(false);
+
+  function speak(text: string, onDone?: () => void) {
+    if (typeof window === 'undefined' || !window.speechSynthesis) {
+      onDone?.();
+      return;
+    }
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.rate = 1.05;
+    utterance.pitch = 1.0;
+    // Prefer a natural English voice if available
+    const voices = window.speechSynthesis.getVoices();
+    const preferred = voices.find(
+      (v) => v.lang.startsWith('en') && (v.name.includes('Samantha') || v.name.includes('Google') || v.name.includes('Natural')),
+    ) ?? voices.find((v) => v.lang.startsWith('en')) ?? null;
+    if (preferred) utterance.voice = preferred;
+    utterance.onstart = () => setSpeaking(true);
+    utterance.onend = () => { setSpeaking(false); onDone?.(); };
+    utterance.onerror = () => { setSpeaking(false); onDone?.(); };
+    window.speechSynthesis.speak(utterance);
+  }
+
+  function stop() {
+    window.speechSynthesis?.cancel();
+    setSpeaking(false);
+  }
+
+  return { speaking, speak, stop };
+}
+
 export default function SearchBar({ large = false }: { large?: boolean }) {
   const router = useRouter();
   const [q, setQ] = useState('');
@@ -114,17 +148,33 @@ export default function SearchBar({ large = false }: { large?: boolean }) {
   const [mode, setMode] = useState<Mode>('location');
   const [interpreting, setInterpreting] = useState(false);
   const [geoState, setGeoState] = useState<'idle' | 'loading' | 'error'>('idle');
+  const [orbState, setOrbState] = useState<OrbState>('idle');
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const tts = useTTS();
+  const modeRef = useRef(mode);
+  useEffect(() => { modeRef.current = mode; });
 
-  const speech = useSpeechRecognition((text) => {
+  const handleVoiceResult = useCallback((text: string) => {
     setQ(text);
-    // Auto-submit after voice input so the user doesn't have to press Search
-    if (mode === 'location') {
-      router.push(`/rentals?q=${encodeURIComponent(text.trim())}`);
+    if (modeRef.current === 'location') {
+      tts.speak(`Searching for rentals in ${text}`, () => {
+        router.push(`/rentals?q=${encodeURIComponent(text.trim())}`);
+      });
     }
-    // In Describe mode just populate the field — let the user confirm before AI call
-  });
+    // Describe mode: populate field; user submits (or we could auto-submit)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const speech = useSpeechRecognition(handleVoiceResult);
+
+  // Sync orb state to listening / thinking / speaking
+  useEffect(() => {
+    if (!speech.listening && !tts.speaking && !interpreting) setOrbState('idle');
+    else if (speech.listening) setOrbState('listening');
+    else if (interpreting) setOrbState('thinking');
+    else if (tts.speaking) setOrbState('speaking');
+  }, [speech.listening, tts.speaking, interpreting]);
 
   useEffect(() => {
     if (mode !== 'location') { setSuggestions([]); setOpen(false); return; }
@@ -215,7 +265,18 @@ export default function SearchBar({ large = false }: { large?: boolean }) {
           if (data.propertyType) params.set('propertyType', data.propertyType);
           if (data.amenities?.length) params.set('amenities', data.amenities.join(','));
           if (!data.city && !data.state) params.set('q', query);
-          router.push(`/rentals?${params.toString()}`);
+          // Build a spoken summary of what we found
+          const parts: string[] = [];
+          if (data.bedrooms) parts.push(`${data.bedrooms}-bedroom`);
+          if (data.propertyType) parts.push(data.propertyType);
+          parts.push('rentals');
+          if (data.city) parts.push(`in ${data.city}`);
+          else if (data.state) parts.push(`in ${data.state}`);
+          if (data.maxPrice) parts.push(`under $${Number(data.maxPrice).toLocaleString()} a month`);
+          if (data.amenities?.length) parts.push(`with ${(data.amenities as string[]).join(' and ')}`);
+          const summary = `Got it. Finding ${parts.join(' ')}.`;
+          setInterpreting(false);
+          tts.speak(summary, () => router.push(`/rentals?${params.toString()}`));
         } else {
           router.push(`/rentals?q=${encodeURIComponent(query)}`);
         }
@@ -255,10 +316,16 @@ export default function SearchBar({ large = false }: { large?: boolean }) {
   const isDescribe = mode === 'describe';
   const isNearby = mode === 'nearby';
 
+  function stopAll() {
+    speech.stop();
+    tts.stop();
+  }
+
   // ── Compact (non-homepage) variant ──────────────────────────────────────────
   if (!large) {
     return (
       <div ref={containerRef} className="relative w-full max-w-md">
+        <VoiceOrb state={orbState} onStop={stopAll} />
         <form
           role="search"
           aria-label="Search rental listings"
@@ -338,6 +405,7 @@ export default function SearchBar({ large = false }: { large?: boolean }) {
   // ── Homepage (large) variant ─────────────────────────────────────────────────
   return (
     <div ref={containerRef} className="relative w-full max-w-2xl">
+      <VoiceOrb state={orbState} onStop={stopAll} />
 
       {/* Mode selector — three tabs */}
       <div className="mb-3 grid grid-cols-3 gap-2" role="tablist" aria-label="Search mode">

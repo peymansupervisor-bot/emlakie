@@ -15,26 +15,35 @@ interface Props {
 }
 
 export default function PhotoManager({ listingId, initialPhotos }: Props) {
-  const [photos, setPhotos] = useState<string[]>(initialPhotos);
+  const [savedPhotos, setSavedPhotos] = useState<string[]>(initialPhotos);
+  const [pendingPhotos, setPendingPhotos] = useState<string[]>(initialPhotos);
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState('');
-  const [deletingUrl, setDeletingUrl] = useState<string | null>(null);
-  const [settingCoverUrl, setSettingCoverUrl] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
+  const [msgType, setMsgType] = useState<'success' | 'error'>('success');
   const fileRef = useRef<HTMLInputElement>(null);
+
+  const isDirty = JSON.stringify(pendingPhotos) !== JSON.stringify(savedPhotos);
+
+  function showMsg(text: string, type: 'success' | 'error' = 'success') {
+    setMsg(text);
+    setMsgType(type);
+  }
 
   async function handleUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const files = Array.from(e.target.files ?? []);
     if (!files.length) return;
-    const remaining = MAX_PHOTOS - photos.length;
-    if (remaining <= 0) { setMsg(`Maximum ${MAX_PHOTOS} photos allowed.`); return; }
+    const remaining = MAX_PHOTOS - pendingPhotos.length;
+    if (remaining <= 0) { showMsg(`Maximum ${MAX_PHOTOS} photos allowed.`, 'error'); return; }
     const oversized = files.filter((f) => f.size > MAX_PHOTO_BYTES);
-    if (oversized.length > 0) setMsg(`${oversized.length} photo${oversized.length > 1 ? 's exceed' : ' exceeds'} the 25 MB limit and ${oversized.length > 1 ? 'were' : 'was'} skipped.`);
+    if (oversized.length > 0) showMsg(`${oversized.length} photo${oversized.length > 1 ? 's exceed' : ' exceeds'} the 25 MB limit and ${oversized.length > 1 ? 'were' : 'was'} skipped.`, 'error');
     const sized = files.filter((f) => f.size <= MAX_PHOTO_BYTES);
     const toUpload = sized.slice(0, remaining);
     if (toUpload.length === 0) return;
-    if (toUpload.length < sized.length) setMsg(`Only ${remaining} slot${remaining > 1 ? 's' : ''} remaining — uploading first ${toUpload.length}.`);
+    if (toUpload.length < sized.length) showMsg(`Only ${remaining} slot${remaining > 1 ? 's' : ''} remaining — uploading first ${toUpload.length}.`, 'error');
     setUploading(true);
+    setMsg(null);
     const newUrls: string[] = [];
     const skipped: string[] = [];
     try {
@@ -62,27 +71,17 @@ export default function PhotoManager({ listingId, initialPhotos }: Props) {
       }
 
       if (newUrls.length === 0) {
-        const reason = skipped.length > 0 ? 'Photos were flagged and not uploaded.' : 'No photos were uploaded.';
-        setMsg(reason);
+        showMsg(skipped.length > 0 ? 'Photos were flagged and not uploaded.' : 'No photos were uploaded.', 'error');
         return;
       }
 
-      // Append all new URLs to the listing in one API call
-      const token = await getToken();
-      const res = await fetch(`/api/listings/${listingId}/photos`, {
-        method: 'PATCH',
-        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ urls: newUrls }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error);
-      setPhotos(data.photos);
-      const msg = skipped.length > 0
-        ? `${newUrls.length} photo${newUrls.length > 1 ? 's' : ''} uploaded and saved. ${skipped.length} skipped (flagged or failed).`
-        : `${newUrls.length} photo${newUrls.length > 1 ? 's' : ''} uploaded and saved.`;
-      setMsg(msg);
+      setPendingPhotos((prev) => [...prev, ...newUrls]);
+      const notice = skipped.length > 0
+        ? `${newUrls.length} photo${newUrls.length > 1 ? 's' : ''} added. ${skipped.length} skipped (flagged or failed). Save to apply.`
+        : `${newUrls.length} photo${newUrls.length > 1 ? 's' : ''} added. Click Save photos to apply.`;
+      showMsg(notice);
     } catch (err: unknown) {
-      setMsg((err as Error).message ?? 'Upload failed.');
+      showMsg((err as Error).message ?? 'Upload failed.', 'error');
     } finally {
       setUploading(false);
       setUploadProgress('');
@@ -90,114 +89,119 @@ export default function PhotoManager({ listingId, initialPhotos }: Props) {
     }
   }
 
-  async function handleSetCover(url: string) {
-    setSettingCoverUrl(url);
+  function handleSetCover(url: string) {
+    setPendingPhotos((prev) => [url, ...prev.filter((p) => p !== url)]);
+    setMsg(null);
+  }
+
+  function handleDelete(url: string) {
+    if (pendingPhotos.length <= MIN_PHOTOS) { showMsg(`Minimum ${MIN_PHOTOS} photo required.`, 'error'); return; }
+    setPendingPhotos((prev) => prev.filter((p) => p !== url));
+    setMsg(null);
+  }
+
+  async function handleSave() {
+    setSaving(true);
     setMsg(null);
     try {
       const token = await getToken();
-      const reordered = [url, ...photos.filter((p) => p !== url)];
       const res = await fetch(`/api/listings/${listingId}/photos`, {
         method: 'PUT',
         headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ photos: reordered }),
+        body: JSON.stringify({ photos: pendingPhotos }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
-      setPhotos(data.photos);
-      setMsg('Cover photo saved.');
+      setSavedPhotos(data.photos);
+      setPendingPhotos(data.photos);
+      showMsg('Photos saved.');
     } catch (err: unknown) {
-      setMsg((err as Error).message ?? 'Failed to update cover.');
+      showMsg((err as Error).message ?? 'Save failed.', 'error');
     } finally {
-      setSettingCoverUrl(null);
+      setSaving(false);
     }
   }
 
-  async function handleDelete(url: string) {
-    if (photos.length <= MIN_PHOTOS) { setMsg(`Minimum ${MIN_PHOTOS} photos required.`); return; }
-    setDeletingUrl(url);
+  function handleDiscard() {
+    setPendingPhotos(savedPhotos);
     setMsg(null);
-    try {
-      const token = await getToken();
-      const res = await fetch(`/api/listings/${listingId}/photos`, {
-        method: 'DELETE',
-        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ photoUrl: url }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error);
-      setPhotos(data.photos);
-      setMsg('Photo removed and saved.');
-    } catch (err: unknown) {
-      setMsg((err as Error).message ?? 'Delete failed.');
-    } finally {
-      setDeletingUrl(null);
-    }
   }
 
   return (
     <div className="rounded-2xl border border-gray-200 p-6 shadow-card">
       <div className="flex items-center justify-between mb-4">
-        <div>
-          <h2 className="font-bold text-gray-900">Photos</h2>
-          <p className="text-xs text-gray-400 mt-0.5">Changes save automatically</p>
+        <h2 className="font-bold text-gray-900">Photos</h2>
+        <div className="flex items-center gap-2">
+          {pendingPhotos.length < MAX_PHOTOS && (
+            <label className={`cursor-pointer rounded-lg border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 transition hover:border-brand-400 hover:text-brand-700 ${uploading ? 'opacity-60 pointer-events-none' : ''}`}>
+              {uploading ? (uploadProgress || 'Uploading…') : `+ Add photos (${pendingPhotos.length}/25)`}
+              <input
+                ref={fileRef}
+                type="file"
+                accept="image/*"
+                multiple
+                className="sr-only"
+                onChange={handleUpload}
+                disabled={uploading}
+              />
+            </label>
+          )}
+          {pendingPhotos.length >= MAX_PHOTOS && (
+            <span className="rounded-lg bg-gray-100 px-4 py-2 text-sm font-semibold text-gray-400">25 photo limit reached</span>
+          )}
+          {isDirty && (
+            <button
+              onClick={handleDiscard}
+              disabled={saving}
+              className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-600 transition hover:border-gray-400 disabled:opacity-60"
+            >
+              Discard
+            </button>
+          )}
+          <button
+            onClick={handleSave}
+            disabled={!isDirty || saving}
+            className="rounded-lg bg-brand-600 px-5 py-2 text-sm font-bold text-white transition hover:bg-brand-700 disabled:opacity-40 disabled:cursor-not-allowed"
+          >
+            {saving ? 'Saving…' : 'Save photos'}
+          </button>
         </div>
-        {photos.length >= MAX_PHOTOS ? (
-          <span className="rounded-lg bg-gray-100 px-4 py-2 text-sm font-semibold text-gray-400">25 photo limit reached</span>
-        ) : (
-          <label className={`cursor-pointer rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-700 ${uploading ? 'opacity-60 pointer-events-none' : ''}`}>
-            {uploading ? (uploadProgress || 'Uploading…') : `+ Add photos (${photos.length}/25)`}
-            <input
-              ref={fileRef}
-              type="file"
-              accept="image/*"
-              multiple
-              className="sr-only"
-              onChange={handleUpload}
-              disabled={uploading}
-            />
-          </label>
-        )}
       </div>
 
       {msg && (
-        <p className="mb-3 text-sm font-semibold text-brand-700">{msg}</p>
+        <p className={`mb-3 text-sm font-semibold ${msgType === 'error' ? 'text-red-600' : 'text-brand-700'}`}>{msg}</p>
       )}
 
-      {photos.length === 0 ? (
-        <p className="py-8 text-center text-sm text-gray-500">No photos yet. Add at least {MIN_PHOTOS} clean, watermark-free photos.</p>
+      {isDirty && !msg && (
+        <p className="mb-3 text-xs text-amber-600 font-medium">You have unsaved changes.</p>
+      )}
+
+      {pendingPhotos.length === 0 ? (
+        <p className="py-8 text-center text-sm text-gray-500">No photos yet. Add at least {MIN_PHOTOS} clean, watermark-free photo.</p>
       ) : (
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-          {photos.map((url, i) => (
+          {pendingPhotos.map((url, i) => (
             <div key={url} className="group relative aspect-[4/3] overflow-hidden rounded-xl bg-gray-100">
               <Image src={url} alt={`Photo ${i + 1}`} fill sizes="(max-width: 640px) 50vw, 33vw" className="object-cover" />
               <div className="absolute inset-0 bg-black/0 transition group-hover:bg-black/30" />
               <button
                 onClick={() => handleDelete(url)}
-                disabled={deletingUrl === url}
                 aria-label="Remove photo"
-                className="absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-full bg-white/90 text-gray-700 opacity-0 shadow transition hover:bg-red-50 hover:text-red-600 group-hover:opacity-100 disabled:opacity-50"
+                className="absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-full bg-white/90 text-gray-700 opacity-0 shadow transition hover:bg-red-50 hover:text-red-600 group-hover:opacity-100"
               >
-                {deletingUrl === url ? (
-                  <svg className="h-3.5 w-3.5 animate-spin" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 00-8 8h4z" />
-                  </svg>
-                ) : (
-                  <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                )}
+                <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
               </button>
               {i === 0 ? (
                 <span className="absolute bottom-2 left-2 rounded bg-black/60 px-1.5 py-0.5 text-[10px] font-semibold text-white">Cover</span>
               ) : (
                 <button
                   onClick={() => handleSetCover(url)}
-                  disabled={settingCoverUrl === url}
                   aria-label="Set as cover"
-                  className="absolute bottom-2 left-2 rounded bg-white/90 px-1.5 py-0.5 text-[10px] font-semibold text-gray-700 opacity-0 shadow transition hover:bg-brand-600 hover:text-white group-hover:opacity-100 disabled:opacity-50"
+                  className="absolute bottom-2 left-2 rounded bg-white/90 px-1.5 py-0.5 text-[10px] font-semibold text-gray-700 opacity-0 shadow transition hover:bg-brand-600 hover:text-white group-hover:opacity-100"
                 >
-                  {settingCoverUrl === url ? '…' : 'Set cover'}
+                  Set cover
                 </button>
               )}
             </div>

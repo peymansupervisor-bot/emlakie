@@ -128,63 +128,49 @@ function useSpeechRecognition(onResult: (text: string) => void) {
 }
 
 // ── Text-to-speech ────────────────────────────────────────────────────────────
-// iOS Safari blocks speechSynthesis unless it's called during a user gesture.
-// Fix: call prime() on the mic button tap to unlock it, then speak() works
-// freely in async callbacks.
+// Use <audio> + server-side TTS instead of speechSynthesis.
+// iOS Safari blocks speechSynthesis from async callbacks entirely; the <audio>
+// element approach works reliably after a one-time gesture-unlock via prime().
+//
+// Silent MP3 (44 bytes) used to unlock the audio session on iOS during tap.
+const SILENT_MP3 =
+  'data:audio/mp3;base64,SUQzBAAAAAABEVRYWFgAAAAtAAADY29tbWVudABCaWdTb3VuZEJhbmsgU291bmQgRWZmZWN0c0xpYnJhcnkAVFhYWAAAACUAAANjb21tZW50AENyZWF0aXZlIENvbW1vbnMgMC4wAFRJVDIAAAARAAAAU2lsZW5jZSAtIDEgc2VjAFRQRTEAAAANAAAAQmlnU291bmRCYW5rAFRDT04AAAAFAAAAT3RoZXIAVEFMQgAAAAsAAABTb3VuZEVmZmVjdAAA//tAxAAABQABmAAAACAAADSAAAAETEFNRTMuMTAwVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVU=';
+
 function useTTS() {
   const [speaking, setSpeaking] = useState(false);
-  const primedRef = useRef(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  // Must be called inside a user-gesture handler (button onClick) to unlock iOS.
+  // Call inside a user-gesture handler to unlock iOS audio session.
   function prime() {
-    if (!window.speechSynthesis || primedRef.current) return;
-    const u = new SpeechSynthesisUtterance(' ');
-    u.volume = 0;
-    u.rate = 10;
-    window.speechSynthesis.speak(u);
-    primedRef.current = true;
+    if (typeof window === 'undefined') return;
+    if (!audioRef.current) audioRef.current = new Audio();
+    audioRef.current.src = SILENT_MP3;
+    audioRef.current.play().catch(() => {});
   }
 
   function speak(text: string, onDone?: () => void) {
-    if (!window.speechSynthesis) { onDone?.(); return; }
-    window.speechSynthesis.cancel();
+    if (typeof window === 'undefined') { onDone?.(); return; }
+    if (!audioRef.current) audioRef.current = new Audio();
 
-    const doSpeak = () => {
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.rate = 1.0;
-      utterance.pitch = 1.0;
-      utterance.volume = 1.0;
+    const audio = audioRef.current;
+    // Stop any current playback
+    audio.pause();
+    audio.src = `/api/voice/tts?text=${encodeURIComponent(text)}`;
 
-      const voices = window.speechSynthesis.getVoices();
-      const preferred =
-        voices.find((v) => v.lang.startsWith('en') && v.localService) ??
-        voices.find((v) => v.lang.startsWith('en')) ??
-        null;
-      if (preferred) utterance.voice = preferred;
+    // Fallback: call onDone even if audio events never fire
+    const fallbackMs = Math.max(4000, text.length * 80);
+    const fallback = setTimeout(() => { setSpeaking(false); onDone?.(); }, fallbackMs);
 
-      // Fallback timer in case onend never fires (known iOS bug)
-      const fallbackMs = Math.max(3000, text.length * 90);
-      const fallback = setTimeout(() => { setSpeaking(false); onDone?.(); }, fallbackMs);
+    audio.onplay  = () => setSpeaking(true);
+    audio.onended = () => { clearTimeout(fallback); setSpeaking(false); onDone?.(); };
+    audio.onerror = () => { clearTimeout(fallback); setSpeaking(false); onDone?.(); };
 
-      utterance.onstart = () => setSpeaking(true);
-      utterance.onend   = () => { clearTimeout(fallback); setSpeaking(false); onDone?.(); };
-      utterance.onerror = () => { clearTimeout(fallback); setSpeaking(false); onDone?.(); };
-
-      window.speechSynthesis.speak(utterance);
-    };
-
-    // Voices may not be loaded on first call — wait for them
-    if (window.speechSynthesis.getVoices().length > 0) {
-      doSpeak();
-    } else {
-      window.speechSynthesis.addEventListener('voiceschanged', doSpeak, { once: true });
-      // Safety: if voiceschanged never fires, speak anyway after 500ms
-      setTimeout(() => { if (window.speechSynthesis.getVoices().length === 0) doSpeak(); }, 500);
-    }
+    setSpeaking(true);
+    audio.play().catch(() => { clearTimeout(fallback); setSpeaking(false); onDone?.(); });
   }
 
   function stop() {
-    window.speechSynthesis?.cancel();
+    if (audioRef.current) { audioRef.current.pause(); audioRef.current.src = ''; }
     setSpeaking(false);
   }
 

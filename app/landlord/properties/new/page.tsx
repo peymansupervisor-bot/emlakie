@@ -1,8 +1,9 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useRef, useState } from 'react';
-import { createListing, getToken } from '@/lib/landlord/client';
+import { useRef, useState, useEffect } from 'react';
+import Link from 'next/link';
+import { createListing, getProfile, getToken, updateProfile } from '@/lib/landlord/client';
 import { supabase } from '@/lib/supabase';
 
 interface PhotoItem {
@@ -171,6 +172,46 @@ export default function NewPropertyPage() {
   const [aiGenerating, setAiGenerating] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
   const filterTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [profileReady, setProfileReady] = useState<boolean | null>(null); // null = loading
+  const [profileName, setProfileName] = useState({ first_name: '', last_name: '' });
+  const [phoneInput, setPhoneInput] = useState('');
+  const [phoneSaving, setPhoneSaving] = useState(false);
+  const [phoneError, setPhoneError] = useState('');
+  const [phoneTouched, setPhoneTouched] = useState(false);
+
+  useEffect(() => {
+    getProfile().then((p) => {
+      const hasPhone = !!(p?.phone?.trim());
+      setProfileReady(hasPhone);
+      setProfileName({ first_name: p?.first_name ?? '', last_name: p?.last_name ?? '' });
+    }).catch(() => setProfileReady(false));
+  }, []);
+
+  function formatPhone(raw: string) {
+    let digits = raw.replace(/\D/g, '');
+    if (digits.startsWith('1') && digits.length >= 11) digits = digits.slice(1);
+    digits = digits.slice(0, 10);
+    if (digits.length > 6) return `(${digits.slice(0,3)}) ${digits.slice(3,6)}-${digits.slice(6)}`;
+    if (digits.length > 3) return `(${digits.slice(0,3)}) ${digits.slice(3)}`;
+    if (digits.length > 0) return `(${digits}`;
+    return '';
+  }
+
+  async function savePhone() {
+    setPhoneTouched(true);
+    const digits = phoneInput.replace(/\D/g, '');
+    if (digits.length !== 10) { setPhoneError('Please enter a valid 10-digit US phone number.'); return; }
+    setPhoneSaving(true);
+    setPhoneError('');
+    try {
+      await updateProfile({ first_name: profileName.first_name, last_name: profileName.last_name, phone: phoneInput });
+      setProfileReady(true);
+    } catch (e) {
+      setPhoneError(e instanceof Error ? e.message : 'Could not save phone number.');
+    } finally {
+      setPhoneSaving(false);
+    }
+  }
 
   async function checkContent(text: string) {
     if (!text.trim()) { setFilterWarnings([]); return; }
@@ -413,6 +454,59 @@ export default function NewPropertyPage() {
   }
 
   const steps = ['Property details', 'Description', 'Photos', 'Review'];
+
+  if (profileReady === null) {
+    return <p className="py-16 text-center text-gray-500">Loading…</p>;
+  }
+
+  if (!profileReady) {
+    const phoneInvalid = phoneTouched && phoneInput.replace(/\D/g, '').length !== 10;
+    return (
+      <div className="mx-auto max-w-2xl">
+        <Link href="/landlord" className="text-sm font-semibold text-brand-600 hover:text-brand-700">
+          ← All properties
+        </Link>
+        <h1 className="mt-4 text-3xl font-extrabold text-gray-900">Add a property</h1>
+        <div className="mt-8 rounded-2xl border border-gray-200 bg-white p-8 shadow-card">
+          <h2 className="text-lg font-extrabold text-gray-900">One more thing before you list</h2>
+          <p className="mt-1 text-sm text-gray-500">
+            A phone number is required so renters can reach you and EMLAKIE can assign a private forwarding number to your listing.
+          </p>
+
+          <div className="mt-6">
+            <label className="block text-sm font-semibold text-gray-700 mb-1">
+              Phone Number <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="tel"
+              value={phoneInput}
+              onChange={(e) => { setPhoneInput(formatPhone(e.target.value)); setPhoneTouched(true); setPhoneError(''); }}
+              onBlur={() => setPhoneTouched(true)}
+              placeholder="+1 (555) 000-0000"
+              className={`w-full rounded-xl border px-4 py-3 text-sm outline-none transition focus:ring-0 ${
+                phoneInvalid || phoneError
+                  ? 'border-red-500 bg-red-50 focus:border-red-500'
+                  : 'border-gray-300 focus:border-brand-600'
+              }`}
+            />
+            {(phoneInvalid || phoneError) && (
+              <p className="mt-1.5 text-xs font-semibold text-red-600">
+                {phoneError || 'Please enter a valid 10-digit US phone number.'}
+              </p>
+            )}
+          </div>
+
+          <button
+            onClick={savePhone}
+            disabled={phoneSaving}
+            className="mt-5 w-full rounded-xl bg-brand-600 py-3 text-sm font-bold text-white transition hover:bg-brand-700 disabled:opacity-60"
+          >
+            {phoneSaving ? 'Saving…' : 'Save & continue to listing'}
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="mx-auto max-w-2xl">

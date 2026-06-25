@@ -230,11 +230,14 @@ export default function SearchBar({ large = false }: { large?: boolean }) {
   useEffect(() => { convActiveRef.current = convActive; }, [convActive]);
   const convMessagesRef = useRef<Array<{ role: 'user' | 'assistant'; content: string }>>([]);
 
+  // Ref so continueListening always calls the latest speech.start (avoids stale closure)
+  const speechStartRef = useRef<() => void>(() => {});
+
   // Called after the AI responds — restart listening if still in conversation
   const continueListening = useCallback(() => {
     if (!convActiveRef.current) return;
     setOrbState('listening');
-    speech.start();
+    speechStartRef.current();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -291,6 +294,7 @@ export default function SearchBar({ large = false }: { large?: boolean }) {
   }, [continueListening]);
 
   const speech = useSpeechRecognition(handleVoiceResult);
+  speechStartRef.current = speech.start;
 
   function playActivationChime() {
     try {

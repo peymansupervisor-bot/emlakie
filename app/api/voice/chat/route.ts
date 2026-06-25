@@ -64,11 +64,16 @@ RULES:
 4. Reference real numbers from inventory above when helpful.
 5. If a city has no listings, suggest a trending city nearby.
 
-RESPONSE FORMAT — valid JSON only:
-No search: {"speak": "response"}
-Search ready: {"speak": "response", "action": {"type": "search", "params": {...}}}
+RESPONSE FORMAT — always output valid complete JSON, nothing else:
+No search: {"speak": "your response here"}
+Search ready: {"speak": "your response here", "action": {"type": "search", "params": {"city": "Austin", "state": "TX"}}}
 
-Params: city, state (2-letter), bedrooms ("studio"/"1"/"2"/"3"/"4+"), maxPrice, minPrice, propertyType ("apartment"/"house"/"condo"/"studio"/"townhome"), amenities (array: "Pet-friendly","Pool","Gym","Garage","In-unit laundry","Furnished","EV charging","Balcony")`;
+Available params: city, state (2-letter code), bedrooms ("studio"/"1"/"2"/"3"/"4+"), maxPrice (number), minPrice (number), propertyType ("apartment"/"house"/"condo"/"studio"/"townhome"), amenities (array of: "Pet-friendly","Pool","Gym","Garage","In-unit laundry","Furnished","EV charging","Balcony")
+
+EXAMPLES:
+User: "Los Angeles" → {"speak": "LA is popular! We have listings there. What's your budget?"}
+User: "under 2000" → {"speak": "On it!", "action": {"type": "search", "params": {"city": "Los Angeles", "state": "CA", "maxPrice": 2000}}}
+User: "pet friendly Austin" → {"speak": "Finding pet-friendly homes in Austin now!", "action": {"type": "search", "params": {"city": "Austin", "state": "TX", "amenities": ["Pet-friendly"]}}}`;
 }
 
 function extractCity(messages: Array<{ role: string; content: string }>): string | undefined {
@@ -94,7 +99,7 @@ export async function POST(req: NextRequest) {
 
     const response = await client.messages.create({
       model: 'claude-haiku-4-5-20251001',
-      max_tokens: 120,
+      max_tokens: 250,
       system,
       messages,
     });

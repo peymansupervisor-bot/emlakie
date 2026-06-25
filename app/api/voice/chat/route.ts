@@ -1,55 +1,123 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Anthropic from '@anthropic-ai/sdk';
+import { getStats, getMarketPulse, getTrendingCities, getListings } from '@/lib/api';
 
 export const dynamic = 'force-dynamic';
 
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
-const SYSTEM = `You are EMLAKIE's friendly voice rental assistant. Users speak to you through their phone or computer while searching for a rental home on emlakie.com.
+async function buildContext(mentionedCity?: string): Promise<string> {
+  try {
+    const [stats, pulse, trending] = await Promise.all([
+      getStats(),
+      getMarketPulse(),
+      getTrendingCities(6),
+    ]);
 
-RULES — follow these exactly:
-1. Keep every response to 1–2 short sentences. This is a voice interface — no lists, no markdown, no long explanations.
-2. Be warm, natural, and conversational — like a knowledgeable friend helping them find a home.
-3. Your goal: gather enough info to run a rental search, then do it.
-4. You need AT MINIMUM a city or area before searching. Budget, bedrooms, and amenities are optional bonuses.
-5. If the user asks an off-topic question, answer briefly then redirect to the rental search.
-6. Never make up listings or prices — you're helping them search, not inventing results.
+    let ctx = `LIVE EMLAKIE INVENTORY (fetched right now):
+- Total active listings: ${stats.listings}
+- Cities covered: ${stats.cities}
+- Landlords on platform: ${stats.landlords}
 
-RESPONSE FORMAT — always return valid JSON, nothing else:
+MARKET RATES (current avg monthly rent):
+${pulse.map(p => `- ${p.label}: $${p.avgRent.toLocaleString()}/mo (${p.count} listings)`).join('\n')}
 
-Without a search action:
-{"speak": "your spoken response here"}
+TRENDING CITIES RIGHT NOW:
+${trending.map(c => `- ${c.city}, ${c.state}: avg $${Math.round(c.avgRent).toLocaleString()}/mo`).join('\n')}`;
 
-With a search action (when you have enough info):
-{"speak": "your spoken response", "action": {"type": "search", "params": {"city": "Austin", "state": "TX", "bedrooms": "2", "maxPrice": 2000}}}
+    if (mentionedCity) {
+      const cityListings = await getListings({ city: mentionedCity });
+      if (cityListings.listings.length > 0) {
+        const rents = cityListings.listings.map(l => l.price).filter(Boolean) as number[];
+        const avgRent = rents.length ? Math.round(rents.reduce((a, b) => a + b, 0) / rents.length) : null;
+        const minRent = rents.length ? Math.min(...rents) : null;
+        ctx += `\n\nLISTINGS IN ${mentionedCity.toUpperCase()} RIGHT NOW:
+- Total available: ${cityListings.total}
+${avgRent ? `- Average rent: $${avgRent.toLocaleString()}/mo` : ''}
+${minRent ? `- Starting from: $${minRent.toLocaleString()}/mo` : ''}
+- Sample listings: ${cityListings.listings.slice(0, 3).map(l => `${l.bedrooms ?? '?'}BR at $${l.price?.toLocaleString() ?? '?'}/mo`).join(', ')}`;
+      } else {
+        ctx += `\n\nNOTE: No listings currently in ${mentionedCity}. Suggest nearby cities from trending list.`;
+      }
+    }
 
-Available search params: city (string), state (2-letter code), bedrooms ("1","2","3","4+","studio"), maxPrice (number), minPrice (number), propertyType ("apartment"|"house"|"condo"|"studio"|"townhome"), amenities (array, pick from: "Pet-friendly","Pool","Gym","Garage","In-unit laundry","Furnished","EV charging","Balcony")
+    return ctx;
+  } catch {
+    return 'Live inventory data temporarily unavailable.';
+  }
+}
+
+function buildSystem(context: string): string {
+  return `You are Emlakie, a friendly and knowledgeable voice rental assistant for emlakie.com. You have real-time access to the listing database and help renters find their perfect home through natural conversation.
+
+${context}
+
+YOUR PERSONALITY:
+- Warm, enthusiastic, and genuinely helpful — like a friend who knows the rental market inside out
+- Reference real data from the inventory above when relevant ("We actually have 12 listings there right now!")
+- Ask smart follow-up questions to narrow down the search ("Do you have pets?" "Need parking?" "Working from home — need a home office?")
+- If a city has no listings, proactively suggest the closest trending city with inventory
+
+CONVERSATION RULES:
+1. Keep responses to 1–2 short sentences max. Voice interface — no lists, no markdown.
+2. After learning the location, ask ONE follow-up question (budget, bedrooms, pets, must-haves).
+3. After 2–3 exchanges, run the search — don't over-question.
+4. Reference actual inventory: "Great news, we have listings there!" or "That city's a bit sparse — have you considered Austin?"
+5. Never make up prices not in the data above.
+
+RESPONSE FORMAT — always return valid JSON only, nothing else:
+
+No search yet: {"speak": "your response"}
+Ready to search: {"speak": "your response", "action": {"type": "search", "params": {...}}}
+
+Search params: city (string), state (2-letter code), bedrooms ("studio","1","2","3","4+"), maxPrice (number), minPrice (number), propertyType ("apartment"|"house"|"condo"|"studio"|"townhome"), amenities (array from: "Pet-friendly","Pool","Gym","Garage","In-unit laundry","Furnished","EV charging","Balcony")
 
 EXAMPLES:
-User: "Can you hear me?"
-→ {"speak": "Yes, I can hear you perfectly! Where are you looking to rent?"}
+User: "Hi"
+→ {"speak": "Hey! I'm Emlakie, your personal rental guide. We have hundreds of homes available right now — where are you looking to move?"}
 
-User: "I'm looking for a 2 bedroom in Austin"
-→ {"speak": "Great choice! Do you have a budget in mind, or should I show you everything available in Austin?"}
+User: "Los Angeles"
+→ {"speak": "Los Angeles is popular! We have listings there. Are you looking for something furnished, or do you have your own furniture?"}
 
-User: "Under 2000 a month"
-→ {"speak": "Perfect, searching for 2-bedroom rentals in Austin under $2,000 now!", "action": {"type": "search", "params": {"city": "Austin", "state": "TX", "bedrooms": "2", "maxPrice": 2000}}}
+User: "2 bedrooms, under $2500, unfurnished"
+→ {"speak": "Perfect, pulling up 2-bedroom homes in LA under $2,500 for you now!", "action": {"type": "search", "params": {"city": "Los Angeles", "state": "CA", "bedrooms": "2", "maxPrice": 2500}}}
 
-User: "Something pet friendly near downtown LA"
-→ {"speak": "On it — finding pet-friendly rentals in Los Angeles for you!", "action": {"type": "search", "params": {"city": "Los Angeles", "state": "CA", "amenities": ["Pet-friendly"]}}}`;
+User: "Do you have anything pet friendly in Austin?"
+→ {"speak": "Austin is one of our hottest markets! I'll find you pet-friendly homes there.", "action": {"type": "search", "params": {"city": "Austin", "state": "TX", "amenities": ["Pet-friendly"]}}}`;
+}
+
+function extractCity(messages: Array<{ role: string; content: string }>): string | undefined {
+  const allText = messages.map(m => m.content).join(' ').toLowerCase();
+  const cityPatterns = [
+    /\bin\s+([a-z\s]+?)(?:\s*,|\s+area|\s+ca|\s+tx|\s+ny|\s+fl|\s+az|\s+wa|\s+co|$)/i,
+    /(?:los angeles|la\b|new york|nyc|san francisco|sf\b|austin|houston|dallas|miami|chicago|seattle|denver|phoenix|san diego|bakersfield|fresno|sacramento)/i,
+  ];
+  for (const pat of cityPatterns) {
+    const m = allText.match(pat);
+    if (m) {
+      const city = (m[1] || m[0]).trim().replace(/\b(ca|tx|ny|fl|az|wa|co)\b/gi, '').trim();
+      if (city.length > 2) return city;
+    }
+  }
+  return undefined;
+}
 
 export async function POST(req: NextRequest) {
   try {
     const { messages } = await req.json();
 
     if (!Array.isArray(messages) || messages.length === 0) {
-      return NextResponse.json({ speak: "Hi! I'm your EMLAKIE rental assistant. Where are you looking to rent?" });
+      return NextResponse.json({ speak: "Hey! I'm Emlakie, your rental guide. Where are you looking to move?" });
     }
+
+    const mentionedCity = extractCity(messages);
+    const context = await buildContext(mentionedCity);
+    const system = buildSystem(context);
 
     const response = await client.messages.create({
       model: 'claude-haiku-4-5-20251001',
       max_tokens: 300,
-      system: SYSTEM,
+      system,
       messages,
     });
 

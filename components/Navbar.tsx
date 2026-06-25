@@ -56,7 +56,7 @@ export default function Navbar() {
             </button>
             <Link
               href="/landlord/login"
-              className="animate-glow-pulse rounded-lg bg-brand-600 px-5 py-2.5 text-sm font-bold text-white transition hover:bg-brand-700"
+              className="rounded-lg bg-brand-600 px-5 py-2.5 text-sm font-bold text-white transition hover:bg-brand-700"
             >
               List Property FREE
             </Link>

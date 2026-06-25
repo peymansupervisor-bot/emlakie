@@ -14,11 +14,11 @@ const playfair = Playfair_Display({ subsets: ['latin'], variable: '--font-playfa
 export const metadata: Metadata = {
   metadataBase: new URL('https://emlakie.com'),
   title: {
-    default: 'EMLAKIE — List Rentals Free & Find Tenants Fast',
+    default: 'EMLAKIE — Rentals Direct from Landlords',
     template: '%s | EMLAKIE',
   },
   description:
-    'Post your rental listing free on EMLAKIE. Reach thousands of qualified tenants, no broker fees, no middleman. Browse rentals or list your property today.',
+    'Search houses, apartments, and condos for rent directly from landlords. No broker fees, no middlemen. List your rental free in under 5 minutes.',
   alternates: {
     canonical: 'https://emlakie.com',
   },

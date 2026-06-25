@@ -6,75 +6,89 @@ export default function ListingCard({ listing, priority = false }: { listing: Li
   const photo = listing.photos?.[0];
 
   return (
-    <article className="group relative overflow-hidden rounded-xl bg-white shadow-card transition hover:shadow-card-hover">
+    <article className="group relative overflow-hidden rounded-2xl border border-gray-100 bg-white transition hover:border-gray-200 hover:shadow-card-hover">
       {/* Stretched link covers the whole card */}
       <Link href={`/rentals/${listing.slug ?? listing.id}`} className="absolute inset-0 z-10" aria-label={listing.title} />
 
-      <div className="relative aspect-[16/9] bg-gray-100">
+      {/* Photo */}
+      <div className="relative aspect-[4/3] overflow-hidden bg-gray-100">
         {photo ? (
           <img
             src={photo}
             alt={`${formatPrice(listing.price)} — ${formatBeds(listing.bedrooms)}, ${formatBaths(listing.bathrooms)} ${formatPropertyType(listing.property_type)} at ${listing.address}, ${listing.city}`}
             loading={priority ? 'eager' : 'lazy'}
-            className="absolute inset-0 h-full w-full object-cover transition duration-300 group-hover:scale-105"
+            className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.03]"
           />
         ) : (
-          <div className="flex h-full items-center justify-center text-gray-500">
-            <svg viewBox="0 0 32 32" className="h-12 w-12 fill-current opacity-40" aria-hidden="true">
+          <div className="flex h-full items-center justify-center bg-gray-50">
+            <svg viewBox="0 0 32 32" className="h-10 w-10 fill-gray-300" aria-hidden="true">
               <path d="M16 3 3 14h4v13h8v-8h2v8h8V14h4L16 3z" />
             </svg>
           </div>
         )}
-        {listing.isSample && (
-          <span className="absolute left-3 top-3 rounded-md bg-gray-900/70 px-2 py-1 text-xs font-semibold text-white">
-            Sample
-          </span>
-        )}
-        {!listing.isSample && listing.listing_source === 'owner' && (
-          <span className="absolute left-3 top-3 rounded-md bg-brand-600/90 px-2 py-1 text-xs font-semibold text-white">
-            By Owner
-          </span>
-        )}
-        {!listing.isSample && listing.listing_source === 'broker' && (
-          <span className="absolute left-3 top-3 rounded-md bg-blue-600/90 px-2 py-1 text-xs font-semibold text-white">
-            Broker Listed
-          </span>
-        )}
-        {!listing.isSample && listing.dom != null && listing.dom <= 6 && (
-          <span className="absolute bottom-3 left-3 rounded-md bg-green-500 px-2 py-1 text-xs font-bold text-white">
-            New
-          </span>
-        )}
-        <span className="absolute right-3 top-3 rounded-md bg-white/90 px-2 py-1 text-xs font-semibold text-gray-700">
+
+        {/* Badges — top-left */}
+        <div className="absolute left-3 top-3 flex gap-1.5">
+          {listing.isSample && (
+            <span className="rounded-full bg-gray-900/75 px-2.5 py-1 text-[11px] font-semibold text-white backdrop-blur-sm">
+              Sample
+            </span>
+          )}
+          {!listing.isSample && listing.listing_source === 'owner' && (
+            <span className="rounded-full bg-brand-600/90 px-2.5 py-1 text-[11px] font-semibold text-white backdrop-blur-sm">
+              By Owner
+            </span>
+          )}
+          {!listing.isSample && listing.listing_source === 'broker' && (
+            <span className="rounded-full bg-blue-600/90 px-2.5 py-1 text-[11px] font-semibold text-white backdrop-blur-sm">
+              Broker
+            </span>
+          )}
+          {!listing.isSample && listing.dom != null && listing.dom <= 6 && (
+            <span className="rounded-full bg-green-500 px-2.5 py-1 text-[11px] font-bold text-white">
+              New
+            </span>
+          )}
+        </div>
+
+        {/* Property type — top-right */}
+        <span className="absolute right-3 top-3 rounded-full bg-black/40 px-2.5 py-1 text-[11px] font-semibold text-white backdrop-blur-sm">
           {formatPropertyType(listing.property_type)}
         </span>
       </div>
 
+      {/* Details */}
       <div className="p-4">
-        <p className="text-xl font-extrabold text-gray-900">{formatPrice(listing.price)}</p>
+        <div className="flex items-start justify-between gap-2">
+          <p className="text-xl font-extrabold leading-tight text-gray-900">{formatPrice(listing.price)}<span className="ml-0.5 text-sm font-medium text-gray-400">/mo</span></p>
+          {listing.dom === 0 && (
+            <span className="mt-0.5 shrink-0 text-[11px] font-semibold text-brand-600">Listed today</span>
+          )}
+        </div>
+
         <p className="mt-1 text-sm font-medium text-gray-700">
-          {formatBeds(listing.bedrooms)} · {formatBaths(listing.bathrooms)} · {formatSqft(listing.sqft)}
+          {formatBeds(listing.bedrooms)} · {formatBaths(listing.bathrooms)}{listing.sqft ? ` · ${formatSqft(listing.sqft)}` : ''}
         </p>
+
         <p className="mt-1 truncate text-sm text-gray-500">
-          {listing.address}, {listing.city}
-          {listing.state ? `, ${listing.state}` : ''}
+          {listing.address}, {listing.city}{listing.state ? `, ${listing.state}` : ''}
         </p>
+
         {listing.listing_source === 'broker' && listing.license_number && (
-          <p className="mt-0.5 text-xs text-blue-600 font-medium">License # {listing.license_number}</p>
+          <p className="mt-1 text-xs text-blue-600">Lic. #{listing.license_number}</p>
         )}
-        <div className="mt-2 flex flex-wrap items-center gap-2">
+
+        <div className="mt-3 flex items-center gap-2">
           {listing.zip && (
             <Link
               href={`/homes/${listing.zip}`}
-              className="relative z-20 rounded-full bg-gray-100 px-3 py-1.5 text-xs font-semibold text-gray-600 hover:bg-brand-50 hover:text-brand-700"
+              className="relative z-20 rounded-full bg-gray-100 px-2.5 py-1 text-xs font-medium text-gray-500 transition hover:bg-brand-50 hover:text-brand-700"
             >
               {listing.zip}
             </Link>
           )}
-          {listing.dom != null && (
-            <span className="text-xs text-gray-500">
-              {listing.dom === 0 ? 'Listed today' : `${listing.dom} days on market`}
-            </span>
+          {listing.dom != null && listing.dom > 0 && (
+            <span className="text-xs text-gray-400">{listing.dom}d on market</span>
           )}
         </div>
       </div>

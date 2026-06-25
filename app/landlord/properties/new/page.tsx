@@ -50,6 +50,7 @@ interface FormData {
   sqft: string;
   price: string;
   availableFrom: string;
+  phone: string;
   title: string;
   description: string;
   amenities: string[];
@@ -65,6 +66,7 @@ const empty: FormData = {
   propertyType: 'house', ownershipType: '',
   bedrooms: '1', bathrooms: '1',
   sqft: '', price: '', availableFrom: '',
+  phone: '',
   title: '', description: '', amenities: [],
   isBroker: null,
   licenseNumber: '',
@@ -172,19 +174,13 @@ export default function NewPropertyPage() {
   const [aiGenerating, setAiGenerating] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
   const filterTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const [profileReady, setProfileReady] = useState<boolean | null>(null); // null = loading
   const [profileName, setProfileName] = useState({ first_name: '', last_name: '' });
-  const [phoneInput, setPhoneInput] = useState('');
-  const [phoneSaving, setPhoneSaving] = useState(false);
-  const [phoneError, setPhoneError] = useState('');
-  const [phoneTouched, setPhoneTouched] = useState(false);
 
   useEffect(() => {
     getProfile().then((p) => {
-      const hasPhone = !!(p?.phone?.trim());
-      setProfileReady(hasPhone);
       setProfileName({ first_name: p?.first_name ?? '', last_name: p?.last_name ?? '' });
-    }).catch(() => setProfileReady(false));
+      if (p?.phone?.trim()) setForm((f) => ({ ...f, phone: p.phone!.trim() }));
+    }).catch(() => {});
   }, []);
 
   function formatPhone(raw: string) {
@@ -195,22 +191,6 @@ export default function NewPropertyPage() {
     if (digits.length > 3) return `(${digits.slice(0,3)}) ${digits.slice(3)}`;
     if (digits.length > 0) return `(${digits}`;
     return '';
-  }
-
-  async function savePhone() {
-    setPhoneTouched(true);
-    const digits = phoneInput.replace(/\D/g, '');
-    if (digits.length !== 10) { setPhoneError('Please enter a valid 10-digit US phone number.'); return; }
-    setPhoneSaving(true);
-    setPhoneError('');
-    try {
-      await updateProfile({ first_name: profileName.first_name, last_name: profileName.last_name, phone: phoneInput });
-      setProfileReady(true);
-    } catch (e) {
-      setPhoneError(e instanceof Error ? e.message : 'Could not save phone number.');
-    } finally {
-      setPhoneSaving(false);
-    }
   }
 
   async function checkContent(text: string) {
@@ -381,6 +361,8 @@ export default function NewPropertyPage() {
       if (!form.state.trim()) return 'State is required.';
       if (!form.price.trim() || isNaN(+form.price) || +form.price < 100) return 'Enter a valid monthly rent.';
       if (form.propertyType === 'studio' && !form.ownershipType) return 'Please specify whether this studio is an apartment unit or a condominium.';
+      const phoneDigits = form.phone.replace(/\D/g, '');
+      if (phoneDigits.length !== 10) return 'Enter a valid 10-digit US phone number so renters can reach you.';
     }
     if (step === 2) {
       if (!form.title.trim()) return 'Add a listing title.';
@@ -405,7 +387,10 @@ export default function NewPropertyPage() {
     setBusy(true);
     setError('');
     try {
-      // ── Step 1: get auth user ──────────────────────────────────────────────
+      // ── Step 1: persist phone to profile (collected in wizard Step 1) ────────
+      await updateProfile({ first_name: profileName.first_name, last_name: profileName.last_name, phone: form.phone });
+
+      // ── Step 2: get auth user ──────────────────────────────────────────────
       console.log('[submit] step 1: getting auth user');
       const { data: { user } } = await supabase.auth.getUser();
       const uid = user?.id ?? 'anon';
@@ -454,59 +439,6 @@ export default function NewPropertyPage() {
   }
 
   const steps = ['Property details', 'Description', 'Photos', 'Review'];
-
-  if (profileReady === null) {
-    return <p className="py-16 text-center text-gray-500">Loading…</p>;
-  }
-
-  if (!profileReady) {
-    const phoneInvalid = phoneTouched && phoneInput.replace(/\D/g, '').length !== 10;
-    return (
-      <div className="mx-auto max-w-2xl">
-        <Link href="/landlord" className="text-sm font-semibold text-brand-600 hover:text-brand-700">
-          ← All properties
-        </Link>
-        <h1 className="mt-4 text-3xl font-extrabold text-gray-900">Add a property</h1>
-        <div className="mt-8 rounded-2xl border border-gray-200 bg-white p-8 shadow-card">
-          <h2 className="text-lg font-extrabold text-gray-900">One more thing before you list</h2>
-          <p className="mt-1 text-sm text-gray-500">
-            A phone number is required so renters can reach you and EMLAKIE can assign a private forwarding number to your listing.
-          </p>
-
-          <div className="mt-6">
-            <label className="block text-sm font-semibold text-gray-700 mb-1">
-              Phone Number <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="tel"
-              value={phoneInput}
-              onChange={(e) => { setPhoneInput(formatPhone(e.target.value)); setPhoneTouched(true); setPhoneError(''); }}
-              onBlur={() => setPhoneTouched(true)}
-              placeholder="+1 (555) 000-0000"
-              className={`w-full rounded-xl border px-4 py-3 text-sm outline-none transition focus:ring-0 ${
-                phoneInvalid || phoneError
-                  ? 'border-red-500 bg-red-50 focus:border-red-500'
-                  : 'border-gray-300 focus:border-brand-600'
-              }`}
-            />
-            {(phoneInvalid || phoneError) && (
-              <p className="mt-1.5 text-xs font-semibold text-red-600">
-                {phoneError || 'Please enter a valid 10-digit US phone number.'}
-              </p>
-            )}
-          </div>
-
-          <button
-            onClick={savePhone}
-            disabled={phoneSaving}
-            className="mt-5 w-full rounded-xl bg-brand-600 py-3 text-sm font-bold text-white transition hover:bg-brand-700 disabled:opacity-60"
-          >
-            {phoneSaving ? 'Saving…' : 'Save & continue to listing'}
-          </button>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="mx-auto max-w-2xl">
@@ -777,6 +709,20 @@ export default function NewPropertyPage() {
                 onChange={(e) => set('availableFrom', e.target.value)} />
             </div>
           </div>
+          <div>
+            <label htmlFor="new-phone" className={labelCls}>Your phone number *</label>
+            <input
+              id="new-phone"
+              type="tel"
+              className={inputCls}
+              placeholder="(555) 000-0000"
+              value={form.phone}
+              onChange={(e) => set('phone', formatPhone(e.target.value))}
+            />
+            <p className="mt-1 text-xs text-gray-500">
+              Renters will reach you at this number. EMLAKIE assigns a private forwarding number to protect your privacy.
+            </p>
+          </div>
         </div>
       )}
 
@@ -842,17 +788,6 @@ export default function NewPropertyPage() {
             <input id="new-virtual-tour" className={inputCls} type="url" placeholder="https://my.matterport.com/show/?m=... or YouTube link"
               value={form.virtualTourUrl} onChange={(e) => set('virtualTourUrl', e.target.value)} />
             <p className="mt-1 text-xs text-gray-500">Paste a Matterport 3D tour or YouTube walkthrough link. Renters can view it directly on your listing.</p>
-            <div className="mt-2 rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-xs text-green-800">
-              <p className="font-semibold mb-1">📹 Want to upload a video tour to the EMLAKIE YouTube channel?</p>
-              <ol className="list-decimal list-inside space-y-1 text-green-700">
-                <li>Go to <span className="font-medium">youtube.com</span> and sign in with:<br />
-                  <span className="font-mono font-medium">Email: {process.env.NEXT_PUBLIC_YT_UPLOAD_EMAIL}</span><br />
-                  <span className="font-mono font-medium">Password: {process.env.NEXT_PUBLIC_YT_UPLOAD_PASSWORD}</span>
-                </li>
-                <li>Click <span className="font-medium">+ Create → Upload video</span> and upload your property walkthrough</li>
-                <li>Set visibility to <span className="font-medium">Public</span>, then copy the video link and paste it above</li>
-              </ol>
-            </div>
           </div>
           <div>
             <p className={labelCls} id="amenities-label">Amenities</p>

@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { signInWithPassword, signUpWithPassword, resetPassword, signInWithOAuth } from '@/lib/landlord/client';
+import { signInWithPassword, signUpWithPassword, resetPassword, signInWithOAuth, updateProfile } from '@/lib/landlord/client';
 
 type Step = 'login' | 'signup' | 'forgot' | 'forgot-sent';
 
@@ -22,6 +22,16 @@ const EyeOffIcon = () => (
 const inputClass = 'w-full rounded-xl border border-gray-300 px-4 py-3 text-base outline-none focus:border-green-600 focus:ring-1 focus:ring-green-600';
 const btnClass = 'w-full rounded-xl py-3 font-semibold text-white transition hover:opacity-90 disabled:opacity-60';
 
+function formatPhone(raw: string) {
+  let digits = raw.replace(/\D/g, '');
+  if (digits.startsWith('1') && digits.length >= 11) digits = digits.slice(1);
+  digits = digits.slice(0, 10);
+  if (digits.length > 6) return `(${digits.slice(0,3)}) ${digits.slice(3,6)}-${digits.slice(6)}`;
+  if (digits.length > 3) return `(${digits.slice(0,3)}) ${digits.slice(3)}`;
+  if (digits.length > 0) return `(${digits}`;
+  return '';
+}
+
 export default function LandlordLoginPage() {
   const router = useRouter();
   const [step, setStep] = useState<Step>('login');
@@ -31,6 +41,9 @@ export default function LandlordLoginPage() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
+  const [signupFirstName, setSignupFirstName] = useState('');
+  const [signupLastName, setSignupLastName] = useState('');
+  const [signupPhone, setSignupPhone] = useState('');
 
   async function onLogin(e: React.FormEvent) {
     e.preventDefault();
@@ -45,9 +58,15 @@ export default function LandlordLoginPage() {
 
   async function onSignup(e: React.FormEvent) {
     e.preventDefault();
+    if (!signupFirstName.trim()) { setError('First name is required.'); return; }
+    if (!signupLastName.trim())  { setError('Last name is required.'); return; }
+    const digits = signupPhone.replace(/\D/g, '');
+    if (digits.length !== 10)    { setError('Enter a valid 10-digit phone number.'); return; }
     setBusy(true); setError('');
     try {
       await signUpWithPassword(email.trim().toLowerCase(), password);
+      // Save name + phone immediately so the profile is complete from day one
+      await updateProfile({ first_name: signupFirstName.trim(), last_name: signupLastName.trim(), phone: signupPhone });
       setMessage('Account created! Check your email to confirm, then sign in.');
       setStep('login');
     } catch (err) {
@@ -220,9 +239,29 @@ export default function LandlordLoginPage() {
           <h2 className="text-3xl font-extrabold text-gray-900">Create account</h2>
           <p className="mt-2 text-gray-500">List your rentals on EMLAKIE for free.</p>
           <form onSubmit={onSignup} className="mt-8 space-y-4">
+            <div className="grid grid-cols-2 gap-3">
+              <input
+                type="text" value={signupFirstName}
+                onChange={(e) => setSignupFirstName(e.target.value)}
+                placeholder="First name *" aria-label="First name" autoComplete="given-name" required
+                className={inputClass}
+              />
+              <input
+                type="text" value={signupLastName}
+                onChange={(e) => setSignupLastName(e.target.value)}
+                placeholder="Last name *" aria-label="Last name" autoComplete="family-name" required
+                className={inputClass}
+              />
+            </div>
+            <input
+              type="tel" value={signupPhone}
+              onChange={(e) => setSignupPhone(formatPhone(e.target.value))}
+              placeholder="Phone number * (555) 000-0000" aria-label="Phone number" autoComplete="tel" required
+              className={inputClass}
+            />
             <input id="signup-email" type="email" value={email} onChange={(e) => setEmail(e.target.value)}
-              placeholder="Email address" aria-label="Email address" autoComplete="email" required className={inputClass} />
-            {passwordField('new-password', 'Password (min 8 characters)', 'signup-password')}
+              placeholder="Email address *" aria-label="Email address" autoComplete="email" required className={inputClass} />
+            {passwordField('new-password', 'Password * (min 8 characters)', 'signup-password')}
             <button type="submit" disabled={busy} className={btnClass} style={{ backgroundColor: '#16a34a' }}>
               {busy ? 'Creating account…' : 'Create account'}
             </button>

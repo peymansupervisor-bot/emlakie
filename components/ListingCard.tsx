@@ -22,7 +22,7 @@ import ListingInsight from '@/components/ui/ListingInsight';
 //
 // Future: return listing.ai_summary when the field is populated server-side.
 
-type InsightResult = { text: string; suppressOwnerBadge?: boolean } | null;
+type InsightResult = { text: string } | null;
 
 function deriveInsight(listing: Listing): InsightResult {
   const a = listing.amenities ?? [];
@@ -90,7 +90,7 @@ function deriveInsight(listing: Listing): InsightResult {
   // Suppress the photo badge so the same idea isn't said twice on the card.
 
   if (listing.listing_source === 'owner')
-    return { text: 'Owner-listed — no agent in the middle, so questions get answered directly and faster.', suppressOwnerBadge: true };
+    return { text: 'Owner-listed — no agent in the middle, so questions get answered directly and faster.' };
 
   // Return null — better to omit than to show something generic.
   return null;
@@ -176,7 +176,6 @@ export default function ListingCard({
   const href = `/rentals/${listing.slug ?? listing.id}`;
   const insightResult = deriveInsight(listing);
   const insight = insightResult?.text ?? null;
-  const showOwnerBadge = listing.listing_source === 'owner' && !insightResult?.suppressOwnerBadge;
   const badges = smartBadges(listing.amenities ?? []);
   const avail = availLabel(listing.availableFrom);
   const isNew = listing.dom != null && listing.dom <= 1;
@@ -213,11 +212,6 @@ export default function ListingCard({
           {listing.isSample && (
             <span className="rounded-full bg-gray-800/70 px-2.5 py-1 text-[11px] font-semibold text-white backdrop-blur-sm">
               Sample
-            </span>
-          )}
-          {!listing.isSample && showOwnerBadge && (
-            <span className="rounded-full bg-brand-600/85 px-2.5 py-1 text-[11px] font-semibold text-white backdrop-blur-sm">
-              By Owner
             </span>
           )}
           {!listing.isSample && listing.listing_source === 'broker' && (

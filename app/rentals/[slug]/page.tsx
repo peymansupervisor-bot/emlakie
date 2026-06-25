@@ -38,11 +38,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       ? listing.description.slice(0, 155).replace(/\s+\S*$/, '') + '…'
       : listing.description
     : `${formatBeds(listing.bedrooms)}, ${formatBaths(listing.bathrooms)} ${formatPropertyType(listing.property_type)} for rent at ${formatPrice(listing.price)}/mo in ${listing.city}, ${listing.state}. Contact the landlord directly on EMLAKIE — no broker fees.`;
-  const ogPhotoUrl = listing.photos?.[0]
-    ? listing.photos[0].replace(
-        /\/storage\/v1\/object\/public\//,
-        '/storage/v1/render/image/public/'
-      ) + '?width=1200&height=630&resize=cover&format=jpeg&quality=85'
+  const rawPhoto = listing.photos?.[0] ?? null;
+  // Only use Supabase render API for WebP uploads — MLS photos are already JPEG and render API returns 400 for them
+  const ogPhotoUrl = rawPhoto
+    ? rawPhoto.endsWith('.webp')
+      ? rawPhoto.replace('/storage/v1/object/public/', '/storage/v1/render/image/public/') + '?width=1200&height=630&resize=cover&format=jpeg&quality=85'
+      : rawPhoto
     : null;
   const ogImage = ogPhotoUrl
     ? [{ url: ogPhotoUrl, width: 1200, height: 630, alt: listing.title }]

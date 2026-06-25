@@ -24,7 +24,7 @@ export async function GET(req: NextRequest) {
   const buffer = Buffer.from(await res.arrayBuffer());
   const jpeg = await sharp(buffer).resize(1200, 630, { fit: 'cover' }).jpeg({ quality: 85 }).toBuffer();
 
-  return new NextResponse(jpeg, {
+  return new NextResponse(new Uint8Array(jpeg), {
     headers: {
       'Content-Type': 'image/jpeg',
       'Cache-Control': 'public, max-age=86400, stale-while-revalidate=604800',

@@ -49,9 +49,12 @@ const MODES: { id: Mode; label: string; sublabel: string; icon: React.ReactNode 
 
 // ── Speech recognition (Web Speech API) ──────────────────────────────────────
 // supported is derived in useEffect so SSR and client hydrate identically.
+type SpeechError = 'not-allowed' | 'no-speech' | 'other' | null;
+
 function useSpeechRecognition(onResult: (text: string) => void) {
   const [supported, setSupported] = useState(false);
   const [listening, setListening] = useState(false);
+  const [error, setError] = useState<SpeechError>(null);
   const recogRef = useRef<SpeechRecognition | null>(null);
   // Keep onResult in a ref so the recognition callback always calls the latest version
   const onResultRef = useRef(onResult);
@@ -63,6 +66,7 @@ function useSpeechRecognition(onResult: (text: string) => void) {
 
   function start() {
     if (!supported || listening) return;
+    setError(null);
     const SR = (window as any).SpeechRecognition ?? (window as any).webkitSpeechRecognition;
     const recog: SpeechRecognition = new SR();
     recog.lang = 'en-US';
@@ -70,13 +74,25 @@ function useSpeechRecognition(onResult: (text: string) => void) {
     recog.maxAlternatives = 1;
     recog.onresult = (e: SpeechRecognitionEvent) => {
       const text = e.results[0]?.[0]?.transcript ?? '';
-      if (text) onResultRef.current(text);
+      if (text) {
+        setError(null);
+        onResultRef.current(text);
+      }
     };
     recog.onend = () => setListening(false);
-    recog.onerror = () => setListening(false);
+    recog.onerror = (e: SpeechRecognitionErrorEvent) => {
+      setListening(false);
+      if (e.error === 'not-allowed') setError('not-allowed');
+      else if (e.error === 'no-speech') setError('no-speech');
+      else setError('other');
+    };
     recogRef.current = recog;
-    recog.start();
-    setListening(true);
+    try {
+      recog.start();
+      setListening(true);
+    } catch {
+      setError('other');
+    }
   }
 
   function stop() {
@@ -84,7 +100,9 @@ function useSpeechRecognition(onResult: (text: string) => void) {
     setListening(false);
   }
 
-  return { supported, listening, start, stop };
+  function clearError() { setError(null); }
+
+  return { supported, listening, error, start, stop, clearError };
 }
 
 export default function SearchBar({ large = false }: { large?: boolean }) {
@@ -310,6 +328,9 @@ export default function SearchBar({ large = false }: { large?: boolean }) {
             onHover={setActiveIdx}
           />
         )}
+        {speech.error && (
+          <MicError error={speech.error} onDismiss={speech.clearError} />
+        )}
       </div>
     );
   }
@@ -519,6 +540,35 @@ export default function SearchBar({ large = false }: { large?: boolean }) {
           onHover={setActiveIdx}
         />
       )}
+      {speech.error && (
+        <MicError error={speech.error} onDismiss={speech.clearError} />
+      )}
+    </div>
+  );
+}
+
+// ── Mic error banner ─────────────────────────────────────────────────────────
+function MicError({ error, onDismiss }: { error: SpeechError; onDismiss: () => void }) {
+  const messages: Record<NonNullable<SpeechError>, string> = {
+    'not-allowed': 'Microphone access was denied. Click the lock icon in your browser\'s address bar to allow it, then try again.',
+    'no-speech': 'No speech was detected. Please try again.',
+    'other': 'Voice search failed. Please try again.',
+  };
+  if (!error) return null;
+  return (
+    <div
+      role="alert"
+      className="absolute left-0 right-0 top-full z-50 mt-1 flex items-start gap-2.5 rounded-xl border border-red-100 bg-red-50 px-4 py-3 text-sm text-red-700 shadow-sm"
+    >
+      <svg viewBox="0 0 20 20" fill="currentColor" className="mt-0.5 h-4 w-4 shrink-0 text-red-400" aria-hidden="true">
+        <path fillRule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clipRule="evenodd" />
+      </svg>
+      <span className="flex-1">{messages[error]}</span>
+      <button type="button" onClick={onDismiss} className="shrink-0 text-red-400 hover:text-red-600" aria-label="Dismiss">
+        <svg viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4">
+          <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
+        </svg>
+      </button>
     </div>
   );
 }

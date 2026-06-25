@@ -47,6 +47,41 @@ const MODES: { id: Mode; label: string; sublabel: string; icon: React.ReactNode 
   },
 ];
 
+// ── Speech recognition (Web Speech API) ──────────────────────────────────────
+// Returns null when the browser doesn't support it — mic button is hidden then.
+function useSpeechRecognition(onResult: (text: string) => void) {
+  const [listening, setListening] = useState(false);
+  const recogRef = useRef<SpeechRecognition | null>(null);
+
+  const supported = typeof window !== 'undefined' &&
+    ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window);
+
+  function start() {
+    if (!supported || listening) return;
+    const SR = (window as any).SpeechRecognition ?? (window as any).webkitSpeechRecognition;
+    const recog: SpeechRecognition = new SR();
+    recog.lang = 'en-US';
+    recog.interimResults = false;
+    recog.maxAlternatives = 1;
+    recog.onresult = (e: SpeechRecognitionEvent) => {
+      const text = e.results[0]?.[0]?.transcript ?? '';
+      if (text) onResult(text);
+    };
+    recog.onend = () => setListening(false);
+    recog.onerror = () => setListening(false);
+    recogRef.current = recog;
+    recog.start();
+    setListening(true);
+  }
+
+  function stop() {
+    recogRef.current?.stop();
+    setListening(false);
+  }
+
+  return { supported, listening, start, stop };
+}
+
 export default function SearchBar({ large = false }: { large?: boolean }) {
   const router = useRouter();
   const [q, setQ] = useState('');
@@ -58,6 +93,15 @@ export default function SearchBar({ large = false }: { large?: boolean }) {
   const [geoState, setGeoState] = useState<'idle' | 'loading' | 'error'>('idle');
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  const speech = useSpeechRecognition((text) => {
+    setQ(text);
+    // Auto-submit after voice input so the user doesn't have to press Search
+    if (mode === 'location') {
+      router.push(`/rentals?q=${encodeURIComponent(text.trim())}`);
+    }
+    // In Describe mode just populate the field — let the user confirm before AI call
+  });
 
   useEffect(() => {
     if (mode !== 'location') { setSuggestions([]); setOpen(false); return; }
@@ -215,6 +259,30 @@ export default function SearchBar({ large = false }: { large?: boolean }) {
             aria-activedescendant={activeIdx >= 0 ? `search-suggestions-sm-${activeIdx}` : undefined}
             className="min-w-0 flex-1 px-4 py-3 text-base text-gray-900 placeholder-gray-500 outline-none focus:ring-2 focus:ring-inset focus:ring-brand-500"
           />
+          {speech.supported && (
+            <button
+              type="button"
+              onClick={speech.listening ? speech.stop : speech.start}
+              aria-label={speech.listening ? 'Stop listening' : 'Search by voice'}
+              className={[
+                'flex items-center justify-center px-3 transition-colors',
+                speech.listening ? 'text-red-500 hover:text-red-600' : 'text-gray-400 hover:text-brand-600',
+              ].join(' ')}
+            >
+              {speech.listening ? (
+                <span className="relative flex h-5 w-5 items-center justify-center">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-400 opacity-60" />
+                  <svg viewBox="0 0 24 24" className="h-4 w-4 fill-current" aria-hidden="true">
+                    <path d="M12 1a4 4 0 0 1 4 4v6a4 4 0 0 1-8 0V5a4 4 0 0 1 4-4Zm-1.5 14.9A7.01 7.01 0 0 1 5 9H3a9 9 0 0 0 8 8.94V20H8v2h8v-2h-3v-2.06A9 9 0 0 0 21 9h-2a7 7 0 0 1-7 7 6.98 6.98 0 0 1-1.5-.1Z" />
+                  </svg>
+                </span>
+              ) : (
+                <svg viewBox="0 0 24 24" className="h-4 w-4 fill-current" aria-hidden="true">
+                  <path d="M12 1a4 4 0 0 1 4 4v6a4 4 0 0 1-8 0V5a4 4 0 0 1 4-4Zm-1.5 14.9A7.01 7.01 0 0 1 5 9H3a9 9 0 0 0 8 8.94V20H8v2h8v-2h-3v-2.06A9 9 0 0 0 21 9h-2a7 7 0 0 1-7 7 6.98 6.98 0 0 1-1.5-.1Z" />
+                </svg>
+              )}
+            </button>
+          )}
           <button
             type="submit"
             aria-label="Search"
@@ -385,6 +453,30 @@ export default function SearchBar({ large = false }: { large?: boolean }) {
               <svg viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4">
                 <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
               </svg>
+            </button>
+          )}
+          {speech.supported && (
+            <button
+              type="button"
+              onClick={speech.listening ? speech.stop : speech.start}
+              aria-label={speech.listening ? 'Stop listening' : 'Search by voice'}
+              className={[
+                'flex items-center justify-center px-3 transition-colors',
+                speech.listening ? 'text-red-500 hover:text-red-600' : 'text-gray-400 hover:text-brand-600',
+              ].join(' ')}
+            >
+              {speech.listening ? (
+                <span className="relative flex h-5 w-5 items-center justify-center">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-400 opacity-60" />
+                  <svg viewBox="0 0 24 24" className="h-4 w-4 fill-current" aria-hidden="true">
+                    <path d="M12 1a4 4 0 0 1 4 4v6a4 4 0 0 1-8 0V5a4 4 0 0 1 4-4Zm-1.5 14.9A7.01 7.01 0 0 1 5 9H3a9 9 0 0 0 8 8.94V20H8v2h8v-2h-3v-2.06A9 9 0 0 0 21 9h-2a7 7 0 0 1-7 7 6.98 6.98 0 0 1-1.5-.1Z" />
+                  </svg>
+                </span>
+              ) : (
+                <svg viewBox="0 0 24 24" className="h-4 w-4 fill-current" aria-hidden="true">
+                  <path d="M12 1a4 4 0 0 1 4 4v6a4 4 0 0 1-8 0V5a4 4 0 0 1 4-4Zm-1.5 14.9A7.01 7.01 0 0 1 5 9H3a9 9 0 0 0 8 8.94V20H8v2h8v-2h-3v-2.06A9 9 0 0 0 21 9h-2a7 7 0 0 1-7 7 6.98 6.98 0 0 1-1.5-.1Z" />
+                </svg>
+              )}
             </button>
           )}
           <button

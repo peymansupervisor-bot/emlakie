@@ -33,7 +33,7 @@ export async function getPropertyData(address: string): Promise<ZllwPropertyData
   try {
     const propRes = await fetch(
       `https://zllw-working-api.p.rapidapi.com/pro/byaddress?propertyaddress=${encodeURIComponent(address)}`,
-      { headers: HEADERS(key), next: { revalidate: 86400 }, cache: 'no-store' }
+      { headers: HEADERS(key), next: { revalidate: 86400 } }
     );
     const propData = await propRes.json();
     const pd = propData?.propertyDetails;

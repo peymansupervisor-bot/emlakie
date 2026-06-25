@@ -349,10 +349,10 @@ export default async function ListingPage({ params }: Props) {
       </div>
 
       {/* Property Facts & Sales History */}
-      {propData && (propData.yearBuilt || propData.livingArea || propData.lotSize || propData.zestimate || propData.rentZestimate || propData.priceHistory.length > 0) && (
+      {propData && (propData.yearBuilt || propData.livingArea || propData.lotSize || propData.priceHistory.length > 0) && (
         <section className="mt-12 space-y-6">
           {/* Property Facts */}
-          {(propData.yearBuilt || propData.livingArea || propData.lotSize || propData.zestimate || propData.rentZestimate) && (
+          {(propData.yearBuilt || propData.livingArea || propData.lotSize) && (
             <div>
               <h2 className="mb-4 text-xl font-bold text-gray-900">Property Facts</h2>
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
@@ -372,18 +372,6 @@ export default async function ListingPage({ params }: Props) {
                   <div className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
                     <p className="text-xs font-medium uppercase tracking-wide text-gray-500">Lot Size</p>
                     <p className="mt-1 text-lg font-bold text-gray-900">{propData.lotSize.toLocaleString()} sqft</p>
-                  </div>
-                )}
-                {propData.zestimate && (
-                  <div className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
-                    <p className="text-xs font-medium uppercase tracking-wide text-gray-500">Zestimate</p>
-                    <p className="mt-1 text-lg font-bold text-gray-900">${propData.zestimate.toLocaleString()}</p>
-                  </div>
-                )}
-                {propData.rentZestimate && (
-                  <div className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
-                    <p className="text-xs font-medium uppercase tracking-wide text-gray-500">Rent Zestimate</p>
-                    <p className="mt-1 text-lg font-bold text-gray-900">${propData.rentZestimate.toLocaleString()}/mo</p>
                   </div>
                 )}
               </div>

@@ -117,17 +117,17 @@ export default async function HomePage() {
           <h1 className="text-center font-serif text-4xl font-bold leading-tight tracking-tight text-gray-900 sm:text-5xl">
             Find your next rental home.
           </h1>
-          <p className="mt-3 text-center text-base text-gray-500 sm:text-lg">
+          <p className="mt-3 text-center text-sm text-gray-400 sm:text-base">
             Rentals direct from landlords — no broker fees, no middlemen.
           </p>
 
           {/* Search bar */}
-          <div className="mt-7 flex justify-center">
+          <div className="mt-8 flex justify-center">
             <SearchBar large />
           </div>
 
           {/* Property type chips */}
-          <div className="mt-5 flex justify-center">
+          <div className="mt-6 flex justify-center">
             <div className="-mx-4 sm:mx-0">
               <div className="flex gap-2 overflow-x-auto px-4 pb-1 sm:flex-wrap sm:justify-center sm:overflow-visible sm:px-0 sm:pb-0 [&::-webkit-scrollbar]:hidden">
                 {PROPERTY_TYPES.map((t) => (

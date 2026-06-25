@@ -38,11 +38,11 @@ export default function Navbar() {
       <header className="sticky top-0 z-50 border-b border-gray-100 bg-white/95 backdrop-blur-sm">
         <nav
           aria-label="Main navigation"
-          className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6"
+          className="mx-auto flex h-[72px] max-w-7xl items-center justify-between gap-4 px-4 sm:px-6"
         >
           {/* Logo */}
           <Link href="/" aria-label="EMLAKIE home" className="shrink-0">
-            <Logo />
+            <Logo className="h-10" textClassName="text-3xl" />
           </Link>
 
           {/* Desktop centre links */}

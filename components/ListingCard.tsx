@@ -6,35 +6,93 @@ import { Listing } from '@/lib/types';
 import { formatBaths, formatBeds, formatPrice, formatPropertyType, formatSqft } from '@/lib/format';
 import ListingInsight from '@/components/ui/ListingInsight';
 
-// ── Insight: one sentence that answers "why should I click this?" ─────────────
-// Priority: most differentiating signal first.
-// Tone: trusted friend, not salesperson. Grounded in real listing data.
+// ── Insight: the single most compelling reason to click this listing ──────────
+//
+// Rules:
+//   1. Never repeat what is already visible elsewhere on the card (badges, DOM
+//      badge, property type label). Add context or explain significance instead.
+//   2. Combination signals outrank individual amenities — the story of two things
+//      together is harder to communicate with badges alone.
+//   3. dom === 0 is already shown as "New today" badge — do not repeat it here.
+//   4. listing_source === 'owner' is already shown as "By Owner" badge. Only use
+//      it as the insight when nothing more compelling exists, and suppress the
+//      badge in that case (suppressOwnerBadge: true) to avoid saying it twice.
+//   5. Return null rather than show a weak or generic insight. Users should learn
+//      to trust that whenever this section appears, it contains something useful.
+//
 // Future: return listing.ai_summary when the field is populated server-side.
-function deriveInsight(listing: Listing): string | null {
+
+type InsightResult = { text: string; suppressOwnerBadge?: boolean } | null;
+
+function deriveInsight(listing: Listing): InsightResult {
   const a = listing.amenities ?? [];
   const has = (x: string) => a.includes(x);
   const sqft = listing.sqft ?? 0;
+  const beds = listing.bedrooms;
 
-  if (listing.dom === 0) return 'Just listed — you have a real shot at getting here first.';
-  if (has('Pet-friendly') && has('Pool')) return 'Pets allowed and a pool — that combination is harder to find than it sounds.';
-  if (has('EV charging')) return 'Comes with EV charging, which most rentals in this range still don\'t offer.';
-  if (has('Furnished') && has('In-unit laundry')) return 'Fully furnished with in-unit laundry — genuinely move-in ready.';
-  if (has('Furnished')) return 'Fully furnished — you can move in without buying a single thing.';
-  if (has('In-unit laundry') && sqft >= 1000) return 'Spacious layout with washer/dryer in the unit — no laundry runs.';
-  if (listing.listing_source === 'owner') return 'Owner-listed — you\'ll work directly with the person who owns the place.';
-  if (has('Pet-friendly')) return 'Pets are welcome here, which narrows the field more than most people expect.';
-  if (has('Pool') && has('Gym')) return 'Pool and gym both included — no need for a separate gym membership.';
-  if (has('Garage')) return 'Comes with a private garage, which is genuinely rare at this price point.';
-  if (has('Balcony') && listing.bedrooms >= 2) return 'Multiple bedrooms and private outdoor space — that\'s a good combination.';
-  if (listing.virtual_tour_url) return 'Has a virtual tour, so you can walk through it before scheduling a visit.';
-  if (sqft >= 1500) return 'Notably spacious — more square footage than most listings in this price range.';
-  if (has('Hardwood floors') && has('Dishwasher')) return 'Hardwood floors and a dishwasher — small details that add up quickly.';
-  if (has('Air conditioning') && listing.bedrooms >= 2) return 'Central air in a multi-bedroom unit — worth noting in warmer climates.';
-  const t = listing.property_type;
-  if (t === 'house') return 'A full home with no shared walls and your own outdoor space.';
-  if (t === 'townhouse') return 'Multi-level layout with more separation between living and sleeping areas.';
-  if (t === 'studio') return 'Compact and efficient — a good fit if you spend most of your time out.';
-  if (t === 'condo') return 'Condo-level finishes and build quality, with rental flexibility.';
+  // ── 1. Lifestyle combinations ─────────────────────────────────────────────
+  // These tell a story the individual badges cannot — the rarity of the
+  // combination is the point, not the features in isolation.
+
+  if (has('Pet-friendly') && has('Pool'))
+    return { text: 'Pets allowed with a pool on site — that combination eliminates most of the search.' };
+
+  if (has('Furnished') && has('In-unit laundry'))
+    return { text: 'Fully furnished with in-unit laundry — nothing to buy or arrange before move-in.' };
+
+  if (has('Pool') && has('Gym'))
+    return { text: 'Pool and gym both included — saves the cost and hassle of a separate membership.' };
+
+  if (has('Balcony') && beds >= 2)
+    return { text: `${beds}-bedroom layout with private outdoor space — room to spread out inside and outside.` };
+
+  // ── 2. Rare amenities worth explaining ───────────────────────────────────
+  // Badge shows the label. Insight explains why it matters.
+
+  if (has('EV charging'))
+    return { text: 'EV charging included — still uncommon enough in rentals that it meaningfully narrows your options.' };
+
+  if (has('Furnished'))
+    return { text: 'Fully furnished — move in without buying or moving a single piece of furniture.' };
+
+  // ── 3. Size context (only when genuinely notable) ─────────────────────────
+  // Only fire when sqft is significantly above average for the bedroom count.
+  // Without market data, use conservative thresholds.
+
+  if (sqft >= 1400 && beds >= 2)
+    return { text: `${sqft.toLocaleString()} sq ft across ${beds} bedrooms — more space than most listings at this price.` };
+
+  if (listing.property_type === 'studio' && sqft >= 650)
+    return { text: `${sqft.toLocaleString()} sq ft — unusually spacious for a studio.` };
+
+  // ── 4. In-unit laundry (explains significance, not just the feature) ──────
+
+  if (has('In-unit laundry'))
+    return { text: 'In-unit washer and dryer — no shared laundry room, no scheduling around neighbors.' };
+
+  // ── 5. Private garage ────────────────────────────────────────────────────
+
+  if (has('Garage'))
+    return { text: 'Private garage included — covered parking is harder to find than most people expect.' };
+
+  // ── 6. Virtual tour ──────────────────────────────────────────────────────
+
+  if (listing.virtual_tour_url)
+    return { text: 'Virtual tour available — do a full walkthrough before scheduling an in-person visit.' };
+
+  // ── 7. Pet-friendly alone ─────────────────────────────────────────────────
+  // Badge shows the label. Insight adds market context.
+
+  if (has('Pet-friendly'))
+    return { text: 'Pet-friendly — a genuinely useful filter since most rentals in any city don\'t allow them.' };
+
+  // ── 8. Owner-listed (only if nothing more compelling exists) ──────────────
+  // Suppress the photo badge so the same idea isn't said twice on the card.
+
+  if (listing.listing_source === 'owner')
+    return { text: 'Owner-listed — no agent in the middle, so questions get answered directly and faster.', suppressOwnerBadge: true };
+
+  // Return null — better to omit than to show something generic.
   return null;
 }
 
@@ -116,7 +174,9 @@ export default function ListingCard({
 }) {
   const photo = listing.photos?.[0];
   const href = `/rentals/${listing.slug ?? listing.id}`;
-  const insight = deriveInsight(listing);
+  const insightResult = deriveInsight(listing);
+  const insight = insightResult?.text ?? null;
+  const showOwnerBadge = listing.listing_source === 'owner' && !insightResult?.suppressOwnerBadge;
   const badges = smartBadges(listing.amenities ?? []);
   const avail = availLabel(listing.availableFrom);
   const isNew = listing.dom != null && listing.dom <= 1;
@@ -155,7 +215,7 @@ export default function ListingCard({
               Sample
             </span>
           )}
-          {!listing.isSample && listing.listing_source === 'owner' && (
+          {!listing.isSample && showOwnerBadge && (
             <span className="rounded-full bg-brand-600/85 px-2.5 py-1 text-[11px] font-semibold text-white backdrop-blur-sm">
               By Owner
             </span>

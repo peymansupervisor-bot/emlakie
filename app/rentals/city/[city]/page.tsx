@@ -4,7 +4,7 @@ import { notFound } from 'next/navigation';
 import ListingCard from '@/components/ListingCard';
 import SeoLinkGrid from '@/components/SeoLinkGrid';
 import RelatedArticles from '@/components/RelatedArticles';
-import { getAllCities, getListingsByCity, getTrendingCities } from '@/lib/api';
+import { getListingsByCity, getTrendingCities } from '@/lib/api';
 import { formatPrice } from '@/lib/format';
 import { getCityContent } from '@/lib/city-content';
 
@@ -15,10 +15,10 @@ interface Props {
 export const revalidate = 300;
 export const dynamicParams = true;
 
+// No pages pre-built at deploy time — all city pages generate on first request
+// and are cached for revalidate seconds. Build time stays constant as listings grow.
 export async function generateStaticParams() {
-  // Only pre-build cities with actual listings — all others generate on first request (dynamicParams=true)
-  const activeCities = await getAllCities();
-  return activeCities.map(c => ({ city: c.slug }));
+  return [];
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {

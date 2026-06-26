@@ -960,6 +960,33 @@ const CITY_CONTENT: Record<string, CityContent> = {
       { label: 'Seattle rentals', slug: 'seattle' },
     ],
   },
+  'dana-point': {
+    headline: 'Homes for Rent in Dana Point, CA',
+    intro:
+      'Dana Point is a laid-back coastal city in south Orange County — home to Dana Point Harbor, world-class surf breaks at Doheny State Beach and Salt Creek, and some of the most scenic bluff-top neighborhoods in Southern California. Tucked between San Clemente and Laguna Beach, Dana Point draws renters who want beach access without the premium pricing of its neighbors. The city\'s compact size, walkable harbor village, and easy I-5 access to San Diego and Los Angeles make it an appealing base for commuters and remote workers alike.',
+    highlights: [
+      { icon: '⚓', label: 'Dana Point Harbor', detail: 'One of Southern California\'s most active small-craft harbors — whale watching tours, sport fishing, dining, and the Ocean Institute are steps from harbor-area rentals.' },
+      { icon: '🏄', label: 'Surf & Beach', detail: 'Doheny State Beach is one of the best beginner surf breaks in California. Salt Creek Beach draws experienced surfers and bodysurfers year-round.' },
+      { icon: '🌅', label: 'Bluff Views', detail: 'Neighborhoods like Monarch Beach and Lantern Village sit atop coastal bluffs with sweeping ocean views — a defining feature of the local rental market.' },
+      { icon: '🚗', label: 'Commute Access', detail: 'Convenient I-5 access makes Dana Point workable for commutes to Irvine (~30 min), San Diego (~45 min), and Laguna Beach (~15 min).' },
+      { icon: '🎣', label: 'Outdoor Lifestyle', detail: 'Beyond surfing, residents enjoy kayaking, paddleboarding, hiking the Headlands, and the annual Festival of Whales and Tall Ships Festival.' },
+    ],
+    neighborhoods: ['Lantern Village', 'Monarch Beach', 'Dana Point Harbor Area', 'Capistrano Beach (Capo Beach)', 'The Strand at Headlands'],
+    rentTips:
+      'Rentals closest to the harbor and Doheny Beach move quickly and command the highest prices — expect $2,800–$5,000/month for a 2-bedroom near the water. Capistrano Beach (on the south end toward San Clemente) offers more value with similar ocean access. Many landlords in Dana Point list directly without a broker, so you can skip the agent fee. Parking is generally included in most units but confirm for older complexes near the harbor.',
+    faqs: [
+      { q: 'Is Dana Point a good place to rent for commuters?', a: 'Yes. Dana Point sits along the I-5 corridor and is a reasonable commute to Irvine, Mission Viejo, and northern San Diego County. Metrolink\'s Orange County Line has a nearby San Juan Capistrano station (~5 minutes away), providing a car-free option to LA and Irvine.' },
+      { q: 'What is the average rent in Dana Point?', a: 'Rents in Dana Point typically range from $2,200/month for a 1-bedroom inland unit to $4,500–$6,000/month for a 2-bedroom with ocean views or near the harbor. Luxury bluff-top homes can exceed $10,000/month.' },
+      { q: 'Does Dana Point have rent control?', a: 'Dana Point does not have a local rent control ordinance beyond California statewide protections (AB 1482), which cap annual rent increases at 5% + CPI (max 10%) for eligible units built before 2005.' },
+      { q: 'What neighborhoods are best in Dana Point?', a: 'Lantern Village is the walkable heart of the city with restaurants and shops. Monarch Beach is prestigious with bluff-top homes and resort access. Capistrano Beach is quieter and more affordable with easy freeway and beach access.' },
+    ],
+    nearbySearches: [
+      { label: 'San Clemente rentals', slug: 'san-clemente' },
+      { label: 'Laguna Beach rentals', slug: 'laguna-beach' },
+      { label: 'San Juan Capistrano rentals', slug: 'san-juan-capistrano' },
+    ],
+  },
+
 };
 
 export function getCityContent(slug: string): CityContent | null {

@@ -117,11 +117,9 @@ export async function maybeReleaseVirtualPhone(userId: string): Promise<void> {
 /** Look up the real phone number for an inbound virtual number. */
 export async function getRealPhoneForVirtual(virtualPhone: string): Promise<string | null> {
   try {
-    // Use anon key — call_routing_lookup RLS policy allows SELECT where virtual_phone IS NOT NULL
-    const db = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    );
+    // Must use service key — call routing is server-side only and the anon key
+    // is blocked by RLS since we restricted call_routing_lookup to service_role.
+    const db = adminClient();
     const { data } = await db.from('profiles').select('phone').eq('virtual_phone', virtualPhone).single();
     return data?.phone ?? null;
   } catch (err) {

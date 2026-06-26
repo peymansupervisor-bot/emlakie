@@ -51,7 +51,7 @@ export default function Navbar() {
               <Link
                 key={l.href}
                 href={l.href}
-                className="rounded-lg px-3 py-2 text-sm font-medium text-gray-500 transition hover:bg-gray-100 hover:text-gray-900"
+                className="rounded-lg px-3 py-2 font-display text-sm font-medium tracking-tight text-gray-500 transition hover:bg-gray-100 hover:text-gray-900"
               >
                 {l.label}
               </Link>
@@ -113,7 +113,7 @@ export default function Navbar() {
                   key={l.href}
                   href={l.href}
                   onClick={closeMobile}
-                  className="rounded-lg px-4 py-2.5 text-sm font-medium text-gray-700 transition hover:bg-gray-50"
+                  className="rounded-lg px-4 py-2.5 font-display text-sm font-medium tracking-tight text-gray-700 transition hover:bg-gray-50"
                 >
                   {l.label}
                 </Link>

@@ -7,6 +7,7 @@ import { useSearchParams } from 'next/navigation';
 import { getMyListings, updateListing } from '@/lib/landlord/client';
 import { LandlordListing } from '@/lib/landlord/types';
 import { formatPrice, formatPropertyType } from '@/lib/format';
+import ReferralBanner from '@/components/ReferralBanner';
 
 function baseAddress(address: string | null | undefined): string {
   if (!address) return '';
@@ -280,6 +281,7 @@ export default function PropertiesPage() {
 
   return (
     <div>
+      <ReferralBanner />
       {justCreated && (
         <div role="status" aria-live="polite" className="mb-8 overflow-hidden rounded-2xl border border-brand-200 bg-gradient-to-br from-brand-50 to-white shadow-card">
           <div className="flex flex-col items-center gap-4 px-6 py-10 text-center sm:px-10">

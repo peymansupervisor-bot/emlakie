@@ -46,6 +46,7 @@ export default function EditListingPage() {
     propertyType: 'house',
     availableFrom: '',
     virtualTourUrl: '',
+    buildingName: '',
     amenities: [] as string[],
     isBroker: false as boolean,
   });
@@ -72,6 +73,7 @@ export default function EditListingPage() {
         propertyType: l.property_type ?? 'house',
         availableFrom: l.availableFrom ? String(l.availableFrom).split('T')[0] : '',
         virtualTourUrl: l.virtual_tour_url ?? '',
+        buildingName: l.building_name ?? '',
         amenities: l.amenities ?? [],
         isBroker: l.listing_source === 'broker',
       });
@@ -114,6 +116,7 @@ export default function EditListingPage() {
         property_type: form.propertyType,
         available_date: form.availableFrom || null,
         virtual_tour_url: form.virtualTourUrl || null,
+        building_name: form.buildingName.trim() || null,
         amenities: form.amenities,
         listing_source: form.isBroker ? 'broker' : 'owner',
       });
@@ -253,6 +256,20 @@ export default function EditListingPage() {
           <input className={inputCls} type="url" value={form.virtualTourUrl}
             onChange={(e) => set('virtualTourUrl', e.target.value)}
             placeholder="https://my.matterport.com/show/?m=..." />
+        </div>
+
+        {/* Building name — groups multiple units in landlord dashboard */}
+        <div>
+          <label className={labelCls}>Building name <span className="font-normal text-gray-500">(optional)</span></label>
+          <input
+            className={inputCls}
+            value={form.buildingName}
+            onChange={(e) => set('buildingName', e.target.value)}
+            placeholder="e.g. 3133–3137 Hollycrest Dr"
+          />
+          <p className="mt-1 text-xs text-gray-500">
+            Units that share the same building name will be grouped together in your dashboard.
+          </p>
         </div>
 
         {/* Amenities */}

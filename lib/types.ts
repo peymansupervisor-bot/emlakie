@@ -31,6 +31,7 @@ export interface Listing {
   user_id?: string | null;
   landlord_id?: string | null;
   virtual_phone?: string | null;
+  building_name?: string | null;
 }
 
 export interface ListingFilters {

@@ -16,7 +16,8 @@ function baseAddress(address: string | null | undefined): string {
 function groupListings(listings: LandlordListing[]): Array<{ key: string; listings: LandlordListing[] }> {
   const map = new Map<string, LandlordListing[]>();
   for (const l of listings) {
-    const key = baseAddress(l.address) || l.id;
+    // building_name groups any set of units explicitly (e.g. multi-address complexes)
+    const key = l.building_name?.trim() || baseAddress(l.address) || l.id;
     if (!map.has(key)) map.set(key, []);
     map.get(key)!.push(l);
   }

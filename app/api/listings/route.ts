@@ -5,6 +5,8 @@ import { generateListingSlug } from '@/lib/format'
 import { geocodeAddress } from '@/lib/geocode'
 import { logError } from '@/lib/log-error'
 import { getOrProvisionVirtualPhone } from '@/lib/twilio'
+import { submitToIndexNow } from '@/lib/indexnow'
+import { stateByAbbr } from '@/lib/states'
 
 export const dynamic = 'force-dynamic'
 // Route segment config — tells Next.js/Vercel this route needs extended body size
@@ -148,6 +150,16 @@ export async function POST(req: NextRequest) {
   // Provision a virtual phone for the landlord if they don't have one yet (fire and forget)
   // Only runs when landlord has at least one active listing — which is now true since we just inserted one
   getOrProvisionVirtualPhone(user.id, zip ?? undefined, city ?? undefined, state ?? undefined).catch(() => {});
+
+  // Notify IndexNow (Bing/Yandex) about the new listing plus the city/state
+  // pages it now belongs to, so they recrawl quickly. Fire-and-forget.
+  const citySlug = city ? city.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '') : null
+  const stateSlug = stateByAbbr.get((state ?? '').toUpperCase())?.slug ?? null
+  submitToIndexNow([
+    `/rentals/${data.slug ?? data.id}`,
+    ...(citySlug ? [`/rentals/city/${citySlug}`] : []),
+    ...(stateSlug ? [`/rentals/state/${stateSlug}`] : []),
+  ]).catch(() => {});
 
   return NextResponse.json(data, { status: 201 })
 }

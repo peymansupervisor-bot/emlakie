@@ -45,6 +45,7 @@ function rowToListing(row: Record<string, unknown>): Listing {
     user_id: (row.landlord_id ?? row.user_id) as string | null | undefined,
     landlord_id: row.landlord_id as string | null | undefined,
     virtual_phone: (row.profiles as { virtual_phone?: string } | null)?.virtual_phone ?? null,
+    refreshed_at: (row.refreshed_at ?? row.updated_at ?? row.created_at) as string | null | undefined,
   };
 }
 

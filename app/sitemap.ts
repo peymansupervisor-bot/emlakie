@@ -11,7 +11,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     .filter(l => l.status === 'active' && (l.slug || l.id))
     .map(l => ({
       url: `${base}/rentals/${l.slug ?? l.id}`,
-      lastModified: new Date(),
+      // Real per-listing freshness so Google trusts lastmod and recrawls
+      // updated listings sooner (falls back to now if the field is missing).
+      lastModified: l.refreshed_at ? new Date(l.refreshed_at) : new Date(),
       changeFrequency: 'weekly' as const,
       priority: 0.9,
     }));

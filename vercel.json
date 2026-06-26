@@ -10,7 +10,7 @@
     },
     {
       "path": "/api/cron/health-check",
-      "schedule": "0 14 * * *"
+      "schedule": "0 5 * * *"
     },
     {
       "path": "/api/cron/ada-audit",

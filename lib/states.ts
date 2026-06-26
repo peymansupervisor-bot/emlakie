@@ -60,3 +60,14 @@ export const US_STATES: USState[] = [
 
 export const stateBySlug = new Map(US_STATES.map((s) => [s.slug, s]));
 export const stateByAbbr = new Map(US_STATES.map((s) => [s.abbr.toUpperCase(), s]));
+
+// States we want indexed by Google ahead of inventory because listings are
+// expected imminently. Everywhere else, a state page stays noindex until it
+// has at least one active listing (see app/rentals/state/[state]/page.tsx).
+// Remove a slug here once the state has real listings — it will stay indexed
+// automatically from that point on.
+export const PRELAUNCH_STATE_SLUGS = new Set<string>(['missouri', 'nebraska', 'kansas']);
+
+export function isPrelaunchState(slug: string): boolean {
+  return PRELAUNCH_STATE_SLUGS.has(slug);
+}

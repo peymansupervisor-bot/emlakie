@@ -1,7 +1,7 @@
 import type { MetadataRoute } from 'next';
 import { getAllZips, getAllCities, getListings } from '@/lib/api';
 import { posts } from '@/lib/blog';
-import { US_STATES } from '@/lib/states';
+import { US_STATES, stateByAbbr, PRELAUNCH_STATE_SLUGS } from '@/lib/states';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = 'https://emlakie.com';
@@ -29,6 +29,22 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.85,
   }));
 
+  // Only include state pages Google should actually index: states with active
+  // listings, plus pre-launch states. Empty state pages are noindex (see the
+  // state route), so listing them here would just send crawlers to dead ends.
+  const indexableStateSlugs = new Set<string>(PRELAUNCH_STATE_SLUGS);
+  for (const c of cities) {
+    const st = stateByAbbr.get((c.state ?? '').toUpperCase());
+    if (st) indexableStateSlugs.add(st.slug);
+  }
+  const statePages: MetadataRoute.Sitemap = US_STATES
+    .filter(s => indexableStateSlugs.has(s.slug))
+    .map(s => ({
+      url: `${base}/rentals/state/${s.slug}`,
+      changeFrequency: 'daily' as const,
+      priority: 0.88,
+    }));
+
   return [
     { url: base, changeFrequency: 'daily', priority: 1 },
     { url: `${base}/rentals`, changeFrequency: 'hourly', priority: 0.9 },
@@ -46,11 +62,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${base}/rentals/section-8`, changeFrequency: 'weekly', priority: 0.8 },
     ...listingPages,
     ...blogPages,
-    ...US_STATES.map(s => ({
-      url: `${base}/rentals/state/${s.slug}`,
-      changeFrequency: 'daily' as const,
-      priority: 0.88,
-    })),
+    ...statePages,
     ...cities.map(c => ({
       url: `${base}/rentals/city/${c.slug}`,
       changeFrequency: 'daily' as const,

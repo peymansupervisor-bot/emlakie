@@ -4,7 +4,7 @@ import { notFound } from 'next/navigation';
 import ListingCard from '@/components/ListingCard';
 import SeoLinkGrid from '@/components/SeoLinkGrid';
 import { getListingsByState, getTrendingCities } from '@/lib/api';
-import { US_STATES } from '@/lib/states';
+import { US_STATES, isPrelaunchState } from '@/lib/states';
 import { formatPrice } from '@/lib/format';
 
 interface Props {
@@ -25,11 +25,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const { name, abbr } = result.state;
   const hasListings = result.total > 0;
+  // Index states that have listings, plus pre-launch states where inventory is
+  // imminent. Everywhere else stays noindex so a new domain's authority isn't
+  // diluted across empty geographic pages.
+  const shouldIndex = hasListings || isPrelaunchState(slug);
   return {
     title: `Houses & Apartments for Rent in ${name}`,
     description: `Browse ${hasListings ? result.total + ' ' : ''}rental homes in ${name} — apartments, houses, condos, and townhomes listed directly by landlords. No broker fees.`,
     alternates: { canonical: `https://emlakie.com/rentals/state/${slug}` },
-    robots: hasListings ? { index: true, follow: true } : { index: false, follow: true },
+    robots: shouldIndex ? { index: true, follow: true } : { index: false, follow: true },
     openGraph: {
       title: `Homes for Rent in ${name} (${abbr}) | EMLAKIE`,
       description: `Find your next rental home in ${name}. Search directly from landlords — no middlemen, no fees.`,

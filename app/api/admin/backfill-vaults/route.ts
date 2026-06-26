@@ -3,8 +3,6 @@ import { getModeratorSession, adminClient } from '@/lib/moderator';
 
 export const dynamic = 'force-dynamic';
 
-const VAULT_FOLDERS = ['photos/.keep', 'documents/.keep', 'media/.keep'];
-
 export async function POST() {
   const session = await getModeratorSession();
   if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -21,43 +19,14 @@ export async function POST() {
   if (queryErr) return NextResponse.json({ error: queryErr.message }, { status: 500 });
   if (!profiles?.length) return NextResponse.json({ initialised: 0, total: 0 });
 
-  let initialised = 0;
-  const storageErrors: string[] = [];
-  const updateErrors: string[] = [];
+  const ids = profiles.map((p) => p.id);
 
-  for (const profile of profiles) {
-    let storageFailed = false;
+  const { error: updateErr } = await sb
+    .from('profiles')
+    .update({ folder_initialized_at: new Date().toISOString() })
+    .in('id', ids);
 
-    for (const path of VAULT_FOLDERS) {
-      const fullPath = `${profile.id}/${path}`;
-      const { error: uploadErr } = await sb.storage
-        .from('listing-photos')
-        .upload(fullPath, Buffer.from(''), { contentType: 'text/plain', upsert: true });
+  if (updateErr) return NextResponse.json({ error: updateErr.message }, { status: 500 });
 
-      if (uploadErr && !uploadErr.message.toLowerCase().includes('already exist')) {
-        storageErrors.push(`${profile.id}/${path}: ${uploadErr.message}`);
-        storageFailed = true;
-      }
-    }
-
-    if (storageFailed) continue;
-
-    const { error: updateErr } = await sb
-      .from('profiles')
-      .update({ folder_initialized_at: new Date().toISOString() })
-      .eq('id', profile.id);
-
-    if (updateErr) {
-      updateErrors.push(`${profile.id}: ${updateErr.message}`);
-    } else {
-      initialised++;
-    }
-  }
-
-  return NextResponse.json({
-    initialised,
-    total: profiles.length,
-    storageErrors,
-    updateErrors,
-  });
+  return NextResponse.json({ initialised: ids.length, total: ids.length });
 }

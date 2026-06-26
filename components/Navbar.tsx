@@ -11,7 +11,7 @@ type AuthState = 'loading' | 'out' | 'in';
 
 const navLinks = [
   { href: '/rentals', label: 'Browse Rentals' },
-  { href: '/rent-estimate', label: 'Rent Estimate' },
+  { href: '/rent-estimate', label: 'E-Rent Value™' },
   { href: '/blog', label: 'Blog' },
 ];
 

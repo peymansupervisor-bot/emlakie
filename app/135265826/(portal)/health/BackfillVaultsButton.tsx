@@ -13,7 +13,10 @@ export default function BackfillVaultsButton() {
       const data = await res.json();
       if (!res.ok) { setState('error'); setResult(data.error ?? 'Failed'); return; }
       setState('done');
-      setResult(`${data.initialised}/${data.total} vaults initialised`);
+      const errs = [...(data.storageErrors ?? []), ...(data.updateErrors ?? [])];
+      setResult(errs.length
+        ? `${data.initialised}/${data.total} done — errors: ${errs.slice(0, 2).join('; ')}`
+        : `${data.initialised}/${data.total} vaults initialised`);
       setTimeout(() => window.location.reload(), 2000);
     } catch {
       setState('error');

@@ -63,10 +63,10 @@ export default function EditListingForm({ listing }: { listing: Listing }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...form,
-          monthly_rent: Number(form.monthly_rent) || null,
-          bedrooms: Number(form.bedrooms) || null,
-          bathrooms: Number(form.bathrooms) || null,
-          living_area_sqft: Number(form.living_area_sqft) || null,
+          monthly_rent: form.monthly_rent === '' ? undefined : Number(form.monthly_rent),
+          bedrooms: form.bedrooms === '' ? undefined : Number(form.bedrooms),
+          bathrooms: form.bathrooms === '' ? undefined : Number(form.bathrooms),
+          living_area_sqft: form.living_area_sqft === '' ? undefined : Number(form.living_area_sqft),
         }),
       });
       if (!res.ok) {

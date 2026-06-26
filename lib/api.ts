@@ -44,7 +44,9 @@ function rowToListing(row: Record<string, unknown>): Listing {
     slug: row.slug as string | null | undefined,
     user_id: (row.landlord_id ?? row.user_id) as string | null | undefined,
     landlord_id: row.landlord_id as string | null | undefined,
-    virtual_phone: (row.profiles as { virtual_phone?: string } | null)?.virtual_phone ?? null,
+    virtual_phone: (row.profiles as { virtual_phone?: string; phone?: string } | null)?.virtual_phone
+      || (row.profiles as { virtual_phone?: string; phone?: string } | null)?.phone
+      || null,
     refreshed_at: (row.refreshed_at ?? row.updated_at ?? row.created_at) as string | null | undefined,
   };
 }
@@ -466,7 +468,7 @@ export async function getListing(idOrSlug: string): Promise<Listing | null> {
     const isUUID = UUID_RE.test(idOrSlug);
     const query = sb
       .from('listings')
-      .select('*, profiles!landlord_id(virtual_phone)')
+      .select('*, profiles!landlord_id(virtual_phone, phone)')
       .in('status', ['active', 'rented', 'expired']);
 
     const { data, error } = await (isUUID

@@ -9,7 +9,9 @@ export async function POST(req: NextRequest) {
     return xml('<Response><Hangup/></Response>');
   }
 
+  console.log('[calls/forward] toNumber:', toNumber);
   const realPhone = await getRealPhoneForVirtual(toNumber);
+  console.log('[calls/forward] realPhone:', realPhone);
   if (!realPhone) {
     return xml('<Response><Say>Sorry, this number is no longer active.</Say><Hangup/></Response>');
   }

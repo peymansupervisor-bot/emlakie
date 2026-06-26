@@ -120,7 +120,11 @@ export async function getRealPhoneForVirtual(virtualPhone: string): Promise<stri
     // Must use service key — call routing is server-side only and the anon key
     // is blocked by RLS since we restricted call_routing_lookup to service_role.
     const db = adminClient();
-    const { data } = await db.from('profiles').select('phone').eq('virtual_phone', virtualPhone).single();
+    const { data, error } = await db.from('profiles').select('phone').eq('virtual_phone', virtualPhone).single();
+    if (error) {
+      console.error('[twilio] getRealPhoneForVirtual DB error for', virtualPhone, error);
+      return null;
+    }
     return data?.phone ?? null;
   } catch (err) {
     console.error('[twilio] getRealPhoneForVirtual error for', virtualPhone, err);

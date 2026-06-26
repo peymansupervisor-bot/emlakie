@@ -126,6 +126,7 @@ export async function POST(req: NextRequest) {
       property_type: formData.get('propertyType') as string,
       ownership_type: formData.get('ownershipType') as string || null,
       listing_source: (formData.get('listingSource') as string) || 'owner',
+      agent_name: formData.get('agentName') as string || null,
       license_number: formData.get('licenseNumber') as string || null,
       virtual_tour_url: formData.get('virtualTourUrl') as string || null,
       amenities,

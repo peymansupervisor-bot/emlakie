@@ -25,6 +25,12 @@ interface Listing {
   license_number?: string | null;
 }
 
+function toNum(v: number | string): number | undefined {
+  if (v === '' || v === null || v === undefined) return undefined;
+  const n = Number(v);
+  return isNaN(n) ? undefined : n;
+}
+
 export default function EditListingForm({ listing }: { listing: Listing }) {
   const router = useRouter();
   const [form, setForm] = useState({
@@ -63,10 +69,10 @@ export default function EditListingForm({ listing }: { listing: Listing }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...form,
-          monthly_rent: form.monthly_rent === '' ? undefined : Number(form.monthly_rent),
-          bedrooms: form.bedrooms === '' ? undefined : Number(form.bedrooms),
-          bathrooms: form.bathrooms === '' ? undefined : Number(form.bathrooms),
-          living_area_sqft: form.living_area_sqft === '' ? undefined : Number(form.living_area_sqft),
+          monthly_rent: toNum(form.monthly_rent),
+          bedrooms: toNum(form.bedrooms),
+          bathrooms: toNum(form.bathrooms),
+          living_area_sqft: toNum(form.living_area_sqft),
         }),
       });
       if (!res.ok) {

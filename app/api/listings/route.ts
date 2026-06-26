@@ -86,6 +86,37 @@ export async function POST(req: NextRequest) {
   const city = formData.get('city') as string
   const state = formData.get('state') as string
   const zip = formData.get('zip') as string || null
+  const listingSource = (formData.get('listingSource') as string) || 'owner'
+  const agentName = formData.get('agentName') as string || null
+  const price = Number(formData.get('price'))
+  const bedrooms = Number(formData.get('bedrooms'))
+  const bathrooms = Number(formData.get('bathrooms'))
+  const propertyType = formData.get('propertyType') as string
+
+  // ── Server-side validation ────────────────────────────────────────────────
+  const validationErrors: string[] = []
+  if (!address?.trim()) validationErrors.push('Address is required.')
+  if (!city?.trim()) validationErrors.push('City is required.')
+  if (!state?.trim()) validationErrors.push('State is required.')
+  if (!propertyType?.trim()) validationErrors.push('Property type is required.')
+  if (!price || price <= 0) validationErrors.push('A valid monthly rent is required.')
+  if (!bedrooms || bedrooms <= 0) validationErrors.push('Number of bedrooms is required.')
+  if (!bathrooms || bathrooms <= 0) validationErrors.push('Number of bathrooms is required.')
+  if (photoUrls.length === 0) validationErrors.push('At least one photo is required.')
+  if (listingSource === 'broker' && !agentName?.trim()) validationErrors.push('Agent/broker name is required for broker listings.')
+
+  // Verify the landlord has a phone on their profile
+  const adminSb = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  )
+  const { data: profile } = await adminSb.from('profiles').select('phone').eq('id', user.id).single()
+  if (!profile?.phone?.trim()) validationErrors.push('A contact phone number is required on your profile before listing.')
+
+  if (validationErrors.length > 0) {
+    return NextResponse.json({ error: validationErrors.join(' ') }, { status: 422 })
+  }
+  // ─────────────────────────────────────────────────────────────────────────
 
   // Generate slug from address — reuse the same slug if this address was listed before,
   // so Google keeps its SEO ranking for the URL across relists of the same property.
@@ -119,14 +150,14 @@ export async function POST(req: NextRequest) {
       city,
       state,
       zip,
-      monthly_rent: Number(formData.get('price')),
-      bedrooms: Number(formData.get('bedrooms')),
-      bathrooms: Number(formData.get('bathrooms')),
+      monthly_rent: price,
+      bedrooms,
+      bathrooms,
       living_area_sqft: formData.get('sqft') ? Number(formData.get('sqft')) : 0,
-      property_type: formData.get('propertyType') as string,
+      property_type: propertyType,
       ownership_type: formData.get('ownershipType') as string || null,
-      listing_source: (formData.get('listingSource') as string) || 'owner',
-      agent_name: formData.get('agentName') as string || null,
+      listing_source: listingSource,
+      agent_name: agentName,
       license_number: formData.get('licenseNumber') as string || null,
       virtual_tour_url: formData.get('virtualTourUrl') as string || null,
       amenities,

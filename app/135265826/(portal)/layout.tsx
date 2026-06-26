@@ -12,16 +12,34 @@ export default async function AdminLayout({ children }: { children: React.ReactN
 
   const sb = adminClient();
 
-  const [{ count: openFlags }, { count: missingIds }] = await Promise.all([
+  const since = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
+  const [{ count: openFlags }, { count: missingIds }, { data: recentListings }] = await Promise.all([
     sb.from('listing_reports').select('*', { count: 'exact', head: true }).eq('reviewed', false),
     sb.from('profiles').select('*', { count: 'exact', head: true }).is('account_id', null),
+    sb.from('listings')
+      .select('photos, listing_source, agent_name, lat, description, profiles!landlord_id(phone, virtual_phone)')
+      .gte('created_at', since)
+      .limit(200),
   ]);
 
   const flagCount = openFlags ?? 0;
   const missingIdCount = missingIds ?? 0;
 
+  type ProfileData = { phone?: string | null; virtual_phone?: string | null } | null;
+  const qualityIssueCount = (recentListings ?? []).filter((l) => {
+    const profile = (Array.isArray(l.profiles) ? l.profiles[0] : l.profiles) as ProfileData;
+    const photos = (l.photos as string[] | null) ?? [];
+    if (photos.length === 0) return true;
+    if (!profile?.virtual_phone) return true;
+    if (!profile?.phone) return true;
+    if (l.listing_source === 'broker' && !l.agent_name) return true;
+    if (!l.lat) return true;
+    return false;
+  }).length;
+
   const NAV = [
     { href: '/135265826', label: 'All Listings', badge: null },
+    { href: '/135265826/quality', label: 'Quality', badge: qualityIssueCount > 0 ? qualityIssueCount : null },
     { href: '/135265826/flags', label: 'Flagged Reports', badge: flagCount > 0 ? flagCount : null },
     { href: '/135265826/ada', label: 'ADA Audit', badge: null },
     { href: '/135265826/seo', label: 'SEO Audit', badge: null },

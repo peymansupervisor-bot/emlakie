@@ -135,23 +135,11 @@ async function checkBridge(): Promise<CheckResult> {
 }
 
 async function checkRapidAPI(): Promise<CheckResult> {
-  try {
-    const key = process.env.RAPIDAPI_KEY;
-    if (!key) return { service: 'RapidAPI (Property Data)', status: 'down', message: 'RAPIDAPI_KEY missing' };
-    // Ping the actual host used by the site (zllw-working-api) with a minimal request
-    const res = await fetch('https://zllw-working-api.p.rapidapi.com/pro/byaddress?propertyaddress=123+Main+St+Los+Angeles+CA', {
-      headers: { 'x-rapidapi-key': key, 'x-rapidapi-host': 'zllw-working-api.p.rapidapi.com' },
-      signal: AbortSignal.timeout(8000),
-      cache: 'no-store',
-    });
-    if (res.status === 200) return { service: 'RapidAPI (Property Data)', status: 'ok', message: 'API responding' };
-    if (res.status === 401 || res.status === 403) return { service: 'RapidAPI (Property Data)', status: 'down', message: 'API key rejected or revoked' };
-    if (res.status === 429) return { service: 'RapidAPI (Property Data)', status: 'degraded', message: 'Rate limit hit' };
-    if (res.status === 404) return { service: 'RapidAPI (Property Data)', status: 'ok', message: 'API reachable (no data for test address)' };
-    return { service: 'RapidAPI (Property Data)', status: 'degraded', message: `HTTP ${res.status}` };
-  } catch (e: unknown) {
-    return { service: 'RapidAPI (Property Data)', status: 'down', message: String(e) };
-  }
+  // Do not make a live API call — it burns rate-limited quota on every health check run.
+  // Just verify the key is configured; actual reachability is validated by real listing page traffic.
+  const key = process.env.RAPIDAPI_KEY;
+  if (!key) return { service: 'RapidAPI (Property Data)', status: 'down', message: 'RAPIDAPI_KEY missing' };
+  return { service: 'RapidAPI (Property Data)', status: 'ok', message: 'API key configured' };
 }
 
 async function checkGoogleSignIn(): Promise<CheckResult> {
@@ -312,69 +300,41 @@ async function checkADAAudit(): Promise<CheckResult> {
 
 async function checkIsolationPolicies(): Promise<CheckResult> {
   try {
+    // pg_policies is a Postgres system catalog — not accessible via PostgREST.
+    // Instead, verify RLS behaviorally: an unauthenticated anon client must get
+    // zero rows from sensitive tables (RLS blocks all reads without a valid JWT).
+    const anonClient = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    );
+
+    const checks = await Promise.all([
+      anonClient.from('profiles').select('id').limit(1),
+      anonClient.from('applications').select('id').limit(1),
+      anonClient.from('conversations').select('id').limit(1),
+    ]);
+
+    const leaks: string[] = [];
+    const tables = ['profiles', 'applications', 'conversations'];
+    checks.forEach((result, i) => {
+      if (!result.error && result.data && result.data.length > 0) {
+        leaks.push(tables[i]);
+      }
+    });
+
+    if (leaks.length > 0) {
+      return {
+        service: 'Data Isolation (RLS)',
+        status: 'down',
+        message: `RLS BREACH: unauthenticated read succeeded on: ${leaks.join(', ')}`,
+      };
+    }
+
+    // Also check for uninitialised landlord vaults
     const sb = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.SUPABASE_SERVICE_KEY ?? process.env.SUPABASE_SERVICE_ROLE_KEY!,
     );
-
-    const REQUIRED_DB: { table: string; policy: string }[] = [
-      { table: 'listings',           policy: 'landlord_insert' },
-      { table: 'listings',           policy: 'landlord_read_own' },
-      { table: 'listings',           policy: 'landlord_update' },
-      { table: 'listings',           policy: 'landlord_delete' },
-      { table: 'applications',       policy: 'Landlords can read their own listing applications' },
-      { table: 'applications',       policy: 'landlord_update_applications' },
-      { table: 'applications',       policy: 'landlord_delete_applications' },
-      { table: 'screening_requests', policy: 'Landlords can insert screening requests' },
-      { table: 'screening_requests', policy: 'Landlords can read own screening requests' },
-      { table: 'screening_requests', policy: 'landlord_update_screening' },
-      { table: 'screening_requests', policy: 'landlord_delete_screening' },
-      { table: 'inquiries',          policy: 'Landlords can read their own inquiries' },
-      { table: 'inquiries',          policy: 'Landlords can delete their own inquiries' },
-      { table: 'inquiries',          policy: 'landlord_update_inquiries' },
-      { table: 'profiles',           policy: 'Users can read own profile' },
-      { table: 'profiles',           policy: 'Users can update own profile' },
-      { table: 'conversations',      policy: 'Users can read own conversations' },
-      { table: 'conversations',      policy: 'Users can update own conversations' },
-      { table: 'app_messages',       policy: 'Users can read messages in own conversations' },
-      { table: 'app_messages',       policy: 'Users can insert messages in own conversations' },
-    ];
-
-    const REQUIRED_STORAGE = [
-      'landlord_upload_photos',
-      'landlord_delete_photos',
-      'landlord_update_photos',
-    ];
-
-    // Query DB policies
-    const { data: dbRows, error: dbErr } = await sb
-      .from('pg_policies' as never)
-      .select('tablename, policyname')
-      .eq('schemaname', 'public') as unknown as {
-        data: { tablename: string; policyname: string }[] | null;
-        error: unknown;
-      };
-
-    if (dbErr || !dbRows) {
-      return { service: 'Data Isolation (RLS)', status: 'down', message: 'Could not query pg_policies' };
-    }
-
-    const dbSet = new Set(dbRows.map((r) => `${r.tablename}::${r.policyname}`));
-    const missingDb = REQUIRED_DB.filter(({ table, policy }) => !dbSet.has(`${table}::${policy}`));
-
-    // Query storage policies
-    const { data: storageRows } = await sb
-      .from('pg_policies' as never)
-      .select('policyname')
-      .eq('schemaname', 'storage')
-      .eq('tablename', 'objects') as unknown as {
-        data: { policyname: string }[] | null;
-      };
-
-    const storageSet = new Set((storageRows ?? []).map((r) => r.policyname));
-    const missingStorage = REQUIRED_STORAGE.filter((p) => !storageSet.has(p));
-
-    // Check for uninitialised vaults (accounts older than 10 min)
     const { data: uninit } = await sb
       .from('profiles')
       .select('account_id, id')
@@ -382,27 +342,14 @@ async function checkIsolationPolicies(): Promise<CheckResult> {
       .neq('role', 'tenant')
       .lt('created_at', new Date(Date.now() - 10 * 60 * 1000).toISOString());
 
-    const allMissing = [
-      ...missingDb.map(({ table, policy }) => `DB: ${table} → "${policy}"`),
-      ...missingStorage.map((p) => `Storage: "${p}"`),
-    ];
-
-    if (allMissing.length > 0) {
-      return {
-        service: 'Data Isolation (RLS)',
-        status: 'down',
-        message: `${allMissing.length} policy/policies missing: ${allMissing.join(' | ')}`,
-      };
-    }
-
     const vaultWarning = uninit && uninit.length > 0
-      ? ` · ${uninit.length} vault(s) uninitialised: ${uninit.map((u: { account_id?: string; id: string }) => u.account_id ?? u.id).join(', ')}`
+      ? ` · ${uninit.length} vault(s) uninitialised`
       : '';
 
     return {
       service: 'Data Isolation (RLS)',
       status: uninit && uninit.length > 0 ? 'degraded' : 'ok',
-      message: `All ${REQUIRED_DB.length} DB + ${REQUIRED_STORAGE.length} storage policies verified${vaultWarning}`,
+      message: `Unauthenticated reads blocked on all sensitive tables${vaultWarning}`,
     };
   } catch (e: unknown) {
     return { service: 'Data Isolation (RLS)', status: 'down', message: String(e) };

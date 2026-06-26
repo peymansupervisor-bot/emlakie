@@ -14,6 +14,7 @@ const TABS = [
   { href: '/landlord/alerts',   label: 'Notifications'  },
   { href: '/landlord/screening', label: 'Screening'      },
   { href: '/landlord/payments', label: '⚡ Boost'        },
+  { href: '/landlord/refer',    label: '🎁 Refer'       },
   { href: '/landlord/profile',  label: 'Profile'        },
 ];
 
@@ -47,6 +48,19 @@ export default function LandlordLayout({ children }: { children: React.ReactNode
           method: 'POST',
           headers: { Authorization: `Bearer ${token}` },
         }).catch(() => {}); // fire-and-forget, non-blocking
+
+        // Attribute a referral if the landlord arrived via a referral link.
+        // Idempotent server-side; clear the code once handed off.
+        let ref: string | null = null;
+        try { ref = localStorage.getItem('emlakie_ref'); } catch {}
+        if (ref) {
+          fetch('/api/referrals/attribute', {
+            method: 'POST',
+            headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ code: ref }),
+          }).catch(() => {});
+          try { localStorage.removeItem('emlakie_ref'); } catch {}
+        }
       }
 
       if (signedIn && !isProfileComplete(p) && pathname !== '/landlord/profile') {

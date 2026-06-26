@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useState, Suspense } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { signInWithPassword, signUpWithPassword, resetPassword, signInWithOAuth, updateProfile } from '@/lib/landlord/client';
 
 type Step = 'login' | 'signup' | 'forgot' | 'forgot-sent';
@@ -36,6 +36,15 @@ function LandlordLoginInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const nextPath = searchParams.get('next') ?? '/landlord';
+
+  // Capture a referral code from the link (?ref=CODE) so it survives signup —
+  // including OAuth redirects. Attribution happens after first sign-in (layout).
+  useEffect(() => {
+    const ref = searchParams.get('ref');
+    if (ref) {
+      try { localStorage.setItem('emlakie_ref', ref.trim().toUpperCase()); } catch {}
+    }
+  }, [searchParams]);
   const [step, setStep] = useState<Step>('login');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');

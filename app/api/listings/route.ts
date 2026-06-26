@@ -7,6 +7,7 @@ import { logError } from '@/lib/log-error'
 import { getOrProvisionVirtualPhone } from '@/lib/twilio'
 import { submitToIndexNow } from '@/lib/indexnow'
 import { stateByAbbr } from '@/lib/states'
+import { qualifyReferralOnFirstListing } from '@/lib/referrals'
 
 export const dynamic = 'force-dynamic'
 // Route segment config — tells Next.js/Vercel this route needs extended body size
@@ -160,6 +161,10 @@ export async function POST(req: NextRequest) {
     ...(citySlug ? [`/rentals/city/${citySlug}`] : []),
     ...(stateSlug ? [`/rentals/state/${stateSlug}`] : []),
   ]).catch(() => {});
+
+  // If this is a referred landlord's first listing, qualify the referral and
+  // grant both parties a free 30-day boost (auto-applied here). Fire-and-forget.
+  qualifyReferralOnFirstListing(user.id, data.id).catch(() => {});
 
   return NextResponse.json(data, { status: 201 })
 }

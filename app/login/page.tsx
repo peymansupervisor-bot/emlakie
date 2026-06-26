@@ -106,7 +106,15 @@ export default function LoginPage() {
           </>
         ) : (
           <>
-            <h2 className="text-2xl font-semibold text-gray-900 mb-1">Enter code</h2>
+            {/*
+              Fix: heading-order violation.
+              Previously <h2>, this was the only heading rendered in the OTP step
+              (the <h1> from the phone step is absent), creating an h2 with no
+              preceding h1 — a skipped heading level. Changed to <h1> because
+              "Enter code" is the top-level heading of the page at this step.
+              Visual styling is unchanged.
+            */}
+            <h1 className="text-2xl font-semibold text-gray-900 mb-1">Enter code</h1>
             <p className="text-gray-500 text-sm mb-6">
               We sent a 6-digit code to <span className="font-medium text-gray-700">{phone}</span>.
             </p>

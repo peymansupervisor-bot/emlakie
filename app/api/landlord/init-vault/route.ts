@@ -1,20 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createSupabaseWithToken, createSupabaseAdmin } from '@/lib/supabase-server';
+import { logError } from '@/lib/log-error';
 
 export const dynamic = 'force-dynamic';
 
-// Subfolder structure created for every new landlord's vault
 const VAULT_FOLDERS = [
-  'photos/.keep',      // property photos (organized by listing id inside)
-  'documents/.keep',   // leases, agreements, addendums
-  'media/.keep',       // floor plans, videos, other media
+  'photos/.keep',
+  'documents/.keep',
+  'media/.keep',
 ];
 
-/**
- * POST /api/landlord/init-vault
- * Creates the landlord's private storage folder structure on first login.
- * Safe to call multiple times — idempotent (skips if already initialized).
- */
 export async function POST(req: NextRequest) {
   const token = req.headers.get('authorization')?.replace('Bearer ', '');
   if (!token) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -25,10 +20,9 @@ export async function POST(req: NextRequest) {
 
   const admin = createSupabaseAdmin();
 
-  // Check if already initialized
   const { data: profile } = await admin
     .from('profiles')
-    .select('folder_initialized_at')
+    .select('folder_initialized_at, account_id')
     .eq('id', user.id)
     .single();
 
@@ -36,27 +30,46 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: true, skipped: true });
   }
 
-  // Create placeholder files in each subfolder to establish the directory structure
-  const errors: string[] = [];
+  const failed: string[] = [];
+
   for (const path of VAULT_FOLDERS) {
     const fullPath = `${user.id}/${path}`;
     const { error } = await admin.storage
       .from('listing-photos')
       .upload(fullPath, new Blob([''], { type: 'text/plain' }), { upsert: true });
     if (error && !error.message.includes('already exists')) {
-      errors.push(`${path}: ${error.message}`);
+      failed.push(`${fullPath}: ${error.message}`);
     }
   }
 
-  if (errors.length > 0) {
-    return NextResponse.json({ error: 'Partial init failure', details: errors }, { status: 500 });
+  if (failed.length > 0) {
+    // Log every failure — this must never be silent
+    await logError({
+      source: 'VaultInit',
+      message: `Storage vault init failed for landlord ${profile?.account_id ?? user.id}`,
+      details: failed.join(' | '),
+      endpoint: 'POST /api/landlord/init-vault',
+      http_status: 500,
+    });
+    return NextResponse.json({ error: 'Vault init failed', details: failed }, { status: 500 });
   }
 
-  // Mark as initialized
-  await admin
+  const { error: updateErr } = await admin
     .from('profiles')
     .update({ folder_initialized_at: new Date().toISOString() })
     .eq('id', user.id);
+
+  if (updateErr) {
+    await logError({
+      source: 'VaultInit',
+      message: `Could not mark vault as initialized for landlord ${profile?.account_id ?? user.id}`,
+      details: updateErr.message,
+      endpoint: 'POST /api/landlord/init-vault',
+      http_status: 500,
+    });
+    // Storage folders were created — return ok so landlord isn't blocked.
+    // Next login will retry marking initialized.
+  }
 
   return NextResponse.json({ ok: true });
 }

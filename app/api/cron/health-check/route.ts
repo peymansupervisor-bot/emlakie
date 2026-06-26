@@ -310,6 +310,105 @@ async function checkADAAudit(): Promise<CheckResult> {
   }
 }
 
+async function checkIsolationPolicies(): Promise<CheckResult> {
+  try {
+    const sb = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_KEY ?? process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    );
+
+    const REQUIRED_DB: { table: string; policy: string }[] = [
+      { table: 'listings',           policy: 'landlord_insert' },
+      { table: 'listings',           policy: 'landlord_read_own' },
+      { table: 'listings',           policy: 'landlord_update' },
+      { table: 'listings',           policy: 'landlord_delete' },
+      { table: 'applications',       policy: 'Landlords can read their own listing applications' },
+      { table: 'applications',       policy: 'landlord_update_applications' },
+      { table: 'applications',       policy: 'landlord_delete_applications' },
+      { table: 'screening_requests', policy: 'Landlords can insert screening requests' },
+      { table: 'screening_requests', policy: 'Landlords can read own screening requests' },
+      { table: 'screening_requests', policy: 'landlord_update_screening' },
+      { table: 'screening_requests', policy: 'landlord_delete_screening' },
+      { table: 'inquiries',          policy: 'Landlords can read their own inquiries' },
+      { table: 'inquiries',          policy: 'Landlords can delete their own inquiries' },
+      { table: 'inquiries',          policy: 'landlord_update_inquiries' },
+      { table: 'profiles',           policy: 'Users can read own profile' },
+      { table: 'profiles',           policy: 'Users can update own profile' },
+      { table: 'conversations',      policy: 'Users can read own conversations' },
+      { table: 'conversations',      policy: 'Users can update own conversations' },
+      { table: 'app_messages',       policy: 'Users can read messages in own conversations' },
+      { table: 'app_messages',       policy: 'Users can insert messages in own conversations' },
+    ];
+
+    const REQUIRED_STORAGE = [
+      'landlord_upload_photos',
+      'landlord_delete_photos',
+      'landlord_update_photos',
+    ];
+
+    // Query DB policies
+    const { data: dbRows, error: dbErr } = await sb
+      .from('pg_policies' as never)
+      .select('tablename, policyname')
+      .eq('schemaname', 'public') as unknown as {
+        data: { tablename: string; policyname: string }[] | null;
+        error: unknown;
+      };
+
+    if (dbErr || !dbRows) {
+      return { service: 'Data Isolation (RLS)', status: 'down', message: 'Could not query pg_policies' };
+    }
+
+    const dbSet = new Set(dbRows.map((r) => `${r.tablename}::${r.policyname}`));
+    const missingDb = REQUIRED_DB.filter(({ table, policy }) => !dbSet.has(`${table}::${policy}`));
+
+    // Query storage policies
+    const { data: storageRows } = await sb
+      .from('pg_policies' as never)
+      .select('policyname')
+      .eq('schemaname', 'storage')
+      .eq('tablename', 'objects') as unknown as {
+        data: { policyname: string }[] | null;
+      };
+
+    const storageSet = new Set((storageRows ?? []).map((r) => r.policyname));
+    const missingStorage = REQUIRED_STORAGE.filter((p) => !storageSet.has(p));
+
+    // Check for uninitialised vaults (accounts older than 10 min)
+    const { data: uninit } = await sb
+      .from('profiles')
+      .select('account_id, id')
+      .is('folder_initialized_at', null)
+      .neq('role', 'tenant')
+      .lt('created_at', new Date(Date.now() - 10 * 60 * 1000).toISOString());
+
+    const allMissing = [
+      ...missingDb.map(({ table, policy }) => `DB: ${table} → "${policy}"`),
+      ...missingStorage.map((p) => `Storage: "${p}"`),
+    ];
+
+    if (allMissing.length > 0) {
+      return {
+        service: 'Data Isolation (RLS)',
+        status: 'down',
+        message: `${allMissing.length} policy/policies missing: ${allMissing.join(' | ')}`,
+      };
+    }
+
+    const vaultWarning = uninit && uninit.length > 0
+      ? ` · ${uninit.length} vault(s) uninitialised: ${uninit.map((u: { account_id?: string; id: string }) => u.account_id ?? u.id).join(', ')}`
+      : '';
+
+    return {
+      service: 'Data Isolation (RLS)',
+      status: uninit && uninit.length > 0 ? 'degraded' : 'ok',
+      message: `All ${REQUIRED_DB.length} DB + ${REQUIRED_STORAGE.length} storage policies verified${vaultWarning}`,
+    };
+  } catch (e: unknown) {
+    return { service: 'Data Isolation (RLS)', status: 'down', message: String(e) };
+  }
+}
+
 async function checkSmartDescriptions(): Promise<CheckResult> {
   try {
     const key = process.env.ANTHROPIC_API_KEY;
@@ -418,6 +517,7 @@ export async function GET(req: NextRequest) {
       checkADAAudit(),
       checkDailyCron(),
       checkSmartDescriptions(),
+      checkIsolationPolicies(),
     ]);
 
     const results: CheckResult[] = checks.map((c) =>

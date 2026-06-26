@@ -16,7 +16,14 @@ export default function Footer() {
 
           <nav aria-label="Footer navigation" className="grid grid-cols-2 gap-10 sm:grid-cols-3">
             <div>
-              <h3 className="font-serif text-base font-bold tracking-tight text-gray-900">Renters</h3>
+              {/*
+                Fix: heading-order violation on /support and /app.
+                These footer column labels were <h3>, which skips a level after
+                each page's <h1> (h1 → h3, no h2 in between). Changed to <h2>
+                so the document outline is h1 → h2 throughout. Visual styling
+                is identical; only the semantic level changes.
+              */}
+              <h2 className="font-serif text-base font-bold tracking-tight text-gray-900">Renters</h2>
               <ul className="mt-4 space-y-3 text-sm text-gray-600">
                 <li><Link href="/rentals" className="transition hover:text-brand-600">Browse all rentals</Link></li>
                 <li><Link href="/rentals/apartments" className="transition hover:text-brand-600">Apartments for rent</Link></li>
@@ -33,7 +40,7 @@ export default function Footer() {
               </ul>
             </div>
             <div>
-              <h3 className="font-serif text-base font-bold tracking-tight text-gray-900">Landlords</h3>
+              <h2 className="font-serif text-base font-bold tracking-tight text-gray-900">Landlords</h2>
               <ul className="mt-4 space-y-3 text-sm text-gray-600">
                 <li><Link href="/for-landlords" className="transition hover:text-brand-600">Why EMLAKIE?</Link></li>
                 <li><Link href="/landlord/login" className="transition hover:text-brand-600">List a property</Link></li>
@@ -42,7 +49,7 @@ export default function Footer() {
               </ul>
             </div>
             <div>
-              <h3 className="font-serif text-base font-bold tracking-tight text-gray-900">Company</h3>
+              <h2 className="font-serif text-base font-bold tracking-tight text-gray-900">Company</h2>
               <ul className="mt-4 space-y-3 text-sm text-gray-600">
                 <li><Link href="/about" className="transition hover:text-brand-600">About</Link></li>
                 <li><Link href="/blog" className="transition hover:text-brand-600">Blog</Link></li>

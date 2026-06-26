@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { getProfile, isSignedIn, signOut } from '@/lib/landlord/client';
+import { getProfile, getToken, isSignedIn, signOut } from '@/lib/landlord/client';
 import { LandlordProfile } from '@/lib/landlord/types';
 import ErrorReporter from '@/components/ErrorReporter';
 
@@ -39,6 +39,15 @@ export default function LandlordLayout({ children }: { children: React.ReactNode
       const p = await getProfile();
       setProfile(p);
       setReady(true);
+
+      // Initialize landlord's private storage vault on first login (idempotent)
+      if (signedIn) {
+        const token = await getToken();
+        fetch('/api/landlord/init-vault', {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${token}` },
+        }).catch(() => {}); // fire-and-forget, non-blocking
+      }
 
       if (signedIn && !isProfileComplete(p) && pathname !== '/landlord/profile') {
         router.replace('/landlord/profile');

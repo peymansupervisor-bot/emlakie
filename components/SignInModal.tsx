@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { signInWithPassword, signUpWithPassword, resetPassword, signInWithOAuth, updateProfile } from '@/lib/landlord/client';
+import { trackEvent } from '@/lib/analytics';
 
 type Step = 'choice' | 'login' | 'signup' | 'forgot' | 'forgot-sent';
 
@@ -158,6 +159,7 @@ export default function SignInModal({
     try {
       await signUpWithPassword(email.trim().toLowerCase(), password);
       await updateProfile({ first_name: firstName.trim(), last_name: lastName.trim(), phone });
+      trackEvent('sign_up', { method: 'password' });
       setMessage('Account created! Check your email to confirm, then sign in.');
       go('login');
     } catch (err) {

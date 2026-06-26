@@ -3,6 +3,7 @@
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useState, useEffect, Suspense } from 'react';
 import { signInWithPassword, signUpWithPassword, resetPassword, signInWithOAuth, updateProfile } from '@/lib/landlord/client';
+import { trackEvent } from '@/lib/analytics';
 
 type Step = 'login' | 'signup' | 'forgot' | 'forgot-sent';
 
@@ -78,6 +79,7 @@ function LandlordLoginInner() {
       await signUpWithPassword(email.trim().toLowerCase(), password);
       // Save name + phone immediately so the profile is complete from day one
       await updateProfile({ first_name: signupFirstName.trim(), last_name: signupLastName.trim(), phone: signupPhone });
+      trackEvent('sign_up', { method: 'password' });
       setMessage('Account created! Check your email to confirm, then sign in.');
       setStep('login');
     } catch (err) {

@@ -5,6 +5,7 @@ import { useRef, useState, useEffect } from 'react';
 import Link from 'next/link';
 import { createListing, getProfile, getToken, updateProfile } from '@/lib/landlord/client';
 import { supabase } from '@/lib/supabase';
+import { trackEvent } from '@/lib/analytics';
 
 interface PhotoItem {
   preview: string;   // blob URL for preview (revoked after processing)
@@ -438,6 +439,7 @@ export default function NewPropertyPage() {
       console.log('[submit] step 4: POST /api/listings');
       await createListing(fd);
       console.log('[submit] listing created successfully');
+      trackEvent('listing_published');
       router.push('/landlord?created=1');
     } catch (e) {
       console.error('[submit] FAILED:', e);

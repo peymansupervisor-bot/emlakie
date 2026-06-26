@@ -19,6 +19,8 @@ const SERVICE_ORDER = [
   { name: 'SEO Audit', icon: '🔍', desc: 'SEO meta tags, headings & structured data' },
   { name: 'Inman RSS', icon: '📰', desc: 'Real estate news feed' },
   { name: 'Daily Alert Cron', icon: '⏰', desc: 'Morning renter alerts' },
+  { name: 'Data Isolation (RLS)', icon: '🔐', desc: 'Row-level security on sensitive tables' },
+  { name: 'Smart Descriptions (AI)', icon: '🤖', desc: 'AI listing description generation' },
 ];
 
 function formatDate(iso: string) {

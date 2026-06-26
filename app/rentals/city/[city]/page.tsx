@@ -12,14 +12,8 @@ interface Props {
   params: Promise<{ city: string }>;
 }
 
-export const revalidate = 300;
+export const dynamic = 'force-dynamic';
 export const dynamicParams = true;
-
-// No pages pre-built at deploy time — all city pages generate on first request
-// and are cached for revalidate seconds. Build time stays constant as listings grow.
-export async function generateStaticParams() {
-  return [];
-}
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { city: slug } = await params;

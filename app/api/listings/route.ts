@@ -105,13 +105,20 @@ export async function POST(req: NextRequest) {
   if (photoUrls.length === 0) validationErrors.push('At least one photo is required.')
   if (listingSource === 'broker' && !agentName?.trim()) validationErrors.push('Agent/broker name is required for broker listings.')
 
-  // Verify the landlord has a phone on their profile
+  // Verify the landlord has a phone — accept from form or existing profile
   const adminSb = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!
   )
+  const formPhone = (formData.get('phone') as string)?.trim() ?? ''
   const { data: profile } = await adminSb.from('profiles').select('phone').eq('id', user.id).single()
-  if (!profile?.phone?.trim()) validationErrors.push('A contact phone number is required on your profile before listing.')
+  const resolvedPhone = profile?.phone?.trim() || formPhone
+  if (!resolvedPhone) {
+    validationErrors.push('A contact phone number is required on your profile before listing.')
+  } else if (!profile?.phone?.trim() && formPhone) {
+    // Phone came from the form but isn't in the DB yet — save it now server-side
+    await adminSb.from('profiles').update({ phone: formPhone }).eq('id', user.id)
+  }
 
   if (validationErrors.length > 0) {
     return NextResponse.json({ error: validationErrors.join(' ') }, { status: 422 })

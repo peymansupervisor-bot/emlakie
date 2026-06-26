@@ -185,11 +185,15 @@ export default function NewPropertyPage() {
   const fileRef = useRef<HTMLInputElement>(null);
   const filterTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [profileName, setProfileName] = useState({ first_name: '', last_name: '' });
+  const [profileHasPhone, setProfileHasPhone] = useState(false);
 
   useEffect(() => {
     getProfile().then((p) => {
       setProfileName({ first_name: p?.first_name ?? '', last_name: p?.last_name ?? '' });
-      if (p?.phone?.trim()) setForm((f) => ({ ...f, phone: p.phone!.trim() }));
+      if (p?.phone?.trim()) {
+        setForm((f) => ({ ...f, phone: p.phone!.trim() }));
+        setProfileHasPhone(true);
+      }
     }).catch(() => {});
   }, []);
 
@@ -371,8 +375,10 @@ export default function NewPropertyPage() {
       if (!form.state.trim()) return 'State is required.';
       if (!form.price.trim() || isNaN(+form.price) || +form.price < 100) return 'Enter a valid monthly rent.';
       if (form.propertyType === 'studio' && !form.ownershipType) return 'Please specify whether this studio is an apartment unit or a condominium.';
-      const phoneDigits = form.phone.replace(/\D/g, '');
-      if (phoneDigits.length !== 10) return 'Enter a valid 10-digit US phone number so renters can reach you.';
+      if (!profileHasPhone) {
+        const phoneDigits = form.phone.replace(/\D/g, '');
+        if (phoneDigits.length !== 10) return 'Enter a valid 10-digit US phone number so renters can reach you.';
+      }
     }
     if (step === 2) {
       if (!form.title.trim()) return 'Add a listing title.';
@@ -432,6 +438,7 @@ export default function NewPropertyPage() {
       if (form.isBroker && form.officeName.trim()) fd.append('officeName', form.officeName.trim());
       if (form.ownershipType) fd.append('ownershipType', form.ownershipType);
       if (form.virtualTourUrl.trim()) fd.append('virtualTourUrl', form.virtualTourUrl.trim());
+      if (form.phone.trim()) fd.append('phone', form.phone.trim());
       photoUrls.forEach((url) => fd.append('photoUrl', url));
       console.log('[submit] FormData entries:', Array.from(fd.keys()));
 
@@ -731,20 +738,22 @@ export default function NewPropertyPage() {
                 onChange={(e) => set('availableFrom', e.target.value)} />
             </div>
           </div>
-          <div>
-            <label htmlFor="new-phone" className={labelCls}>Your phone number *</label>
-            <input
-              id="new-phone"
-              type="tel"
-              className={inputCls}
-              placeholder="(555) 000-0000"
-              value={form.phone}
-              onChange={(e) => set('phone', formatPhone(e.target.value))}
-            />
-            <p className="mt-1 text-xs text-gray-500">
-              Renters will reach you at this number. EMLAKIE assigns a private forwarding number to protect your privacy.
-            </p>
-          </div>
+          {!profileHasPhone && (
+            <div>
+              <label htmlFor="new-phone" className={labelCls}>Your phone number *</label>
+              <input
+                id="new-phone"
+                type="tel"
+                className={inputCls}
+                placeholder="(555) 000-0000"
+                value={form.phone}
+                onChange={(e) => set('phone', formatPhone(e.target.value))}
+              />
+              <p className="mt-1 text-xs text-gray-500">
+                Renters will reach you at this number. EMLAKIE assigns a private forwarding number to protect your privacy.
+              </p>
+            </div>
+          )}
         </div>
       )}
 

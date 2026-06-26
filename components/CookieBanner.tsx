@@ -18,6 +18,8 @@ export default function CookieBanner() {
 
   function accept() {
     localStorage.setItem('emlakie_cookie_consent', 'accepted');
+    // Let analytics start immediately on accept, without requiring a reload.
+    window.dispatchEvent(new Event('emlakie-consent-changed'));
     setVisible(false);
   }
 

@@ -146,7 +146,7 @@ export default function Filters() {
         onClick={() => setFilter('ownerDirect', ownerDirect ? '' : '1')}
         className={`flex items-center gap-1.5 rounded-lg border px-3 py-2 text-sm font-medium outline-none transition focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-1 ${
           ownerDirect
-            ? 'border-brand-600 bg-brand-600 text-white'
+            ? 'border-brand-600 bg-brand-700 text-white'
             : 'border-gray-300 bg-white text-gray-700 hover:border-gray-400'
         }`}
       >
@@ -172,7 +172,7 @@ export default function Filters() {
         >
           Amenities
           {selectedAmenities.length > 0 && (
-            <span className="flex h-4 w-4 items-center justify-center rounded-full bg-brand-600 text-[10px] font-bold text-white">
+            <span className="flex h-4 w-4 items-center justify-center rounded-full bg-brand-700 text-[10px] font-bold text-white">
               {selectedAmenities.length}
             </span>
           )}

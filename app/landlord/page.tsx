@@ -119,7 +119,7 @@ function PriceEditor({ listing, onSaved }: { listing: LandlordListing; onSaved: 
             <button
               type="submit"
               disabled={saving}
-              className="rounded-lg bg-brand-600 px-2.5 py-1 text-xs font-semibold text-white hover:bg-brand-700 disabled:opacity-50"
+              className="rounded-lg bg-brand-700 px-2.5 py-1 text-xs font-semibold text-white hover:bg-brand-800 disabled:opacity-50"
             >
               {saving ? '…' : 'Save'}
             </button>
@@ -283,7 +283,7 @@ export default function PropertiesPage() {
       {justCreated && (
         <div role="status" aria-live="polite" className="mb-8 overflow-hidden rounded-2xl border border-brand-200 bg-gradient-to-br from-brand-50 to-white shadow-card">
           <div className="flex flex-col items-center gap-4 px-6 py-10 text-center sm:px-10">
-            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-brand-600 text-white shadow-lg shadow-brand-600/30">
+            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-brand-700 text-white shadow-lg shadow-brand-600/30">
               <svg viewBox="0 0 24 24" className="h-8 w-8" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                 <path d="M20 6 9 17l-5-5" />
               </svg>
@@ -319,7 +319,7 @@ export default function PropertiesPage() {
               </a>
               <Link
                 href="/landlord/properties/new"
-                className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-700"
+                className="rounded-lg bg-brand-700 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-800"
               >
                 + Add Another Property
               </Link>
@@ -376,7 +376,7 @@ export default function PropertiesPage() {
           </Link>
           <Link
             href="/landlord/properties/new"
-            className="rounded-xl bg-brand-600 px-5 py-2.5 font-semibold text-white transition hover:bg-brand-700"
+            className="rounded-xl bg-brand-700 px-5 py-2.5 font-semibold text-white transition hover:bg-brand-800"
           >
             + Add a property
           </Link>

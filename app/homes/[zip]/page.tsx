@@ -198,7 +198,7 @@ export default async function ZipPage({ params }: Props) {
           <div className="mt-6 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
             <Link
               href="/app"
-              className="rounded-xl bg-brand-600 px-6 py-3 font-semibold text-white hover:bg-brand-700"
+              className="rounded-xl bg-brand-700 px-6 py-3 font-semibold text-white hover:bg-brand-800"
             >
               List Your Home
             </Link>
@@ -227,7 +227,7 @@ export default async function ZipPage({ params }: Props) {
             </p>
             <Link
               href="/app"
-              className="mt-4 inline-block rounded-lg bg-brand-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-brand-700"
+              className="mt-4 inline-block rounded-lg bg-brand-700 px-5 py-2.5 text-sm font-semibold text-white hover:bg-brand-800"
             >
               Apply in the App
             </Link>
@@ -253,7 +253,7 @@ export default async function ZipPage({ params }: Props) {
             <div className="mt-4 flex flex-wrap gap-3">
               <Link
                 href={`/rentals/city/${city.toLowerCase().replace(/\s+/g, '-')}`}
-                className="rounded-lg bg-brand-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-brand-700"
+                className="rounded-lg bg-brand-700 px-5 py-2.5 text-sm font-semibold text-white hover:bg-brand-800"
               >
                 Rentals in {city}
               </Link>

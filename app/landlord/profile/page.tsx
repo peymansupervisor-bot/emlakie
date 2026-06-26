@@ -188,7 +188,7 @@ export default function ProfilePage() {
         <button
           type="submit"
           disabled={busy || hasSystemFieldMissing}
-          className="w-full rounded-xl bg-brand-600 py-3 font-semibold text-white transition hover:bg-brand-700 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full rounded-xl bg-brand-700 py-3 font-semibold text-white transition hover:bg-brand-800 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {busy ? 'Saving…' : 'Save profile'}
         </button>

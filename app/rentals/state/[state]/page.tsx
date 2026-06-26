@@ -179,7 +179,7 @@ export default async function StatePage({ params }: Props) {
             <div className="mt-8 text-center">
               <Link
                 href={`/rentals?q=${encodeURIComponent(abbr)}`}
-                className="inline-block rounded-xl bg-brand-600 px-8 py-3 font-semibold text-white hover:bg-brand-700"
+                className="inline-block rounded-xl bg-brand-700 px-8 py-3 font-semibold text-white hover:bg-brand-800"
               >
                 Search all {total} rentals in {name} →
               </Link>
@@ -198,7 +198,7 @@ export default async function StatePage({ params }: Props) {
             Be the first landlord to list a home here and reach renters searching in {name} right now.
           </p>
           <div className="mt-6 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
-            <Link href="/landlord/login" className="rounded-xl bg-brand-600 px-6 py-3 font-semibold text-white hover:bg-brand-700">
+            <Link href="/landlord/login" className="rounded-xl bg-brand-700 px-6 py-3 font-semibold text-white hover:bg-brand-800">
               List Your Home Free
             </Link>
             <Link href="/rentals" className="rounded-xl border border-gray-200 px-6 py-3 font-semibold text-gray-700 hover:border-brand-400 hover:text-brand-600">
@@ -217,7 +217,7 @@ export default async function StatePage({ params }: Props) {
             : `${name} is an active rental market. EMLAKIE connects renters directly with landlords across the state — no broker fees, no middlemen. As landlords list homes here, live prices and availability will appear on this page. List your property on EMLAKIE to reach renters searching in ${name} today.`}
         </p>
         <div className="mt-4 flex flex-wrap gap-3">
-          <Link href={`/rentals?q=${encodeURIComponent(abbr)}`} className="rounded-lg bg-brand-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-brand-700">
+          <Link href={`/rentals?q=${encodeURIComponent(abbr)}`} className="rounded-lg bg-brand-700 px-5 py-2.5 text-sm font-semibold text-white hover:bg-brand-800">
             Search {abbr} rentals
           </Link>
           <Link href="/landlord/login" className="rounded-lg border border-gray-200 bg-white px-5 py-2.5 text-sm font-semibold text-gray-700 hover:border-brand-400 hover:text-brand-600">

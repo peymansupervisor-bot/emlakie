@@ -191,7 +191,7 @@ export default function HowItWorksPage() {
         <div className="mt-14 space-y-10 max-w-2xl mx-auto">
           {renterSteps.map(s => (
             <div key={s.n} className="flex gap-5">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-600 text-sm font-extrabold text-white">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-700 text-sm font-extrabold text-white">
                 {s.n}
               </div>
               <div className="pt-1">
@@ -203,7 +203,7 @@ export default function HowItWorksPage() {
         </div>
         <div className="mt-12 text-center">
           <Link href="/rentals"
-            className="inline-block rounded-xl bg-brand-600 px-8 py-4 font-bold text-white transition hover:bg-brand-700">
+            className="inline-block rounded-xl bg-brand-700 px-8 py-4 font-bold text-white transition hover:bg-brand-800">
             Browse available rentals →
           </Link>
         </div>
@@ -227,7 +227,7 @@ export default function HowItWorksPage() {
           <div className="mt-14 space-y-10 max-w-2xl mx-auto">
             {landlordSteps.map(s => (
               <div key={s.n} className="flex gap-5">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-600 text-sm font-extrabold text-white">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-700 text-sm font-extrabold text-white">
                   {s.n}
                 </div>
                 <div className="pt-1">
@@ -239,7 +239,7 @@ export default function HowItWorksPage() {
           </div>
           <div className="mt-12 text-center">
             <Link href="/landlords"
-              className="inline-block rounded-xl bg-brand-600 px-8 py-4 font-bold text-white transition hover:bg-brand-700">
+              className="inline-block rounded-xl bg-brand-700 px-8 py-4 font-bold text-white transition hover:bg-brand-800">
               List my property for free →
             </Link>
           </div>
@@ -295,7 +295,7 @@ export default function HowItWorksPage() {
         </div>
         <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
           <Link href="/rentals"
-            className="rounded-xl bg-brand-600 px-8 py-4 font-bold text-white transition hover:bg-brand-700">
+            className="rounded-xl bg-brand-700 px-8 py-4 font-bold text-white transition hover:bg-brand-800">
             Browse rentals
           </Link>
           <Link href="/landlords"

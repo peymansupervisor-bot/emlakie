@@ -23,7 +23,7 @@ interface Props {
 
 const inputClass = 'w-full rounded-xl border border-gray-300 px-4 py-3 text-base outline-none focus:border-brand-600 focus:ring-1 focus:ring-brand-600';
 const labelClass = 'block text-sm font-medium text-gray-700 mb-1';
-const btnPrimary = 'w-full rounded-xl bg-brand-600 py-3 text-base font-bold text-white transition hover:bg-brand-700 disabled:opacity-60';
+const btnPrimary = 'w-full rounded-xl bg-brand-700 py-3 text-base font-bold text-white transition hover:bg-brand-800 disabled:opacity-60';
 const btnOutline = 'w-full rounded-xl border border-gray-300 py-3 text-base font-semibold text-gray-700 transition hover:border-gray-400 hover:bg-gray-50 disabled:opacity-60';
 
 function EyeIcon() {

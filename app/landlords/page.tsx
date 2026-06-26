@@ -129,7 +129,7 @@ export default function LandlordsPage() {
           </p>
           <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link href="/landlord/login"
-              className="rounded-xl bg-brand-600 px-8 py-4 text-base font-bold text-white transition hover:bg-brand-700 shadow-sm">
+              className="rounded-xl bg-brand-700 px-8 py-4 text-base font-bold text-white transition hover:bg-brand-800 shadow-sm">
               List my property for free →
             </Link>
             <Link href="/rent-estimate"
@@ -185,7 +185,7 @@ export default function LandlordsPage() {
           <div className="mt-12 space-y-8">
             {steps.map(s => (
               <div key={s.n} className="flex gap-5">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-600 text-sm font-extrabold text-white">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-700 text-sm font-extrabold text-white">
                   {s.n}
                 </div>
                 <div className="pt-1">
@@ -197,7 +197,7 @@ export default function LandlordsPage() {
           </div>
           <div className="mt-12 text-center">
             <Link href="/landlord/login"
-              className="inline-block rounded-xl bg-brand-600 px-8 py-4 font-bold text-white transition hover:bg-brand-700">
+              className="inline-block rounded-xl bg-brand-700 px-8 py-4 font-bold text-white transition hover:bg-brand-800">
               Get started for free →
             </Link>
           </div>

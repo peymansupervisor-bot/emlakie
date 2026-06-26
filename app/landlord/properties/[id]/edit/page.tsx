@@ -322,7 +322,7 @@ export default function EditListingPage() {
       {/* Save */}
       <div className="mt-8 flex gap-3">
         <button onClick={handleSave} disabled={busy || saved}
-          className="flex-1 rounded-xl bg-brand-600 py-3 font-semibold text-white transition hover:bg-brand-700 disabled:opacity-60">
+          className="flex-1 rounded-xl bg-brand-700 py-3 font-semibold text-white transition hover:bg-brand-800 disabled:opacity-60">
           {busy ? 'Saving…' : 'Save changes'}
         </button>
         <Link href={`/landlord/properties/${id}`}

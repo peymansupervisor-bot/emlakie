@@ -52,7 +52,7 @@ export default function EValue({ ev }: { ev: EValueResult }) {
         <div>
           <div className="flex items-center gap-2">
             <span className="text-2xl font-extrabold text-gray-900">E-rent Value™ &amp; E-sale Value™</span>
-            <span className="rounded-full bg-brand-600 px-2.5 py-0.5 text-xs font-bold text-white tracking-wide">
+            <span className="rounded-full bg-brand-700 px-2.5 py-0.5 text-xs font-bold text-white tracking-wide">
               by EMLAKIE
             </span>
           </div>

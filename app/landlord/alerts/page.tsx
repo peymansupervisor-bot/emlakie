@@ -39,7 +39,7 @@ export default function AlertsPage() {
           Once you have an active listing, you&apos;ll see applicants,<br />views, and tips here.
         </p>
         <Link href="/landlord/properties/new"
-          className="mt-6 rounded-xl bg-brand-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-brand-700">
+          className="mt-6 rounded-xl bg-brand-700 px-5 py-2.5 text-sm font-semibold text-white hover:bg-brand-800">
           + Add your first listing
         </Link>
       </div>

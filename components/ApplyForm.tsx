@@ -208,7 +208,7 @@ export default function ApplyForm({ listingId, listingPrice }: Props) {
       <button
         type="submit"
         disabled={loading}
-        className="mt-4 w-full rounded-xl bg-brand-600 py-3 text-sm font-semibold text-white transition hover:bg-brand-700 disabled:opacity-60"
+        className="mt-4 w-full rounded-xl bg-brand-700 py-3 text-sm font-semibold text-white transition hover:bg-brand-800 disabled:opacity-60"
       >
         {loading ? 'Sending…' : 'Send Inquiry'}
       </button>

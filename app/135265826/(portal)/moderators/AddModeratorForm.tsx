@@ -33,7 +33,7 @@ export default function AddModeratorForm() {
         className="flex-1 rounded-xl bg-gray-800 border border-gray-700 px-3 py-2.5 text-sm text-white placeholder-gray-500 outline-none focus:border-brand-500"
       />
       <button type="submit" disabled={busy}
-        className="rounded-xl bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-brand-700 transition disabled:opacity-60">
+        className="rounded-xl bg-brand-700 px-4 py-2.5 text-sm font-semibold text-white hover:bg-brand-800 transition disabled:opacity-60">
         {busy ? 'Adding…' : 'Add'}
       </button>
       {msg && <p className="self-center text-xs text-green-400">{msg}</p>}

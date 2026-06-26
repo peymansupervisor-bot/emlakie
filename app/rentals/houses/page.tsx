@@ -113,7 +113,7 @@ export default async function HousesPage() {
       )}
 
       <div className="mt-10 text-center">
-        <Link href="/rentals?propertyType=house" className="inline-block rounded-xl bg-brand-600 px-8 py-3 font-semibold text-white transition hover:bg-brand-700">
+        <Link href="/rentals?propertyType=house" className="inline-block rounded-xl bg-brand-700 px-8 py-3 font-semibold text-white transition hover:bg-brand-800">
           Search all houses for rent
         </Link>
         <p className="mt-3 text-xs text-gray-500">Filter by city, price, and bedrooms to find the right house.</p>

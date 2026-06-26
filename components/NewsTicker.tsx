@@ -35,7 +35,7 @@ export default async function NewsTicker() {
   const items = [...headlines, ...headlines];
 
   return (
-    <div className="w-full bg-brand-600 text-white overflow-hidden">
+    <div className="w-full bg-brand-700 text-white overflow-hidden">
       <div className="flex items-center">
         <span className="shrink-0 bg-brand-700 px-3 py-2 text-xs font-bold uppercase tracking-widest z-10">
           News

@@ -196,7 +196,7 @@ function EmailForm({ subject: initialSubject }: { subject?: string }) {
       </div>
       {error && <p role="alert" className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">{error}</p>}
       <button type="submit" disabled={loading}
-        className="w-full rounded-xl bg-brand-600 py-3 text-sm font-semibold text-white transition hover:bg-brand-700 disabled:opacity-60">
+        className="w-full rounded-xl bg-brand-700 py-3 text-sm font-semibold text-white transition hover:bg-brand-800 disabled:opacity-60">
         {loading ? 'Sending…' : 'Send Message'}
       </button>
       <p className="text-center text-xs text-gray-500">Or email us directly at <a href="mailto:support@emlakie.com" className="text-brand-600 hover:underline">support@emlakie.com</a></p>
@@ -293,7 +293,7 @@ export default function ContactFlow() {
           <p className="text-sm leading-relaxed text-gray-700">{topic.answer}</p>
           {topic.cta && (
             <a href={topic.cta.href}
-              className="mt-4 inline-block rounded-lg bg-brand-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-700">
+              className="mt-4 inline-block rounded-lg bg-brand-700 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-800">
               {topic.cta.label}
             </a>
           )}

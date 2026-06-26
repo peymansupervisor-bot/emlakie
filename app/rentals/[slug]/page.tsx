@@ -327,7 +327,7 @@ export default async function ListingPage({ params }: Props) {
                 </p>
                 <Link
                   href={`/rentals?city=${encodeURIComponent(listing.city)}`}
-                  className="mt-5 block rounded-xl bg-brand-600 py-3 text-center font-semibold text-white transition hover:bg-brand-700"
+                  className="mt-5 block rounded-xl bg-brand-700 py-3 text-center font-semibold text-white transition hover:bg-brand-800"
                 >
                   Search in {listing.city}
                 </Link>

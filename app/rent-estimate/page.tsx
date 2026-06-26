@@ -177,7 +177,7 @@ export default function RentEstimatePage() {
         {error && <p role="alert" className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700">{error}</p>}
 
         <button type="submit" disabled={loading}
-          className="w-full rounded-xl bg-brand-600 py-3.5 font-bold text-white transition hover:bg-brand-700 disabled:opacity-60">
+          className="w-full rounded-xl bg-brand-700 py-3.5 font-bold text-white transition hover:bg-brand-800 disabled:opacity-60">
           {loading ? 'Calculating…' : 'Get my E-rent Value™ →'}
         </button>
         <p className="text-center text-xs text-gray-400">Free · No account needed · Based on real active listings</p>
@@ -195,7 +195,7 @@ export default function RentEstimatePage() {
                 Try a nearby city, or be the first to list your property and help set the market.
               </p>
               <Link href="/landlord/login"
-                className="mt-5 inline-block rounded-xl bg-brand-600 px-6 py-3 font-bold text-white hover:bg-brand-700">
+                className="mt-5 inline-block rounded-xl bg-brand-700 px-6 py-3 font-bold text-white hover:bg-brand-800">
                 List your property for free →
               </Link>
             </div>
@@ -287,7 +287,7 @@ export default function RentEstimatePage() {
                   Post for free on EMLAKIE — tenants contact you directly, no broker fees, no commissions.
                 </p>
                 <Link href="/landlord/login"
-                  className="mt-5 inline-block rounded-xl bg-brand-600 px-8 py-3 font-bold text-white transition hover:bg-brand-700">
+                  className="mt-5 inline-block rounded-xl bg-brand-700 px-8 py-3 font-bold text-white transition hover:bg-brand-800">
                   List my property for free →
                 </Link>
                 <p className="mt-2 text-xs text-gray-400">Takes under 5 minutes · No credit card</p>

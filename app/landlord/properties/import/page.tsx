@@ -79,7 +79,7 @@ export default function ImportFromMlsPage() {
         {listings.length > 0 && (
           <button
             onClick={importAll}
-            className="rounded-xl bg-brand-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-brand-700 transition"
+            className="rounded-xl bg-brand-700 px-5 py-2.5 text-sm font-semibold text-white hover:bg-brand-800 transition"
           >
             Import All ({listings.length})
           </button>
@@ -140,7 +140,7 @@ export default function ImportFromMlsPage() {
                   {status === 'idle' && (
                     <button
                       onClick={() => importListing(l)}
-                      className="w-full rounded-xl bg-brand-600 py-2 text-sm font-semibold text-white hover:bg-brand-700 transition"
+                      className="w-full rounded-xl bg-brand-700 py-2 text-sm font-semibold text-white hover:bg-brand-800 transition"
                     >
                       Import to EMLAKIE
                     </button>

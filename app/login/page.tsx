@@ -98,7 +98,7 @@ export default function LoginPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-brand-600 hover:bg-brand-700 text-white font-medium py-3 rounded-lg text-sm transition disabled:opacity-50"
+                className="w-full bg-brand-700 hover:bg-brand-800 text-white font-medium py-3 rounded-lg text-sm transition disabled:opacity-50"
               >
                 {loading ? 'Sending...' : 'Send verification code'}
               </button>
@@ -137,7 +137,7 @@ export default function LoginPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-brand-600 hover:bg-brand-700 text-white font-medium py-3 rounded-lg text-sm transition disabled:opacity-50"
+                className="w-full bg-brand-700 hover:bg-brand-800 text-white font-medium py-3 rounded-lg text-sm transition disabled:opacity-50"
               >
                 {loading ? 'Verifying...' : 'Verify & sign in'}
               </button>

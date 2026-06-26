@@ -187,7 +187,7 @@ function LandlordLoginInner() {
       <div className="mt-10 grid gap-8 sm:grid-cols-3">
         {steps.map((step, i) => (
           <div key={step.title} className="rounded-2xl border border-gray-200 p-6 shadow-card">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-600 text-lg font-bold text-white">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-700 text-lg font-bold text-white">
               {i + 1}
             </div>
             <h3 className="mt-4 text-lg font-bold text-gray-900">{step.title}</h3>

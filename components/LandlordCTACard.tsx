@@ -29,7 +29,7 @@ export default function LandlordCTACard() {
       </ul>
       <Link
         href="/landlord/login"
-        className="mt-5 block w-full rounded-xl bg-brand-600 py-2.5 text-center text-sm font-bold text-white transition hover:bg-brand-700"
+        className="mt-5 block w-full rounded-xl bg-brand-700 py-2.5 text-center text-sm font-bold text-white transition hover:bg-brand-800"
       >
         List my property free →
       </Link>

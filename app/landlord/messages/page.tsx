@@ -152,7 +152,7 @@ export default function MessagesPage() {
                 <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4">
                   {thread.messages.map((m) => (
                     <div key={m.id} className={`flex ${m.from_landlord ? 'justify-end' : 'justify-start'}`}>
-                      <div className={`max-w-[72%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${m.from_landlord ? 'bg-brand-600 text-white rounded-br-sm' : 'bg-gray-100 text-gray-900 rounded-bl-sm'}`}>
+                      <div className={`max-w-[72%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${m.from_landlord ? 'bg-brand-700 text-white rounded-br-sm' : 'bg-gray-100 text-gray-900 rounded-bl-sm'}`}>
                         <p style={{ whiteSpace: 'pre-wrap' }}>{m.body}</p>
                         <p className={`mt-1.5 text-right text-xs ${m.from_landlord ? 'text-green-200' : 'text-gray-400'}`}>{formatTime(m.created_at)}</p>
                       </div>
@@ -187,7 +187,7 @@ export default function MessagesPage() {
                       className="flex-1 resize-none rounded-xl border border-gray-200 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
                     />
                     <button type="submit" disabled={!reply.trim() || sending}
-                      className="self-end rounded-xl bg-brand-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-700 disabled:opacity-50">
+                      className="self-end rounded-xl bg-brand-700 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-800 disabled:opacity-50">
                       {sending ? '…' : 'Send'}
                     </button>
                   </form>

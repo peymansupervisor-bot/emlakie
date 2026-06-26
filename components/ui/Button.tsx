@@ -18,7 +18,7 @@ const BASE =
   'disabled:opacity-50 disabled:pointer-events-none';
 
 const VARIANTS: Record<Variant, string> = {
-  primary:   'rounded-xl bg-brand-600 text-white hover:bg-brand-700',
+  primary:   'rounded-xl bg-brand-700 text-white hover:bg-brand-800',
   secondary: 'rounded-xl border border-gray-200 bg-white text-gray-700 hover:bg-gray-50',
   ghost:     'text-gray-500 hover:text-gray-900',
 };

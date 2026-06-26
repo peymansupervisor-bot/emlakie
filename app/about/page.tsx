@@ -217,7 +217,7 @@ export default function AboutPage() {
           <div className="mt-8 flex flex-col sm:flex-row justify-center gap-4">
             <Link
               href="/rentals"
-              className="rounded-xl bg-brand-600 px-8 py-3 text-sm font-bold text-white hover:bg-brand-700 transition"
+              className="rounded-xl bg-brand-700 px-8 py-3 text-sm font-bold text-white hover:bg-brand-800 transition"
             >
               Search Rentals
             </Link>

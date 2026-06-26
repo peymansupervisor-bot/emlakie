@@ -176,7 +176,7 @@ export default function RentCheckPage() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full rounded-xl bg-brand-600 py-3.5 font-bold text-white transition hover:bg-brand-700 disabled:opacity-60"
+          className="w-full rounded-xl bg-brand-700 py-3.5 font-bold text-white transition hover:bg-brand-800 disabled:opacity-60"
         >
           {loading ? 'Checking…' : 'Check my rent →'}
         </button>
@@ -195,7 +195,7 @@ export default function RentCheckPage() {
                 We only found {result.count} listing{result.count !== 1 ? 's' : ''} matching your criteria in that city.
                 Try a nearby city or broaden the property type.
               </p>
-              <Link href="/rentals" className="mt-5 inline-block rounded-xl bg-brand-600 px-6 py-2.5 text-sm font-bold text-white hover:bg-brand-700">
+              <Link href="/rentals" className="mt-5 inline-block rounded-xl bg-brand-700 px-6 py-2.5 text-sm font-bold text-white hover:bg-brand-800">
                 Browse all rentals
               </Link>
             </div>
@@ -272,7 +272,7 @@ export default function RentCheckPage() {
               <div className="mt-8 text-center">
                 <Link
                   href={`/rentals?city=${encodeURIComponent(form.city)}&bedrooms=${form.bedrooms}`}
-                  className="inline-block rounded-xl bg-brand-600 px-8 py-3 font-bold text-white transition hover:bg-brand-700"
+                  className="inline-block rounded-xl bg-brand-700 px-8 py-3 font-bold text-white transition hover:bg-brand-800"
                 >
                   Browse rentals in {form.city} →
                 </Link>

@@ -498,7 +498,7 @@ export default function NewPropertyPage() {
               >
                 <div className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold transition-all ${
                   done
-                    ? 'bg-brand-600 text-white shadow-sm shadow-brand-600/30'
+                    ? 'bg-brand-700 text-white shadow-sm shadow-brand-600/30'
                     : active
                     ? 'border-2 border-brand-600 bg-brand-50 text-brand-700'
                     : 'border border-gray-200 bg-white text-gray-400'
@@ -877,7 +877,7 @@ export default function NewPropertyPage() {
                     <img src={item.preview} alt={`Property photo ${i + 1}`} className="h-full w-full object-cover" />
                   )}
                   {i === 0 && !item.uploading && !item.error && (
-                    <span className="absolute left-1 top-1 rounded-full bg-brand-600 px-2 py-0.5 text-xs font-bold text-white">
+                    <span className="absolute left-1 top-1 rounded-full bg-brand-700 px-2 py-0.5 text-xs font-bold text-white">
                       Cover
                     </span>
                   )}
@@ -954,13 +954,13 @@ export default function NewPropertyPage() {
       <div className="mt-8 flex gap-3">
         {step < 4 && (
           <button type="button" onClick={next}
-            className="flex-1 rounded-xl bg-brand-600 py-3 font-semibold text-white transition hover:bg-brand-700">
+            className="flex-1 rounded-xl bg-brand-700 py-3 font-semibold text-white transition hover:bg-brand-800">
             Continue
           </button>
         )}
         {step === 4 && (
           <button type="button" onClick={submit} disabled={busy}
-            className="flex-1 rounded-xl bg-brand-600 py-3 font-semibold text-white transition hover:bg-brand-700 disabled:opacity-60">
+            className="flex-1 rounded-xl bg-brand-700 py-3 font-semibold text-white transition hover:bg-brand-800 disabled:opacity-60">
             {busy ? 'Publishing…' : 'Publish listing'}
           </button>
         )}

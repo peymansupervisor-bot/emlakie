@@ -547,7 +547,7 @@ export default function SearchBar({ large = false }: { large?: boolean }) {
           <button
             type="submit"
             aria-label="Search"
-            className="flex items-center gap-1.5 bg-brand-600 px-5 font-semibold text-white transition hover:bg-brand-700"
+            className="flex items-center gap-1.5 bg-brand-700 px-5 font-semibold text-white transition hover:bg-brand-800"
           >
             <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true">
               <circle cx="11" cy="11" r="7" />

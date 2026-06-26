@@ -129,7 +129,7 @@ export default async function FurnishedPage() {
       )}
 
       <div className="mt-10 text-center">
-        <Link href="/rentals" className="inline-block rounded-xl bg-brand-600 px-8 py-3 font-semibold text-white transition hover:bg-brand-700">
+        <Link href="/rentals" className="inline-block rounded-xl bg-brand-700 px-8 py-3 font-semibold text-white transition hover:bg-brand-800">
           Browse all rentals
         </Link>
       </div>

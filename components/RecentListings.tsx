@@ -46,7 +46,7 @@ export default async function RecentListings() {
                 </div>
               )}
               {/* Featured badge */}
-              <span className="absolute top-2 left-2 rounded-full bg-brand-600 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white shadow">
+              <span className="absolute top-2 left-2 rounded-full bg-brand-700 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white shadow">
                 Featured
               </span>
             </div>

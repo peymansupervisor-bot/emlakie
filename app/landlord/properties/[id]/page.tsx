@@ -189,7 +189,7 @@ export default function PropertyDashboardPage() {
               Edit listing
             </Link>
             <button onClick={handleExtend} disabled={actionBusy}
-              className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-700 disabled:opacity-60">
+              className="rounded-lg bg-brand-700 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-800 disabled:opacity-60">
               Extend 45 days
             </button>
             <button onClick={handleMarkRented} disabled={actionBusy}
@@ -218,7 +218,7 @@ export default function PropertyDashboardPage() {
           >
             {t}
             {t === 'inquiries' && pending.length > 0 && (
-              <span className="ml-2 rounded-full bg-brand-600 px-2 py-0.5 text-xs font-bold text-white">
+              <span className="ml-2 rounded-full bg-brand-700 px-2 py-0.5 text-xs font-bold text-white">
                 {pending.length}
               </span>
             )}
@@ -274,7 +274,7 @@ export default function PropertyDashboardPage() {
               <button
                 onClick={submitRented}
                 disabled={actionBusy}
-                className="flex-1 rounded-xl bg-brand-600 py-2.5 text-sm font-bold text-white transition hover:bg-brand-700 disabled:opacity-60"
+                className="flex-1 rounded-xl bg-brand-700 py-2.5 text-sm font-bold text-white transition hover:bg-brand-800 disabled:opacity-60"
               >
                 {actionBusy ? 'Saving…' : 'Confirm — Mark as Rented'}
               </button>
@@ -340,7 +340,7 @@ export default function PropertyDashboardPage() {
               <div className="mt-4 flex flex-wrap gap-2">
                 <button
                   onClick={() => { setMessageModal(app.id); setMessageText(''); setMessageSuccess(false); }}
-                  className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-700"
+                  className="rounded-lg bg-brand-700 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-800"
                 >
                   Send Message
                 </button>
@@ -420,7 +420,7 @@ export default function PropertyDashboardPage() {
                     }
                   }}
                   disabled={messageSending || !messageText.trim()}
-                  className="flex-1 rounded-xl bg-brand-600 py-2.5 text-sm font-bold text-white transition hover:bg-brand-700 disabled:opacity-60"
+                  className="flex-1 rounded-xl bg-brand-700 py-2.5 text-sm font-bold text-white transition hover:bg-brand-800 disabled:opacity-60"
                 >
                   {messageSending ? 'Sending…' : 'Send'}
                 </button>
@@ -452,7 +452,7 @@ export default function PropertyDashboardPage() {
               <button
                 onClick={() => handleInquiryAction(respondModal, 'approved', respondNote || undefined)}
                 disabled={!!respondingId}
-                className="flex-1 rounded-xl bg-brand-600 py-2.5 text-sm font-bold text-white transition hover:bg-brand-700 disabled:opacity-60"
+                className="flex-1 rounded-xl bg-brand-700 py-2.5 text-sm font-bold text-white transition hover:bg-brand-800 disabled:opacity-60"
               >
                 {respondingId ? 'Sending…' : 'Send Response'}
               </button>

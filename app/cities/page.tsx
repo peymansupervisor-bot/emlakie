@@ -242,7 +242,7 @@ export default function CitiesPage() {
         <div className="mt-6 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
           <Link
             href="/rentals"
-            className="rounded-xl bg-brand-600 px-8 py-3 font-bold text-white transition hover:bg-brand-700"
+            className="rounded-xl bg-brand-700 px-8 py-3 font-bold text-white transition hover:bg-brand-800"
           >
             Search all rentals
           </Link>

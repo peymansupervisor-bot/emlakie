@@ -149,7 +149,7 @@ export default function ForLandlordsPage() {
           <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link
               href="/landlord/login"
-              className="w-full rounded-xl bg-brand-600 px-8 py-4 text-base font-bold text-white shadow-sm transition hover:bg-brand-700 sm:w-auto"
+              className="w-full rounded-xl bg-brand-700 px-8 py-4 text-base font-bold text-white shadow-sm transition hover:bg-brand-800 sm:w-auto"
             >
               List My Property Free →
             </Link>
@@ -229,7 +229,7 @@ export default function ForLandlordsPage() {
           <div className="mt-14 space-y-8">
             {steps.map((s, i) => (
               <div key={s.n} className="flex gap-5">
-                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-brand-600 text-sm font-extrabold text-white shadow-lg shadow-brand-600/25">
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-brand-700 text-sm font-extrabold text-white shadow-lg shadow-brand-600/25">
                   {s.n}
                 </div>
                 <div className="pt-2">
@@ -246,7 +246,7 @@ export default function ForLandlordsPage() {
           <div className="mt-14 text-center">
             <Link
               href="/landlord/login"
-              className="inline-block rounded-xl bg-brand-600 px-8 py-4 font-bold text-white shadow-sm transition hover:bg-brand-700"
+              className="inline-block rounded-xl bg-brand-700 px-8 py-4 font-bold text-white shadow-sm transition hover:bg-brand-800"
             >
               Get started for free →
             </Link>
@@ -285,7 +285,7 @@ export default function ForLandlordsPage() {
                   <p className="text-sm leading-relaxed text-gray-700">{t.quote}</p>
                 </blockquote>
                 <figcaption className="mt-6 flex items-center gap-3">
-                  <div className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-600 text-xs font-bold text-white">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-700 text-xs font-bold text-white">
                     {t.initials}
                   </div>
                   <div>
@@ -359,7 +359,7 @@ export default function ForLandlordsPage() {
           <div className="mt-8">
             <Link
               href="/landlord/login"
-              className="inline-block rounded-xl bg-brand-600 px-10 py-4 text-base font-bold text-white shadow-lg shadow-brand-600/25 transition hover:bg-brand-500"
+              className="inline-block rounded-xl bg-brand-700 px-10 py-4 text-base font-bold text-white shadow-lg shadow-brand-600/25 transition hover:bg-brand-500"
             >
               Create Your Free Account →
             </Link>

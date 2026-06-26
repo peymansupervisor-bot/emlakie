@@ -192,7 +192,7 @@ export default async function CityPage({ params }: Props) {
             Be the first landlord to list a home here and reach renters searching right now.
           </p>
           <div className="mt-6 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
-            <Link href="/landlord/login" className="rounded-xl bg-brand-600 px-6 py-3 font-semibold text-white hover:bg-brand-700">
+            <Link href="/landlord/login" className="rounded-xl bg-brand-700 px-6 py-3 font-semibold text-white hover:bg-brand-800">
               List Your Home
             </Link>
             <Link href="/rentals" className="rounded-xl border border-gray-200 px-6 py-3 font-semibold text-gray-700 hover:border-brand-400 hover:text-brand-600">
@@ -233,7 +233,7 @@ export default async function CityPage({ params }: Props) {
             : `${label} is an active rental market. As landlords list homes here, live prices and availability will appear on this page automatically. List your property on EMLAKIE to reach renters searching in ${city} right now.`}
         </p>
         <div className="mt-4 flex gap-3">
-          <Link href={`/rentals?city=${encodeURIComponent(city)}`} className="rounded-lg bg-brand-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-brand-700">
+          <Link href={`/rentals?city=${encodeURIComponent(city)}`} className="rounded-lg bg-brand-700 px-5 py-2.5 text-sm font-semibold text-white hover:bg-brand-800">
             Search {city} rentals
           </Link>
           <Link href="/blog" className="rounded-lg border border-gray-200 px-5 py-2.5 text-sm font-semibold text-gray-700 hover:border-brand-400 hover:text-brand-600">

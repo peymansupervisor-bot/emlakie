@@ -213,7 +213,7 @@ function ApplicantDrawer({ lead, onClose, onDelete }: {
                     setSending(false);
                   }
                 }}
-                className="w-full rounded-xl bg-brand-600 py-2 text-sm font-semibold text-white transition hover:bg-brand-700 disabled:opacity-40"
+                className="w-full rounded-xl bg-brand-700 py-2 text-sm font-semibold text-white transition hover:bg-brand-800 disabled:opacity-40"
               >
                 {sending ? 'Sending…' : 'Send Message'}
               </button>
@@ -313,7 +313,7 @@ export default function LeadsPage() {
           <p className="mt-1 text-sm text-gray-500">All applicants across your properties</p>
         </div>
         {pending > 0 && (
-          <span className="rounded-full bg-brand-600 px-3 py-1 text-sm font-bold text-white">
+          <span className="rounded-full bg-brand-700 px-3 py-1 text-sm font-bold text-white">
             {pending} new
           </span>
         )}

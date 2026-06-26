@@ -120,7 +120,7 @@ export default async function StudiosPage() {
       )}
 
       <div className="mt-10 text-center">
-        <Link href="/rentals?propertyType=studio" className="inline-block rounded-xl bg-brand-600 px-8 py-3 font-semibold text-white transition hover:bg-brand-700">
+        <Link href="/rentals?propertyType=studio" className="inline-block rounded-xl bg-brand-700 px-8 py-3 font-semibold text-white transition hover:bg-brand-800">
           Search all studios for rent
         </Link>
         <p className="mt-3 text-xs text-gray-500">Filter by city and price to find a studio in your budget.</p>

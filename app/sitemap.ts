@@ -1,14 +1,14 @@
 import type { MetadataRoute } from 'next';
-import { getAllZips, getAllCities, getListings } from '@/lib/api';
+import { getAllZips, getAllCities, getListingsForSitemap } from '@/lib/api';
 import { posts } from '@/lib/blog';
 import { US_STATES, stateByAbbr, PRELAUNCH_STATE_SLUGS } from '@/lib/states';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = 'https://emlakie.com';
-  const [zips, cities, { listings }] = await Promise.all([getAllZips(), getAllCities(), getListings()]);
+  const [zips, cities, listings] = await Promise.all([getAllZips(), getAllCities(), getListingsForSitemap()]);
 
   const listingPages: MetadataRoute.Sitemap = listings
-    .filter(l => l.status === 'active' && (l.slug || l.id))
+    .filter(l => l.slug || l.id)
     .map(l => ({
       url: `${base}/rentals/${l.slug ?? l.id}`,
       // Real per-listing freshness so Google trusts lastmod and recrawls

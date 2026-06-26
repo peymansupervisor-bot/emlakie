@@ -147,6 +147,33 @@ export async function getAllMappableListings(): Promise<Pick<Listing, 'id' | 'la
   }
 }
 
+/**
+ * Lightweight, UNPAGINATED list of every active listing for the sitemap.
+ * getListings() caps at 20 per page, which would silently drop listings from
+ * the sitemap as inventory grows — this returns all of them with just the
+ * fields sitemap entries need (slug/id for the URL, refreshed_at for lastmod).
+ */
+export async function getListingsForSitemap(): Promise<Pick<Listing, 'id' | 'slug' | 'refreshed_at'>[]> {
+  noStore();
+  try {
+    const sb = supabaseAdmin();
+    const { data } = await sb
+      .from('listings')
+      .select('id, slug, refreshed_at')
+      .eq('status', 'active')
+      .gt('expires_at', new Date().toISOString())
+      .order('refreshed_at', { ascending: false })
+      .limit(5000);
+    return (data ?? []).map((row) => ({
+      id: row.id as string,
+      slug: row.slug as string | null | undefined,
+      refreshed_at: row.refreshed_at as string | null | undefined,
+    }));
+  } catch {
+    return [];
+  }
+}
+
 export async function getAllZips(): Promise<ZipLocation[]> {
   try {
     const res = await fetch(`${API_URL}/listings/locations`, {

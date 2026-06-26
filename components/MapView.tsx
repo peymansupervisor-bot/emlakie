@@ -223,6 +223,16 @@ export default function MapView({ listings, activeId, onMarkerClick, drawMode = 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Invalidate Leaflet's size whenever the container is resized (e.g. split→map view switch)
+  useEffect(() => {
+    if (!containerRef.current) return;
+    const observer = new ResizeObserver(() => {
+      mapRef.current?.map.invalidateSize();
+    });
+    observer.observe(containerRef.current);
+    return () => observer.disconnect();
+  }, []);
+
   // Sync markers whenever mappable listings change after map is ready
   useEffect(() => {
     if (!mapRef.current) return;

@@ -28,27 +28,6 @@ export async function getProfile(): Promise<LandlordProfile | null> {
   return data ?? null;
 }
 
-export async function sendPhoneVerification(phone: string): Promise<void> {
-  const e164 = '+1' + phone.replace(/\D/g, '');
-  const { error } = await supabase.auth.signInWithOtp({ phone: e164, options: { shouldCreateUser: true } });
-  if (error) throw new Error(error.message);
-}
-
-export async function verifyPhoneOtp(phone: string, token: string): Promise<void> {
-  const { data: { session: originalSession } } = await supabase.auth.getSession();
-
-  const e164 = '+1' + phone.replace(/\D/g, '');
-  const { error } = await supabase.auth.verifyOtp({ phone: e164, token, type: 'sms' });
-  if (error) throw new Error(error.message);
-
-  if (originalSession) {
-    await supabase.auth.setSession({
-      access_token: originalSession.access_token,
-      refresh_token: originalSession.refresh_token,
-    });
-  }
-}
-
 function toTitleCase(str: string): string {
   return str.trim().replace(/\b\w/g, (c) => c.toUpperCase());
 }
@@ -65,16 +44,6 @@ export async function updateProfile(payload: { first_name: string; last_name: st
   if (error) throw new Error(error.message);
   // Fire welcome email on first profile completion (non-blocking)
   api('/api/welcome', { method: 'POST' }).catch(() => {});
-}
-
-export async function sendOtp(phone: string): Promise<void> {
-  const { error } = await supabase.auth.signInWithOtp({ phone });
-  if (error) throw new Error(error.message);
-}
-
-export async function verifyOtp(phone: string, token: string): Promise<void> {
-  const { error } = await supabase.auth.verifyOtp({ phone, token, type: 'sms' });
-  if (error) throw new Error(error.message);
 }
 
 export async function signInWithOAuth(provider: 'google' | 'facebook' | 'apple'): Promise<void> {
@@ -97,22 +66,6 @@ export async function signUpWithPassword(email: string, password: string): Promi
 
 export async function resetPassword(email: string): Promise<void> {
   const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo: `${window.location.origin}/landlord/reset-password` });
-  if (error) throw new Error(error.message);
-}
-
-export async function sendEmailOtp(email: string): Promise<void> {
-  const { error } = await supabase.auth.signInWithOtp({
-    email,
-    options: {
-      shouldCreateUser: true,
-      emailRedirectTo: `${window.location.origin}/landlord`,
-    },
-  });
-  if (error) throw new Error(error.message);
-}
-
-export async function verifyEmailOtp(email: string, token: string): Promise<void> {
-  const { error } = await supabase.auth.verifyOtp({ email, token, type: 'email' });
   if (error) throw new Error(error.message);
 }
 

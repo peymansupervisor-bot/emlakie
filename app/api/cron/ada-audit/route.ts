@@ -19,7 +19,7 @@ const STATIC_PAGES = [
   '/contact',
   '/how-it-works',
   '/landlords',
-  '/login',
+  '/landlord/login',
   '/support',
   '/cities',
   '/rent-check',

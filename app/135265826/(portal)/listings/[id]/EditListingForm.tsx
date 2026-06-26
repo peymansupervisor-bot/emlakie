@@ -19,6 +19,10 @@ interface Listing {
   available_date: string;
   landlord_id: string;
   slug: string;
+  listing_source?: string | null;
+  agent_name?: string | null;
+  office_name?: string | null;
+  license_number?: string | null;
 }
 
 export default function EditListingForm({ listing }: { listing: Listing }) {
@@ -37,6 +41,10 @@ export default function EditListingForm({ listing }: { listing: Listing }) {
     status: listing.status ?? 'active',
     property_type: listing.property_type ?? 'apartment',
     available_date: listing.available_date ? listing.available_date.slice(0, 10) : '',
+    listing_source: listing.listing_source ?? 'owner',
+    agent_name: listing.agent_name ?? '',
+    office_name: listing.office_name ?? '',
+    license_number: listing.license_number ?? '',
   });
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
@@ -173,6 +181,33 @@ export default function EditListingForm({ listing }: { listing: Listing }) {
           <div>
             <label className={label}>Available From</label>
             <input className={field} type="date" value={form.available_date} onChange={e => set('available_date', e.target.value)} />
+          </div>
+        </div>
+      </div>
+
+      {/* Broker / agent info */}
+      <div className="rounded-2xl border border-gray-800 bg-gray-900 p-6">
+        <h2 className="text-sm font-bold text-white mb-4">Listing Source & Broker</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label className={label}>Listing Source</label>
+            <select className={field} value={form.listing_source} onChange={e => set('listing_source', e.target.value)}>
+              <option value="owner">Owner</option>
+              <option value="broker">Broker / Agent</option>
+              <option value="mls">MLS</option>
+            </select>
+          </div>
+          <div>
+            <label className={label}>Agent / Broker Name</label>
+            <input className={field} value={form.agent_name} onChange={e => set('agent_name', e.target.value)} placeholder="Full name" />
+          </div>
+          <div>
+            <label className={label}>Office / Brokerage Name</label>
+            <input className={field} value={form.office_name} onChange={e => set('office_name', e.target.value)} placeholder="Brokerage name" />
+          </div>
+          <div>
+            <label className={label}>License Number</label>
+            <input className={field} value={form.license_number} onChange={e => set('license_number', e.target.value)} placeholder="DRE #" />
           </div>
         </div>
       </div>

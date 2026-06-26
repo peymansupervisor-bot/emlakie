@@ -1,5 +1,6 @@
 import twilio from 'twilio';
 import { createClient } from '@supabase/supabase-js';
+import { logError } from './log-error';
 
 function adminClient() {
   return createClient(
@@ -72,6 +73,14 @@ export async function getOrProvisionVirtualPhone(userId: string, postalCode?: st
     return await provisionNumber(userId, postalCode, city, state);
   } catch (err) {
     console.error('[twilio] getOrProvisionVirtualPhone error for', userId, err);
+    await logError({
+      source: 'Twilio Provision',
+      message: err instanceof Error ? err.message : String(err),
+      details: err instanceof Error ? err.stack : undefined,
+      user_id: userId,
+      endpoint: 'getOrProvisionVirtualPhone',
+      context: { postalCode, city, state },
+    });
     return null;
   }
 }
@@ -111,6 +120,13 @@ export async function maybeReleaseVirtualPhone(userId: string): Promise<void> {
     await db.from('profiles').update({ virtual_phone: null }).eq('id', userId);
   } catch (err) {
     console.error('[twilio] maybeReleaseVirtualPhone error for', userId, err);
+    await logError({
+      source: 'Twilio Release',
+      message: err instanceof Error ? err.message : String(err),
+      details: err instanceof Error ? err.stack : undefined,
+      user_id: userId,
+      endpoint: 'maybeReleaseVirtualPhone',
+    });
   }
 }
 
@@ -123,11 +139,33 @@ export async function getRealPhoneForVirtual(virtualPhone: string): Promise<stri
     const { data, error } = await db.from('profiles').select('phone').eq('virtual_phone', virtualPhone).single();
     if (error) {
       console.error('[twilio] getRealPhoneForVirtual DB error for', virtualPhone, error);
+      await logError({
+        source: 'Twilio Call Forward',
+        message: error.message,
+        endpoint: 'getRealPhoneForVirtual',
+        context: { virtualPhone },
+      });
       return null;
+    }
+    if (!data?.phone) {
+      // A live listing number that maps to no real phone — an inbound caller would hear nothing.
+      await logError({
+        source: 'Twilio Call Forward',
+        message: 'No real phone mapped for inbound virtual number',
+        endpoint: 'getRealPhoneForVirtual',
+        context: { virtualPhone },
+      });
     }
     return data?.phone ?? null;
   } catch (err) {
     console.error('[twilio] getRealPhoneForVirtual error for', virtualPhone, err);
+    await logError({
+      source: 'Twilio Call Forward',
+      message: err instanceof Error ? err.message : String(err),
+      details: err instanceof Error ? err.stack : undefined,
+      endpoint: 'getRealPhoneForVirtual',
+      context: { virtualPhone },
+    });
     return null;
   }
 }

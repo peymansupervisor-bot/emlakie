@@ -1,5 +1,6 @@
 import { adminClient } from '@/lib/moderator';
 import RunHealthCheckButton from '../RunHealthCheckButton';
+import BackfillVaultsButton from './BackfillVaultsButton';
 
 export const dynamic = 'force-dynamic';
 
@@ -114,8 +115,11 @@ export default async function HealthPage() {
                 )}
               </div>
 
-              {/* Right: badge + date */}
+              {/* Right: badge + date + action */}
               <div className="shrink-0 text-right">
+                {name === 'Data Isolation (RLS)' && row?.message?.includes('vault') && (
+                  <div className="mb-2"><BackfillVaultsButton /></div>
+                )}
                 <span className={`inline-block rounded-full px-3 py-0.5 text-xs font-bold ${style.badge}`}>
                   {style.badgeLabel}
                 </span>

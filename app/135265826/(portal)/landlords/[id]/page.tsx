@@ -38,6 +38,7 @@ export default async function LandlordProfilePage({ params }: { params: Promise<
     active: 'text-green-400 bg-green-900/40',
     rented: 'text-blue-400 bg-blue-900/40',
     expired: 'text-gray-400 bg-gray-800',
+    inactive: 'text-amber-400 bg-amber-900/40',
     suspended: 'text-red-400 bg-red-900/40',
   };
 

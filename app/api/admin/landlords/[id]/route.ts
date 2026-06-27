@@ -14,7 +14,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   try {
     if (!await auth()) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     const { id } = await params;
-    const { action } = await req.json();
+    const { action, listing_action, reassign_to } = await req.json();
 
     if (action !== 'suspend' && action !== 'unsuspend') {
       return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
@@ -28,12 +28,16 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     });
     if (authErr) return NextResponse.json({ error: authErr.message }, { status: 500 });
 
-    // Also suspend/unsuspend all their listings
     if (action === 'suspend') {
-      await sb.from('listings').update({ status: 'suspended' }).eq('landlord_id', id);
+      if (listing_action === 'reassign' && reassign_to) {
+        await sb.from('listings').update({ landlord_id: reassign_to }).eq('landlord_id', id);
+      } else {
+        // Make active listings inactive (hidden from public, recoverable)
+        await sb.from('listings').update({ status: 'inactive' }).eq('landlord_id', id).eq('status', 'active');
+      }
     } else {
-      // Restore suspended listings back to active
-      await sb.from('listings').update({ status: 'active' }).eq('landlord_id', id).eq('status', 'suspended');
+      // Restore inactive listings back to active on unsuspend
+      await sb.from('listings').update({ status: 'active' }).eq('landlord_id', id).eq('status', 'inactive');
     }
 
     return NextResponse.json({ ok: true });

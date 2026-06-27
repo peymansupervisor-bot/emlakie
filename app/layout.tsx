@@ -20,14 +20,14 @@ export const metadata: Metadata = {
   description:
     'Search houses, apartments, and condos for rent directly from landlords. No broker fees, no middlemen. List your rental free in under 5 minutes.',
   alternates: {
-    canonical: 'https://emlakie.com',
+    canonical: 'https://emlakie.com/', // trailing slash aligns with the canonical expected for the root route
   },
   openGraph: {
     siteName: 'EMLAKIE',
     title: 'EMLAKIE — List Rentals Free & Find Tenants Fast',
     description: 'Post your rental listing free on EMLAKIE. Reach thousands of qualified tenants, no broker fees, no middleman. Browse rentals or list your property today.',
     type: 'website',
-    url: 'https://emlakie.com',
+    url: 'https://emlakie.com/',
     images: [
       {
         url: '/og-image.png',

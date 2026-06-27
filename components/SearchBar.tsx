@@ -807,7 +807,7 @@ function MicError({ error, onDismiss, onRetry }: { error: SpeechError; onDismiss
           </p>
           {isBlocked && (
             <p className="mt-0.5 text-xs text-red-500">
-              Click the 🔒 lock icon in your address bar → Site settings → Microphone → Allow, then click the mic button again.
+              Click the icon at the left of your address bar → Site settings → Microphone → Allow, then click the mic button again.
             </p>
           )}
         </div>

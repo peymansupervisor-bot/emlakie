@@ -2,7 +2,6 @@
 
 import { useRouter } from 'next/navigation';
 import { useState, useEffect, useRef } from 'react';
-import { isAddressQuery } from '@/lib/address-utils';
 
 interface Suggestion {
   type: 'city' | 'address' | 'listing';

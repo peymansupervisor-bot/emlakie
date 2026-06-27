@@ -120,7 +120,7 @@ export default function LandlordActions({ landlordId, isBanned }: { landlordId: 
                     <div className="mt-3">
                       <input
                         type="text"
-                        placeholder="Search by name or email…"
+                        placeholder="Search by account ID (e.g. EM-12)…"
                         value={query}
                         onChange={e => { setQuery(e.target.value); setSelected(null); }}
                         className="w-full rounded-lg border border-gray-600 bg-gray-800 px-3 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-blue-500"

@@ -17,9 +17,7 @@ export async function GET(req: NextRequest) {
     .limit(10);
 
   if (q) {
-    query = query.or(
-      `first_name.ilike.%${q}%,last_name.ilike.%${q}%,email.ilike.%${q}%,display_name.ilike.%${q}%`
-    );
+    query = query.ilike('account_id', `%${q}%`);
   }
 
   const { data, error } = await query.order('created_at', { ascending: false });

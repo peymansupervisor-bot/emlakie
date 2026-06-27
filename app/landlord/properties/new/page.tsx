@@ -182,6 +182,7 @@ export default function NewPropertyPage() {
   const [filterWarnings, setFilterWarnings] = useState<{term: string; reason: string; law: string; suggestion: string}[]>([]);
   const [filterChecking, setFilterChecking] = useState(false);
   const [aiGenerating, setAiGenerating] = useState(false);
+  const [aiError, setAiError] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
   const filterTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [profileName, setProfileName] = useState({ first_name: '', last_name: '' });
@@ -246,6 +247,7 @@ export default function NewPropertyPage() {
 
   async function generateDescription() {
     setAiGenerating(true);
+    setAiError(null);
     try {
       const res = await fetch('/api/listings/generate-description', {
         method: 'POST',
@@ -265,9 +267,12 @@ export default function NewPropertyPage() {
       if (res.ok) {
         const { description } = await res.json();
         set('description', description);
+      } else {
+        const data = await res.json().catch(() => ({}));
+        setAiError(data.error || 'Failed to generate description. Please try again.');
       }
     } catch {
-      // silently ignore — landlord can still write manually
+      setAiError('Unable to reach the AI service. Please check your connection and try again.');
     } finally {
       setAiGenerating(false);
     }
@@ -788,6 +793,9 @@ export default function NewPropertyPage() {
                 )}
               </button>
             </div>
+            {aiError && (
+              <p className="mb-1 text-xs text-red-600">{aiError}</p>
+            )}
             <textarea
               id="new-description"
               className={`${inputCls} min-h-[160px] resize-y ${filterWarnings.length > 0 ? 'border-red-400 focus:border-red-500 focus:ring-red-400' : ''}`}

@@ -4,17 +4,17 @@ import { getListings } from '@/lib/api';
 import ListingCard from '@/components/ListingCard';
 
 export const metadata: Metadata = {
-  title: 'Short-Term Rentals — Monthly & Flexible Lease Apartments',
+  title: 'Short-Term & Month-to-Month Rentals',
   description: 'Find short-term and month-to-month rentals. Flexible leases for relocations, travel nurses, and remote workers — no long commitment, no broker fees.',
   alternates: { canonical: 'https://emlakie.com/rentals/short-term' },
   openGraph: {
-    title: 'Short-Term Rentals — Monthly & Flexible Lease Apartments',
+    title: 'Short-Term & Month-to-Month Rentals',
     description: 'Find short-term and month-to-month rentals. Flexible leases for relocations, travel nurses, and remote workers — no long commitment, no broker fees.',
     type: 'website',
     url: 'https://emlakie.com/rentals/short-term',
     images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'EMLAKIE Short-Term Rentals' }],
   },
-  twitter: { card: 'summary_large_image', title: 'Short-Term Rentals — Monthly & Flexible Lease Apartments', description: 'Find short-term and month-to-month rentals. Flexible leases for relocations, travel nurses, and remote workers — no broker fees.', images: ['/og-image.png'] },
+  twitter: { card: 'summary_large_image', title: 'Short-Term & Month-to-Month Rentals', description: 'Find short-term and month-to-month rentals. Flexible leases for relocations, travel nurses, and remote workers — no broker fees.', images: ['/og-image.png'] },
 };
 
 const schema = {

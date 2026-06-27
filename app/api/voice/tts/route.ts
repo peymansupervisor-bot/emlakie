@@ -24,7 +24,7 @@ export async function GET(req: NextRequest) {
         model: 'tts-1',
         voice: 'nova',
         input: text.slice(0, 4096),
-        response_format: 'mp3',
+        response_format: 'pcm', // 24kHz mono 16-bit LE — stream directly, no buffering
       }),
     });
 
@@ -34,11 +34,11 @@ export async function GET(req: NextRequest) {
       return new NextResponse('TTS unavailable', { status: 502 });
     }
 
-    const audio = await res.arrayBuffer();
-    return new NextResponse(audio, {
+    // Pipe the PCM stream directly to the client — no server-side buffering
+    return new NextResponse(res.body, {
       headers: {
-        'Content-Type': 'audio/mpeg',
-        'Cache-Control': 'public, max-age=3600',
+        'Content-Type': 'audio/pcm',
+        'Cache-Control': 'no-cache',
       },
     });
   } catch (err) {

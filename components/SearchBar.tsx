@@ -211,13 +211,13 @@ function useSpeechRecognition(onResult: (text: string) => void) {
         const dt = now - lastTs;
         lastTs = now;
         if (rms > 0.03) { speechStarted = true; silentMs = 0; }
-        else if (speechStarted) { silentMs += dt; if (silentMs > 700) { stopRecorder(); return; } }
+        else if (speechStarted) { silentMs += dt; if (silentMs > 500) { stopRecorder(); return; } }
         silenceFrameRef.current = requestAnimationFrame(tick);
       };
 
       stopTimerRef.current = setTimeout(() => {
         silenceFrameRef.current = requestAnimationFrame(tick);
-      }, 200);
+      }, 100);
     } catch { /* no AudioContext — 6s cap only */ }
 
     maxTimerRef.current = setTimeout(() => stopRecorder(), 6000);
@@ -240,31 +240,32 @@ function useSpeechRecognition(onResult: (text: string) => void) {
   return { supported: true, listening, error, start, stop, clearError };
 }
 
-// ── Text-to-speech via Web Audio API ─────────────────────────────────────────
-// iOS Safari blocks both speechSynthesis and <audio>.play() from async
-// callbacks. Web Audio API (AudioContext) works as long as it was RESUMED
-// during a user gesture — prime() does that on the mic tap.
-// Audio bytes come from /api/voice/tts (server-side TTS proxy).
+// ── Text-to-speech via Web Audio API (PCM streaming) ─────────────────────────
+// Streams raw 24kHz mono 16-bit PCM from /api/voice/tts and schedules chunks
+// back-to-back so playback starts on the first chunk — no full-file wait.
+// prime() must be called during a user gesture to unlock iOS AudioContext.
 function useTTS() {
   const [speaking, setSpeaking] = useState(false);
   const ctxRef    = useRef<AudioContext | null>(null);
-  const sourceRef = useRef<AudioBufferSourceNode | null>(null);
+  const gainRef   = useRef<GainNode | null>(null);
+  const abortRef  = useRef<AbortController | null>(null);
+  const sourcesRef = useRef<AudioBufferSourceNode[]>([]);
 
   function getCtx(): AudioContext {
     if (!ctxRef.current || ctxRef.current.state === 'closed') {
       const AC = window.AudioContext ?? (window as any).webkitAudioContext;
       ctxRef.current = new AC();
+      gainRef.current = ctxRef.current.createGain();
+      gainRef.current.connect(ctxRef.current.destination);
     }
     return ctxRef.current;
   }
 
-  // Call during the mic-button tap to resume the AudioContext on iOS.
   function prime() {
     if (typeof window === 'undefined') return;
     try {
       const ctx = getCtx();
       ctx.resume().catch(() => {});
-      // Play a 1-sample silent buffer — fully unlocks the audio session on iOS
       const buf = ctx.createBuffer(1, 1, 22050);
       const src = ctx.createBufferSource();
       src.buffer = buf;
@@ -275,41 +276,101 @@ function useTTS() {
 
   async function speak(text: string, onDone?: () => void) {
     if (typeof window === 'undefined') { onDone?.(); return; }
-    try { sourceRef.current?.stop(); } catch {}
 
+    // Cancel any in-flight TTS
+    abortRef.current?.abort();
+    sourcesRef.current.forEach(s => { try { s.stop(); } catch {} });
+    sourcesRef.current = [];
+
+    const abort = new AbortController();
+    abortRef.current = abort;
     setSpeaking(true);
+
     const fallback = setTimeout(
       () => { setSpeaking(false); onDone?.(); },
-      Math.max(4000, text.length * 80),
+      Math.max(6000, text.length * 100),
     );
 
     try {
       const ctx = getCtx();
       if (ctx.state === 'suspended') await ctx.resume();
+      gainRef.current!.gain.setValueAtTime(1, ctx.currentTime);
 
-      const res = await fetch(`/api/voice/tts?text=${encodeURIComponent(text)}`);
-      if (!res.ok) throw new Error(`TTS ${res.status}`);
+      const res = await fetch(`/api/voice/tts?text=${encodeURIComponent(text)}`, {
+        signal: abort.signal,
+      });
+      if (!res.ok || !res.body) throw new Error(`TTS ${res.status}`);
 
-      const arrayBuf = await res.arrayBuffer();
-      const audioBuf = await ctx.decodeAudioData(arrayBuf);
+      const PCM_RATE = 24000;
+      const reader = res.body.getReader();
+      let nextStart = ctx.currentTime + 0.05; // 50ms initial buffer
+      let leftover: Uint8Array | null = null;
+      let lastSource: AudioBufferSourceNode | null = null;
 
-      const source = ctx.createBufferSource();
-      source.buffer = audioBuf;
-      source.connect(ctx.destination);
-      sourceRef.current = source;
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done || abort.signal.aborted) break;
 
-      source.onended = () => { clearTimeout(fallback); setSpeaking(false); onDone?.(); };
-      source.start(0);
-    } catch (err) {
-      console.error('[TTS]', err);
+        // Combine leftover byte from previous chunk (PCM is 2 bytes/sample)
+        let chunk = value;
+        if (leftover) {
+          const merged = new Uint8Array(leftover.length + value.length);
+          merged.set(leftover);
+          merged.set(value, leftover.length);
+          chunk = merged;
+          leftover = null;
+        }
+        if (chunk.length % 2 !== 0) {
+          leftover = chunk.slice(-1);
+          chunk = chunk.slice(0, -1);
+        }
+        if (chunk.length === 0) continue;
+
+        // Convert 16-bit little-endian signed PCM → float32
+        const numSamples = chunk.length >> 1;
+        const float32 = new Float32Array(numSamples);
+        for (let i = 0; i < numSamples; i++) {
+          let s = (chunk[i * 2 + 1] << 8) | chunk[i * 2];
+          if (s > 0x7FFF) s -= 0x10000;
+          float32[i] = s / 32768.0;
+        }
+
+        const audioBuf = ctx.createBuffer(1, numSamples, PCM_RATE);
+        audioBuf.copyToChannel(float32, 0);
+
+        const source = ctx.createBufferSource();
+        source.buffer = audioBuf;
+        source.connect(gainRef.current!);
+        const startAt = Math.max(nextStart, ctx.currentTime);
+        source.start(startAt);
+        nextStart = startAt + audioBuf.duration;
+
+        sourcesRef.current.push(source);
+        lastSource = source;
+      }
+
       clearTimeout(fallback);
+
+      if (lastSource && !abort.signal.aborted) {
+        lastSource.onended = () => { setSpeaking(false); onDone?.(); };
+      } else if (!abort.signal.aborted) {
+        setSpeaking(false);
+        onDone?.();
+      }
+    } catch (err: unknown) {
+      clearTimeout(fallback);
+      if (err instanceof Error && err.name === 'AbortError') return;
+      console.error('[TTS]', err);
       setSpeaking(false);
       onDone?.();
     }
   }
 
   function stop() {
-    try { sourceRef.current?.stop(); } catch {}
+    abortRef.current?.abort();
+    gainRef.current?.gain.setValueAtTime(0, 0);
+    sourcesRef.current.forEach(s => { try { s.stop(); } catch {} });
+    sourcesRef.current = [];
     setSpeaking(false);
   }
 

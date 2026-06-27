@@ -354,8 +354,10 @@ function useTTS() {
       if (lastSource && !abort.signal.aborted) {
         lastSource.onended = () => { setSpeaking(false); onDone?.(); };
       } else if (!abort.signal.aborted) {
+        // Empty stream — PCM unavailable; wait 300ms before calling onDone to
+        // avoid a tight retry loop if TTS is degraded
         setSpeaking(false);
-        onDone?.();
+        setTimeout(() => { if (!abort.signal.aborted) onDone?.(); }, 300);
       }
     } catch (err: unknown) {
       clearTimeout(fallback);
@@ -411,13 +413,14 @@ export default function SearchBar({ large = false }: { large?: boolean }) {
 
   const handleVoiceResult = useCallback(async (text: string) => {
     if (!convActiveRef.current) return;
+    if (!text.trim()) return; // skip empty transcripts — prevent sending blank content to Anthropic
 
     setTranscript({ user: text, ai: '' });
     setOrbState('thinking');
 
     const messages = [
-      ...convMessagesRef.current,
-      { role: 'user' as const, content: text },
+      ...convMessagesRef.current.filter(m => m.content.trim()),  // strip any previously-empty messages
+      { role: 'user' as const, content: text.trim() },
     ];
     convMessagesRef.current = messages;
 

@@ -24,7 +24,7 @@ export async function GET(req: NextRequest) {
         model: 'tts-1',
         voice: 'nova',
         input: text.slice(0, 4096),
-        response_format: 'pcm', // 24kHz mono 16-bit LE — stream directly, no buffering
+        response_format: 'pcm', // 24kHz mono 16-bit LE
       }),
     });
 
@@ -34,11 +34,15 @@ export async function GET(req: NextRequest) {
       return new NextResponse('TTS unavailable', { status: 502 });
     }
 
-    // Pipe the PCM stream directly to the client — no server-side buffering
-    return new NextResponse(res.body, {
+    // Use TransformStream to pipe — direct res.body passthrough is unreliable in Next.js Node runtime
+    const { readable, writable } = new TransformStream<Uint8Array, Uint8Array>();
+    res.body!.pipeTo(writable).catch(() => {});
+
+    return new NextResponse(readable, {
       headers: {
         'Content-Type': 'audio/pcm',
         'Cache-Control': 'no-cache',
+        'X-Accel-Buffering': 'no',
       },
     });
   } catch (err) {

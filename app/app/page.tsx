@@ -22,9 +22,31 @@ export const metadata: Metadata = {
   },
 };
 
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  name: 'Get the EMLAKIE App',
+  description:
+    'Search rentals, chat with landlords, and apply in minutes. EMLAKIE is coming soon to the App Store and Google Play.',
+  url: 'https://emlakie.com/app',
+  publisher: {
+    '@type': 'Organization',
+    name: 'EMLAKIE',
+    url: 'https://emlakie.com',
+    logo: {
+      '@type': 'ImageObject',
+      url: 'https://emlakie.com/logo.png',
+    },
+  },
+};
+
 export default function AppPage() {
   return (
     <section className="mx-auto flex max-w-3xl flex-col items-center px-4 py-24 text-center sm:px-6">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <Image src="/logo.png" alt="EMLAKIE" width={80} height={80} className="rounded-3xl shadow-card" />
       <h1 className="mt-8 text-4xl font-extrabold text-gray-900">
         The EMLAKIE app is almost here

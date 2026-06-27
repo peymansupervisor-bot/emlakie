@@ -4,17 +4,17 @@ import { getListings } from '@/lib/api';
 import ListingCard from '@/components/ListingCard';
 
 export const metadata: Metadata = {
-  title: 'Section 8 Rentals — Housing Choice Voucher Accepted',
+  title: 'Section 8 Rentals — Voucher Accepted',
   description: 'Find landlords who accept Section 8 Housing Choice Vouchers. Browse rental homes that welcome HCV tenants — no broker fees.',
   alternates: { canonical: 'https://emlakie.com/rentals/section-8' },
   openGraph: {
-    title: 'Section 8 Rentals — Housing Choice Voucher Accepted',
+    title: 'Section 8 Rentals — Voucher Accepted',
     description: 'Find landlords who accept Section 8 Housing Choice Vouchers. Browse rental homes that welcome HCV tenants — no broker fees.',
     type: 'website',
     url: 'https://emlakie.com/rentals/section-8',
     images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'EMLAKIE Section 8 Rentals' }],
   },
-  twitter: { card: 'summary_large_image', title: 'Section 8 Rentals — Housing Choice Voucher Accepted', description: 'Find landlords who accept Section 8 Housing Choice Vouchers. Browse rental homes that welcome HCV tenants — no broker fees.', images: ['/og-image.png'] },
+  twitter: { card: 'summary_large_image', title: 'Section 8 Rentals — Voucher Accepted', description: 'Find landlords who accept Section 8 Housing Choice Vouchers. Browse rental homes that welcome HCV tenants — no broker fees.', images: ['/og-image.png'] },
 };
 
 const schema = {

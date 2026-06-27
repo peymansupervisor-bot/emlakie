@@ -48,14 +48,30 @@ const MODES: { id: Mode; label: string; sublabel: string; icon: React.ReactNode 
   },
 ];
 
-// ── Speech recognition via MediaRecorder + Whisper ───────────────────────────
-// Uses MediaRecorder to capture audio, sends to /api/voice/transcribe (OpenAI
-// Whisper), and returns the transcript. Works in Chrome, Safari, and Firefox.
+// ── Speech recognition ────────────────────────────────────────────────────────
+// Safari: native SpeechRecognition (Apple on-device, instant).
+// Chrome / all others: MediaRecorder → /api/voice/transcribe (OpenAI Whisper).
 type SpeechError = 'not-allowed' | 'no-speech' | 'other' | null;
 
 function useSpeechRecognition(onResult: (text: string) => void) {
   const [listening, setListening] = useState(false);
   const [error, setError] = useState<SpeechError>(null);
+  const onResultRef = useRef(onResult);
+  useEffect(() => { onResultRef.current = onResult; });
+
+  // Stable flag: true = use native SpeechRecognition (Safari), false = Whisper
+  const useNativeRef = useRef<boolean | null>(null);
+  if (useNativeRef.current === null && typeof window !== 'undefined') {
+    const hasAPI = 'SpeechRecognition' in window || 'webkitSpeechRecognition' in window;
+    const isChrome = !!(window as any).chrome;
+    useNativeRef.current = hasAPI && !isChrome;
+  }
+
+  // ── Native SpeechRecognition refs (Safari) ──
+  const recogRef = useRef<SpeechRecognition | null>(null);
+  const permittedRef = useRef(false);
+
+  // ── Whisper / MediaRecorder refs (Chrome) ──
   const recorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
   const silenceFrameRef = useRef<number | null>(null);
@@ -63,8 +79,6 @@ function useSpeechRecognition(onResult: (text: string) => void) {
   const maxTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const audioCtxRef = useRef<AudioContext | null>(null);
   const cancelledRef = useRef(false);
-  const onResultRef = useRef(onResult);
-  useEffect(() => { onResultRef.current = onResult; });
 
   // Auto-clear error when mic permission is granted
   useEffect(() => {
@@ -75,7 +89,46 @@ function useSpeechRecognition(onResult: (text: string) => void) {
     }).catch(() => {});
   }, [error]);
 
-  function cleanup() {
+  // ── Native path (Safari) ─────────────────────────────────────────────────
+  async function startNative() {
+    setError(null);
+    if (!permittedRef.current) {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        stream.getTracks().forEach((t) => t.stop());
+        permittedRef.current = true;
+      } catch {
+        setError('not-allowed');
+        return;
+      }
+    }
+    const SR = (window as any).SpeechRecognition ?? (window as any).webkitSpeechRecognition;
+    const recog: SpeechRecognition = new SR();
+    recog.lang = 'en-US';
+    recog.interimResults = false;
+    recog.maxAlternatives = 1;
+    recog.onresult = (e: SpeechRecognitionEvent) => {
+      const text = e.results[0]?.[0]?.transcript ?? '';
+      if (text) { setError(null); onResultRef.current(text); }
+    };
+    recog.onend = () => setListening(false);
+    recog.onerror = (e: SpeechRecognitionErrorEvent) => {
+      setListening(false);
+      if (e.error === 'not-allowed') setError('not-allowed');
+      else if (e.error === 'no-speech') setError('no-speech');
+      else setError('other');
+    };
+    recogRef.current = recog;
+    try { recog.start(); setListening(true); } catch { setError('other'); }
+  }
+
+  function stopNative() {
+    recogRef.current?.stop();
+    setListening(false);
+  }
+
+  // ── Whisper path (Chrome / Firefox) ──────────────────────────────────────
+  function cleanupWhisper() {
     if (silenceFrameRef.current !== null) { cancelAnimationFrame(silenceFrameRef.current); silenceFrameRef.current = null; }
     if (stopTimerRef.current !== null) { clearTimeout(stopTimerRef.current); stopTimerRef.current = null; }
     if (maxTimerRef.current !== null) { clearTimeout(maxTimerRef.current); maxTimerRef.current = null; }
@@ -83,15 +136,12 @@ function useSpeechRecognition(onResult: (text: string) => void) {
     audioCtxRef.current = null;
   }
 
-  function stopNow() {
-    if (recorderRef.current && recorderRef.current.state === 'recording') {
-      recorderRef.current.stop();
-    }
+  function stopRecorder() {
+    if (recorderRef.current && recorderRef.current.state === 'recording') recorderRef.current.stop();
     recorderRef.current = null;
   }
 
-  async function start() {
-    if (listening) return;
+  async function startWhisper() {
     setError(null);
     cancelledRef.current = false;
 
@@ -110,49 +160,37 @@ function useSpeechRecognition(onResult: (text: string) => void) {
 
     const recorder = new MediaRecorder(stream, mimeType ? { mimeType } : undefined);
     chunksRef.current = [];
-
     recorder.ondataavailable = (e) => { if (e.data.size > 0) chunksRef.current.push(e.data); };
 
     recorder.onstop = async () => {
-      cleanup();
+      cleanupWhisper();
       stream.getTracks().forEach((t) => t.stop());
       setListening(false);
-
       if (cancelledRef.current) return;
 
       const ext = mimeType.includes('mp4') ? 'mp4' : 'webm';
       const blob = new Blob(chunksRef.current, { type: mimeType || 'audio/webm' });
-
       if (blob.size < 500) { setError('no-speech'); return; }
 
       const fd = new FormData();
       fd.append('audio', blob, `audio.${ext}`);
-
       try {
         const res = await fetch('/api/voice/transcribe', { method: 'POST', body: fd });
         const data = await res.json();
         const text = (data.text ?? '').trim();
-        if (text) {
-          setError(null);
-          onResultRef.current(text);
-        } else {
-          setError('no-speech');
-        }
-      } catch {
-        setError('other');
-      }
+        if (text) { setError(null); onResultRef.current(text); }
+        else setError('no-speech');
+      } catch { setError('other'); }
     };
 
     recorder.start(100);
     recorderRef.current = recorder;
     setListening(true);
 
-    // Silence detection: stop after 1.5 s of quiet following speech onset
     try {
       const AC = window.AudioContext ?? (window as any).webkitAudioContext;
       const ctx = new AC() as AudioContext;
       audioCtxRef.current = ctx;
-      // Chrome creates AudioContext suspended — resume so the analyser receives data
       if (ctx.state === 'suspended') await ctx.resume();
       const source = ctx.createMediaStreamSource(stream);
       const analyser = ctx.createAnalyser();
@@ -169,34 +207,32 @@ function useSpeechRecognition(onResult: (text: string) => void) {
         let sum = 0;
         for (let i = 0; i < buf.length; i++) { const n = (buf[i] - 128) / 128; sum += n * n; }
         const rms = Math.sqrt(sum / buf.length);
-
         const now = performance.now();
         const dt = now - lastTs;
         lastTs = now;
-
         if (rms > 0.03) { speechStarted = true; silentMs = 0; }
-        else if (speechStarted) {
-          silentMs += dt;
-          if (silentMs > 700) { stopNow(); return; }
-        }
+        else if (speechStarted) { silentMs += dt; if (silentMs > 700) { stopRecorder(); return; } }
         silenceFrameRef.current = requestAnimationFrame(tick);
       };
 
-      // Give user 200 ms to start speaking before silence tracking begins
       stopTimerRef.current = setTimeout(() => {
         silenceFrameRef.current = requestAnimationFrame(tick);
       }, 200);
-    } catch { /* AudioContext unavailable — fall through to 8 s max */ }
+    } catch { /* no AudioContext — 6s cap only */ }
 
-    // Hard 6-second cap
-    maxTimerRef.current = setTimeout(() => stopNow(), 6000);
+    maxTimerRef.current = setTimeout(() => stopRecorder(), 6000);
+  }
+
+  // ── Public interface ──────────────────────────────────────────────────────
+  async function start() {
+    if (listening) return;
+    if (useNativeRef.current) await startNative();
+    else await startWhisper();
   }
 
   function stop() {
-    cancelledRef.current = true;
-    cleanup();
-    stopNow();
-    setListening(false);
+    if (useNativeRef.current) { stopNative(); }
+    else { cancelledRef.current = true; cleanupWhisper(); stopRecorder(); setListening(false); }
   }
 
   function clearError() { setError(null); }

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useAssistantPanel } from '@/hooks/assistant/useAssistantPanel';
 import { useAssistantSession } from '@/hooks/assistant/useAssistantSession';
 import AssistantLauncher from './AssistantLauncher';
@@ -29,14 +29,17 @@ export default function AssistantClient() {
     sendMessage,
   } = useAssistantSession();
 
-  // When the panel opens, start the session; when it closes, end it.
+  // Track whether the session was ever opened so we don't dispatch CLOSE on
+  // initial mount (state machine would transition idle → closed unnecessarily).
+  const sessionStartedRef = useRef(false);
+
   useEffect(() => {
     if (open) {
+      sessionStartedRef.current = true;
       openSession();
-    } else {
+    } else if (sessionStartedRef.current) {
       closeSession();
     }
-    // openSession / closeSession are stable useCallback refs — safe to list
   }, [open, openSession, closeSession]);
 
   return (

@@ -113,6 +113,8 @@ export function transition(
       return state;
 
     case 'CLOSE':
+      // Never transition from idle — idle means no session was ever started.
+      if (phase === 'idle') return state;
       return { phase: 'closed' };
 
     case 'RESET':

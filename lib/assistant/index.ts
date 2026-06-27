@@ -43,4 +43,5 @@ export type { AssistantSessionState, AssistantEvent } from './stateMachine';
 
 export type { AssistantTransport } from './transport';
 
-export { createMockTransport } from './mockTransport';
+// createMockTransport is intentionally NOT re-exported here.
+// It is only used directly in useAssistantSession.ts and will be deleted in Phase 1D.

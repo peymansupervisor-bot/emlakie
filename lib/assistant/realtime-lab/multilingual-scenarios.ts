@@ -221,6 +221,27 @@ export const MONOLINGUAL_SCENARIOS: LabScenario[] = [
     passCondition: 'Assistant responds in Vietnamese. "Los Angeles" and price preserved.',
     record: 'Response latency (ms) · Vietnamese detected? Y/N',
   },
+
+  {
+    id: 'tr-01',
+    label: 'Turkish',
+    languages: ['tr'],
+    isMixed: false,
+    turns: [
+      {
+        utterance: 'Merhaba, Los Angeles\'ta iki yatak odalı bir daire arıyorum, aylık iki bin dolardan az.',
+        expectedResponseLanguage: 'Turkish',
+        note: 'Standard opening query in Turkish.',
+      },
+      {
+        utterance: 'Evcil hayvan kabul ediyor mu?',
+        expectedResponseLanguage: 'Turkish',
+        note: 'Follow-up in Turkish.',
+      },
+    ],
+    passCondition: 'Assistant responds in Turkish throughout. "Los Angeles" and price preserved verbatim.',
+    record: 'Response latency (ms) · Turkish detected? Y/N · Language maintained across turns? Y/N',
+  },
 ];
 
 // ---------------------------------------------------------------------------
@@ -278,6 +299,32 @@ export const MIXED_LANGUAGE_SCENARIOS: LabScenario[] = [
     ],
     passCondition: 'Assistant switches to Persian in turn 2, stays in Persian in turn 3, preserves "Koreatown" verbatim.',
     record: 'Switch in turn 2? Y/N · Persian in turn 3? Y/N · "Koreatown" verbatim? Y/N',
+  },
+
+  {
+    id: 'mix-en-tr-01',
+    label: 'English → Turkish switch',
+    languages: ['en', 'tr'],
+    isMixed: true,
+    turns: [
+      {
+        utterance: "Hi, I'm looking for an apartment in Los Angeles.",
+        expectedResponseLanguage: 'English',
+        note: 'Turn 1: Start in English.',
+      },
+      {
+        utterance: 'Türkçe konuşabilir misiniz? Türkçe devam etmek istiyorum.',
+        expectedResponseLanguage: 'Turkish',
+        note: 'Turn 2: Switch to Turkish mid-conversation.',
+      },
+      {
+        utterance: 'Hollywood bölgesinde iki yatak odalı daireler ne kadar?',
+        expectedResponseLanguage: 'Turkish',
+        note: 'Turn 3: Continue in Turkish. "Hollywood" must be preserved verbatim.',
+      },
+    ],
+    passCondition: 'Assistant switches to Turkish in turn 2, stays in Turkish for turn 3, preserves "Hollywood" verbatim.',
+    record: 'Switch in turn 2? Y/N · Turkish in turn 3? Y/N · "Hollywood" preserved? Y/N',
   },
 
   {

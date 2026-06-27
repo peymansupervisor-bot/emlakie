@@ -187,6 +187,14 @@ export const LANGUAGE_ROSTER: Readonly<LanguageDefinition[]> = [
     enabled: true,
     priority: 10,
   },
+  {
+    code: 'tr',
+    nameEn: 'Turkish',
+    nameSelf: 'Türkçe',
+    direction: 'ltr',
+    enabled: true,
+    priority: 11,
+  },
 ] as const;
 
 // ---------------------------------------------------------------------------

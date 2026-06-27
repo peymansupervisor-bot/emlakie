@@ -35,7 +35,8 @@ export type LanguageCode =
   | 'zh-Hans'  // Chinese Simplified
   | 'zh-Hant'  // Chinese Traditional
   | 'ko'       // Korean
-  | 'vi';      // Vietnamese
+  | 'vi'       // Vietnamese
+  | 'tr';      // Turkish
 
 /** Whether a language renders right-to-left. */
 export type TextDirection = 'ltr' | 'rtl';

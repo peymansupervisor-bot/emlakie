@@ -175,19 +175,19 @@ function useSpeechRecognition(onResult: (text: string) => void) {
         if (rms > 0.03) { speechStarted = true; silentMs = 0; }
         else if (speechStarted) {
           silentMs += dt;
-          if (silentMs > 1500) { stopNow(); return; }
+          if (silentMs > 700) { stopNow(); return; }
         }
         silenceFrameRef.current = requestAnimationFrame(tick);
       };
 
-      // Give user 600 ms to start speaking before silence tracking begins
+      // Give user 200 ms to start speaking before silence tracking begins
       stopTimerRef.current = setTimeout(() => {
         silenceFrameRef.current = requestAnimationFrame(tick);
-      }, 600);
+      }, 200);
     } catch { /* AudioContext unavailable — fall through to 8 s max */ }
 
-    // Hard 8-second cap
-    maxTimerRef.current = setTimeout(() => stopNow(), 8000);
+    // Hard 6-second cap
+    maxTimerRef.current = setTimeout(() => stopNow(), 6000);
   }
 
   function stop() {

@@ -11,16 +11,37 @@ export async function generateStaticParams() {
   return getAllSlugs().map(slug => ({ slug }));
 }
 
+/**
+ * Returns the shortest title string that still fits within the 60-char SERP
+ * limit when the layout's " | EMLAKIE" template suffix (+9 chars) is appended.
+ * If the raw post.title is ≤ 51 chars it is used as-is (template renders it
+ * to ≤ 60 total). If it is longer we fall back to an `absolute` title which
+ * bypasses the template entirely and is used verbatim — capped at 60 chars.
+ */
+function buildTitle(rawTitle: string): Metadata['title'] {
+  if (rawTitle.length <= 51) {
+    // Template will produce: "<rawTitle> | EMLAKIE" (≤ 60 chars total) ✓
+    return rawTitle;
+  }
+  // Bypass template to keep the full composed title ≤ 60 chars.
+  const truncated = rawTitle.length <= 60 ? rawTitle : rawTitle.slice(0, 57) + '…';
+  return { absolute: truncated };
+}
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const post = getPost(slug);
   if (!post) return { title: 'Not found' };
+
+  const title = buildTitle(post.title);
+  const ogTitle = typeof title === 'string' ? title : (title as { absolute: string }).absolute;
+
   return {
-    title: post.title,
+    title,
     description: post.description,
     alternates: { canonical: `https://emlakie.com/blog/${slug}` },
     openGraph: {
-      title: post.title,
+      title: ogTitle,
       description: post.description,
       type: 'article',
       url: `https://emlakie.com/blog/${slug}`,
@@ -29,7 +50,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     },
     twitter: {
       card: 'summary_large_image',
-      title: post.title,
+      title: ogTitle,
       description: post.description,
       images: ['/og-image.png'],
     },

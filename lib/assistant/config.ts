@@ -86,7 +86,7 @@ export const SUPPORTED_LANGUAGES: Readonly<LanguageConfig[]> = [
   {
     code: 'hy',
     nameEn: 'Armenian',
-    nameSelf: 'Հայերեն',
+    nameSelf: 'Հայերեն', // U+0540 U+0561 U+0575 U+0565 U+0580 U+0565 U+0576 - pure Armenian, no Latin
     direction: 'ltr',
     phase: 3,
     beta: true,

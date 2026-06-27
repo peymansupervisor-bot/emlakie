@@ -17,6 +17,16 @@ export type LabConnectionStatus =
   | 'error';
 
 // ---------------------------------------------------------------------------
+// Assistant activity state (derived from Realtime events)
+// ---------------------------------------------------------------------------
+
+export type LabAssistantState =
+  | 'idle'
+  | 'listening'
+  | 'user-speaking'
+  | 'speaking';
+
+// ---------------------------------------------------------------------------
 // Event log entry — no user content ever stored here
 // ---------------------------------------------------------------------------
 
@@ -36,6 +46,14 @@ export interface LabEventEntry {
 
 export interface LabMetrics {
   status: LabConnectionStatus;
+  /** Inferred assistant activity state from Realtime events */
+  assistantState: LabAssistantState;
+  /** BCP-47 language code detected by Whisper on the last transcription event */
+  detectedLanguage: string | null;
+  /** Browser name detected from userAgent */
+  browserName: string;
+  /** Whether microphone permission has been granted this session */
+  micPermission: 'unknown' | 'granted' | 'denied';
   /** epoch ms when session.created fired */
   sessionStartedAt: number | null;
   /** All measured response latencies in ms (speech_stopped → first audio delta) */
@@ -61,6 +79,10 @@ export interface LabMetrics {
 
 export const INITIAL_LAB_METRICS: LabMetrics = {
   status: 'idle',
+  assistantState: 'idle',
+  detectedLanguage: null,
+  browserName: 'Unknown',
+  micPermission: 'unknown',
   sessionStartedAt: null,
   latencies: [],
   lastLatencyMs: null,

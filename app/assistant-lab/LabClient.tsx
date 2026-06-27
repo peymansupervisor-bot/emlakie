@@ -257,9 +257,6 @@ export default function LabClient() {
             <span className="text-sm font-medium text-gray-700">
               {statusLabel(metrics.status)}
             </span>
-            {isActive && (
-              <span className="text-sm text-gray-400">· Session: {duration}</span>
-            )}
             {metrics.status === 'error' && metrics.lastError && (
               <span className="ml-auto rounded bg-red-50 px-2 py-0.5 text-xs font-medium text-red-700">
                 {metrics.lastError}
@@ -306,20 +303,40 @@ export default function LabClient() {
             Session metrics
           </p>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+            <MetricCell label="Browser" value={metrics.browserName} />
+            <MetricCell
+              label="Microphone"
+              value={metrics.micPermission === 'granted' ? 'Granted' : metrics.micPermission === 'denied' ? 'Denied' : '—'}
+              highlight={metrics.micPermission === 'granted'}
+            />
+            <MetricCell
+              label="Assistant state"
+              value={
+                metrics.assistantState === 'idle' ? 'Idle'
+                : metrics.assistantState === 'listening' ? 'Listening'
+                : metrics.assistantState === 'user-speaking' ? 'User speaking'
+                : 'Speaking'
+              }
+              highlight={metrics.assistantState === 'listening'}
+            />
+            <MetricCell
+              label="Detected language"
+              value={metrics.detectedLanguage ?? '—'}
+            />
             <MetricCell
               label="Last latency"
               value={formatMs(metrics.lastLatencyMs)}
               highlight={metrics.lastLatencyMs !== null && metrics.lastLatencyMs < 1000}
             />
             <MetricCell label="Avg latency" value={formatMs(metrics.avgLatencyMs)} />
+            <MetricCell label="Session duration" value={duration} />
             <MetricCell label="Turns" value={metrics.totalTurns} />
-            <MetricCell label="Errors" value={metrics.errorCount} />
             <MetricCell
               label="Interruptions"
               value={metrics.interruptionCount}
               highlight={metrics.interruptionCount > 0}
             />
-            <MetricCell label="Transcriptions" value={metrics.transcriptionCount} />
+            <MetricCell label="Errors" value={metrics.errorCount} />
           </div>
 
           {/* Interruption result */}
@@ -385,7 +402,7 @@ export default function LabClient() {
               'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500',
             ].join(' ')}
           >
-            Copy lab report to clipboard
+            Copy Test Report
           </button>
         )}
 

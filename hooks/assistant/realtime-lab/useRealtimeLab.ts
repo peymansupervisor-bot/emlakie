@@ -58,12 +58,33 @@ function nextId() {
   return `lab-${Date.now()}-${++_seq}`;
 }
 
+function detectBrowser(): string {
+  if (typeof navigator === 'undefined') return 'Unknown';
+  const ua = navigator.userAgent;
+  if (ua.includes('Edg/') || ua.includes('EdgA/')) return 'Edge';
+  if (ua.includes('Chrome/') && !ua.includes('Chromium')) return 'Chrome';
+  if (ua.includes('Firefox/')) return 'Firefox';
+  if (ua.includes('Safari/') && !ua.includes('Chrome')) return 'Safari';
+  if (ua.includes('OPR/') || ua.includes('Opera/')) return 'Opera';
+  return 'Unknown';
+}
+
+function formatDurationMs(ms: number): string {
+  const totalSecs = Math.floor(ms / 1000);
+  const mins = Math.floor(totalSecs / 60);
+  const secs = totalSecs % 60;
+  return mins > 0 ? `${mins}m ${secs}s` : `${secs}s`;
+}
+
 // ---------------------------------------------------------------------------
 // Hook
 // ---------------------------------------------------------------------------
 
 export function useRealtimeLab({ audioRef }: UseRealtimeLabOptions): UseRealtimeLabReturn {
-  const [metrics, setMetrics] = useState<LabMetrics>(INITIAL_LAB_METRICS);
+  const [metrics, setMetrics] = useState<LabMetrics>(() => ({
+    ...INITIAL_LAB_METRICS,
+    browserName: detectBrowser(),
+  }));
 
   // Stable refs — never trigger re-renders
   const pcRef = useRef<RTCPeerConnection | null>(null);
@@ -139,6 +160,7 @@ export function useRealtimeLab({ audioRef }: UseRealtimeLabOptions): UseRealtime
           setMetrics((m) => ({
             ...m,
             status: 'connected',
+            assistantState: 'listening',
             sessionStartedAt: Date.now(),
           }));
           logEvent('session.created');
@@ -151,10 +173,14 @@ export function useRealtimeLab({ audioRef }: UseRealtimeLabOptions): UseRealtime
         // VAD: user started speaking
         case 'input_audio_buffer.speech_started':
           if (isRespondingAudioRef.current) {
-            // Simultaneous speech during assistant response = interruption
-            setMetrics((m) => ({ ...m, interruptionCount: m.interruptionCount + 1 }));
+            setMetrics((m) => ({
+              ...m,
+              assistantState: 'user-speaking',
+              interruptionCount: m.interruptionCount + 1,
+            }));
             logEvent('speech_started', 'interruption detected');
           } else {
+            setMetrics((m) => ({ ...m, assistantState: 'user-speaking' }));
             logEvent('speech_started');
           }
           break;
@@ -162,6 +188,7 @@ export function useRealtimeLab({ audioRef }: UseRealtimeLabOptions): UseRealtime
         // VAD: user stopped speaking — start latency clock
         case 'input_audio_buffer.speech_stopped':
           speechStoppedAtRef.current = Date.now();
+          setMetrics((m) => ({ ...m, assistantState: 'listening' }));
           logEvent('speech_stopped');
           break;
 
@@ -183,6 +210,7 @@ export function useRealtimeLab({ audioRef }: UseRealtimeLabOptions): UseRealtime
                 );
                 return {
                   ...m,
+                  assistantState: 'speaking',
                   latencies: newLatencies,
                   lastLatencyMs: latencyMs,
                   avgLatencyMs: avg,
@@ -190,6 +218,7 @@ export function useRealtimeLab({ audioRef }: UseRealtimeLabOptions): UseRealtime
               });
               logEvent('response.audio.delta', `first chunk — ${latencyMs}ms latency`);
             } else {
+              setMetrics((m) => ({ ...m, assistantState: 'speaking' }));
               logEvent('response.audio.delta', 'first chunk (no speech_stopped timestamp)');
             }
           }
@@ -198,6 +227,7 @@ export function useRealtimeLab({ audioRef }: UseRealtimeLabOptions): UseRealtime
         // Response audio stream complete
         case 'response.audio.done':
           isRespondingAudioRef.current = false;
+          setMetrics((m) => ({ ...m, assistantState: 'listening' }));
           logEvent('response.audio.done');
           break;
 
@@ -207,11 +237,20 @@ export function useRealtimeLab({ audioRef }: UseRealtimeLabOptions): UseRealtime
           logEvent('response.done');
           break;
 
-        // Transcription complete — count it (do NOT log or store transcript text)
-        case 'conversation.item.input_audio_transcription.completed':
-          setMetrics((m) => ({ ...m, transcriptionCount: m.transcriptionCount + 1 }));
-          logEvent('transcription.completed');
+        // Transcription complete — count it, extract language code (NOT transcript text)
+        case 'conversation.item.input_audio_transcription.completed': {
+          const lang =
+            typeof (event as Record<string, unknown>).language === 'string'
+              ? (event as Record<string, unknown>).language as string
+              : null;
+          setMetrics((m) => ({
+            ...m,
+            transcriptionCount: m.transcriptionCount + 1,
+            ...(lang ? { detectedLanguage: lang } : {}),
+          }));
+          logEvent('transcription.completed', lang ? `lang:${lang}` : undefined);
           break;
+        }
 
         // OpenAI error
         case 'error': {
@@ -252,7 +291,7 @@ export function useRealtimeLab({ audioRef }: UseRealtimeLabOptions): UseRealtime
     }
     isRespondingAudioRef.current = false;
     speechStoppedAtRef.current = null;
-    setMetrics((m) => ({ ...m, status: 'stopped' }));
+    setMetrics((m) => ({ ...m, status: 'stopped', assistantState: 'idle' }));
     logEvent('session.stopped');
   }, [audioRef, logEvent]);
 
@@ -274,8 +313,14 @@ export function useRealtimeLab({ audioRef }: UseRealtimeLabOptions): UseRealtime
   // -------------------------------------------------------------------------
 
   const startSession = useCallback(async () => {
-    // Reset metrics for a fresh session
-    setMetrics({ ...INITIAL_LAB_METRICS, status: 'requesting-mic' });
+    const browser = detectBrowser();
+
+    // Reset metrics for a fresh session (preserve browser name)
+    setMetrics({
+      ...INITIAL_LAB_METRICS,
+      browserName: browser,
+      status: 'requesting-mic',
+    });
     isRespondingAudioRef.current = false;
     speechStoppedAtRef.current = null;
 
@@ -287,11 +332,18 @@ export function useRealtimeLab({ audioRef }: UseRealtimeLabOptions): UseRealtime
       const code = err instanceof Error && err.name === 'NotAllowedError'
         ? 'mic_permission_denied'
         : 'mic_unavailable';
-      setMetrics((m) => ({ ...m, status: 'error', lastError: code, errorCount: 1 }));
+      setMetrics((m) => ({
+        ...m,
+        status: 'error',
+        micPermission: 'denied',
+        lastError: code,
+        errorCount: 1,
+      }));
       logEvent('error', code);
       return;
     }
     streamRef.current = stream;
+    setMetrics((m) => ({ ...m, micPermission: 'granted' }));
     logEvent('mic_granted');
 
     // -- Step 2: Ephemeral token from our server --
@@ -421,29 +473,50 @@ export function useRealtimeLab({ audioRef }: UseRealtimeLabOptions): UseRealtime
   }, [audioRef, handleRealtimeEvent, logEvent]);
 
   // -------------------------------------------------------------------------
-  // Copy lab report to clipboard
+  // Copy plain-text test report to clipboard
   // -------------------------------------------------------------------------
 
   const copyReport = useCallback(() => {
-    const report = {
-      model: LAB_REALTIME_MODEL,
-      voice: LAB_VOICE,
-      status: metrics.status,
-      sessionDurationMs: metrics.sessionStartedAt
-        ? Date.now() - metrics.sessionStartedAt
-        : null,
-      totalTurns: metrics.totalTurns,
-      latencies: metrics.latencies,
-      lastLatencyMs: metrics.lastLatencyMs,
-      avgLatencyMs: metrics.avgLatencyMs,
-      interruptionCount: metrics.interruptionCount,
-      transcriptionCount: metrics.transcriptionCount,
-      errorCount: metrics.errorCount,
-      lastError: metrics.lastError,
-      eventCount: metrics.events.length,
-      reportedAt: new Date().toISOString(),
-    };
-    void navigator.clipboard.writeText(JSON.stringify(report, null, 2));
+    const now = new Date();
+    const durationMs = metrics.sessionStartedAt
+      ? Date.now() - metrics.sessionStartedAt
+      : null;
+
+    const lines: string[] = [
+      'EMLAKIE AI LAB TEST REPORT',
+      '==========================',
+      `Date:              ${now.toISOString()}`,
+      `Browser:           ${metrics.browserName}`,
+      `Microphone:        ${metrics.micPermission}`,
+      '',
+      'CONNECTION',
+      `Status:            ${metrics.status}`,
+      `Session duration:  ${durationMs !== null ? formatDurationMs(durationMs) : '—'}`,
+      '',
+      'ASSISTANT STATE',
+      `Current state:     ${metrics.assistantState}`,
+      '',
+      'CONVERSATION',
+      `Turns:             ${metrics.totalTurns}`,
+      `Transcriptions:    ${metrics.transcriptionCount}`,
+      `Detected language: ${metrics.detectedLanguage ?? '—'}`,
+      '',
+      'PERFORMANCE',
+      `Last latency:      ${metrics.lastLatencyMs !== null ? `${metrics.lastLatencyMs}ms` : '—'}`,
+      `Average latency:   ${metrics.avgLatencyMs !== null ? `${metrics.avgLatencyMs}ms` : '—'}`,
+      `Latency history:   ${metrics.latencies.length > 0 ? metrics.latencies.map((n) => `${n}ms`).join(', ') : '—'}`,
+      '',
+      'RELIABILITY',
+      `Interruptions:     ${metrics.interruptionCount}`,
+      `Errors:            ${metrics.errorCount}`,
+      `Last error:        ${metrics.lastError ?? 'none'}`,
+      '',
+      'MODEL',
+      `Model:             ${LAB_REALTIME_MODEL}`,
+      `Voice:             ${LAB_VOICE}`,
+    ];
+
+    void navigator.clipboard.writeText(lines.join('\n'));
   }, [metrics]);
 
   return { metrics, startSession, stopSession, copyReport };

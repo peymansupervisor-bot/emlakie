@@ -240,79 +240,16 @@ function useSpeechRecognition(onResult: (text: string) => void) {
   return { supported: true, listening, error, start, stop, clearError };
 }
 
-// ── Text-to-speech via Web Audio API (Chrome/Firefox) or WAV blob (Safari) ──
-//
-// Safari's Web Audio implementation schedules and fires onended correctly but
-// produces no audible output when AudioBufferSourceNodes are routed through a
-// GainNode — a longstanding WebKit bug. As a result, Safari gets a separate
-// path: fetch the full PCM response as an ArrayBuffer, wrap it in a minimal
-// WAV container, and play it via HTMLAudioElement which Safari handles reliably.
-//
-// Chrome and Firefox use the existing streaming Web Audio path: PCM chunks are
-// accumulated into ~150 ms frames and scheduled back-to-back on the timeline.
-//
-// The server always returns raw 24 kHz mono signed 16-bit little-endian PCM
-// (OpenAI response_format: "pcm"). No server changes are needed.
-
-// Set to true temporarily to enable lifecycle console logging.
-const DEBUG_TTS  = false;
-const PCM_RATE   = 24000;                      // Hz — OpenAI tts-1 PCM output
-const FRAME_BYTES = PCM_RATE * 2 * 0.15 | 0;  // 7200 bytes ≈ 150 ms of Int16 mono
-
-function ttsLog(...args: unknown[]) {
-  if (DEBUG_TTS) console.log(`[TTS ${performance.now().toFixed(0)}ms]`, ...args);
-}
-
-// Returns true for Safari (macOS and iOS). Chrome on iOS also uses WebKit but
-// reports itself as Safari — we treat all WebKit/Safari UA strings the same way
-// since the Web Audio bug affects all of them.
-function isSafariBrowser(): boolean {
-  if (typeof navigator === 'undefined') return false;
-  const ua = navigator.userAgent;
-  return /Safari/.test(ua) && !/Chrome/.test(ua) && !/Chromium/.test(ua);
-}
-
-// Build a minimal 44-byte WAV header + PCM data blob.
-// Spec: http://soundfile.sapp.org/doc/WaveFormat/
-function pcm16ToWavBlob(pcmBytes: Uint8Array, sampleRate = 24000, channels = 1): Blob {
-  const bitsPerSample = 16;
-  const byteRate      = sampleRate * channels * (bitsPerSample / 8);
-  const blockAlign    = channels * (bitsPerSample / 8);
-  const dataSize      = pcmBytes.byteLength;
-  const buf           = new ArrayBuffer(44 + dataSize);
-  const v             = new DataView(buf);
-  const str = (off: number, s: string) => { for (let i = 0; i < s.length; i++) v.setUint8(off + i, s.charCodeAt(i)); };
-
-  str(0,  'RIFF');
-  v.setUint32(4,  36 + dataSize,   true); // file size - 8
-  str(8,  'WAVE');
-  str(12, 'fmt ');
-  v.setUint32(16, 16,              true); // fmt chunk length
-  v.setUint16(20, 1,               true); // PCM = 1
-  v.setUint16(22, channels,        true);
-  v.setUint32(24, sampleRate,      true);
-  v.setUint32(28, byteRate,        true);
-  v.setUint16(32, blockAlign,      true);
-  v.setUint16(34, bitsPerSample,   true);
-  str(36, 'data');
-  v.setUint32(40, dataSize,        true);
-  new Uint8Array(buf).set(pcmBytes, 44);
-
-  return new Blob([buf], { type: 'audio/wav' });
-}
-
+// ── Text-to-speech via Web Audio API (PCM streaming) ─────────────────────────
+// Streams raw 24kHz mono 16-bit PCM from /api/voice/tts and schedules chunks
+// back-to-back so playback starts on the first chunk — no full-file wait.
+// prime() must be called during a user gesture to unlock iOS AudioContext.
 function useTTS() {
   const [speaking, setSpeaking] = useState(false);
-  // Web Audio path (Chrome/Firefox)
-  const ctxRef           = useRef<AudioContext | null>(null);
-  const gainRef          = useRef<GainNode | null>(null);
-  const sourcesRef       = useRef<AudioBufferSourceNode[]>([]);
-  const playbackTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  // Safari WAV path
-  const audioElRef       = useRef<HTMLAudioElement | null>(null);
-  const objectUrlRef     = useRef<string | null>(null);
-  // Shared
-  const abortRef         = useRef<AbortController | null>(null);
+  const ctxRef    = useRef<AudioContext | null>(null);
+  const gainRef   = useRef<GainNode | null>(null);
+  const abortRef  = useRef<AbortController | null>(null);
+  const sourcesRef = useRef<AudioBufferSourceNode[]>([]);
 
   function getCtx(): AudioContext {
     if (!ctxRef.current || ctxRef.current.state === 'closed') {
@@ -324,43 +261,11 @@ function useTTS() {
     return ctxRef.current;
   }
 
-  function clearPlaybackTimer() {
-    if (playbackTimerRef.current !== null) {
-      clearTimeout(playbackTimerRef.current);
-      playbackTimerRef.current = null;
-    }
-  }
-
-  function revokeObjectUrl() {
-    if (objectUrlRef.current) {
-      URL.revokeObjectURL(objectUrlRef.current);
-      objectUrlRef.current = null;
-    }
-  }
-
-  function stopAudioEl() {
-    if (audioElRef.current) {
-      audioElRef.current.onended = null;
-      audioElRef.current.onerror = null;
-      audioElRef.current.pause();
-      audioElRef.current.src = '';
-      audioElRef.current = null;
-    }
-    revokeObjectUrl();
-  }
-
   function prime() {
     if (typeof window === 'undefined') return;
-    if (isSafariBrowser()) {
-      // On Safari, HTMLAudioElement doesn't need priming — it plays without
-      // a prior user-gesture unlock as long as play() is called from within
-      // the gesture call stack (which speak() is, via startConversation).
-      return;
-    }
     try {
       const ctx = getCtx();
       ctx.resume().catch(() => {});
-      // Silent 1-sample buffer unlocks the iOS AudioContext during the tap
       const buf = ctx.createBuffer(1, 1, 22050);
       const src = ctx.createBufferSource();
       src.buffer = buf;
@@ -370,9 +275,7 @@ function useTTS() {
   }
 
   function speakFallback(text: string, onDone?: () => void) {
-    if (typeof window === 'undefined' || !window.speechSynthesis) {
-      setSpeaking(false); onDone?.(); return;
-    }
+    if (typeof window === 'undefined' || !window.speechSynthesis) { setSpeaking(false); onDone?.(); return; }
     window.speechSynthesis.cancel();
     const utt = new SpeechSynthesisUtterance(text);
     utt.onend  = () => { setSpeaking(false); onDone?.(); };
@@ -381,168 +284,11 @@ function useTTS() {
     window.speechSynthesis.speak(utt);
   }
 
-  // ── Safari path: fetch full PCM → WAV blob → HTMLAudioElement ────────────
-  async function speakSafari(
-    text: string,
-    abort: AbortController,
-    deadline: ReturnType<typeof setTimeout>,
-    onDone?: () => void,
-  ) {
-    const res = await fetch(`/api/voice/tts?text=${encodeURIComponent(text)}`, {
-      signal: abort.signal,
-    });
-    if (!res.ok) throw new Error(`TTS HTTP ${res.status}`);
-
-    const pcmBytes = new Uint8Array(await res.arrayBuffer());
-    ttsLog(`Safari: received ${pcmBytes.length} PCM bytes`);
-
-    if (abort.signal.aborted) return;
-    if (pcmBytes.length < 2) throw new Error('empty PCM');
-
-    clearTimeout(deadline);
-
-    const wavBlob = pcm16ToWavBlob(pcmBytes);
-    const url     = URL.createObjectURL(wavBlob);
-    objectUrlRef.current = url;
-
-    let finished = false;
-    const finish = () => {
-      if (finished) return;
-      finished = true;
-      stopAudioEl();
-      setSpeaking(false);
-      onDone?.();
-    };
-
-    const audio = new Audio(url);
-    audioElRef.current = audio;
-    audio.onended = () => { ttsLog('Safari: audio.onended'); finish(); };
-    audio.onerror = (e) => {
-      console.error('[TTS] Safari HTMLAudioElement error:', e);
-      finish();
-      speakFallback(text, onDone);
-    };
-
-    // Fallback: if onended never fires, unblock after expected duration + 500 ms
-    const durationMs = (pcmBytes.length / (PCM_RATE * 2)) * 1000;
-    playbackTimerRef.current = setTimeout(() => {
-      ttsLog('Safari: playback timer fired (onended did not)');
-      finish();
-    }, durationMs + 500);
-
-    ttsLog(`Safari: playing WAV, duration ~${durationMs.toFixed(0)}ms`);
-    await audio.play().catch((e) => {
-      console.error('[TTS] Safari audio.play() rejected:', e);
-      finish();
-      speakFallback(text, onDone);
-    });
-  }
-
-  // ── Chrome/Firefox path: streaming Web Audio ──────────────────────────────
-  function scheduleFrame(
-    bytes: Uint8Array,
-    ctx: AudioContext,
-    gain: GainNode,
-    nextStart: number,
-  ): number {
-    const numSamples = bytes.length >> 1;
-    const float32 = new Float32Array(numSamples);
-    for (let i = 0; i < numSamples; i++) {
-      const lo = bytes[i * 2];
-      const hi = bytes[i * 2 + 1];
-      let s = (hi << 8) | lo;
-      if (s > 0x7FFF) s -= 0x10000;
-      float32[i] = s / 32768.0;
-    }
-    const audioBuf = ctx.createBuffer(1, numSamples, PCM_RATE);
-    audioBuf.copyToChannel(float32, 0);
-    const source = ctx.createBufferSource();
-    source.buffer = audioBuf;
-    source.connect(gain);
-    // Snap forward if real time has overtaken nextStart (underrun protection)
-    const startAt = Math.max(nextStart, ctx.currentTime + 0.005);
-    source.start(startAt);
-    sourcesRef.current.push(source);
-    ttsLog(`frame ${sourcesRef.current.length}: ${numSamples} samples, lag=${Math.round((startAt - ctx.currentTime) * 1000)}ms`);
-    return startAt + audioBuf.duration;
-  }
-
-  async function speakStreaming(
-    text: string,
-    abort: AbortController,
-    deadline: ReturnType<typeof setTimeout>,
-    onDone?: () => void,
-  ) {
-    const ctx = getCtx();
-    try { await ctx.resume(); } catch { /* best-effort */ }
-    gainRef.current!.gain.setValueAtTime(1, ctx.currentTime);
-
-    const res = await fetch(`/api/voice/tts?text=${encodeURIComponent(text)}`, {
-      signal: abort.signal,
-    });
-    if (!res.ok || !res.body) throw new Error(`TTS HTTP ${res.status}`);
-
-    const reader = res.body.getReader();
-    let nextStart   = ctx.currentTime + 0.05;
-    let accumulator = new Uint8Array(0);
-    let lastSource: AudioBufferSourceNode | null = null;
-
-    while (true) {
-      const { done, value } = await reader.read();
-      if (abort.signal.aborted) { reader.cancel().catch(() => {}); break; }
-
-      if (value && value.length > 0) {
-        const next = new Uint8Array(accumulator.length + value.length);
-        next.set(accumulator); next.set(value, accumulator.length);
-        accumulator = next;
-        while (accumulator.length >= FRAME_BYTES) {
-          nextStart = scheduleFrame(accumulator.slice(0, FRAME_BYTES), ctx, gainRef.current!, nextStart);
-          accumulator = accumulator.slice(FRAME_BYTES);
-          lastSource = sourcesRef.current[sourcesRef.current.length - 1];
-        }
-      }
-
-      if (done) {
-        const rem = accumulator.length % 2 === 0 ? accumulator : accumulator.slice(0, -1);
-        if (rem.length >= 2) {
-          nextStart = scheduleFrame(rem, ctx, gainRef.current!, nextStart);
-          lastSource = sourcesRef.current[sourcesRef.current.length - 1];
-        }
-        ttsLog(`stream done — ${sourcesRef.current.length} frames, ~${((nextStart - ctx.currentTime) * 1000).toFixed(0)}ms remaining`);
-        break;
-      }
-    }
-
-    clearTimeout(deadline);
-
-    if (lastSource && !abort.signal.aborted) {
-      // Use setTimeout as the primary completion signal. onended is an optional
-      // early-exit; the timer guarantees completion even if onended is slow.
-      const remainingMs = Math.max(200, (nextStart - ctx.currentTime) * 1000 + 150);
-      let finished = false;
-      const finish = () => {
-        if (finished) return;
-        finished = true;
-        clearPlaybackTimer();
-        sourcesRef.current = [];
-        setSpeaking(false);
-        onDone?.();
-      };
-      playbackTimerRef.current = setTimeout(finish, remainingMs);
-      lastSource.onended = () => { clearPlaybackTimer(); finish(); };
-    } else if (!abort.signal.aborted) {
-      speakFallback(text, onDone);
-    }
-  }
-
-  // ── Public speak() — dispatches to the correct path ──────────────────────
   async function speak(text: string, onDone?: () => void) {
     if (typeof window === 'undefined') { onDone?.(); return; }
 
-    // Tear down any previous in-flight TTS
+    // Cancel any in-flight TTS
     abortRef.current?.abort();
-    clearPlaybackTimer();
-    stopAudioEl();
     window.speechSynthesis?.cancel();
     sourcesRef.current.forEach(s => { try { s.stop(); } catch {} });
     sourcesRef.current = [];
@@ -551,33 +297,89 @@ function useTTS() {
     abortRef.current = abort;
     setSpeaking(true);
 
-    const deadlineMs = Math.max(8000, text.length * 80);
-    const deadline = setTimeout(() => { setSpeaking(false); onDone?.(); }, deadlineMs);
+    const fallback = setTimeout(
+      () => { setSpeaking(false); onDone?.(); },
+      Math.max(6000, text.length * 100),
+    );
 
     try {
-      if (isSafariBrowser()) {
-        await speakSafari(text, abort, deadline, onDone);
-      } else {
-        await speakStreaming(text, abort, deadline, onDone);
+      const ctx = getCtx();
+      if (ctx.state === 'suspended') await ctx.resume();
+      gainRef.current!.gain.setValueAtTime(1, ctx.currentTime);
+
+      const res = await fetch(`/api/voice/tts?text=${encodeURIComponent(text)}`, {
+        signal: abort.signal,
+      });
+      if (!res.ok || !res.body) throw new Error(`TTS ${res.status}`);
+
+      const PCM_RATE = 24000;
+      const reader = res.body.getReader();
+      let nextStart = ctx.currentTime + 0.05; // 50ms initial buffer
+      let leftover: Uint8Array | null = null;
+      let lastSource: AudioBufferSourceNode | null = null;
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done || abort.signal.aborted) break;
+
+        // Combine leftover byte from previous chunk (PCM is 2 bytes/sample)
+        let chunk = value;
+        if (leftover) {
+          const merged = new Uint8Array(leftover.length + value.length);
+          merged.set(leftover);
+          merged.set(value, leftover.length);
+          chunk = merged;
+          leftover = null;
+        }
+        if (chunk.length % 2 !== 0) {
+          leftover = chunk.slice(-1);
+          chunk = chunk.slice(0, -1);
+        }
+        if (chunk.length === 0) continue;
+
+        // Convert 16-bit little-endian signed PCM → float32
+        const numSamples = chunk.length >> 1;
+        const float32 = new Float32Array(numSamples);
+        for (let i = 0; i < numSamples; i++) {
+          let s = (chunk[i * 2 + 1] << 8) | chunk[i * 2];
+          if (s > 0x7FFF) s -= 0x10000;
+          float32[i] = s / 32768.0;
+        }
+
+        const audioBuf = ctx.createBuffer(1, numSamples, PCM_RATE);
+        audioBuf.copyToChannel(float32, 0);
+
+        const source = ctx.createBufferSource();
+        source.buffer = audioBuf;
+        source.connect(gainRef.current!);
+        const startAt = Math.max(nextStart, ctx.currentTime);
+        source.start(startAt);
+        nextStart = startAt + audioBuf.duration;
+
+        sourcesRef.current.push(source);
+        lastSource = source;
+      }
+
+      clearTimeout(fallback);
+
+      if (lastSource && !abort.signal.aborted) {
+        lastSource.onended = () => { setSpeaking(false); onDone?.(); };
+      } else if (!abort.signal.aborted) {
+        // Empty PCM stream — fall back to browser speechSynthesis
+        speakFallback(text, onDone);
       }
     } catch (err: unknown) {
-      clearTimeout(deadline);
-      if (err instanceof Error && err.name === 'AbortError') {
-        setSpeaking(false); return;
-      }
-      console.error('[TTS] playback failed, falling back to speechSynthesis:', err);
+      clearTimeout(fallback);
+      if (err instanceof Error && err.name === 'AbortError') return;
+      console.error('[TTS] falling back to speechSynthesis:', err);
       speakFallback(text, onDone);
     }
   }
 
   function stop() {
     abortRef.current?.abort();
-    clearPlaybackTimer();
-    stopAudioEl();
     window.speechSynthesis?.cancel();
-    if (gainRef.current) {
-      try { gainRef.current.gain.setValueAtTime(0, 0); } catch {}
-    }
+    gainRef.current?.gain.setValueAtTime(0, 0);
     sourcesRef.current.forEach(s => { try { s.stop(); } catch {} });
     sourcesRef.current = [];
     setSpeaking(false);

@@ -41,9 +41,8 @@ export async function GET(req: NextRequest) {
     return new NextResponse(readable, {
       headers: {
         'Content-Type': 'audio/pcm',
-        'Cache-Control': 'no-store, no-cache, must-revalidate',
+        'Cache-Control': 'no-cache',
         'X-Accel-Buffering': 'no',
-        'X-Content-Type-Options': 'nosniff',
       },
     });
   } catch (err) {

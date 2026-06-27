@@ -4,9 +4,13 @@
  * All assistant-wide constants live here. Business logic does not.
  * This file is safe to import in both server and client code — it has
  * no side effects and no imports from Next.js or browser APIs.
+ *
+ * Language configuration has been moved to lib/assistant/languages.ts.
+ * The constants below are re-exported for backwards compatibility so that
+ * all existing import sites continue to work without modification.
  */
 
-import type { LanguageCode, TextDirection } from '@/types/assistant';
+import type { LanguageCode } from '@/types/assistant';
 
 // ---------------------------------------------------------------------------
 // Feature flags
@@ -23,88 +27,22 @@ export const ASSISTANT_ENABLED =
   process.env.ENABLE_AI_ASSISTANT === 'true';
 
 // ---------------------------------------------------------------------------
-// Supported languages
+// Language configuration
+// — Definitions live in lib/assistant/languages.ts.
+// — These re-exports keep all existing call sites unchanged.
 // ---------------------------------------------------------------------------
 
-export interface LanguageConfig {
-  code: LanguageCode;
-  /** Human-readable name in English. */
-  nameEn: string;
-  /** Human-readable name in the language itself. */
-  nameSelf: string;
-  direction: TextDirection;
-  /** Phase in which this language becomes active. */
-  phase: 1 | 2 | 3;
-  /**
-   * Whether this language is in beta quality.
-   * Beta languages show a quality disclaimer to the user.
-   */
-  beta: boolean;
-}
-
-export const SUPPORTED_LANGUAGES: Readonly<LanguageConfig[]> = [
-  {
-    code: 'en',
-    nameEn: 'English',
-    nameSelf: 'English',
-    direction: 'ltr',
-    phase: 1,
-    beta: false,
-  },
-  {
-    code: 'es',
-    nameEn: 'Spanish',
-    nameSelf: 'Español',
-    direction: 'ltr',
-    phase: 1,
-    beta: false,
-  },
-  {
-    code: 'fa',
-    nameEn: 'Persian / Farsi',
-    nameSelf: 'فارسی',
-    direction: 'rtl',
-    phase: 2,
-    beta: true,
-  },
-  {
-    code: 'ru',
-    nameEn: 'Russian',
-    nameSelf: 'Русский',
-    direction: 'ltr',
-    phase: 2,
-    beta: false,
-  },
-  {
-    code: 'ar',
-    nameEn: 'Arabic',
-    nameSelf: 'العربية',
-    direction: 'rtl',
-    phase: 3,
-    beta: false,
-  },
-  {
-    code: 'hy',
-    nameEn: 'Armenian',
-    nameSelf: 'Հայերեն', // U+0540 U+0561 U+0575 U+0565 U+0580 U+0565 U+0576 - pure Armenian, no Latin
-    direction: 'ltr',
-    phase: 3,
-    beta: true,
-  },
-] as const;
-
-/** ISO 639-1 codes of languages active in the current deployment phase. */
-export const ACTIVE_LANGUAGE_CODES: LanguageCode[] = SUPPORTED_LANGUAGES
-  .filter((l) => l.phase === 1) // Phase 1: English + Spanish only
-  .map((l) => l.code);
-
-/** Default/fallback language when detection fails. */
-export const DEFAULT_LANGUAGE: LanguageCode = 'en';
-
-/** Languages that render right-to-left. */
-export const RTL_LANGUAGES: LanguageCode[] = SUPPORTED_LANGUAGES
-  .filter((l) => l.direction === 'rtl')
-  .map((l) => l.code);
+export type { LanguageDefinition as LanguageConfig } from './languages';
+export {
+  LANGUAGE_ROSTER as SUPPORTED_LANGUAGES,
+  ACTIVE_LANGUAGES,
+  ACTIVE_LANGUAGE_CODES,
+  RTL_LANGUAGE_CODES as RTL_LANGUAGES,
+  DEFAULT_LANGUAGE,
+  isRTL,
+  getLanguage,
+  getDirection,
+} from './languages';
 
 // ---------------------------------------------------------------------------
 // Voice settings

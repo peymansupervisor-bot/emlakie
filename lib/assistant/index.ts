@@ -10,12 +10,25 @@
  */
 
 export { ASSISTANT_ENABLED } from './config';
+
+// Language configuration — import from languages.ts for full API,
+// or from config.ts for backwards-compatible re-exports.
 export type { LanguageConfig } from './config';
 export {
   SUPPORTED_LANGUAGES,
+  ACTIVE_LANGUAGES,
   ACTIVE_LANGUAGE_CODES,
   DEFAULT_LANGUAGE,
   RTL_LANGUAGES,
+  isRTL,
+  getLanguage,
+  getDirection,
+} from './config';
+// Direct exports from languages.ts for callers that want the canonical type name
+export type { LanguageDefinition } from './languages';
+export { LANGUAGE_ROSTER, RTL_LANGUAGE_CODES } from './languages';
+
+export {
   VOICE_SETTINGS,
   SESSION_TIMEOUTS,
   RATE_LIMITS,

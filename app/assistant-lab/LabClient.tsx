@@ -10,7 +10,9 @@
 import { useRef, useState, useEffect } from 'react';
 import { useRealtimeLab } from '@/hooks/assistant/realtime-lab/useRealtimeLab';
 import { LAB_SYSTEM_INSTRUCTION, LAB_REALTIME_MODEL, LAB_VOICE } from '@/lib/assistant/realtime-lab/config';
+import { ALL_SCENARIOS } from '@/lib/assistant/realtime-lab/multilingual-scenarios';
 import type { LabConnectionStatus, LabMetrics } from '@/lib/assistant/realtime-lab/types';
+import type { LabScenario } from '@/lib/assistant/realtime-lab/multilingual-scenarios';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -109,6 +111,70 @@ function EventLog({ events }: { events: LabMetrics['events'] }) {
           ))
         )}
       </div>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Scenario panel
+// ---------------------------------------------------------------------------
+
+function ScenarioCard({ scenario }: { scenario: LabScenario }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="rounded-xl border border-gray-100 bg-white overflow-hidden">
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        className="w-full flex items-center justify-between px-4 py-3 text-left hover:bg-gray-50 transition"
+      >
+        <div className="flex items-center gap-2">
+          {scenario.isMixed && (
+            <span className="rounded bg-purple-100 px-1.5 py-0.5 text-[10px] font-semibold text-purple-700 uppercase tracking-wide">
+              Mixed
+            </span>
+          )}
+          <span className="text-sm font-medium text-gray-800">{scenario.label}</span>
+          <span className="text-xs text-gray-400">({scenario.languages.join(' + ')})</span>
+        </div>
+        <span className="text-gray-400 text-xs">{open ? '▲' : '▼'}</span>
+      </button>
+
+      {open && (
+        <div className="border-t border-gray-100 px-4 py-3 space-y-3">
+          {scenario.turns.map((turn, i) => (
+            <div key={i} className="space-y-1">
+              <p className="text-[10px] font-semibold uppercase tracking-wide text-gray-400">
+                Turn {i + 1} — say this:
+              </p>
+              <p
+                className="rounded-lg bg-gray-950 px-3 py-2 font-mono text-xs text-green-300 leading-relaxed"
+                dir={
+                  scenario.languages.some((l) => l === 'fa' || l === 'ar') && i > 0
+                    ? 'auto'
+                    : 'auto'
+                }
+              >
+                {turn.utterance}
+              </p>
+              <p className="text-[11px] text-gray-500">
+                Expected response: <strong>{turn.expectedResponseLanguage}</strong>
+                {turn.note && <> — {turn.note}</>}
+              </p>
+            </div>
+          ))}
+          <div className="rounded-lg bg-green-50 border border-green-100 px-3 py-2">
+            <p className="text-[11px] text-green-800">
+              <strong>Pass condition:</strong> {scenario.passCondition}
+            </p>
+          </div>
+          <div className="rounded-lg bg-amber-50 border border-amber-100 px-3 py-2">
+            <p className="text-[11px] text-amber-800">
+              <strong>Record:</strong> {scenario.record}
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -225,18 +291,12 @@ export default function LabClient() {
               : 'Start Lab Session'}
           </button>
 
-          {/* Test guidance */}
-          {(metrics.status === 'idle' || metrics.status === 'stopped' || metrics.status === 'error') && (
-            <div className="rounded-lg bg-gray-50 p-3 text-xs text-gray-500 space-y-1">
-              <p className="font-medium text-gray-600">How to test:</p>
-              <ul className="list-disc list-inside space-y-0.5">
-                <li><strong>English:</strong> &ldquo;I&apos;m looking for a 2-bedroom apartment under $2,000&rdquo;</li>
-                <li><strong>Spanish:</strong> &ldquo;Busco un departamento de dos recámaras&rdquo;</li>
-                <li><strong>Persian:</strong> &ldquo;دنبال یک آپارتمان دو خوابه می‌گردم&rdquo;</li>
-                <li><strong>Mixed:</strong> Switch languages mid-conversation</li>
-                <li><strong>Interruption:</strong> Speak while assistant is responding</li>
-              </ul>
-            </div>
+          {/* Interruption tip — always visible when not busy */}
+          {!isBusy && (
+            <p className="text-xs text-gray-400">
+              <strong className="text-gray-500">Interruption test:</strong>{' '}
+              While the assistant is speaking, start talking over it. The assistant should stop immediately.
+            </p>
           )}
         </div>
 
@@ -301,6 +361,18 @@ export default function LabClient() {
 
         {/* ── Event log ── */}
         <EventLog events={metrics.events} />
+
+        {/* ── Multilingual test scenarios ── */}
+        <div>
+          <p className="mb-3 text-[11px] font-semibold uppercase tracking-wide text-gray-400">
+            Multilingual test scenarios ({ALL_SCENARIOS.length} total)
+          </p>
+          <div className="space-y-2">
+            {ALL_SCENARIOS.map((s) => (
+              <ScenarioCard key={s.id} scenario={s} />
+            ))}
+          </div>
+        </div>
 
         {/* ── Copy report ── */}
         {(metrics.status === 'stopped' || metrics.status === 'error' || metrics.totalTurns > 0) && (

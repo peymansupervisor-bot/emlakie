@@ -11,8 +11,31 @@
 // Language
 // ---------------------------------------------------------------------------
 
-/** ISO 639-1 codes for the six languages supported in Phase 1–3. */
-export type LanguageCode = 'en' | 'es' | 'fa' | 'hy' | 'ru' | 'ar';
+/**
+ * ISO 639-1 / BCP-47 codes for all languages in the assistant language roster.
+ *
+ * Codes follow BCP-47 convention:
+ *   zh-Hans — Chinese Simplified
+ *   zh-Hant — Chinese Traditional
+ * All other codes are plain ISO 639-1 two-letter codes.
+ *
+ * Adding a new language:
+ *   1. Add its code here.
+ *   2. Add a LanguageDefinition entry in lib/assistant/languages.ts.
+ *   3. Set enabled: true when ready to activate.
+ *   No other files need to change.
+ */
+export type LanguageCode =
+  | 'en'       // English
+  | 'es'       // Spanish
+  | 'fa'       // Persian / Farsi
+  | 'hy'       // Armenian
+  | 'ru'       // Russian
+  | 'ar'       // Arabic
+  | 'zh-Hans'  // Chinese Simplified
+  | 'zh-Hant'  // Chinese Traditional
+  | 'ko'       // Korean
+  | 'vi';      // Vietnamese
 
 /** Whether a language renders right-to-left. */
 export type TextDirection = 'ltr' | 'rtl';

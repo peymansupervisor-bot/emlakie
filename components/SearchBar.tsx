@@ -89,7 +89,8 @@ function useSpeechRecognition(onResult: (text: string) => void) {
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
         stream.getTracks().forEach((t) => t.stop());
         permittedRef.current = true;
-      } catch {
+      } catch (err) {
+        console.error('[mic] getUserMedia failed:', err);
         setError('not-allowed');
         return;
       }
@@ -109,6 +110,7 @@ function useSpeechRecognition(onResult: (text: string) => void) {
     };
     recog.onend = () => setListening(false);
     recog.onerror = (e: SpeechRecognitionErrorEvent) => {
+      console.error('[mic] SpeechRecognition error:', e.error, e.message);
       setListening(false);
       if (e.error === 'not-allowed') setError('not-allowed');
       else if (e.error === 'no-speech') setError('no-speech');

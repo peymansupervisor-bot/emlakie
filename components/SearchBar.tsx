@@ -247,7 +247,7 @@ function useSpeechRecognition(onResult: (text: string) => void) {
 // AudioBufferSourceNode per network packet.
 // prime() must be called during a user gesture to unlock iOS AudioContext.
 
-const DEBUG_TTS = true;                          // ← temporary diagnostics; revert after debugging
+const DEBUG_TTS = false;
 const PCM_RATE   = 24000;                        // Hz (OpenAI tts-1 pcm output)
 const FRAME_BYTES = PCM_RATE * 2 * 0.15 | 0;    // ~150 ms worth of Int16 samples = 7200 bytes
 
@@ -458,20 +458,24 @@ function useTTS() {
       ttsLog('speak() — deadline cleared');
 
       if (lastSource && !abort.signal.aborted) {
-        ttsLog('speak() — attaching onended to lastSource');
-        // Safety: if onended never fires (browser bug), the deadline above already cleared
-        // Re-arm a tight per-audio timeout as a second safety net
-        const audioEndMs = Math.max(500, (nextStart - ctx.currentTime) * 1000 + 1000);
-        ttsLog(`speak() — audio should finish in ~${((nextStart - ctx.currentTime) * 1000).toFixed(0)}ms, safety timeout=${audioEndMs.toFixed(0)}ms`);
-        const audioDeadline = setTimeout(() => {
-          ttsWarn('speak() — onended NEVER FIRED (browser bug), forcing done via audio deadline');
+        // Primary completion: schedule done via a timeout derived from the known playback
+        // end time. Safari has a longstanding bug where AudioBufferSourceNode.onended
+        // silently never fires, so we cannot rely on it as the only signal.
+        const remainingMs = Math.max(200, (nextStart - ctx.currentTime) * 1000 + 150);
+        ttsLog(`speak() — audio ends in ~${remainingMs.toFixed(0)}ms (nextStart=${nextStart.toFixed(3)}, now=${ctx.currentTime.toFixed(3)})`);
+        let done = false;
+        const finish = () => {
+          if (done) return;
+          done = true;
+          ttsLog('speak() — finish() called, clearing speaking');
           setSpeaking(false); onDone?.();
-        }, audioEndMs);
-
+        };
+        const playbackTimer = setTimeout(finish, remainingMs);
+        // Bonus: onended may fire first on Chrome/Firefox — take the early exit
         lastSource.onended = () => {
-          clearTimeout(audioDeadline);
-          ttsLog('speak() — lastSource.onended fired ✓, clearing speaking');
-          setSpeaking(false); onDone?.();
+          clearTimeout(playbackTimer);
+          ttsLog('speak() — lastSource.onended fired early ✓');
+          finish();
         };
       } else if (!abort.signal.aborted) {
         ttsWarn('speak() — no frames were scheduled (empty PCM), falling back to speechSynthesis');

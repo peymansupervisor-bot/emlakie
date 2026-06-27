@@ -30,7 +30,6 @@ function isHeic(buf: Buffer): boolean {
 // crashes at toBuffer(). heic-convert uses its own WASM libheif with the decoder.
 async function toJpegReadyBuffer(raw: Buffer): Promise<Buffer> {
   if (isHeic(raw)) {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
     const heicConvert = require('heic-convert') as (o: { buffer: Buffer; format: 'JPEG'; quality: number }) => Promise<ArrayBuffer>
     const ab: ArrayBuffer = await heicConvert({ buffer: raw, format: 'JPEG', quality: 1 })
     return Buffer.from(new Uint8Array(ab))

@@ -101,7 +101,7 @@ export default function RentCheckPage() {
         <p className="text-xs font-semibold uppercase tracking-widest text-brand-600">Free Tool</p>
         <h1 className="mt-2 text-4xl font-extrabold text-gray-900 sm:text-5xl">Is my rent fair?</h1>
         <p className="mt-4 text-lg text-gray-500">
-          Enter your city, bedroom count, and what you pay — we'll compare it against real listings from landlords in your area.
+          Enter your city, bedroom count, and what you pay — we&apos;ll compare it against real listings from landlords in your area.
         </p>
       </div>
 

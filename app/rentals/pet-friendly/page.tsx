@@ -97,7 +97,7 @@ export default async function PetFriendlyPage() {
         <h2 className="text-xl font-extrabold text-gray-900">Finding pet-friendly rentals: what to expect</h2>
         <p>
           Finding a pet-friendly apartment or house for rent is one of the biggest challenges for renters with dogs,
-          cats, or other animals. While many landlords advertise "no pets," a growing number welcome well-behaved
+          cats, or other animals. While many landlords advertise &quot;no pets,&quot; a growing number welcome well-behaved
           animals — especially in single-family homes and smaller multi-family buildings where pet damage is easier
           to manage. Private landlords tend to be significantly more flexible than large corporate apartment complexes.
         </p>

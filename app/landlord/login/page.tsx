@@ -299,7 +299,7 @@ function LandlordLoginInner() {
       {step === 'forgot' && (
         <>
           <h2 className="text-3xl font-extrabold text-gray-900">Reset password</h2>
-          <p className="mt-2 text-gray-500">Enter your email and we'll send you a reset link.</p>
+          <p className="mt-2 text-gray-500">Enter your email and we&apos;ll send you a reset link.</p>
           <form onSubmit={onForgot} className="mt-8 space-y-4">
             <input id="forgot-email" type="email" value={email} onChange={(e) => setEmail(e.target.value)}
               placeholder="Email address" aria-label="Email address" autoComplete="email" required className={inputClass} />

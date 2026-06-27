@@ -182,7 +182,7 @@ export default function TermsPage() {
           </p>
           <p className="mt-2">
             Landlords whose listings are removed or suspended will not be entitled to any refund, compensation, or
-            advance notice. EMLAKIE's exercise of this right does not constitute a waiver of any other rights or
+            advance notice. EMLAKIE&apos;s exercise of this right does not constitute a waiver of any other rights or
             remedies available to EMLAKIE under these Terms or applicable law.
           </p>
           <p className="mt-2">

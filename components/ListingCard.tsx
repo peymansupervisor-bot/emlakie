@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { Listing } from '@/lib/types';
 import { formatBaths, formatBeds, formatPrice, formatPropertyType, formatSqft } from '@/lib/format';
@@ -196,12 +197,13 @@ export default function ListingCard({
       {/* ── Photo ──────────────────────────────────────────────────────────── */}
       <div className="relative aspect-[4/3] overflow-hidden bg-gray-100">
         {photo ? (
-          <img
+          <Image
             src={photo}
             alt={`${listing.bedrooms === 0 ? 'Studio' : `${listing.bedrooms}BR`} ${formatPropertyType(listing.property_type)} in ${listing.city}`}
-            loading={priority ? 'eager' : 'lazy'}
-            decoding="async"
-            className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.04]"
+            fill
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            priority={priority}
+            className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.04]"
           />
         ) : (
           <div className="flex h-full items-center justify-center bg-gray-50">

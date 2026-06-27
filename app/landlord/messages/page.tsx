@@ -90,7 +90,7 @@ export default function MessagesPage() {
           </div>
           <p className="mt-4 font-semibold text-gray-900">No messages yet</p>
           <p className="mt-2 text-sm text-gray-600">
-            Start a conversation from the <Link href="/landlord/leads" className="font-semibold text-brand-600 hover:underline">Leads</Link> tab by clicking "Message" on any applicant.
+            Start a conversation from the <Link href="/landlord/leads" className="font-semibold text-brand-600 hover:underline">Leads</Link> tab by clicking &quot;Message&quot; on any applicant.
           </p>
         </div>
       ) : (

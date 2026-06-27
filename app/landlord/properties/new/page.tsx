@@ -567,7 +567,7 @@ export default function NewPropertyPage() {
                 }`}
               >
                 <span aria-hidden="true">🪪</span> Broker / Agent
-                <span className="block text-xs font-normal mt-0.5 text-current opacity-70">I'm a licensed real estate professional</span>
+                <span className="block text-xs font-normal mt-0.5 text-current opacity-70">I&apos;m a licensed real estate professional</span>
               </button>
             </div>
             {form.isBroker === true && (

@@ -75,7 +75,7 @@ export default function ScreeningModal({ applicationId, listingId, listingAddres
               </div>
               <div className="flex gap-3">
                 <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-green-600 text-white text-xs font-bold">3</span>
-                <p>The applicant completes and pays on TransUnion's secure site. You receive the report directly.</p>
+                <p>The applicant completes and pays on TransUnion&apos;s secure site. You receive the report directly.</p>
               </div>
             </div>
           </div>

@@ -95,7 +95,7 @@ export default function ImportFromMlsPage() {
 
       {error && (
         <div className="rounded-2xl border border-red-200 bg-red-50 p-6 text-center">
-          <p className="font-semibold text-red-700">Couldn't connect to ListHub</p>
+          <p className="font-semibold text-red-700">Couldn&apos;t connect to ListHub</p>
           <p className="text-sm text-red-500 mt-1">{error}</p>
           <p className="text-xs text-gray-500 mt-3">Make sure LISTHUB_CLIENT_ID and LISTHUB_CLIENT_SECRET are set in Vercel.</p>
         </div>

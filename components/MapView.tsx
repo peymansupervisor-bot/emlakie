@@ -215,10 +215,11 @@ export default function MapView({ listings, activeId, onMarkerClick, drawMode = 
       syncMarkers(map, L);
     });
 
+    const markers = markersRef.current;
     return () => {
       mapRef.current?.map.remove();
       mapRef.current = null;
-      markersRef.current.clear();
+      markers.clear();
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

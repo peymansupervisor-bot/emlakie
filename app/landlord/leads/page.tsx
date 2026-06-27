@@ -344,7 +344,7 @@ export default function LeadsPage() {
       {filtered.length === 0 ? (
         <div className="mt-16 text-center">
           <p className="font-semibold text-gray-900">No leads yet</p>
-          <p className="mt-2 text-sm text-gray-500">When renters apply to your listings they'll appear here.</p>
+          <p className="mt-2 text-sm text-gray-500">When renters apply to your listings they&apos;ll appear here.</p>
         </div>
       ) : (
         <div className="mt-6 overflow-hidden rounded-2xl border border-gray-200">

@@ -1,4 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/no-require-imports
 const zipcodeLib = require('zipcodes') as {
   lookup: (zip: string) => ZipInfo | null;
 };

@@ -82,7 +82,7 @@ export default async function FurnishedPage() {
 
       {/* What's typically included */}
       <div className="mt-10 rounded-2xl bg-brand-50 border border-brand-100 px-6 py-6">
-        <h2 className="font-bold text-brand-800">What "furnished" typically includes</h2>
+        <h2 className="font-bold text-brand-800">What &quot;furnished&quot; typically includes</h2>
         <div className="mt-3 grid gap-2 sm:grid-cols-2 text-sm text-gray-700">
           {['Bed frame & mattress', 'Sofa & living room furniture', 'Dining table & chairs', 'Kitchen appliances', 'Washer / dryer', 'Wi-Fi (in many units)'].map(item => (
             <div key={item} className="flex items-center gap-2">
@@ -93,7 +93,7 @@ export default async function FurnishedPage() {
             </div>
           ))}
         </div>
-        <p className="mt-3 text-xs text-gray-500">Always confirm exactly what's included with the landlord before signing.</p>
+        <p className="mt-3 text-xs text-gray-500">Always confirm exactly what&apos;s included with the landlord before signing.</p>
       </div>
 
       {/* More about furnished rentals */}

@@ -86,8 +86,8 @@ export default async function ShortTermPage() {
         <h2 className="font-bold text-brand-800">What to know about short-term rentals</h2>
         <ul className="mt-3 space-y-2 text-sm text-gray-700">
           <li>• Short-term leases typically cost 10–20% more per month than annual leases — you pay for flexibility.</li>
-          <li>• Month-to-month leases usually require 30 days' notice to vacate from either party.</li>
-          <li>• Always clarify the minimum lease term upfront — "short-term" can mean 1 month or 6 months depending on the landlord.</li>
+          <li>• Month-to-month leases usually require 30 days&apos; notice to vacate from either party.</li>
+          <li>• Always clarify the minimum lease term upfront — &quot;short-term&quot; can mean 1 month or 6 months depending on the landlord.</li>
           <li>• Some landlords offer furnished units on short-term leases — ask if furniture is included.</li>
           <li>• Corporate housing and extended-stay hotels are alternatives, but private landlords on EMLAKIE are typically far cheaper.</li>
         </ul>

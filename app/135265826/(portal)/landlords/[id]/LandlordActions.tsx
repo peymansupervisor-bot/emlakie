@@ -100,7 +100,7 @@ export default function LandlordActions({ landlordId, isBanned }: { landlordId: 
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
           <div className="w-full max-w-md rounded-2xl border border-gray-700 bg-gray-900 p-6 shadow-2xl">
             <h2 className="text-lg font-bold text-white mb-1">Suspend Account</h2>
-            <p className="text-sm text-gray-400 mb-5">The landlord's account will be locked. What should happen to their listings?</p>
+            <p className="text-sm text-gray-400 mb-5">The landlord&apos;s account will be locked. What should happen to their listings?</p>
 
             <div className="flex flex-col gap-3 mb-5">
               <label className={`flex items-start gap-3 rounded-xl border p-4 cursor-pointer transition ${listingAction === 'inactive' ? 'border-amber-500 bg-amber-950/30' : 'border-gray-700 hover:border-gray-500'}`}>

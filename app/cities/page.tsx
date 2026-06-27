@@ -235,7 +235,7 @@ export default function CitiesPage() {
 
       {/* CTA */}
       <section className="rounded-2xl border border-brand-100 bg-brand-50 px-8 py-10 text-center">
-        <h2 className="text-2xl font-extrabold text-gray-900">Don't see your city?</h2>
+        <h2 className="text-2xl font-extrabold text-gray-900">Don&apos;t see your city?</h2>
         <p className="mt-2 text-gray-600">
           Search across all active listings or filter by ZIP code to find rentals anywhere in the US.
         </p>

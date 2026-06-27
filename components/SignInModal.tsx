@@ -459,7 +459,7 @@ export default function SignInModal({
           {step === 'forgot' && (
             <div>
               <h2 id={headingId} className="mb-1 text-2xl font-extrabold text-gray-900">Reset Password</h2>
-              <p className="mb-6 text-sm text-gray-600">Enter your email and we'll send you a reset link.</p>
+              <p className="mb-6 text-sm text-gray-600">Enter your email and we&apos;ll send you a reset link.</p>
 
               <form onSubmit={onForgot} className="space-y-4">
                 <div>

@@ -74,7 +74,7 @@ export default function ScreeningPage() {
         <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-green-600 text-white text-sm font-bold">?</div>
         <div className="text-sm text-green-900 space-y-0.5">
           <p className="font-semibold">How to screen a tenant</p>
-          <p>Go to <strong>Inquiries</strong>, open an application, and click <strong>Run Background Check</strong>. You'll be directed to SmartMove to invite the applicant. The report is sent directly to your SmartMove account.</p>
+          <p>Go to <strong>Inquiries</strong>, open an application, and click <strong>Run Background Check</strong>. You&apos;ll be directed to SmartMove to invite the applicant. The report is sent directly to your SmartMove account.</p>
         </div>
       </div>
 
@@ -83,7 +83,7 @@ export default function ScreeningPage() {
       ) : requests.length === 0 ? (
         <div className="text-center py-20 rounded-2xl border-2 border-dashed border-gray-200">
           <p className="text-gray-400 text-lg font-semibold">No screening requests yet</p>
-          <p className="text-gray-400 text-sm mt-1">Go to <strong>Inquiries</strong> and click "Run Background Check" on an applicant to get started.</p>
+          <p className="text-gray-400 text-sm mt-1">Go to <strong>Inquiries</strong> and click &quot;Run Background Check&quot; on an applicant to get started.</p>
         </div>
       ) : (
         <div className="space-y-3">

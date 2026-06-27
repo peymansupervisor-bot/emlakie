@@ -81,10 +81,13 @@ function formatDurationMs(ms: number): string {
 // ---------------------------------------------------------------------------
 
 export function useRealtimeLab({ audioRef }: UseRealtimeLabOptions): UseRealtimeLabReturn {
-  const [metrics, setMetrics] = useState<LabMetrics>(() => ({
-    ...INITIAL_LAB_METRICS,
-    browserName: detectBrowser(),
-  }));
+  // Initialize with 'Unknown' so server and client render the same value.
+  // detectBrowser() runs only after mount (useEffect) to avoid hydration mismatch.
+  const [metrics, setMetrics] = useState<LabMetrics>(INITIAL_LAB_METRICS);
+
+  useEffect(() => {
+    setMetrics((m) => ({ ...m, browserName: detectBrowser() }));
+  }, []);
 
   // Stable refs — never trigger re-renders
   const pcRef = useRef<RTCPeerConnection | null>(null);
@@ -313,14 +316,12 @@ export function useRealtimeLab({ audioRef }: UseRealtimeLabOptions): UseRealtime
   // -------------------------------------------------------------------------
 
   const startSession = useCallback(async () => {
-    const browser = detectBrowser();
-
-    // Reset metrics for a fresh session (preserve browser name)
-    setMetrics({
+    // Reset metrics for a fresh session, preserving the browser name already detected
+    setMetrics((prev) => ({
       ...INITIAL_LAB_METRICS,
-      browserName: browser,
+      browserName: prev.browserName,
       status: 'requesting-mic',
-    });
+    }));
     isRespondingAudioRef.current = false;
     speechStoppedAtRef.current = null;
 

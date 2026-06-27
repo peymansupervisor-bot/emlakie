@@ -1,12 +1,9 @@
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
-import type { AssistantState } from '@/types/assistant';
 
 export interface UseAssistantPanelReturn {
   open: boolean;
-  /** Current UI state — idle in Phase 1B (no audio or AI connected). */
-  assistantState: AssistantState;
   openPanel: () => void;
   closePanel: () => void;
   /** Ref attached to the launcher button for focus-return on close. */
@@ -19,12 +16,11 @@ export interface UseAssistantPanelReturn {
  * Manages the assistant panel's open/closed state, keyboard handling,
  * and focus management (WCAG 2.4.3 Focus Order, 2.1.2 No Keyboard Trap).
  *
- * Phase 1B: assistantState is always 'idle' — no audio or AI is connected.
- * Phase 1C+ will update assistantState via WebSocket session events.
+ * Panel state (open/close) is separate from session state.
+ * Session state (displayState, messages, etc.) is owned by useAssistantSession.
  */
 export function useAssistantPanel(): UseAssistantPanelReturn {
   const [open, setOpen] = useState(false);
-  const [assistantState] = useState<AssistantState>('idle');
   const launcherRef = useRef<HTMLButtonElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
 
@@ -62,5 +58,5 @@ export function useAssistantPanel(): UseAssistantPanelReturn {
     return () => document.removeEventListener('keydown', onKeyDown);
   }, [open, closePanel]);
 
-  return { open, assistantState, openPanel, closePanel, launcherRef, panelRef };
+  return { open, openPanel, closePanel, launcherRef, panelRef };
 }

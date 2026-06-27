@@ -29,3 +29,18 @@ export type { PropertyTypeValue, AmenityValue } from './config';
 
 export { assistantLogger, startTimer } from './logger';
 export type { LogLevel, AssistantLogEntry, AssistantSubsystem } from './logger';
+
+export {
+  transition,
+  INITIAL_STATE,
+  toDisplayState,
+  canSendMessage,
+  canOpen,
+  getRecommendations,
+  getAssistantMessage,
+} from './stateMachine';
+export type { AssistantSessionState, AssistantEvent } from './stateMachine';
+
+export type { AssistantTransport } from './transport';
+
+export { createMockTransport } from './mockTransport';

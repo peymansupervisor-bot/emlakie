@@ -22,21 +22,26 @@ export type TextDirection = 'ltr' | 'rtl';
 // ---------------------------------------------------------------------------
 
 /**
- * UI state of the assistant widget.
+ * Display-oriented UI state for AssistantStateDisplay and AssistantLauncher.
+ * Derived from AssistantSessionState via toDisplayState() in stateMachine.ts.
  *
- * idle       — widget closed or not yet opened
- * requesting — microphone permission prompt in flight
- * listening  — mic open, capturing user speech
- * processing — audio received, server is working
- * speaking   — assistant TTS playing back
- * error      — non-recoverable session error (widget resets to idle after toast)
+ * idle                  — not yet started, or session closed
+ * connecting            — transport connect() in flight
+ * greeting              — assistant speaking its opening line
+ * listening             — ready to receive user input
+ * processing            — thinking / searching
+ * speaking              — assistant delivering a response
+ * showingRecommendations — listings are on screen, conversation can continue
+ * error                 — non-recoverable; resets to idle after toast
  */
 export type AssistantState =
   | 'idle'
-  | 'requesting'
+  | 'connecting'
+  | 'greeting'
   | 'listening'
   | 'processing'
   | 'speaking'
+  | 'showingRecommendations'
   | 'error';
 
 // ---------------------------------------------------------------------------

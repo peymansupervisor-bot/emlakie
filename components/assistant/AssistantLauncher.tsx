@@ -5,7 +5,7 @@ import type { AssistantState } from '@/types/assistant';
 interface AssistantLauncherProps {
   onClick: () => void;
   panelOpen: boolean;
-  assistantState: AssistantState;
+  displayState: AssistantState;
   buttonRef: React.RefObject<HTMLButtonElement>;
 }
 
@@ -28,10 +28,10 @@ interface AssistantLauncherProps {
 export default function AssistantLauncher({
   onClick,
   panelOpen,
-  assistantState,
+  displayState,
   buttonRef,
 }: AssistantLauncherProps) {
-  const isActive = assistantState !== 'idle' && assistantState !== 'error';
+  const isActive = displayState !== 'idle' && displayState !== 'error';
 
   return (
     <button

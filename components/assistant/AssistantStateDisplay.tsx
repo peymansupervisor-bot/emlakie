@@ -15,14 +15,19 @@ const STATE_CONFIG: Record<
     sublabel: 'Tell me what kind of rental home you\'re looking for.',
     indicator: <IdleIndicator />,
   },
-  requesting: {
-    label: 'Requesting access',
-    sublabel: 'Please allow microphone access when prompted.',
+  connecting: {
+    label: 'Connecting…',
+    sublabel: 'Starting the AI leasing assistant.',
+    indicator: <ThinkingDots />,
+  },
+  greeting: {
+    label: 'Hello!',
+    sublabel: 'The assistant is introducing itself.',
     indicator: <PulsingDot color="brand" />,
   },
   listening: {
     label: 'Listening…',
-    sublabel: 'Speak clearly — I\'m capturing your request.',
+    sublabel: 'Type your rental request below.',
     indicator: <ListeningWave />,
   },
   processing: {
@@ -31,9 +36,14 @@ const STATE_CONFIG: Record<
     indicator: <ThinkingDots />,
   },
   speaking: {
-    label: 'Speaking',
-    sublabel: 'I\'m sharing what I found.',
+    label: 'Responding',
+    sublabel: 'The assistant is sharing what it found.',
     indicator: <PulsingDot color="brand" />,
+  },
+  showingRecommendations: {
+    label: 'Results ready',
+    sublabel: 'Here are some homes that match your request.',
+    indicator: <IdleIndicator />,
   },
   error: {
     label: 'Something went wrong',

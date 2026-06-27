@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Free Rent Check — Is Your Rent Fair?',
-  description: "Find out if you're overpaying rent. Enter your address and current rent to instantly compare against real local listings. Free rent check tool from EMLAKIE.",
+  description: "Find out if you're overpaying rent. Enter your city and current rent to instantly compare against real local listings. Free tool from EMLAKIE.",
   alternates: { canonical: 'https://emlakie.com/rent-check' },
   openGraph: {
     title: 'Free Rent Check — Is Your Rent Fair? | EMLAKIE',

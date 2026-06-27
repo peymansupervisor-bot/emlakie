@@ -274,11 +274,22 @@ function useTTS() {
     } catch { /* AudioContext unavailable */ }
   }
 
+  function speakFallback(text: string, onDone?: () => void) {
+    if (typeof window === 'undefined' || !window.speechSynthesis) { setSpeaking(false); onDone?.(); return; }
+    window.speechSynthesis.cancel();
+    const utt = new SpeechSynthesisUtterance(text);
+    utt.onend  = () => { setSpeaking(false); onDone?.(); };
+    utt.onerror = () => { setSpeaking(false); onDone?.(); };
+    setSpeaking(true);
+    window.speechSynthesis.speak(utt);
+  }
+
   async function speak(text: string, onDone?: () => void) {
     if (typeof window === 'undefined') { onDone?.(); return; }
 
     // Cancel any in-flight TTS
     abortRef.current?.abort();
+    window.speechSynthesis?.cancel();
     sourcesRef.current.forEach(s => { try { s.stop(); } catch {} });
     sourcesRef.current = [];
 
@@ -354,22 +365,20 @@ function useTTS() {
       if (lastSource && !abort.signal.aborted) {
         lastSource.onended = () => { setSpeaking(false); onDone?.(); };
       } else if (!abort.signal.aborted) {
-        // Empty stream — PCM unavailable; wait 300ms before calling onDone to
-        // avoid a tight retry loop if TTS is degraded
-        setSpeaking(false);
-        setTimeout(() => { if (!abort.signal.aborted) onDone?.(); }, 300);
+        // Empty PCM stream — fall back to browser speechSynthesis
+        speakFallback(text, onDone);
       }
     } catch (err: unknown) {
       clearTimeout(fallback);
       if (err instanceof Error && err.name === 'AbortError') return;
-      console.error('[TTS]', err);
-      setSpeaking(false);
-      onDone?.();
+      console.error('[TTS] falling back to speechSynthesis:', err);
+      speakFallback(text, onDone);
     }
   }
 
   function stop() {
     abortRef.current?.abort();
+    window.speechSynthesis?.cancel();
     gainRef.current?.gain.setValueAtTime(0, 0);
     sourcesRef.current.forEach(s => { try { s.stop(); } catch {} });
     sourcesRef.current = [];

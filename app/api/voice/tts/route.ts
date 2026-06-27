@@ -2,28 +2,37 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export const dynamic = 'force-dynamic';
 
-// Proxy Google Translate TTS — avoids CORS and works server-side.
-// Returns MP3 audio for the given text. Swap for OpenAI/ElevenLabs when ready.
 export async function GET(req: NextRequest) {
   const text = req.nextUrl.searchParams.get('text') ?? '';
   if (!text.trim()) {
     return new NextResponse('Missing text', { status: 400 });
   }
 
-  try {
-    const url =
-      `https://translate.google.com/translate_tts?ie=UTF-8&tl=en-US&client=tw-ob&q=` +
-      encodeURIComponent(text.slice(0, 200)); // Google caps at ~200 chars
+  const apiKey = process.env.OPENAI_API_KEY;
+  if (!apiKey) {
+    return new NextResponse('TTS not configured', { status: 503 });
+  }
 
-    const res = await fetch(url, {
+  try {
+    const res = await fetch('https://api.openai.com/v1/audio/speech', {
+      method: 'POST',
       headers: {
-        'User-Agent':
-          'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15',
-        Referer: 'https://translate.google.com/',
+        Authorization: `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
       },
+      body: JSON.stringify({
+        model: 'tts-1',
+        voice: 'nova',
+        input: text.slice(0, 4096),
+        response_format: 'mp3',
+      }),
     });
 
-    if (!res.ok) throw new Error(`Google TTS ${res.status}`);
+    if (!res.ok) {
+      const err = await res.text();
+      console.error('[voice/tts] OpenAI error:', res.status, err);
+      return new NextResponse('TTS unavailable', { status: 502 });
+    }
 
     const audio = await res.arrayBuffer();
     return new NextResponse(audio, {

@@ -162,7 +162,7 @@ function useSpeechRecognition(onResult: (text: string) => void) {
       let silentMs = 0;
       let lastTs = performance.now();
 
-      function tick() {
+      const tick = () => {
         analyser.getByteTimeDomainData(buf);
         let sum = 0;
         for (const v of buf) { const n = (v - 128) / 128; sum += n * n; }
@@ -178,7 +178,7 @@ function useSpeechRecognition(onResult: (text: string) => void) {
           if (silentMs > 1500) { stopNow(); return; }
         }
         silenceFrameRef.current = requestAnimationFrame(tick);
-      }
+      };
 
       // Give user 600 ms to start speaking before silence tracking begins
       stopTimerRef.current = setTimeout(() => {

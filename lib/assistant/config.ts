@@ -86,7 +86,7 @@ export const SUPPORTED_LANGUAGES: Readonly<LanguageConfig[]> = [
   {
     code: 'hy',
     nameEn: 'Armenian',
-    nameSelf: 'Հայerén',
+    nameSelf: 'Հայերեն',
     direction: 'ltr',
     phase: 3,
     beta: true,

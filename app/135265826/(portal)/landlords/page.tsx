@@ -10,15 +10,18 @@ export default async function LandlordsPage({ searchParams }: { searchParams: Pr
   const { q } = await searchParams;
   const sb = adminClient();
 
-  const { data: profileRows } = await sb
-    .from('profiles')
-    .select('id, first_name, last_name, display_name, phone, phone_verified, email, account_id, created_at')
-    .limit(500);
+  const [{ data: profileRows }, { data: listingCounts }, { data: authUsers }] = await Promise.all([
+    sb.from('profiles').select('id, first_name, last_name, display_name, phone, phone_verified, email, account_id, created_at').limit(500),
+    sb.from('listings').select('landlord_id, status').limit(1000000),
+    sb.auth.admin.listUsers({ perPage: 1000 }),
+  ]);
 
-  const { data: listingCounts } = await sb
-    .from('listings')
-    .select('landlord_id, status')
-    .limit(1000000);
+  const now = new Date();
+  const bannedIds = new Set(
+    (authUsers?.users ?? [])
+      .filter(u => u.banned_until && new Date(u.banned_until) > now)
+      .map(u => u.id)
+  );
 
   const countMap: Record<string, { total: number; active: number }> = {};
   for (const l of listingCounts ?? []) {
@@ -103,14 +106,20 @@ export default async function LandlordsPage({ searchParams }: { searchParams: Pr
                   p.display_name ||
                   '—';
                 const counts = countMap[p.id];
+                const isSuspended = bannedIds.has(p.id);
                 return (
-                  <tr key={p.id} className={`hover:bg-gray-900/50 transition ${!p.account_id ? 'bg-amber-950/20' : ''}`}>
+                  <tr key={p.id} className={`hover:bg-gray-900/50 transition ${isSuspended ? 'bg-red-950/20' : !p.account_id ? 'bg-amber-950/20' : ''}`}>
                     <td className="px-4 py-3 text-xs font-mono">
                       {p.account_id
-                        ? <span className="text-gray-400">{p.account_id}</span>
+                        ? <span className={isSuspended ? 'text-red-400' : 'text-gray-400'}>{p.account_id}</span>
                         : <span className="text-amber-500">missing</span>}
                     </td>
-                    <td className="px-4 py-3 font-semibold text-white whitespace-nowrap">{name}</td>
+                    <td className="px-4 py-3 whitespace-nowrap">
+                      <span className={`font-semibold ${isSuspended ? 'text-red-300' : 'text-white'}`}>{name}</span>
+                      {isSuspended && (
+                        <span className="ml-2 rounded bg-red-600 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-widest text-white">Suspended</span>
+                      )}
+                    </td>
                     <td className="px-4 py-3 text-gray-300 whitespace-nowrap">{p.email ?? '—'}</td>
                     <td className="px-4 py-3 text-gray-300 whitespace-nowrap">
                       {p.phone ? (
@@ -124,12 +133,15 @@ export default async function LandlordsPage({ searchParams }: { searchParams: Pr
                     </td>
                     <td className="px-4 py-3 text-center">
                       {counts ? (
-                        <span className="text-white font-semibold">{counts.total}</span>
+                        <span className={`font-semibold ${isSuspended ? 'text-red-400' : 'text-white'}`}>{counts.total}</span>
                       ) : (
                         <span className="text-gray-600">0</span>
                       )}
-                      {counts && counts.active > 0 && (
+                      {counts && counts.active > 0 && !isSuspended && (
                         <span className="ml-1 text-[10px] text-green-400">({counts.active} active)</span>
+                      )}
+                      {counts && counts.active > 0 && isSuspended && (
+                        <span className="ml-1 text-[10px] text-red-400">({counts.active} still active!)</span>
                       )}
                     </td>
                     <td className="px-4 py-3 text-xs text-gray-400 whitespace-nowrap">

@@ -1,9 +1,8 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { isAddressQuery } from '@/lib/address-utils';
-import VoiceOrb, { type OrbState, type OrbTranscript } from '@/components/VoiceOrb';
 
 interface Suggestion {
   type: 'city' | 'address' | 'listing';
@@ -48,346 +47,6 @@ const MODES: { id: Mode; label: string; sublabel: string; icon: React.ReactNode 
   },
 ];
 
-// ── Speech recognition ────────────────────────────────────────────────────────
-// Safari: native SpeechRecognition (Apple on-device, instant).
-// Chrome / all others: MediaRecorder → /api/voice/transcribe (OpenAI Whisper).
-type SpeechError = 'not-allowed' | 'no-speech' | 'other' | null;
-
-function useSpeechRecognition(onResult: (text: string) => void) {
-  const [listening, setListening] = useState(false);
-  const [error, setError] = useState<SpeechError>(null);
-  const onResultRef = useRef(onResult);
-  useEffect(() => { onResultRef.current = onResult; });
-
-  // Stable flag: true = use native SpeechRecognition (Safari), false = Whisper
-  const useNativeRef = useRef<boolean | null>(null);
-  if (useNativeRef.current === null && typeof window !== 'undefined') {
-    const hasAPI = 'SpeechRecognition' in window || 'webkitSpeechRecognition' in window;
-    const isChrome = !!(window as any).chrome;
-    useNativeRef.current = hasAPI && !isChrome;
-  }
-
-  // ── Native SpeechRecognition refs (Safari) ──
-  const recogRef = useRef<SpeechRecognition | null>(null);
-  const permittedRef = useRef(false);
-
-  // ── Whisper / MediaRecorder refs (Chrome) ──
-  const recorderRef = useRef<MediaRecorder | null>(null);
-  const chunksRef = useRef<Blob[]>([]);
-  const silenceFrameRef = useRef<number | null>(null);
-  const stopTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const maxTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const audioCtxRef = useRef<AudioContext | null>(null);
-  const cancelledRef = useRef(false);
-
-  // Auto-clear error when mic permission is granted
-  useEffect(() => {
-    if (!error) return;
-    navigator.permissions.query({ name: 'microphone' as PermissionName }).then((status) => {
-      if (status.state === 'granted') setError(null);
-      status.onchange = () => { if (status.state === 'granted') setError(null); };
-    }).catch(() => {});
-  }, [error]);
-
-  // ── Native path (Safari) ─────────────────────────────────────────────────
-  async function startNative() {
-    setError(null);
-    if (!permittedRef.current) {
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        stream.getTracks().forEach((t) => t.stop());
-        permittedRef.current = true;
-      } catch {
-        setError('not-allowed');
-        return;
-      }
-    }
-    const SR = (window as any).SpeechRecognition ?? (window as any).webkitSpeechRecognition;
-    const recog: SpeechRecognition = new SR();
-    recog.lang = 'en-US';
-    recog.interimResults = false;
-    recog.maxAlternatives = 1;
-    recog.onresult = (e: SpeechRecognitionEvent) => {
-      const text = e.results[0]?.[0]?.transcript ?? '';
-      if (text) { setError(null); onResultRef.current(text); }
-    };
-    recog.onend = () => setListening(false);
-    recog.onerror = (e: SpeechRecognitionErrorEvent) => {
-      setListening(false);
-      if (e.error === 'not-allowed') setError('not-allowed');
-      else if (e.error === 'no-speech') setError('no-speech');
-      else setError('other');
-    };
-    recogRef.current = recog;
-    try { recog.start(); setListening(true); } catch { setError('other'); }
-  }
-
-  function stopNative() {
-    recogRef.current?.stop();
-    setListening(false);
-  }
-
-  // ── Whisper path (Chrome / Firefox) ──────────────────────────────────────
-  function cleanupWhisper() {
-    if (silenceFrameRef.current !== null) { cancelAnimationFrame(silenceFrameRef.current); silenceFrameRef.current = null; }
-    if (stopTimerRef.current !== null) { clearTimeout(stopTimerRef.current); stopTimerRef.current = null; }
-    if (maxTimerRef.current !== null) { clearTimeout(maxTimerRef.current); maxTimerRef.current = null; }
-    try { audioCtxRef.current?.close(); } catch {}
-    audioCtxRef.current = null;
-  }
-
-  function stopRecorder() {
-    if (recorderRef.current && recorderRef.current.state === 'recording') recorderRef.current.stop();
-    recorderRef.current = null;
-  }
-
-  async function startWhisper() {
-    setError(null);
-    cancelledRef.current = false;
-
-    let stream: MediaStream;
-    try {
-      stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    } catch {
-      setError('not-allowed');
-      return;
-    }
-
-    const mimeType =
-      MediaRecorder.isTypeSupported('audio/webm;codecs=opus') ? 'audio/webm;codecs=opus' :
-      MediaRecorder.isTypeSupported('audio/webm') ? 'audio/webm' :
-      MediaRecorder.isTypeSupported('audio/mp4') ? 'audio/mp4' : '';
-
-    const recorder = new MediaRecorder(stream, mimeType ? { mimeType } : undefined);
-    chunksRef.current = [];
-    recorder.ondataavailable = (e) => { if (e.data.size > 0) chunksRef.current.push(e.data); };
-
-    recorder.onstop = async () => {
-      cleanupWhisper();
-      stream.getTracks().forEach((t) => t.stop());
-      setListening(false);
-      if (cancelledRef.current) return;
-
-      const ext = mimeType.includes('mp4') ? 'mp4' : 'webm';
-      const blob = new Blob(chunksRef.current, { type: mimeType || 'audio/webm' });
-      if (blob.size < 500) { setError('no-speech'); return; }
-
-      const fd = new FormData();
-      fd.append('audio', blob, `audio.${ext}`);
-      try {
-        const res = await fetch('/api/voice/transcribe', { method: 'POST', body: fd });
-        const data = await res.json();
-        const text = (data.text ?? '').trim();
-        if (text) { setError(null); onResultRef.current(text); }
-        else setError('no-speech');
-      } catch { setError('other'); }
-    };
-
-    recorder.start(100);
-    recorderRef.current = recorder;
-    setListening(true);
-
-    try {
-      const AC = window.AudioContext ?? (window as any).webkitAudioContext;
-      const ctx = new AC() as AudioContext;
-      audioCtxRef.current = ctx;
-      if (ctx.state === 'suspended') await ctx.resume();
-      const source = ctx.createMediaStreamSource(stream);
-      const analyser = ctx.createAnalyser();
-      analyser.fftSize = 256;
-      source.connect(analyser);
-
-      const buf = new Uint8Array(analyser.frequencyBinCount);
-      let speechStarted = false;
-      let silentMs = 0;
-      let lastTs = performance.now();
-
-      const tick = () => {
-        analyser.getByteTimeDomainData(buf);
-        let sum = 0;
-        for (let i = 0; i < buf.length; i++) { const n = (buf[i] - 128) / 128; sum += n * n; }
-        const rms = Math.sqrt(sum / buf.length);
-        const now = performance.now();
-        const dt = now - lastTs;
-        lastTs = now;
-        if (rms > 0.03) { speechStarted = true; silentMs = 0; }
-        else if (speechStarted) { silentMs += dt; if (silentMs > 500) { stopRecorder(); return; } }
-        silenceFrameRef.current = requestAnimationFrame(tick);
-      };
-
-      stopTimerRef.current = setTimeout(() => {
-        silenceFrameRef.current = requestAnimationFrame(tick);
-      }, 100);
-    } catch { /* no AudioContext — 6s cap only */ }
-
-    maxTimerRef.current = setTimeout(() => stopRecorder(), 6000);
-  }
-
-  // ── Public interface ──────────────────────────────────────────────────────
-  async function start() {
-    if (listening) return;
-    if (useNativeRef.current) await startNative();
-    else await startWhisper();
-  }
-
-  function stop() {
-    if (useNativeRef.current) { stopNative(); }
-    else { cancelledRef.current = true; cleanupWhisper(); stopRecorder(); setListening(false); }
-  }
-
-  function clearError() { setError(null); }
-
-  return { supported: true, listening, error, start, stop, clearError };
-}
-
-// ── Text-to-speech via Web Audio API (PCM streaming) ─────────────────────────
-// Streams raw 24kHz mono 16-bit PCM from /api/voice/tts and schedules chunks
-// back-to-back so playback starts on the first chunk — no full-file wait.
-// prime() must be called during a user gesture to unlock iOS AudioContext.
-function useTTS() {
-  const [speaking, setSpeaking] = useState(false);
-  const ctxRef    = useRef<AudioContext | null>(null);
-  const gainRef   = useRef<GainNode | null>(null);
-  const abortRef  = useRef<AbortController | null>(null);
-  const sourcesRef = useRef<AudioBufferSourceNode[]>([]);
-
-  function getCtx(): AudioContext {
-    if (!ctxRef.current || ctxRef.current.state === 'closed') {
-      const AC = window.AudioContext ?? (window as any).webkitAudioContext;
-      ctxRef.current = new AC();
-      gainRef.current = ctxRef.current.createGain();
-      gainRef.current.connect(ctxRef.current.destination);
-    }
-    return ctxRef.current;
-  }
-
-  function prime() {
-    if (typeof window === 'undefined') return;
-    try {
-      const ctx = getCtx();
-      ctx.resume().catch(() => {});
-      const buf = ctx.createBuffer(1, 1, 22050);
-      const src = ctx.createBufferSource();
-      src.buffer = buf;
-      src.connect(ctx.destination);
-      src.start(0);
-    } catch { /* AudioContext unavailable */ }
-  }
-
-  function speakFallback(text: string, onDone?: () => void) {
-    if (typeof window === 'undefined' || !window.speechSynthesis) { setSpeaking(false); onDone?.(); return; }
-    window.speechSynthesis.cancel();
-    const utt = new SpeechSynthesisUtterance(text);
-    utt.onend  = () => { setSpeaking(false); onDone?.(); };
-    utt.onerror = () => { setSpeaking(false); onDone?.(); };
-    setSpeaking(true);
-    window.speechSynthesis.speak(utt);
-  }
-
-  async function speak(text: string, onDone?: () => void) {
-    if (typeof window === 'undefined') { onDone?.(); return; }
-
-    // Cancel any in-flight TTS
-    abortRef.current?.abort();
-    window.speechSynthesis?.cancel();
-    sourcesRef.current.forEach(s => { try { s.stop(); } catch {} });
-    sourcesRef.current = [];
-
-    const abort = new AbortController();
-    abortRef.current = abort;
-    setSpeaking(true);
-
-    const fallback = setTimeout(
-      () => { setSpeaking(false); onDone?.(); },
-      Math.max(6000, text.length * 100),
-    );
-
-    try {
-      const ctx = getCtx();
-      if (ctx.state === 'suspended') await ctx.resume();
-      gainRef.current!.gain.setValueAtTime(1, ctx.currentTime);
-
-      const res = await fetch(`/api/voice/tts?text=${encodeURIComponent(text)}`, {
-        signal: abort.signal,
-      });
-      if (!res.ok || !res.body) throw new Error(`TTS ${res.status}`);
-
-      const PCM_RATE = 24000;
-      const reader = res.body.getReader();
-      let nextStart = ctx.currentTime + 0.05; // 50ms initial buffer
-      let leftover: Uint8Array | null = null;
-      let lastSource: AudioBufferSourceNode | null = null;
-
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done || abort.signal.aborted) break;
-
-        // Combine leftover byte from previous chunk (PCM is 2 bytes/sample)
-        let chunk = value;
-        if (leftover) {
-          const merged = new Uint8Array(leftover.length + value.length);
-          merged.set(leftover);
-          merged.set(value, leftover.length);
-          chunk = merged;
-          leftover = null;
-        }
-        if (chunk.length % 2 !== 0) {
-          leftover = chunk.slice(-1);
-          chunk = chunk.slice(0, -1);
-        }
-        if (chunk.length === 0) continue;
-
-        // Convert 16-bit little-endian signed PCM → float32
-        const numSamples = chunk.length >> 1;
-        const float32 = new Float32Array(numSamples);
-        for (let i = 0; i < numSamples; i++) {
-          let s = (chunk[i * 2 + 1] << 8) | chunk[i * 2];
-          if (s > 0x7FFF) s -= 0x10000;
-          float32[i] = s / 32768.0;
-        }
-
-        const audioBuf = ctx.createBuffer(1, numSamples, PCM_RATE);
-        audioBuf.copyToChannel(float32, 0);
-
-        const source = ctx.createBufferSource();
-        source.buffer = audioBuf;
-        source.connect(gainRef.current!);
-        const startAt = Math.max(nextStart, ctx.currentTime);
-        source.start(startAt);
-        nextStart = startAt + audioBuf.duration;
-
-        sourcesRef.current.push(source);
-        lastSource = source;
-      }
-
-      clearTimeout(fallback);
-
-      if (lastSource && !abort.signal.aborted) {
-        lastSource.onended = () => { setSpeaking(false); onDone?.(); };
-      } else if (!abort.signal.aborted) {
-        // Empty PCM stream — fall back to browser speechSynthesis
-        speakFallback(text, onDone);
-      }
-    } catch (err: unknown) {
-      clearTimeout(fallback);
-      if (err instanceof Error && err.name === 'AbortError') return;
-      console.error('[TTS] falling back to speechSynthesis:', err);
-      speakFallback(text, onDone);
-    }
-  }
-
-  function stop() {
-    abortRef.current?.abort();
-    window.speechSynthesis?.cancel();
-    gainRef.current?.gain.setValueAtTime(0, 0);
-    sourcesRef.current.forEach(s => { try { s.stop(); } catch {} });
-    sourcesRef.current = [];
-    setSpeaking(false);
-  }
-
-  return { speaking, speak, stop, prime };
-}
-
 export default function SearchBar({ large = false }: { large?: boolean }) {
   const router = useRouter();
   const [q, setQ] = useState('');
@@ -397,134 +56,8 @@ export default function SearchBar({ large = false }: { large?: boolean }) {
   const [mode, setMode] = useState<Mode>('location');
   const [interpreting, setInterpreting] = useState(false);
   const [geoState, setGeoState] = useState<'idle' | 'loading' | 'error'>('idle');
-  const [orbState, setOrbState] = useState<OrbState>('idle');
-  const [transcript, setTranscript] = useState<OrbTranscript>({});
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const tts = useTTS();
-
-  // ── Conversation state ────────────────────────────────────────────────────
-  const [convActive, setConvActive] = useState(false);
-  const convActiveRef = useRef(false);
-  useEffect(() => { convActiveRef.current = convActive; }, [convActive]);
-  const convMessagesRef = useRef<Array<{ role: 'user' | 'assistant'; content: string }>>([]);
-
-  // Ref so continueListening always calls the latest speech.start (avoids stale closure)
-  const speechStartRef = useRef<() => void>(() => {});
-
-  // Called after the AI responds — restart listening if still in conversation
-  const continueListening = useCallback(() => {
-    if (!convActiveRef.current) return;
-    setOrbState('listening');
-    speechStartRef.current();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const handleVoiceResult = useCallback(async (text: string) => {
-    if (!convActiveRef.current) return;
-    if (!text.trim()) return; // skip empty transcripts — prevent sending blank content to Anthropic
-
-    setTranscript({ user: text, ai: '' });
-    setOrbState('thinking');
-
-    const messages = [
-      ...convMessagesRef.current.filter(m => m.content.trim()),  // strip any previously-empty messages
-      { role: 'user' as const, content: text.trim() },
-    ];
-    convMessagesRef.current = messages;
-
-    try {
-      const res = await fetch('/api/voice/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages }),
-      });
-      const data: { speak: string; action?: { type: string; params: Record<string, unknown> } } = await res.json();
-      const aiText = data.speak || "Sorry, I didn't catch that.";
-
-      convMessagesRef.current = [...messages, { role: 'assistant', content: aiText }];
-      setTranscript({ user: text, ai: aiText });
-      setOrbState('speaking');
-
-      if (data.action?.type === 'search') {
-        const p = (data.action.params ?? {}) as Record<string, unknown>;
-        const params = new URLSearchParams();
-        if (p.city) params.set('city', String(p.city));
-        if (p.state && !p.city) params.set('q', String(p.state));
-        if (p.maxPrice) params.set('maxPrice', String(p.maxPrice));
-        if (p.minPrice) params.set('minPrice', String(p.minPrice));
-        if (p.bedrooms) params.set('bedrooms', String(p.bedrooms));
-        if (p.propertyType) params.set('propertyType', String(p.propertyType));
-        if (Array.isArray(p.amenities) && p.amenities.length) params.set('amenities', (p.amenities as string[]).join(','));
-        // Speak then navigate
-        tts.speak(aiText);
-        setTimeout(() => {
-          setConvActive(false);
-          setOrbState('idle');
-          router.push(`/rentals?${params.toString()}`);
-        }, 1800);
-      } else {
-        // Continue conversation after TTS finishes
-        tts.speak(aiText, continueListening);
-      }
-    } catch {
-      tts.speak("Sorry, something went wrong. Try again!", continueListening);
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [continueListening]);
-
-  const speech = useSpeechRecognition(handleVoiceResult);
-  speechStartRef.current = speech.start;
-
-  function playActivationChime() {
-    try {
-      const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
-      const now = ctx.currentTime;
-      const play = (freq: number, start: number, dur: number) => {
-        const osc  = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-        osc.type = 'sine';
-        osc.frequency.value = freq;
-        gain.gain.setValueAtTime(0, start);
-        gain.gain.linearRampToValueAtTime(0.25, start + 0.01);
-        gain.gain.exponentialRampToValueAtTime(0.001, start + dur);
-        osc.start(start);
-        osc.stop(start + dur);
-      };
-      play(523, now,        0.18); // C5
-      play(784, now + 0.13, 0.22); // G5
-      setTimeout(() => ctx.close(), 800);
-    } catch { /* AudioContext not available */ }
-  }
-
-  function startConversation() {
-    tts.prime(); // unlock iOS audio session during user tap
-    playActivationChime();
-    convMessagesRef.current = [];
-    setTranscript({});
-    setConvActive(true);
-    setOrbState('listening');
-    speech.start();
-  }
-
-  function stopConversation() {
-    setConvActive(false);
-    speech.stop();
-    tts.stop();
-    setOrbState('idle');
-    setTranscript({});
-  }
-
-  // Keep orbState in sync with speech/tts when NOT in conversation mode
-  useEffect(() => {
-    if (convActive) return;
-    if (!speech.listening && !tts.speaking && !interpreting) setOrbState('idle');
-    else if (speech.listening) setOrbState('listening');
-    else if (interpreting) setOrbState('thinking');
-    else if (tts.speaking) setOrbState('speaking');
-  }, [speech.listening, tts.speaking, interpreting, convActive]);
 
   useEffect(() => {
     if (mode !== 'location') { setSuggestions([]); setOpen(false); return; }
@@ -615,20 +148,7 @@ export default function SearchBar({ large = false }: { large?: boolean }) {
           if (data.propertyType) params.set('propertyType', data.propertyType);
           if (data.amenities?.length) params.set('amenities', data.amenities.join(','));
           if (!data.city && !data.state) params.set('q', query);
-          // Build a spoken summary of what we found
-          const parts: string[] = [];
-          if (data.bedrooms) parts.push(`${data.bedrooms}-bedroom`);
-          if (data.propertyType) parts.push(data.propertyType);
-          parts.push('rentals');
-          if (data.city) parts.push(`in ${data.city}`);
-          else if (data.state) parts.push(`in ${data.state}`);
-          if (data.maxPrice) parts.push(`under $${Number(data.maxPrice).toLocaleString()} a month`);
-          if (data.amenities?.length) parts.push(`with ${(data.amenities as string[]).join(' and ')}`);
-          const summary = `Got it. Finding ${parts.join(' ')}.`;
-          setInterpreting(false);
-          tts.speak(summary);
-          // Small delay so TTS has a chance to start before navigation kills the page
-          setTimeout(() => router.push(`/rentals?${params.toString()}`), 1800);
+          router.push(`/rentals?${params.toString()}`);
         } else {
           router.push(`/rentals?q=${encodeURIComponent(query)}`);
         }
@@ -668,15 +188,10 @@ export default function SearchBar({ large = false }: { large?: boolean }) {
   const isDescribe = mode === 'describe';
   const isNearby = mode === 'nearby';
 
-  function stopAll() {
-    stopConversation();
-  }
-
   // ── Compact (non-homepage) variant ──────────────────────────────────────────
   if (!large) {
     return (
       <div ref={containerRef} className="relative w-full max-w-md">
-        <VoiceOrb state={orbState} transcript={transcript} onStop={stopAll} />
         <form
           role="search"
           aria-label="Search rental listings"
@@ -700,30 +215,6 @@ export default function SearchBar({ large = false }: { large?: boolean }) {
             aria-activedescendant={activeIdx >= 0 ? `search-suggestions-sm-${activeIdx}` : undefined}
             className="min-w-0 flex-1 px-4 py-3 text-base text-gray-900 placeholder-gray-500 outline-none focus:ring-2 focus:ring-inset focus:ring-brand-500"
           />
-          {speech.supported && (
-            <button
-              type="button"
-              onClick={convActive ? stopConversation : startConversation}
-              aria-label={convActive ? 'End voice conversation' : 'Start voice search'}
-              className={[
-                'flex items-center justify-center px-3 transition-colors',
-                convActive ? 'text-red-500 hover:text-red-600' : 'text-gray-400 hover:text-brand-600',
-              ].join(' ')}
-            >
-              {convActive ? (
-                <span className="relative flex h-5 w-5 items-center justify-center">
-                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-400 opacity-60" />
-                  <svg viewBox="0 0 24 24" className="h-4 w-4 fill-current" aria-hidden="true">
-                    <path d="M12 1a4 4 0 0 1 4 4v6a4 4 0 0 1-8 0V5a4 4 0 0 1 4-4Zm-1.5 14.9A7.01 7.01 0 0 1 5 9H3a9 9 0 0 0 8 8.94V20H8v2h8v-2h-3v-2.06A9 9 0 0 0 21 9h-2a7 7 0 0 1-7 7 6.98 6.98 0 0 1-1.5-.1Z" />
-                  </svg>
-                </span>
-              ) : (
-                <svg viewBox="0 0 24 24" className="h-4 w-4 fill-current" aria-hidden="true">
-                  <path d="M12 1a4 4 0 0 1 4 4v6a4 4 0 0 1-8 0V5a4 4 0 0 1 4-4Zm-1.5 14.9A7.01 7.01 0 0 1 5 9H3a9 9 0 0 0 8 8.94V20H8v2h8v-2h-3v-2.06A9 9 0 0 0 21 9h-2a7 7 0 0 1-7 7 6.98 6.98 0 0 1-1.5-.1Z" />
-                </svg>
-              )}
-            </button>
-          )}
           <button
             type="submit"
             aria-label="Search"
@@ -746,9 +237,6 @@ export default function SearchBar({ large = false }: { large?: boolean }) {
             onHover={setActiveIdx}
           />
         )}
-        {speech.error && (
-          <MicError error={speech.error} onDismiss={speech.clearError} onRetry={() => { speech.clearError(); speech.start(); }} />
-        )}
       </div>
     );
   }
@@ -756,8 +244,6 @@ export default function SearchBar({ large = false }: { large?: boolean }) {
   // ── Homepage (large) variant ─────────────────────────────────────────────────
   return (
     <div ref={containerRef} className="relative w-full max-w-2xl">
-      <VoiceOrb state={orbState} onStop={stopAll} />
-
       {/* Mode selector — three tabs */}
       <div className="mb-3 grid grid-cols-3 gap-2" role="tablist" aria-label="Search mode">
         {MODES.map((m) => {
@@ -846,7 +332,7 @@ export default function SearchBar({ large = false }: { large?: boolean }) {
         </div>
       )}
 
-      {/* Search form — hidden only when nearby is loading/erroring */}
+      {/* Search form */}
       {!isNearby && (
         <form
           id="search-panel"
@@ -900,30 +386,6 @@ export default function SearchBar({ large = false }: { large?: boolean }) {
               </svg>
             </button>
           )}
-          {speech.supported && (
-            <button
-              type="button"
-              onClick={convActive ? stopConversation : startConversation}
-              aria-label={convActive ? 'End voice conversation' : 'Start voice search'}
-              className={[
-                'flex items-center justify-center px-3 transition-colors',
-                convActive ? 'text-red-500 hover:text-red-600' : 'text-gray-400 hover:text-brand-600',
-              ].join(' ')}
-            >
-              {convActive ? (
-                <span className="relative flex h-5 w-5 items-center justify-center">
-                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-400 opacity-60" />
-                  <svg viewBox="0 0 24 24" className="h-4 w-4 fill-current" aria-hidden="true">
-                    <path d="M12 1a4 4 0 0 1 4 4v6a4 4 0 0 1-8 0V5a4 4 0 0 1 4-4Zm-1.5 14.9A7.01 7.01 0 0 1 5 9H3a9 9 0 0 0 8 8.94V20H8v2h8v-2h-3v-2.06A9 9 0 0 0 21 9h-2a7 7 0 0 1-7 7 6.98 6.98 0 0 1-1.5-.1Z" />
-                  </svg>
-                </span>
-              ) : (
-                <svg viewBox="0 0 24 24" className="h-4 w-4 fill-current" aria-hidden="true">
-                  <path d="M12 1a4 4 0 0 1 4 4v6a4 4 0 0 1-8 0V5a4 4 0 0 1 4-4Zm-1.5 14.9A7.01 7.01 0 0 1 5 9H3a9 9 0 0 0 8 8.94V20H8v2h8v-2h-3v-2.06A9 9 0 0 0 21 9h-2a7 7 0 0 1-7 7 6.98 6.98 0 0 1-1.5-.1Z" />
-                </svg>
-              )}
-            </button>
-          )}
           <button
             type="submit"
             aria-label={isDescribe ? 'Search with AI' : 'Search'}
@@ -959,51 +421,6 @@ export default function SearchBar({ large = false }: { large?: boolean }) {
           onHover={setActiveIdx}
         />
       )}
-      {speech.error && (
-        <MicError error={speech.error} onDismiss={speech.clearError} onRetry={() => { speech.clearError(); speech.start(); }} />
-      )}
-    </div>
-  );
-}
-
-// ── Mic error banner ─────────────────────────────────────────────────────────
-function MicError({ error, onDismiss, onRetry }: { error: SpeechError; onDismiss: () => void; onRetry: () => void }) {
-  if (!error) return null;
-  const isBlocked = error === 'not-allowed';
-  return (
-    <div
-      role="alert"
-      className="absolute left-0 right-0 top-full z-50 mt-1 rounded-xl border border-red-100 bg-red-50 px-4 py-3 shadow-sm"
-    >
-      <div className="flex items-start gap-2.5">
-        <svg viewBox="0 0 20 20" fill="currentColor" className="mt-0.5 h-4 w-4 shrink-0 text-red-400" aria-hidden="true">
-          <path fillRule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clipRule="evenodd" />
-        </svg>
-        <div className="flex-1">
-          <p className="text-sm text-red-700">
-            {isBlocked
-              ? 'Microphone blocked for this site.'
-              : error === 'no-speech' ? 'No speech detected.' : 'Voice search failed.'}
-          </p>
-          {isBlocked && (
-            <p className="mt-0.5 text-xs text-red-500">
-              Click the icon at the left of your address bar → Site settings → Microphone → Allow, then click the mic button again.
-            </p>
-          )}
-        </div>
-        <div className="flex items-center gap-2 shrink-0">
-          {!isBlocked && (
-            <button type="button" onClick={onRetry} className="text-xs font-semibold text-red-600 hover:text-red-800 underline underline-offset-2">
-              Try again
-            </button>
-          )}
-          <button type="button" onClick={onDismiss} className="text-red-400 hover:text-red-600" aria-label="Dismiss">
-            <svg viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4">
-              <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
-            </svg>
-          </button>
-        </div>
-      </div>
     </div>
   );
 }

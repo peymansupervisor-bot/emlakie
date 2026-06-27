@@ -32,12 +32,12 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
       if (listing_action === 'reassign' && reassign_to) {
         await sb.from('listings').update({ landlord_id: reassign_to }).eq('landlord_id', id);
       } else {
-        // Make active listings inactive (hidden from public, recoverable)
-        await sb.from('listings').update({ status: 'inactive' }).eq('landlord_id', id).eq('status', 'active');
+        // Suspend active listings so they're hidden but distinguishable from voluntarily inactive ones
+        await sb.from('listings').update({ status: 'suspended' }).eq('landlord_id', id).eq('status', 'active');
       }
     } else {
-      // Restore inactive listings back to active on unsuspend
-      await sb.from('listings').update({ status: 'active' }).eq('landlord_id', id).eq('status', 'inactive');
+      // Restore only suspended listings back to active on unsuspend
+      await sb.from('listings').update({ status: 'active' }).eq('landlord_id', id).eq('status', 'suspended');
     }
 
     return NextResponse.json({ ok: true });

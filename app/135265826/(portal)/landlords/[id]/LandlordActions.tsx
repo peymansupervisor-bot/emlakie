@@ -106,8 +106,8 @@ export default function LandlordActions({ landlordId, isBanned }: { landlordId: 
               <label className={`flex items-start gap-3 rounded-xl border p-4 cursor-pointer transition ${listingAction === 'inactive' ? 'border-amber-500 bg-amber-950/30' : 'border-gray-700 hover:border-gray-500'}`}>
                 <input type="radio" name="la" value="inactive" checked={listingAction === 'inactive'} onChange={() => setListingAction('inactive')} className="mt-0.5 accent-amber-500" />
                 <div>
-                  <p className="text-sm font-semibold text-white">Make Inactive</p>
-                  <p className="text-xs text-gray-400 mt-0.5">Listings are hidden from the public but preserved. They can be restored if the account is unsuspended.</p>
+                  <p className="text-sm font-semibold text-white">Suspend Listings</p>
+                  <p className="text-xs text-gray-400 mt-0.5">Active listings are suspended and hidden from the public. They are automatically restored if the account is unsuspended.</p>
                 </div>
               </label>
 

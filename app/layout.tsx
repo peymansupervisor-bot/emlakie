@@ -5,6 +5,7 @@ import Footer from '@/components/Footer';
 import CookieBanner from '@/components/CookieBanner';
 import GoogleAnalytics from '@/components/GoogleAnalytics';
 import ErrorReporter from '@/components/ErrorReporter';
+import AssistantShell from '@/components/assistant/AssistantShell';
 import './globals.css';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
@@ -68,6 +69,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Footer />
         <CookieBanner />
         <ErrorReporter />
+        <AssistantShell />
         <GoogleAnalytics />
       </body>
     </html>

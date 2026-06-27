@@ -40,6 +40,7 @@ export default async function LandlordProfilePage({ params }: { params: Promise<
     expired: 'text-gray-400 bg-gray-800',
     inactive: 'text-amber-400 bg-amber-900/40',
     suspended: 'text-red-400 bg-red-900/40',
+    draft: 'text-gray-400 bg-gray-800',
   };
 
   return (

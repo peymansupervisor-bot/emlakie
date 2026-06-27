@@ -247,9 +247,23 @@ function useSpeechRecognition(onResult: (text: string) => void) {
 // AudioBufferSourceNode per network packet.
 // prime() must be called during a user gesture to unlock iOS AudioContext.
 
-const DEBUG_TTS = false;
+const DEBUG_TTS = true;                          // ← temporary diagnostics; revert after debugging
 const PCM_RATE   = 24000;                        // Hz (OpenAI tts-1 pcm output)
 const FRAME_BYTES = PCM_RATE * 2 * 0.15 | 0;    // ~150 ms worth of Int16 samples = 7200 bytes
+
+function ttsLog(...args: unknown[]) {
+  if (!DEBUG_TTS) return;
+  // Prefix with timestamp so log lines can be read in order even if interleaved
+  console.log(`[TTS ${performance.now().toFixed(0)}ms]`, ...args);
+}
+function ttsWarn(...args: unknown[]) {
+  if (!DEBUG_TTS) return;
+  console.warn(`[TTS ${performance.now().toFixed(0)}ms]`, ...args);
+}
+function ttsError(...args: unknown[]) {
+  // Always log errors, even when DEBUG_TTS is off
+  console.error(`[TTS ${performance.now().toFixed(0)}ms]`, ...args);
+}
 
 function useTTS() {
   const [speaking, setSpeaking] = useState(false);
@@ -272,6 +286,7 @@ function useTTS() {
     if (typeof window === 'undefined') return;
     try {
       const ctx = getCtx();
+      ttsLog('prime() — ctx.state before resume:', ctx.state);
       ctx.resume().catch(() => {});
       // Play a silent 1-sample buffer to open the iOS audio session
       const buf = ctx.createBuffer(1, 1, 22050);
@@ -279,17 +294,22 @@ function useTTS() {
       src.buffer = buf;
       src.connect(ctx.destination);
       src.start(0);
-    } catch { /* AudioContext unavailable */ }
+      ttsLog('prime() — silent buffer started');
+    } catch (e) {
+      ttsError('prime() threw:', e);
+    }
   }
 
   function speakFallback(text: string, onDone?: () => void) {
+    ttsWarn('speakFallback() — using speechSynthesis, supported:', typeof window !== 'undefined' && !!window.speechSynthesis);
     if (typeof window === 'undefined' || !window.speechSynthesis) {
+      ttsWarn('speakFallback() — speechSynthesis unavailable, clearing speaking');
       setSpeaking(false); onDone?.(); return;
     }
     window.speechSynthesis.cancel();
     const utt = new SpeechSynthesisUtterance(text);
-    utt.onend  = () => { setSpeaking(false); onDone?.(); };
-    utt.onerror = () => { setSpeaking(false); onDone?.(); };
+    utt.onend  = () => { ttsLog('speakFallback() — utterance ended, clearing speaking'); setSpeaking(false); onDone?.(); };
+    utt.onerror = (e) => { ttsError('speakFallback() — utterance error:', e); setSpeaking(false); onDone?.(); };
     setSpeaking(true);
     window.speechSynthesis.speak(utt);
   }
@@ -305,7 +325,6 @@ function useTTS() {
     const numSamples = bytes.length >> 1;
     const float32 = new Float32Array(numSamples);
     for (let i = 0; i < numSamples; i++) {
-      // Int16 little-endian: low byte first
       const lo = bytes[i * 2];
       const hi = bytes[i * 2 + 1];
       let s = (hi << 8) | lo;
@@ -320,17 +339,20 @@ function useTTS() {
     source.buffer = audioBuf;
     source.connect(gain);
 
-    // Underrun protection: if we fell behind real time, catch up immediately
+    // Underrun protection: if scheduling has fallen behind real time, catch up
     const startAt = Math.max(nextStart, ctx.currentTime + 0.005);
     source.start(startAt);
     sourcesRef.current.push(source);
 
-    if (DEBUG_TTS) console.log(`[TTS] frame ${numSamples} samples, start=${startAt.toFixed(3)}, dur=${audioBuf.duration.toFixed(3)}`);
+    ttsLog(`scheduleFrame — ${numSamples} samples (${(audioBuf.duration * 1000).toFixed(1)}ms), startAt=${startAt.toFixed(3)}, ctx.currentTime=${ctx.currentTime.toFixed(3)}`);
     return startAt + audioBuf.duration;
   }
 
   async function speak(text: string, onDone?: () => void) {
     if (typeof window === 'undefined') { onDone?.(); return; }
+
+    ttsLog('speak() START — ua:', navigator.userAgent);
+    ttsLog('speak() text length:', text.length, '| text:', text.slice(0, 80));
 
     // Cancel any in-flight TTS
     abortRef.current?.abort();
@@ -342,46 +364,56 @@ function useTTS() {
     abortRef.current = abort;
     setSpeaking(true);
 
-    // Hard deadline: if nothing calls onDone in time, unblock the conversation
+    // Safety deadline — prevents speaking state from getting stuck if onended never fires
+    const deadlineMs = Math.max(8000, text.length * 80);
+    ttsLog(`speak() — deadline set to ${deadlineMs}ms`);
     const deadline = setTimeout(() => {
-      if (DEBUG_TTS) console.warn('[TTS] deadline fired — forcing done');
+      ttsWarn('speak() — DEADLINE FIRED, forcing speaking=false and calling onDone');
       setSpeaking(false); onDone?.();
-    }, Math.max(8000, text.length * 80));
+    }, deadlineMs);
 
     try {
       const ctx = getCtx();
-      // Always attempt resume — iOS may have re-suspended after the prime() tap
-      try { await ctx.resume(); } catch { /* ignore */ }
+      ttsLog('speak() — AudioContext.state BEFORE resume:', ctx.state);
+      try {
+        await ctx.resume();
+        ttsLog('speak() — AudioContext.state AFTER resume:', ctx.state);
+      } catch (e) {
+        ttsWarn('speak() — ctx.resume() threw (continuing anyway):', e);
+      }
+
       gainRef.current!.gain.setValueAtTime(1, ctx.currentTime);
 
+      ttsLog('speak() — fetching /api/voice/tts');
       const res = await fetch(`/api/voice/tts?text=${encodeURIComponent(text)}`, {
         signal: abort.signal,
       });
+      ttsLog('speak() — fetch response: status=', res.status, 'ok=', res.ok, 'body=', !!res.body);
       if (!res.ok || !res.body) throw new Error(`TTS HTTP ${res.status}`);
 
       const reader = res.body.getReader();
-      // 50 ms head-start so the first frame is scheduled slightly ahead of now
       let nextStart = ctx.currentTime + 0.05;
-      // accumulator: raw bytes not yet flushed into a frame
       let accumulator = new Uint8Array(0);
+      let totalBytesReceived = 0;
       let lastSource: AudioBufferSourceNode | null = null;
 
       while (true) {
         const { done, value } = await reader.read();
 
         if (abort.signal.aborted) {
+          ttsWarn('speak() — aborted during read, cancelling reader');
           reader.cancel().catch(() => {});
           break;
         }
 
         if (value && value.length > 0) {
-          // Append incoming bytes to accumulator
+          totalBytesReceived += value.length;
+
           const next = new Uint8Array(accumulator.length + value.length);
           next.set(accumulator);
           next.set(value, accumulator.length);
           accumulator = next;
 
-          // Flush complete FRAME_BYTES-sized frames (must be even for Int16)
           while (accumulator.length >= FRAME_BYTES) {
             const frameBytes = accumulator.slice(0, FRAME_BYTES);
             accumulator = accumulator.slice(FRAME_BYTES);
@@ -391,7 +423,7 @@ function useTTS() {
         }
 
         if (done) {
-          // Flush any remaining bytes (must be byte-pair aligned; drop a trailing odd byte)
+          ttsLog(`speak() — stream done. totalBytes=${totalBytesReceived}, accumulator remainder=${accumulator.length}`);
           const remaining = accumulator.length % 2 === 0
             ? accumulator
             : accumulator.slice(0, -1);
@@ -399,35 +431,47 @@ function useTTS() {
             nextStart = scheduleFrame(remaining, ctx, gainRef.current!, nextStart);
             lastSource = sourcesRef.current[sourcesRef.current.length - 1];
           }
-          if (DEBUG_TTS) console.log(`[TTS] stream done — ${sourcesRef.current.length} frames scheduled`);
+          ttsLog(`speak() — total frames scheduled: ${sourcesRef.current.length}, nextStart=${nextStart.toFixed(3)}`);
           break;
         }
       }
 
       clearTimeout(deadline);
+      ttsLog('speak() — deadline cleared');
 
       if (lastSource && !abort.signal.aborted) {
-        // Fire onDone after the last scheduled buffer actually finishes playing
+        ttsLog('speak() — attaching onended to lastSource');
+        // Safety: if onended never fires (browser bug), the deadline above already cleared
+        // Re-arm a tight per-audio timeout as a second safety net
+        const audioEndMs = Math.max(500, (nextStart - ctx.currentTime) * 1000 + 1000);
+        ttsLog(`speak() — audio should finish in ~${((nextStart - ctx.currentTime) * 1000).toFixed(0)}ms, safety timeout=${audioEndMs.toFixed(0)}ms`);
+        const audioDeadline = setTimeout(() => {
+          ttsWarn('speak() — onended NEVER FIRED (browser bug), forcing done via audio deadline');
+          setSpeaking(false); onDone?.();
+        }, audioEndMs);
+
         lastSource.onended = () => {
-          if (DEBUG_TTS) console.log('[TTS] lastSource ended');
+          clearTimeout(audioDeadline);
+          ttsLog('speak() — lastSource.onended fired ✓, clearing speaking');
           setSpeaking(false); onDone?.();
         };
       } else if (!abort.signal.aborted) {
-        // OpenAI returned an empty PCM stream
-        if (DEBUG_TTS) console.warn('[TTS] empty PCM — falling back to speechSynthesis');
+        ttsWarn('speak() — no frames were scheduled (empty PCM), falling back to speechSynthesis');
         speakFallback(text, onDone);
       }
     } catch (err: unknown) {
       clearTimeout(deadline);
       if (err instanceof Error && err.name === 'AbortError') {
+        ttsLog('speak() — aborted (user stopped), clearing speaking');
         setSpeaking(false); return;
       }
-      if (DEBUG_TTS) console.error('[TTS] error, falling back:', err);
+      ttsError('speak() — caught error, falling back to speechSynthesis:', err);
       speakFallback(text, onDone);
     }
   }
 
   function stop() {
+    ttsLog('stop() called');
     abortRef.current?.abort();
     window.speechSynthesis?.cancel();
     if (gainRef.current) {
@@ -436,6 +480,7 @@ function useTTS() {
     sourcesRef.current.forEach(s => { try { s.stop(); } catch {} });
     sourcesRef.current = [];
     setSpeaking(false);
+    ttsLog('stop() done');
   }
 
   return { speaking, speak, stop, prime };

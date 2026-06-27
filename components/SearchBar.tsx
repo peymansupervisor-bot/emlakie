@@ -342,18 +342,21 @@ function useTTS() {
     // Underrun protection: if scheduling has fallen behind real time, catch up
     const startAt = Math.max(nextStart, ctx.currentTime + 0.005);
 
-    ttsLog(`scheduleFrame — source.start()`, {
-      startAt: startAt.toFixed(3),
-      currentTime: ctx.currentTime.toFixed(3),
-      lagMs: ((startAt - ctx.currentTime) * 1000).toFixed(1),
-      durationMs: (audioBuf.duration * 1000).toFixed(1),
-      numSamples,
-      gainValue: gain.gain.value,
-      destinationChannels: ctx.destination.channelCount,
+    const lagMs = Math.round((startAt - ctx.currentTime) * 1000);
+    console.log('[TTS] source.start()', {
+      startAt,
+      currentTime: ctx.currentTime,
+      lagMs,
+      duration: audioBuf.duration,
+      gain: gain.gain.value,
+      destinationChannels: ctx.destination.maxChannelCount,
     });
 
     source.onended = () => {
-      ttsLog(`source.onended — startAt=${startAt.toFixed(3)}, dur=${audioBuf.duration.toFixed(3)}`);
+      console.log('[TTS] source.onended', {
+        currentTime: ctx.currentTime,
+        expectedEnd: startAt + audioBuf.duration,
+      });
     };
 
     source.start(startAt);
@@ -446,6 +449,7 @@ function useTTS() {
             lastSource = sourcesRef.current[sourcesRef.current.length - 1];
           }
           ttsLog(`speak() — total frames scheduled: ${sourcesRef.current.length}, nextStart=${nextStart.toFixed(3)}, ctx.currentTime=${ctx.currentTime.toFixed(3)}, expected playback end in ${((nextStart - ctx.currentTime) * 1000).toFixed(0)}ms`);
+          console.log('[TTS] playback scheduled until', nextStart);
           break;
         }
       }

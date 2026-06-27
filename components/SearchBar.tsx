@@ -123,7 +123,7 @@ function useSpeechRecognition(onResult: (text: string) => void) {
       const ext = mimeType.includes('mp4') ? 'mp4' : 'webm';
       const blob = new Blob(chunksRef.current, { type: mimeType || 'audio/webm' });
 
-      if (blob.size < 2000) { setError('no-speech'); return; }
+      if (blob.size < 500) { setError('no-speech'); return; }
 
       const fd = new FormData();
       fd.append('audio', blob, `audio.${ext}`);
@@ -152,6 +152,8 @@ function useSpeechRecognition(onResult: (text: string) => void) {
       const AC = window.AudioContext ?? (window as any).webkitAudioContext;
       const ctx = new AC() as AudioContext;
       audioCtxRef.current = ctx;
+      // Chrome creates AudioContext suspended — resume so the analyser receives data
+      if (ctx.state === 'suspended') await ctx.resume();
       const source = ctx.createMediaStreamSource(stream);
       const analyser = ctx.createAnalyser();
       analyser.fftSize = 256;

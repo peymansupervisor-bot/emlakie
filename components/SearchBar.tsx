@@ -48,24 +48,25 @@ const MODES: { id: Mode; label: string; sublabel: string; icon: React.ReactNode 
   },
 ];
 
-// ── Speech recognition (Web Speech API) ──────────────────────────────────────
-// supported is derived in useEffect so SSR and client hydrate identically.
+// ── Speech recognition via MediaRecorder + Whisper ───────────────────────────
+// Uses MediaRecorder to capture audio, sends to /api/voice/transcribe (OpenAI
+// Whisper), and returns the transcript. Works in Chrome, Safari, and Firefox.
 type SpeechError = 'not-allowed' | 'no-speech' | 'other' | null;
 
 function useSpeechRecognition(onResult: (text: string) => void) {
-  const [supported, setSupported] = useState(false);
   const [listening, setListening] = useState(false);
   const [error, setError] = useState<SpeechError>(null);
-  const recogRef = useRef<SpeechRecognition | null>(null);
-  // Keep onResult in a ref so the recognition callback always calls the latest version
+  const recorderRef = useRef<MediaRecorder | null>(null);
+  const chunksRef = useRef<Blob[]>([]);
+  const silenceFrameRef = useRef<number | null>(null);
+  const stopTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const maxTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const audioCtxRef = useRef<AudioContext | null>(null);
+  const cancelledRef = useRef(false);
   const onResultRef = useRef(onResult);
   useEffect(() => { onResultRef.current = onResult; });
 
-  useEffect(() => {
-    setSupported('SpeechRecognition' in window || 'webkitSpeechRecognition' in window);
-  }, []);
-
-  // Auto-clear error when the user grants mic permission without reloading
+  // Auto-clear error when mic permission is granted
   useEffect(() => {
     if (!error) return;
     navigator.permissions.query({ name: 'microphone' as PermissionName }).then((status) => {
@@ -74,65 +75,131 @@ function useSpeechRecognition(onResult: (text: string) => void) {
     }).catch(() => {});
   }, [error]);
 
-  // Track whether mic permission has already been granted this session.
-  // getUserMedia must be called from a user gesture — subsequent starts
-  // (from async TTS callbacks) skip it since iOS blocks it there.
-  const permittedRef = useRef(false);
+  function cleanup() {
+    if (silenceFrameRef.current !== null) { cancelAnimationFrame(silenceFrameRef.current); silenceFrameRef.current = null; }
+    if (stopTimerRef.current !== null) { clearTimeout(stopTimerRef.current); stopTimerRef.current = null; }
+    if (maxTimerRef.current !== null) { clearTimeout(maxTimerRef.current); maxTimerRef.current = null; }
+    try { audioCtxRef.current?.close(); } catch {}
+    audioCtxRef.current = null;
+  }
+
+  function stopNow() {
+    if (recorderRef.current && recorderRef.current.state === 'recording') {
+      recorderRef.current.stop();
+    }
+    recorderRef.current = null;
+  }
 
   async function start() {
-    if (!supported || listening) return;
+    if (listening) return;
     setError(null);
+    cancelledRef.current = false;
 
-    if (!permittedRef.current) {
-      // First start: trigger permission dialog via getUserMedia (user gesture)
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        stream.getTracks().forEach((t) => t.stop());
-        permittedRef.current = true;
-      } catch (err) {
-        console.error('[mic] getUserMedia failed:', err);
-        setError('not-allowed');
-        return;
-      }
-    }
-
-    const SR = (window as any).SpeechRecognition ?? (window as any).webkitSpeechRecognition;
-    const recog: SpeechRecognition = new SR();
-    recog.lang = 'en-US';
-    recog.interimResults = false;
-    recog.maxAlternatives = 1;
-    recog.onresult = (e: SpeechRecognitionEvent) => {
-      const text = e.results[0]?.[0]?.transcript ?? '';
-      if (text) {
-        setError(null);
-        onResultRef.current(text);
-      }
-    };
-    recog.onend = () => setListening(false);
-    recog.onerror = (e: SpeechRecognitionErrorEvent) => {
-      console.error('[mic] SpeechRecognition error:', e.error, e.message);
-      setListening(false);
-      if (e.error === 'not-allowed') setError('not-allowed');
-      else if (e.error === 'no-speech') setError('no-speech');
-      else setError('other');
-    };
-    recogRef.current = recog;
+    let stream: MediaStream;
     try {
-      recog.start();
-      setListening(true);
+      stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     } catch {
-      setError('other');
+      setError('not-allowed');
+      return;
     }
+
+    const mimeType =
+      MediaRecorder.isTypeSupported('audio/webm;codecs=opus') ? 'audio/webm;codecs=opus' :
+      MediaRecorder.isTypeSupported('audio/webm') ? 'audio/webm' :
+      MediaRecorder.isTypeSupported('audio/mp4') ? 'audio/mp4' : '';
+
+    const recorder = new MediaRecorder(stream, mimeType ? { mimeType } : undefined);
+    chunksRef.current = [];
+
+    recorder.ondataavailable = (e) => { if (e.data.size > 0) chunksRef.current.push(e.data); };
+
+    recorder.onstop = async () => {
+      cleanup();
+      stream.getTracks().forEach((t) => t.stop());
+      setListening(false);
+
+      if (cancelledRef.current) return;
+
+      const ext = mimeType.includes('mp4') ? 'mp4' : 'webm';
+      const blob = new Blob(chunksRef.current, { type: mimeType || 'audio/webm' });
+
+      if (blob.size < 2000) { setError('no-speech'); return; }
+
+      const fd = new FormData();
+      fd.append('audio', blob, `audio.${ext}`);
+
+      try {
+        const res = await fetch('/api/voice/transcribe', { method: 'POST', body: fd });
+        const data = await res.json();
+        const text = (data.text ?? '').trim();
+        if (text) {
+          setError(null);
+          onResultRef.current(text);
+        } else {
+          setError('no-speech');
+        }
+      } catch {
+        setError('other');
+      }
+    };
+
+    recorder.start(100);
+    recorderRef.current = recorder;
+    setListening(true);
+
+    // Silence detection: stop after 1.5 s of quiet following speech onset
+    try {
+      const AC = window.AudioContext ?? (window as any).webkitAudioContext;
+      const ctx = new AC() as AudioContext;
+      audioCtxRef.current = ctx;
+      const source = ctx.createMediaStreamSource(stream);
+      const analyser = ctx.createAnalyser();
+      analyser.fftSize = 256;
+      source.connect(analyser);
+
+      const buf = new Uint8Array(analyser.frequencyBinCount);
+      let speechStarted = false;
+      let silentMs = 0;
+      let lastTs = performance.now();
+
+      function tick() {
+        analyser.getByteTimeDomainData(buf);
+        let sum = 0;
+        for (const v of buf) { const n = (v - 128) / 128; sum += n * n; }
+        const rms = Math.sqrt(sum / buf.length);
+
+        const now = performance.now();
+        const dt = now - lastTs;
+        lastTs = now;
+
+        if (rms > 0.03) { speechStarted = true; silentMs = 0; }
+        else if (speechStarted) {
+          silentMs += dt;
+          if (silentMs > 1500) { stopNow(); return; }
+        }
+        silenceFrameRef.current = requestAnimationFrame(tick);
+      }
+
+      // Give user 600 ms to start speaking before silence tracking begins
+      stopTimerRef.current = setTimeout(() => {
+        silenceFrameRef.current = requestAnimationFrame(tick);
+      }, 600);
+    } catch { /* AudioContext unavailable — fall through to 8 s max */ }
+
+    // Hard 8-second cap
+    maxTimerRef.current = setTimeout(() => stopNow(), 8000);
   }
 
   function stop() {
-    recogRef.current?.stop();
+    cancelledRef.current = true;
+    cleanup();
+    stopNow();
     setListening(false);
   }
 
   function clearError() { setError(null); }
 
-  return { supported, listening, error, start, stop, clearError };
+  return { supported: true, listening, error, start, stop, clearError };
 }
 
 // ── Text-to-speech via Web Audio API ─────────────────────────────────────────

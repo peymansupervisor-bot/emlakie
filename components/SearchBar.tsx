@@ -165,7 +165,7 @@ function useSpeechRecognition(onResult: (text: string) => void) {
       const tick = () => {
         analyser.getByteTimeDomainData(buf);
         let sum = 0;
-        for (const v of buf) { const n = (v - 128) / 128; sum += n * n; }
+        for (let i = 0; i < buf.length; i++) { const n = (buf[i] - 128) / 128; sum += n * n; }
         const rms = Math.sqrt(sum / buf.length);
 
         const now = performance.now();

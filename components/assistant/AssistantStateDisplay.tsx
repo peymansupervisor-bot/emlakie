@@ -12,12 +12,12 @@ const STATE_CONFIG: Record<
 > = {
   idle: {
     label: 'Ready',
-    sublabel: 'Tell me what kind of rental home you\'re looking for.',
+    sublabel: 'Start a session to speak with your AI leasing assistant.',
     indicator: <IdleIndicator />,
   },
   connecting: {
     label: 'Connecting…',
-    sublabel: 'Starting the AI leasing assistant.',
+    sublabel: 'Starting your voice session.',
     indicator: <ThinkingDots />,
   },
   greeting: {
@@ -27,17 +27,17 @@ const STATE_CONFIG: Record<
   },
   listening: {
     label: 'Listening…',
-    sublabel: 'Type your rental request below.',
+    sublabel: 'Speak your question — I\'m here to help.',
     indicator: <ListeningWave />,
   },
   processing: {
-    label: 'Finding matches…',
-    sublabel: 'Searching for the best homes for you.',
+    label: 'Thinking…',
+    sublabel: 'Working on your answer.',
     indicator: <ThinkingDots />,
   },
   speaking: {
-    label: 'Responding',
-    sublabel: 'The assistant is sharing what it found.',
+    label: 'Speaking',
+    sublabel: 'The assistant is responding.',
     indicator: <PulsingDot color="brand" />,
   },
   showingRecommendations: {
@@ -47,7 +47,7 @@ const STATE_CONFIG: Record<
   },
   error: {
     label: 'Something went wrong',
-    sublabel: 'Please try again or use the search bar.',
+    sublabel: 'Please close and try again.',
     indicator: <PulsingDot color="error" />,
   },
 };

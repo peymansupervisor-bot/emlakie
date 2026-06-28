@@ -2,35 +2,29 @@
 
 import { useEffect, useRef } from 'react';
 import { useAssistantPanel } from '@/hooks/assistant/useAssistantPanel';
-import { useAssistantSession } from '@/hooks/assistant/useAssistantSession';
+import { useRealtimeSession } from '@/hooks/assistant/useRealtimeSession';
 import AssistantLauncher from './AssistantLauncher';
 import AssistantPanel from './AssistantPanel';
 
 /**
  * Client-side root of the AI Leasing Assistant.
  *
- * Imported by AssistantShell (server component) which guards the feature flag.
- * This component is only mounted when ENABLE_AI_ASSISTANT=true.
- *
- * Phase 1C: useAssistantSession drives state via MockTransport.
- * Phase 1D: Replace MockTransport inside useAssistantSession — this file unchanged.
+ * Mounted only when ENABLE_AI_ASSISTANT=true (guarded by AssistantShell).
+ * Owns the <audio> element that receives the assistant's voice output.
  */
 export default function AssistantClient() {
+  const audioRef = useRef<HTMLAudioElement>(null);
+
   const { open, openPanel, closePanel, launcherRef, panelRef } =
     useAssistantPanel();
 
   const {
     displayState,
-    messages,
-    recommendations,
-    inputEnabled,
     open: openSession,
     close: closeSession,
-    sendMessage,
-  } = useAssistantSession();
+    cancel,
+  } = useRealtimeSession(audioRef);
 
-  // Track whether the session was ever opened so we don't dispatch CLOSE on
-  // initial mount (state machine would transition idle → closed unnecessarily).
   const sessionStartedRef = useRef(false);
 
   useEffect(() => {
@@ -44,6 +38,9 @@ export default function AssistantClient() {
 
   return (
     <>
+      {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
+      <audio ref={audioRef} autoPlay />
+
       <AssistantLauncher
         onClick={open ? closePanel : openPanel}
         panelOpen={open}
@@ -53,11 +50,8 @@ export default function AssistantClient() {
       <AssistantPanel
         open={open}
         displayState={displayState}
-        messages={messages}
-        recommendations={recommendations}
-        inputEnabled={inputEnabled}
         onClose={closePanel}
-        onSendMessage={sendMessage}
+        onCancel={cancel}
         panelRef={panelRef}
       />
     </>

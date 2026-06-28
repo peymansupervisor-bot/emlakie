@@ -38,9 +38,11 @@ export const INITIAL_STATE: AssistantSessionState = { phase: 'idle' };
 
 export type AssistantEvent =
   | { type: 'OPEN' }
+  | { type: 'CONNECTED' }
   | { type: 'GREETING_RECEIVED'; message: string }
   | { type: 'GREETING_COMPLETE' }
   | { type: 'USER_MESSAGE'; text: string }
+  | { type: 'VOICE_INPUT' }
   | { type: 'RESPONSE_RECEIVED'; message: string }
   | { type: 'RECOMMENDATIONS_RECEIVED'; recommendations: ListingRecommendation[] }
   | { type: 'SPEAKING_COMPLETE' }
@@ -64,6 +66,10 @@ export function transition(
       if (phase === 'idle' || phase === 'closed') return { phase: 'opening' };
       return state;
 
+    case 'CONNECTED':
+      if (phase === 'opening') return { phase: 'listening' };
+      return state;
+
     case 'GREETING_RECEIVED':
       if (phase === 'opening')
         return { phase: 'greeting', message: event.message };
@@ -76,6 +82,10 @@ export function transition(
     case 'USER_MESSAGE':
       if (phase === 'listening' || phase === 'showingRecommendations')
         return { phase: 'thinking', userMessage: event.text };
+      return state;
+
+    case 'VOICE_INPUT':
+      if (phase === 'listening') return { phase: 'thinking', userMessage: '' };
       return state;
 
     case 'RESPONSE_RECEIVED':

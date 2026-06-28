@@ -57,6 +57,13 @@ export interface RealtimeEngineConfig {
    * Override in tests.
    */
   functionCallUrl?: string;
+  /**
+   * Optional text the user typed before opening the assistant.
+   * Injected as a user message immediately after the greeting fires,
+   * so the model responds as if the user had spoken it.
+   * Never logged — treated the same as a spoken user turn.
+   */
+  initialContext?: string;
 }
 
 export interface RealtimeEngineCallbacks {
@@ -281,6 +288,22 @@ export class RealtimeEngine {
   private triggerGreeting(): void {
     const dc = this.dc;
     if (!dc || dc.readyState !== 'open') return;
+
+    if (this.config.initialContext) {
+      // Inject the typed query as a user message so the model responds to it
+      // directly, skipping a generic greeting. Not logged — same as spoken input.
+      dc.send(
+        JSON.stringify({
+          type: 'conversation.item.create',
+          item: {
+            type: 'message',
+            role: 'user',
+            content: [{ type: 'input_text', text: this.config.initialContext }],
+          },
+        }),
+      );
+    }
+
     dc.send(JSON.stringify({ type: 'response.create' }));
   }
 

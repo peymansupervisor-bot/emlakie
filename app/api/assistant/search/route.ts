@@ -28,7 +28,7 @@ import type { ListingFilters } from '@/lib/types';
 export const dynamic = 'force-dynamic';
 
 const UI_RESULTS = 10;
-const SPEAK_COUNT = 3;
+const SPEAK_COUNT = 2;
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
   if (process.env.ENABLE_AI_ASSISTANT !== 'true') {

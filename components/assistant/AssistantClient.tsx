@@ -27,11 +27,20 @@ export default function AssistantClient() {
   } = useRealtimeSession(audioRef);
 
   const sessionStartedRef = useRef(false);
+  // Holds the typed query from SearchBar until the session useEffect picks it up.
+  const pendingContextRef = useRef<string | null>(null);
 
-  // Listen for the custom event fired by SearchBar's "Speak with Emlakie" button.
+  // Listen for the custom event fired by SearchBar's "Talk to Emlakie" button.
+  // detail.query carries any text the user had typed before clicking, so the
+  // model can respond to it immediately without asking "Which city?" again.
   useEffect(() => {
-    function handleOpenRequest() {
+    function handleOpenRequest(e: Event) {
+      const query = (e as CustomEvent<{ query?: string }>).detail?.query;
       if (!open) openPanel();
+      // Store typed context so it can be passed when the session actually opens.
+      // We use a ref to avoid stale closure issues — the session opens in a
+      // separate useEffect triggered by the `open` state change.
+      pendingContextRef.current = query?.trim() || null;
     }
     window.addEventListener('emlakie:open-assistant', handleOpenRequest);
     return () => window.removeEventListener('emlakie:open-assistant', handleOpenRequest);
@@ -40,7 +49,9 @@ export default function AssistantClient() {
   useEffect(() => {
     if (open) {
       sessionStartedRef.current = true;
-      openSession();
+      const ctx = pendingContextRef.current ?? undefined;
+      pendingContextRef.current = null;
+      openSession(ctx);
     } else if (sessionStartedRef.current) {
       closeSession();
     }

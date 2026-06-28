@@ -50,7 +50,8 @@ export interface UseRealtimeSessionReturn {
   recommendations: ListingRecommendation[];
   /** Always false — no text input. */
   inputEnabled: boolean;
-  open: () => void;
+  /** Pass optional typed context from the search bar to pre-seed the session. */
+  open: (initialContext?: string) => void;
   close: () => void;
   /** No-op — text input removed. */
   sendMessage: (text: string) => void;
@@ -68,7 +69,7 @@ export function useRealtimeSession(
   // open
   // -------------------------------------------------------------------------
 
-  const open = useCallback(() => {
+  const open = useCallback((initialContext?: string) => {
     if (!canOpen(sessionState)) return;
     dispatch({ type: 'OPEN' });
     setRecommendations([]);
@@ -82,6 +83,7 @@ export function useRealtimeSession(
         voice: REALTIME_VOICE,
         sendGreetingOnConnect: true,
         tools: ASSISTANT_TOOLS,
+        initialContext: initialContext?.trim() || undefined,
       },
       {
         onConnected: () => dispatch({ type: 'CONNECTED' }),

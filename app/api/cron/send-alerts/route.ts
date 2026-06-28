@@ -30,7 +30,14 @@ export async function GET(req: NextRequest) {
       .select('*')
       .eq('verified', true);
 
-    if (!searches?.length) return NextResponse.json({ sent: 0 });
+    if (!searches?.length) {
+      await sb.from('system_health').insert({
+        service: 'Daily Alert Cron',
+        status: 'ok',
+        message: 'No verified saved searches — nothing to send',
+      });
+      return NextResponse.json({ sent: 0 });
+    }
 
     let sent = 0;
 

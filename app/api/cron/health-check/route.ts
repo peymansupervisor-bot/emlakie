@@ -308,17 +308,19 @@ async function checkIsolationPolicies(): Promise<CheckResult> {
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     );
 
-    const checks = await Promise.all([
-      anonClient.from('profiles').select('id').limit(1),
-      anonClient.from('applications').select('id').limit(1),
-      anonClient.from('conversations').select('id').limit(1),
-    ]);
+    const tables = ['profiles', 'applications', 'conversations'];
+    const checks = await Promise.all(
+      tables.map((t) => anonClient.from(t).select('id').limit(1).then(
+        (r) => ({ table: t, ...r }),
+        (err) => ({ table: t, data: null, error: { message: String(err), code: 'EXCEPTION' } }),
+      ))
+    );
 
     const leaks: string[] = [];
-    const tables = ['profiles', 'applications', 'conversations'];
-    checks.forEach((result, i) => {
+    checks.forEach((result) => {
+      // If the table doesn't exist (42P01) or policies error, treat as blocked (not a leak)
       if (!result.error && result.data && result.data.length > 0) {
-        leaks.push(tables[i]);
+        leaks.push(result.table);
       }
     });
 

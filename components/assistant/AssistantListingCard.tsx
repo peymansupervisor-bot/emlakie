@@ -14,7 +14,7 @@ interface AssistantListingCardProps {
 const MAX_CHIPS = 2;
 
 export default function AssistantListingCard({ listing, rank }: AssistantListingCardProps) {
-  const href = listing.slug ? `/listings/${listing.slug}` : null;
+  const href = listing.slug ? `/rentals/${listing.slug}` : null;
   const photo = listing.photos?.[0] ?? null;
   const chips = (listing.amenities ?? []).slice(0, MAX_CHIPS);
 

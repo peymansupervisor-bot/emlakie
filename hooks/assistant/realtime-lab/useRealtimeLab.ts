@@ -189,7 +189,7 @@ export function useRealtimeLab({ audioRef }: UseRealtimeLabOptions): UseRealtime
                 type: 'session.update',
                 session: {
                   type: 'realtime',
-                  audio: { input: { turn_detection: LAB_VAD_CONFIG } },
+                  audio: { input: { turn_detection: { ...LAB_VAD_CONFIG, create_response: true } } },
                 },
               }));
             }

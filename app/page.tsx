@@ -130,7 +130,7 @@ export default async function HomePage() {
 
           {/* Search bar */}
           <div className="mt-8 flex justify-center">
-            <SearchBar large assistantEnabled={ASSISTANT_ENABLED} />
+            <SearchBar large />
           </div>
 
           {/* Property type chips */}

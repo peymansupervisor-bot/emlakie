@@ -11,38 +11,38 @@ const STATE_CONFIG: Record<
   { label: string; sublabel: string; indicator: React.ReactNode }
 > = {
   idle: {
-    label: 'Ask Emlakie',
-    sublabel: 'Tap the button below to start.',
+    label: 'Ready',
+    sublabel: 'Start a session to speak with your AI leasing assistant.',
     indicator: <IdleIndicator />,
   },
   connecting: {
     label: 'Connecting…',
-    sublabel: 'Microphone ready. Setting up your session.',
+    sublabel: 'Starting your voice session.',
     indicator: <ThinkingDots />,
   },
   greeting: {
-    label: 'Connected',
-    sublabel: 'Emlakie is ready.',
+    label: 'Hello!',
+    sublabel: 'The assistant is introducing itself.',
     indicator: <PulsingDot color="brand" />,
   },
   listening: {
-    label: 'Listening',
-    sublabel: 'Go ahead — I\'m here.',
+    label: 'Listening…',
+    sublabel: 'Speak your question — I\'m here to help.',
     indicator: <ListeningWave />,
   },
   processing: {
-    label: 'Searching…',
-    sublabel: 'Looking through live listings.',
+    label: 'Thinking…',
+    sublabel: 'Working on your answer.',
     indicator: <ThinkingDots />,
   },
   speaking: {
     label: 'Speaking',
-    sublabel: 'Interrupt any time.',
+    sublabel: 'The assistant is responding.',
     indicator: <PulsingDot color="brand" />,
   },
   showingRecommendations: {
-    label: 'Results',
-    sublabel: 'Scroll to see all matches.',
+    label: 'Results ready',
+    sublabel: 'Here are some homes that match your request.',
     indicator: <IdleIndicator />,
   },
   error: {

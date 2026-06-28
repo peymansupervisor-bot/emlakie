@@ -3,11 +3,11 @@
  * Isolated to lib/assistant/realtime-lab/ — not imported anywhere else.
  */
 
-/** OpenAI Realtime model used for the lab. Pin to a specific version for reproducibility. */
-export const LAB_REALTIME_MODEL = 'gpt-4o-realtime-preview-2024-12-17';
+/** OpenAI Realtime model used for the lab. */
+export const LAB_REALTIME_MODEL = 'gpt-realtime-2';
 
-/** Assistant voice. 'alloy' is neutral and works well for a leasing context. */
-export const LAB_VOICE = 'alloy' as const;
+/** Assistant voice — 'marin' is the current default in the OpenAI Realtime API. */
+export const LAB_VOICE = 'marin' as const;
 
 /** System instruction given to the model at session.update. */
 export const LAB_SYSTEM_INSTRUCTION =
@@ -21,8 +21,8 @@ export const LAB_MAX_EVENT_LOG = 50;
 /** Next.js API route that issues the ephemeral OpenAI token. */
 export const LAB_TOKEN_URL = '/api/assistant/realtime-lab/token';
 
-/** Base URL for the OpenAI Realtime WebRTC SDP exchange. */
-export const LAB_OPENAI_REALTIME_URL = 'https://api.openai.com/v1/realtime';
+/** SDP exchange endpoint for the OpenAI Realtime WebRTC API. */
+export const LAB_OPENAI_REALTIME_URL = 'https://api.openai.com/v1/realtime/calls';
 
 /** Server VAD config — standard values for leasing conversation cadence. */
 export const LAB_VAD_CONFIG = {

@@ -356,12 +356,15 @@ export function useRealtimeLab({ audioRef }: UseRealtimeLabOptions): UseRealtime
         throw new Error(`status_${tokenRes.status}`);
       }
       const tokenData = (await tokenRes.json()) as {
-        client_secret?: { value?: string };
+        value?: string;
         error?: string;
+        detail?: string;
+        httpStatus?: number;
       };
-      const key = tokenData?.client_secret?.value;
+      const key = tokenData?.value;
       if (!key) {
-        throw new Error(tokenData.error ?? 'no_client_secret');
+        const detail = tokenData.detail ? ` (${tokenData.detail})` : '';
+        throw new Error(tokenData.error ? `${tokenData.error}${detail}` : 'no_ephemeral_key');
       }
       ephemeralKey = key;
     } catch (err) {
@@ -433,17 +436,14 @@ export function useRealtimeLab({ audioRef }: UseRealtimeLabOptions): UseRealtime
       const offer = await pc.createOffer();
       await pc.setLocalDescription(offer);
 
-      const sdpRes = await fetch(
-        `${LAB_OPENAI_REALTIME_URL}?model=${LAB_REALTIME_MODEL}`,
-        {
-          method: 'POST',
-          body: offer.sdp,
-          headers: {
-            Authorization: `Bearer ${ephemeralKey}`,
-            'Content-Type': 'application/sdp',
-          },
+      const sdpRes = await fetch(LAB_OPENAI_REALTIME_URL, {
+        method: 'POST',
+        body: offer.sdp,
+        headers: {
+          Authorization: `Bearer ${ephemeralKey}`,
+          'Content-Type': 'application/sdp',
         },
-      );
+      });
 
       if (!sdpRes.ok) {
         throw new Error(`sdp_exchange_${sdpRes.status}`);

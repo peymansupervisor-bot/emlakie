@@ -33,28 +33,42 @@ export async function POST(): Promise<NextResponse> {
   }
 
   try {
-    const openAIRes = await fetch('https://api.openai.com/v1/realtime/sessions', {
+    const openAIRes = await fetch('https://api.openai.com/v1/realtime/client_secrets', {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${apiKey}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-4o-realtime-preview-2024-12-17',
-        voice: 'alloy',
+        session: {
+          type: 'realtime',
+          model: 'gpt-realtime-2',
+          audio: {
+            output: {
+              voice: 'marin',
+            },
+          },
+        },
       }),
     });
 
     if (!openAIRes.ok) {
-      // Log status but not the response body (may contain key information)
-      console.error(`[realtime-lab/token] OpenAI returned ${openAIRes.status}`);
+      let openAIError = 'unknown';
+      try {
+        const errBody = await openAIRes.json() as { error?: { message?: string; code?: string } };
+        // Log message and code but never the API key or user content
+        openAIError = errBody?.error?.code ?? errBody?.error?.message ?? 'unknown';
+      } catch {
+        openAIError = `http_${openAIRes.status}`;
+      }
+      console.error(`[realtime-lab/token] OpenAI returned ${openAIRes.status}: ${openAIError}`);
       return NextResponse.json(
-        { error: 'openai_session_failed' },
+        { error: 'openai_session_failed', detail: openAIError, httpStatus: openAIRes.status },
         { status: 502 },
       );
     }
 
-    // Forward the full OpenAI response — browser needs client_secret.value
+    // Forward the full OpenAI response — browser needs data.value (new API format)
     const data: unknown = await openAIRes.json();
     return NextResponse.json(data);
 

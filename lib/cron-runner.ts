@@ -48,7 +48,7 @@ export async function cronRun<T>(
       service,
       status: 'down',
       message: msg.slice(0, 500),
-    }).catch(() => {}); // never throw from the recorder itself
+    }).then(undefined, () => {}); // never throw from the recorder itself
     throw e;
   }
 }

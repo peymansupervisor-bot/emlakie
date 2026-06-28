@@ -120,7 +120,7 @@ export default async function HomePage() {
           </h1>
           {ASSISTANT_ENABLED ? (
             <p className="mt-3 text-center text-sm text-gray-600 sm:text-base">
-              Tell our AI leasing assistant what you&apos;re looking for. It can search live rentals, compare options, and speak multiple languages.
+              Just tell Emlakie what you&apos;re looking for.
             </p>
           ) : (
             <p className="mt-3 text-center text-sm text-gray-600 sm:text-base">

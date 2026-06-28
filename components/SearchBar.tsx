@@ -77,7 +77,7 @@ export default function SearchBar({
     {
       id: 'describe',
       label: assistantEnabled ? 'Ask Emlakie' : 'Describe',
-      sublabel: assistantEnabled ? 'AI voice search' : 'Your ideal rental',
+      sublabel: assistantEnabled ? 'Find rentals naturally' : 'Your ideal rental',
       icon: assistantEnabled ? IconMic : IconSun,
     },
     {
@@ -221,7 +221,7 @@ export default function SearchBar({
   const placeholder = isDescribe
     ? assistantEnabled
       ? 'Find me a pet-friendly two-bedroom under $2,500.'
-      : 'e.g. "Pet-friendly 2BR near downtown Austin under $2,000"'
+      : 'e.g. "Pet-friendly 2-bedroom near downtown Austin under $2,000"'
     : 'City, ZIP, address, or neighborhood';
 
   // ── Compact (non-homepage) variant ──────────────────────────────────────────
@@ -432,7 +432,7 @@ export default function SearchBar({
             <button
               type="button"
               onClick={openAssistant}
-              aria-label="Open AI leasing assistant"
+              aria-label="Talk to Emlakie"
               className={[
                 'flex items-center gap-2 border-l border-brand-100 px-5',
                 'text-sm font-semibold text-brand-700',
@@ -444,7 +444,7 @@ export default function SearchBar({
                 <path d="M10 2a3 3 0 0 0-3 3v5a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" />
                 <path fillRule="evenodd" d="M4.25 9.5a.75.75 0 0 1 .75.75 5 5 0 0 0 10 0 .75.75 0 0 1 1.5 0 6.5 6.5 0 0 1-5.75 6.46V18.5h2a.75.75 0 0 1 0 1.5h-5.5a.75.75 0 0 1 0-1.5h2v-1.79A6.5 6.5 0 0 1 3.5 10.25a.75.75 0 0 1 .75-.75Z" clipRule="evenodd" />
               </svg>
-              <span className="hidden sm:inline whitespace-nowrap">Speak with Emlakie</span>
+              <span className="hidden sm:inline whitespace-nowrap">Talk to Emlakie</span>
             </button>
           )}
 

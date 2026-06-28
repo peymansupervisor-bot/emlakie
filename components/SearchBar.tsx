@@ -197,12 +197,15 @@ export default function SearchBar({
 
   // Dispatch a custom event picked up by AssistantClient to open the panel.
   // Includes any typed text so the assistant can respond to it immediately.
+  // Clear q after dispatch so stale text is never reused in a future session
+  // (q is shared state across all tabs and survives mode changes).
   const openAssistant = useCallback(() => {
     window.dispatchEvent(
       new CustomEvent('emlakie:open-assistant', {
         detail: { query: q.trim() || undefined },
       }),
     );
+    setQ('');
   }, [q]);
 
   function onKeyDown(e: React.KeyboardEvent) {

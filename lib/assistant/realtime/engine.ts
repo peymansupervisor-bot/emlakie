@@ -308,6 +308,11 @@ export class RealtimeEngine {
     const dc = this.dc;
     if (!dc || dc.readyState !== 'open') return;
 
+    // Flush any audio the microphone may have captured during the chime window.
+    // Without this, VAD activity during the ~510ms chime delay could feed an
+    // unintended audio turn to the model immediately after the greeting fires.
+    dc.send(JSON.stringify({ type: 'input_audio_buffer.clear' }));
+
     if (this.config.initialContext) {
       // Inject the typed query as a user message so the model responds to it
       // directly, skipping a generic greeting. Not logged — same as spoken input.

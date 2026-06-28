@@ -96,6 +96,9 @@ export function useRealtimeLab({ audioRef }: UseRealtimeLabOptions): UseRealtime
   const speechStoppedAtRef = useRef<number | null>(null);
   /** True from first `response.audio.delta` to `response.audio.done`. Used for interruption detection. */
   const isRespondingAudioRef = useRef<boolean>(false);
+  /** False until the first session.updated confirms our session.update was applied.
+   *  Guards against triggering re-enable logic on subsequent session.updated events. */
+  const setupCompleteRef = useRef<boolean>(false);
 
   // -------------------------------------------------------------------------
   // Event log — records event type + optional note, never user content
@@ -122,30 +125,25 @@ export function useRealtimeLab({ audioRef }: UseRealtimeLabOptions): UseRealtime
     const dc = dcRef.current;
     if (!dc || dc.readyState !== 'open') return;
 
-    // session.update uses the current nested format — old top-level fields
-    // (modalities, input_audio_format, input_audio_transcription, voice) are
-    // unknown_parameter in gpt-realtime-2 and cause missing_required_parameter
-    // on audio.input.format.rate when the API tries to parse the pcm16 string.
-    // Instructions and transcription are now configured in the client_secrets
-    // body (token route) so session.update only reinforces turn_detection here.
-    const sessionUpdatePayload = {
+    // Disable create_response during setup to prevent ambient-noise VAD triggers
+    // from generating responses before the user speaks. Re-enabled in the
+    // session.updated handler once setup is confirmed complete.
+    dc.send(JSON.stringify({
       type: 'session.update',
       session: {
         type: 'realtime',
         output_modalities: ['audio'],
         audio: {
           input: {
-            turn_detection: LAB_VAD_CONFIG,
+            turn_detection: { ...LAB_VAD_CONFIG, create_response: false },
           },
           output: {
             voice: LAB_VOICE,
           },
         },
       },
-    };
-    console.log('[realtime-lab] session.update payload:', JSON.stringify(sessionUpdatePayload, null, 2));
-    dc.send(JSON.stringify(sessionUpdatePayload));
-    logEvent('session.update → sent');
+    }));
+    logEvent('session.update → sent (create_response disabled for setup)');
   }, [logEvent]);
 
   // -------------------------------------------------------------------------
@@ -178,7 +176,27 @@ export function useRealtimeLab({ audioRef }: UseRealtimeLabOptions): UseRealtime
           break;
 
         case 'session.updated':
-          logEvent('session.updated');
+          if (!setupCompleteRef.current) {
+            // First session.updated = our setup session.update was applied.
+            // Clear any audio buffered during WebRTC setup (prevents ambient-noise
+            // VAD triggers from creating responses before the user speaks), then
+            // re-enable automatic responses for normal conversation.
+            setupCompleteRef.current = true;
+            const dc = dcRef.current;
+            if (dc && dc.readyState === 'open') {
+              dc.send(JSON.stringify({ type: 'input_audio_buffer.clear' }));
+              dc.send(JSON.stringify({
+                type: 'session.update',
+                session: {
+                  type: 'realtime',
+                  audio: { input: { turn_detection: LAB_VAD_CONFIG } },
+                },
+              }));
+            }
+            logEvent('session.updated (setup complete — create_response re-enabled)');
+          } else {
+            logEvent('session.updated');
+          }
           break;
 
         // VAD: user started speaking
@@ -315,6 +333,7 @@ export function useRealtimeLab({ audioRef }: UseRealtimeLabOptions): UseRealtime
     }
     isRespondingAudioRef.current = false;
     speechStoppedAtRef.current = null;
+    setupCompleteRef.current = false;
     setMetrics((m) => ({ ...m, status: 'stopped', assistantState: 'idle' }));
     logEvent('session.stopped');
   }, [audioRef, logEvent]);
@@ -345,6 +364,7 @@ export function useRealtimeLab({ audioRef }: UseRealtimeLabOptions): UseRealtime
     }));
     isRespondingAudioRef.current = false;
     speechStoppedAtRef.current = null;
+    setupCompleteRef.current = false;
 
     // -- Step 1: Microphone permission --
     let stream: MediaStream;

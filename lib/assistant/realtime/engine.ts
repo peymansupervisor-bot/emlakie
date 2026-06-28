@@ -123,6 +123,9 @@ export class RealtimeEngine {
   private dc: RTCDataChannel | null = null;
   private stream: MediaStream | null = null;
   private setupComplete = false;
+  // True after Phase 2 session.updated is received — tools are registered at
+  // this point, so it is safe to inject initialContext and trigger a response.
+  private phase2Complete = false;
   private speechStoppedAt: number | null = null;
   private isRespondingAudio = false;
 
@@ -390,17 +393,24 @@ export class RealtimeEngine {
 
       case 'session.updated':
         if (!this.setupComplete) {
+          // Phase 1 confirmed — clear audio buffer and send Phase 2 setup
+          // (registers tools). Greeting fires only after Phase 2 is confirmed,
+          // so tools are guaranteed available when initialContext is injected.
           this.setupComplete = true;
           const dc = this.dc;
           if (dc && dc.readyState === 'open') {
             dc.send(JSON.stringify({ type: 'input_audio_buffer.clear' }));
             this.sendPhase2Setup();
-            if (this.config.sendGreetingOnConnect) {
-              setTimeout(() => this.triggerGreeting(), 300);
-            }
           }
           this.cb.onSessionUpdated?.(true);
           this.cb.onConnected?.();
+        } else if (!this.phase2Complete) {
+          // Phase 2 confirmed — tools are now registered; safe to greet / inject context
+          this.phase2Complete = true;
+          if (this.config.sendGreetingOnConnect) {
+            this.triggerGreeting();
+          }
+          this.cb.onSessionUpdated?.(false);
         } else {
           this.cb.onSessionUpdated?.(false);
         }

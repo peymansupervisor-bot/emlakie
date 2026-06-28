@@ -241,11 +241,11 @@ export default function LabClient() {
         {/* ── System instruction ── */}
         <div className="rounded-xl border border-gray-200 bg-white p-4">
           <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-wide text-gray-400">
-            System instruction
+            System instruction <span className="normal-case font-normal text-gray-400">(shared with production)</span>
           </p>
-          <p className="text-sm leading-relaxed text-gray-700 italic">
-            &ldquo;{LAB_SYSTEM_INSTRUCTION}&rdquo;
-          </p>
+          <pre className="max-h-40 overflow-y-auto whitespace-pre-wrap text-[11px] leading-relaxed text-gray-600 font-mono">
+            {LAB_SYSTEM_INSTRUCTION}
+          </pre>
         </div>
 
         {/* ── Status + controls ── */}

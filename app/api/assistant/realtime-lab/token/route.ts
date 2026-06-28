@@ -13,7 +13,7 @@
  */
 
 import { NextResponse } from 'next/server';
-import { LAB_SYSTEM_INSTRUCTION } from '@/lib/assistant/realtime-lab/config';
+import { ASSISTANT_SYSTEM_INSTRUCTION, REALTIME_MODEL, REALTIME_VOICE } from '@/lib/assistant/realtime/config';
 
 export const dynamic = 'force-dynamic';
 
@@ -43,15 +43,15 @@ export async function POST(): Promise<NextResponse> {
       body: JSON.stringify({
         session: {
           type: 'realtime',
-          model: 'gpt-realtime-2',
+          model: REALTIME_MODEL,
           output_modalities: ['audio'],
-          instructions: LAB_SYSTEM_INSTRUCTION,
+          instructions: ASSISTANT_SYSTEM_INSTRUCTION,
           audio: {
             input: {
               transcription: { model: 'whisper-1' },
             },
             output: {
-              voice: 'marin',
+              voice: REALTIME_VOICE,
             },
           },
         },

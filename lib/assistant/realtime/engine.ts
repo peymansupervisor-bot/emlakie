@@ -128,6 +128,9 @@ export class RealtimeEngine {
   private phase2Complete = false;
   private speechStoppedAt: number | null = null;
   private isRespondingAudio = false;
+  // AudioContext created during the user-gesture window (getUserMedia) so the
+  // startup chime can play reliably in Safari without a separate gesture.
+  private chimeCtx: AudioContext | null = null;
 
   // Function call state — tracks the current response's function call, if any
   private fcCallId: string | null = null;
@@ -160,6 +163,14 @@ export class RealtimeEngine {
     }
     this.stream = stream;
     this.cb.onMicGranted?.();
+
+    // Create AudioContext inside the user-gesture window so Safari allows it.
+    // Used later for the startup chime before the greeting fires.
+    try {
+      this.chimeCtx = new AudioContext();
+    } catch {
+      // AudioContext unavailable (test env, old browser) — chime will be skipped
+    }
 
     // Step 2: Ephemeral token
     let ephemeralKey: string;
@@ -288,7 +299,12 @@ export class RealtimeEngine {
     dc.send(JSON.stringify({ type: 'session.update', session }));
   }
 
-  private triggerGreeting(): void {
+  private async triggerGreeting(): Promise<void> {
+    // Play the startup chime and wait for it to finish before the model speaks.
+    // This prevents the first word of the greeting from being clipped by the
+    // audio pipeline warming up.
+    await this.playStartupChime();
+
     const dc = this.dc;
     if (!dc || dc.readyState !== 'open') return;
 
@@ -308,6 +324,53 @@ export class RealtimeEngine {
     }
 
     dc.send(JSON.stringify({ type: 'response.create' }));
+  }
+
+  /**
+   * Plays a gentle two-note ascending chime (~300ms) then waits 150ms.
+   * Total delay before greeting: ~450ms.
+   *
+   * Uses the AudioContext created during the user-gesture window so Safari
+   * allows audio without a second gesture. Fails silently if unavailable.
+   */
+  private async playStartupChime(): Promise<void> {
+    const ctx = this.chimeCtx;
+    if (!ctx) {
+      await new Promise<void>((r) => setTimeout(r, 450));
+      return;
+    }
+    try {
+      if (ctx.state === 'suspended') await ctx.resume();
+
+      const now = ctx.currentTime;
+      // Two sine-wave tones, gently ascending: G5 → C6
+      // Each has a quick attack and exponential decay — soft, not piercing.
+      const notes: { freq: number; start: number }[] = [
+        { freq: 783.99, start: 0 },     // G5 — opens at 0ms
+        { freq: 1046.50, start: 0.13 }, // C6 — follows at 130ms
+      ];
+
+      for (const { freq, start } of notes) {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.value = freq;
+        // Gain envelope: silent → 0.12 peak (subtle) → near-silent over 220ms
+        gain.gain.setValueAtTime(0, now + start);
+        gain.gain.linearRampToValueAtTime(0.12, now + start + 0.012);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + start + 0.22);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(now + start);
+        osc.stop(now + start + 0.23);
+      }
+
+      // Chime ends at ~360ms (130ms offset + 230ms tone); add 150ms buffer
+      await new Promise<void>((r) => setTimeout(r, 510));
+    } catch {
+      // Chime failed — still wait so audio pipeline has time to warm up
+      await new Promise<void>((r) => setTimeout(r, 450));
+    }
   }
 
   // -------------------------------------------------------------------------
@@ -535,11 +598,14 @@ export class RealtimeEngine {
     this.stream = null;
     if (this.audioRef.current) this.audioRef.current.srcObject = null;
     this.setupComplete = false;
+    this.phase2Complete = false;
     this.speechStoppedAt = null;
     this.isRespondingAudio = false;
     this.currentResponseIsFunctionCall = false;
     this.fcCallId = null;
     this.fcName = null;
     this.fcArgsBuffer = '';
+    this.chimeCtx?.close().catch(() => {});
+    this.chimeCtx = null;
   }
 }

@@ -13,6 +13,7 @@
  */
 
 import { NextResponse } from 'next/server';
+import { LAB_SYSTEM_INSTRUCTION } from '@/lib/assistant/realtime-lab/config';
 
 export const dynamic = 'force-dynamic';
 
@@ -43,7 +44,12 @@ export async function POST(): Promise<NextResponse> {
         session: {
           type: 'realtime',
           model: 'gpt-realtime-2',
+          output_modalities: ['audio'],
+          instructions: LAB_SYSTEM_INSTRUCTION,
           audio: {
+            input: {
+              transcription: { model: 'whisper-1' },
+            },
             output: {
               voice: 'marin',
             },
@@ -69,7 +75,13 @@ export async function POST(): Promise<NextResponse> {
     }
 
     // Forward the full OpenAI response — browser needs data.value (new API format)
-    const data: unknown = await openAIRes.json();
+    const data = await openAIRes.json() as Record<string, unknown>;
+    // Diagnostic: log response shape (never log the actual token value)
+    const safeShape = Object.keys(data).reduce<Record<string, string>>((acc, k) => {
+      acc[k] = k === 'value' ? '[REDACTED]' : typeof data[k];
+      return acc;
+    }, {});
+    console.log('[realtime-lab/token] OpenAI response shape:', JSON.stringify(safeShape));
     return NextResponse.json(data);
 
   } catch (err) {

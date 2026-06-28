@@ -27,7 +27,6 @@ import { INITIAL_LAB_METRICS } from '@/lib/assistant/realtime-lab/types';
 import {
   LAB_REALTIME_MODEL,
   LAB_VOICE,
-  LAB_SYSTEM_INSTRUCTION,
   LAB_MAX_EVENT_LOG,
   LAB_TOKEN_URL,
   LAB_OPENAI_REALTIME_URL,
@@ -123,20 +122,28 @@ export function useRealtimeLab({ audioRef }: UseRealtimeLabOptions): UseRealtime
     const dc = dcRef.current;
     if (!dc || dc.readyState !== 'open') return;
 
-    dc.send(
-      JSON.stringify({
-        type: 'session.update',
-        session: {
-          modalities: ['text', 'audio'],
-          instructions: LAB_SYSTEM_INSTRUCTION,
-          voice: LAB_VOICE,
-          input_audio_format: 'pcm16',
-          output_audio_format: 'pcm16',
-          input_audio_transcription: { model: 'whisper-1' },
-          turn_detection: LAB_VAD_CONFIG,
+    // session.update uses the current nested format — old top-level fields
+    // (modalities, input_audio_format, input_audio_transcription, voice) are
+    // unknown_parameter in gpt-realtime-2 and cause missing_required_parameter
+    // on audio.input.format.rate when the API tries to parse the pcm16 string.
+    // Instructions and transcription are now configured in the client_secrets
+    // body (token route) so session.update only reinforces turn_detection here.
+    const sessionUpdatePayload = {
+      type: 'session.update',
+      session: {
+        output_modalities: ['audio'],
+        audio: {
+          input: {
+            turn_detection: LAB_VAD_CONFIG,
+          },
+          output: {
+            voice: LAB_VOICE,
+          },
         },
-      }),
-    );
+      },
+    };
+    console.log('[realtime-lab] session.update payload:', JSON.stringify(sessionUpdatePayload, null, 2));
+    dc.send(JSON.stringify(sessionUpdatePayload));
     logEvent('session.update → sent');
   }, [logEvent]);
 
@@ -257,16 +264,29 @@ export function useRealtimeLab({ audioRef }: UseRealtimeLabOptions): UseRealtime
 
         // OpenAI error
         case 'error': {
-          // Log the error code only — never the message (may contain user content)
           const errObj = event.error as Record<string, unknown> | undefined;
           const errCode =
             typeof errObj?.code === 'string' ? errObj.code : 'unknown_error';
+          // param identifies the exact missing/invalid field — safe to log (not user content)
+          const errParam =
+            typeof errObj?.param === 'string' ? errObj.param : null;
+          // message is safe for missing_required_parameter errors (field name, not user speech)
+          const errMessage =
+            typeof errObj?.message === 'string' ? errObj.message : null;
+          const errLabel = [errCode, errParam && `param:${errParam}`].filter(Boolean).join(' ');
+          // Print full non-content error details to console for diagnostics
+          console.error('[realtime-lab] OpenAI error event:', {
+            code: errCode,
+            param: errParam,
+            message: errMessage,
+            event_id: typeof event.event_id === 'string' ? event.event_id : undefined,
+          });
           setMetrics((m) => ({
             ...m,
             errorCount: m.errorCount + 1,
-            lastError: errCode,
+            lastError: errLabel,
           }));
-          logEvent('error', errCode);
+          logEvent('error', errLabel);
           break;
         }
 

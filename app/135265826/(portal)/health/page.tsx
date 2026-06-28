@@ -1,6 +1,7 @@
 import { adminClient } from '@/lib/moderator';
 import RunHealthCheckButton from '../RunHealthCheckButton';
 import BackfillVaultsButton from './BackfillVaultsButton';
+import TriggerAlertCronButton from './TriggerAlertCronButton';
 
 export const dynamic = 'force-dynamic';
 
@@ -119,6 +120,9 @@ export default async function HealthPage() {
               <div className="shrink-0 text-right">
                 {name === 'Data Isolation (RLS)' && row?.message?.includes('vault') && (
                   <div className="mb-2"><BackfillVaultsButton /></div>
+                )}
+                {name === 'Daily Alert Cron' && (
+                  <div className="mb-2"><TriggerAlertCronButton /></div>
                 )}
                 <span className={`inline-block rounded-full px-3 py-0.5 text-xs font-bold ${style.badge}`}>
                   {style.badgeLabel}

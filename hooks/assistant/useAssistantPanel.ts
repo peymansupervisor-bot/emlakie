@@ -58,5 +58,12 @@ export function useAssistantPanel(): UseAssistantPanelReturn {
     return () => document.removeEventListener('keydown', onKeyDown);
   }, [open, closePanel]);
 
+  // Allow external triggers (e.g. SearchBar mic button) to open the panel
+  useEffect(() => {
+    function onOpen() { setOpen(true); }
+    window.addEventListener('emlakie:open-assistant', onOpen);
+    return () => window.removeEventListener('emlakie:open-assistant', onOpen);
+  }, []);
+
   return { open, openPanel, closePanel, launcherRef, panelRef };
 }

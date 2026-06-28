@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { useState, useEffect, useRef } from 'react';
 
+
 interface Suggestion {
   type: 'city' | 'address' | 'listing';
   label: string;
@@ -46,7 +47,7 @@ const MODES: { id: Mode; label: string; sublabel: string; icon: React.ReactNode 
   },
 ];
 
-export default function SearchBar({ large = false }: { large?: boolean }) {
+export default function SearchBar({ large = false, showVoice = false }: { large?: boolean; showVoice?: boolean }) {
   const router = useRouter();
   const [q, setQ] = useState('');
   const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
@@ -214,6 +215,19 @@ export default function SearchBar({ large = false }: { large?: boolean }) {
             aria-activedescendant={activeIdx >= 0 ? `search-suggestions-sm-${activeIdx}` : undefined}
             className="min-w-0 flex-1 px-4 py-3 text-base text-gray-900 placeholder-gray-500 outline-none focus:ring-2 focus:ring-inset focus:ring-brand-500"
           />
+          {showVoice && (
+            <button
+              type="button"
+              aria-label="Talk to Emlakie"
+              onClick={() => window.dispatchEvent(new CustomEvent('emlakie:open-assistant'))}
+              className="px-3 text-gray-400 hover:text-brand-600 transition-colors"
+            >
+              <svg viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4" aria-hidden="true">
+                <path d="M10 2a3 3 0 0 0-3 3v5a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" />
+                <path fillRule="evenodd" d="M4.25 9.5a.75.75 0 0 1 .75.75 5 5 0 0 0 10 0 .75.75 0 0 1 1.5 0 6.5 6.5 0 0 1-5.75 6.46V18.5h2a.75.75 0 0 1 0 1.5h-5.5a.75.75 0 0 1 0-1.5h2v-1.79A6.5 6.5 0 0 1 3.5 10.25a.75.75 0 0 1 .75-.75Z" clipRule="evenodd" />
+              </svg>
+            </button>
+          )}
           <button
             type="submit"
             aria-label="Search"
@@ -382,6 +396,19 @@ export default function SearchBar({ large = false }: { large?: boolean }) {
             >
               <svg viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4">
                 <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
+              </svg>
+            </button>
+          )}
+          {showVoice && (
+            <button
+              type="button"
+              aria-label="Talk to Emlakie"
+              onClick={() => window.dispatchEvent(new CustomEvent('emlakie:open-assistant'))}
+              className="px-4 text-gray-400 hover:text-brand-600 transition-colors"
+            >
+              <svg viewBox="0 0 20 20" fill="currentColor" className="h-5 w-5" aria-hidden="true">
+                <path d="M10 2a3 3 0 0 0-3 3v5a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" />
+                <path fillRule="evenodd" d="M4.25 9.5a.75.75 0 0 1 .75.75 5 5 0 0 0 10 0 .75.75 0 0 1 1.5 0 6.5 6.5 0 0 1-5.75 6.46V18.5h2a.75.75 0 0 1 0 1.5h-5.5a.75.75 0 0 1 0-1.5h2v-1.79A6.5 6.5 0 0 1 3.5 10.25a.75.75 0 0 1 .75-.75Z" clipRule="evenodd" />
               </svg>
             </button>
           )}

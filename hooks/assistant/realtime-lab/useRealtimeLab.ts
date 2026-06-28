@@ -131,6 +131,7 @@ export function useRealtimeLab({ audioRef }: UseRealtimeLabOptions): UseRealtime
     const sessionUpdatePayload = {
       type: 'session.update',
       session: {
+        type: 'realtime',
         output_modalities: ['audio'],
         audio: {
           input: {

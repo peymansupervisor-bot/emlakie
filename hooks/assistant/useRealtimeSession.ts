@@ -4,13 +4,13 @@
  * useRealtimeSession — production AI Leasing Assistant session hook.
  *
  * Wraps RealtimeEngine and maps voice events to the assistant state machine.
- * Replaces the Phase 1C MockTransport-based useAssistantSession.
  *
  * Voice flow:
  *   open()       → OPEN → state: opening
  *   onConnected  → CONNECTED → state: listening  (model greets via audio)
  *   speech ends  → VOICE_INPUT → state: thinking
- *   response.created → RESPONSE_RECEIVED → state: speaking
+ *   function call → executeFunctionCall → onFunctionCallResult → recommendations state
+ *   response.created (audio) → RESPONSE_RECEIVED → state: speaking
  *   response.done    → SPEAKING_COMPLETE → state: listening
  *   error        → ERROR state
  *   close()      → CLOSE → state: closed
@@ -18,7 +18,7 @@
  * No transcripts are stored. No user content is logged.
  */
 
-import { useReducer, useRef, useCallback, useEffect } from 'react';
+import { useReducer, useRef, useCallback, useEffect, useState } from 'react';
 import {
   transition,
   INITIAL_STATE,
@@ -31,22 +31,28 @@ import {
   REALTIME_VOICE,
   REALTIME_SDP_URL,
   REALTIME_TOKEN_URL,
+  ASSISTANT_TOOLS,
 } from '@/lib/assistant/realtime/config';
 import type { AssistantSessionState } from '@/lib/assistant/stateMachine';
-import type { AssistantState, AssistantMessage, ListingRecommendation } from '@/types/assistant';
+import type {
+  AssistantState,
+  AssistantMessage,
+  ListingRecommendation,
+  AssistantSearchResponse,
+} from '@/types/assistant';
 
 export interface UseRealtimeSessionReturn {
   sessionState: AssistantSessionState;
   displayState: AssistantState;
-  /** Always empty in Phase 2 — voice-only, no text transcript display. */
+  /** Always empty — voice-only, no text transcript display. */
   messages: AssistantMessage[];
-  /** Always empty in Phase 2 — listing DB not connected yet. */
+  /** Populated when the model calls search_listings. Up to 10 listings. */
   recommendations: ListingRecommendation[];
-  /** Always false in Phase 2 — no text input. */
+  /** Always false — no text input. */
   inputEnabled: boolean;
   open: () => void;
   close: () => void;
-  /** No-op in Phase 2 — text input removed. */
+  /** No-op — text input removed. */
   sendMessage: (text: string) => void;
   cancel: () => void;
 }
@@ -55,6 +61,7 @@ export function useRealtimeSession(
   audioRef: React.RefObject<HTMLAudioElement>,
 ): UseRealtimeSessionReturn {
   const [sessionState, dispatch] = useReducer(transition, INITIAL_STATE);
+  const [recommendations, setRecommendations] = useState<ListingRecommendation[]>([]);
   const engineRef = useRef<RealtimeEngine | null>(null);
 
   // -------------------------------------------------------------------------
@@ -64,6 +71,7 @@ export function useRealtimeSession(
   const open = useCallback(() => {
     if (!canOpen(sessionState)) return;
     dispatch({ type: 'OPEN' });
+    setRecommendations([]);
 
     const engine = new RealtimeEngine(
       audioRef,
@@ -73,6 +81,7 @@ export function useRealtimeSession(
         vadConfig: REALTIME_VAD_CONFIG,
         voice: REALTIME_VOICE,
         sendGreetingOnConnect: true,
+        tools: ASSISTANT_TOOLS,
       },
       {
         onConnected: () => dispatch({ type: 'CONNECTED' }),
@@ -83,6 +92,13 @@ export function useRealtimeSession(
           dispatch({ type: 'RESPONSE_RECEIVED', message: '' }),
 
         onResponseDone: () => dispatch({ type: 'SPEAKING_COMPLETE' }),
+
+        onFunctionCallResult: (_name, result) => {
+          const res = result as AssistantSearchResponse;
+          if (Array.isArray(res?.results)) {
+            setRecommendations(res.results);
+          }
+        },
 
         onError: (code) =>
           dispatch({ type: 'ERROR', code, message: code }),
@@ -102,6 +118,7 @@ export function useRealtimeSession(
   const close = useCallback(() => {
     engineRef.current?.disconnect();
     engineRef.current = null;
+    setRecommendations([]);
     dispatch({ type: 'CLOSE' });
   }, []);
 
@@ -127,7 +144,7 @@ export function useRealtimeSession(
     sessionState,
     displayState: toDisplayState(sessionState),
     messages: [],
-    recommendations: [],
+    recommendations,
     inputEnabled: false,
     open,
     close,

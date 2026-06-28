@@ -10,6 +10,16 @@
  * Security: OPENAI_API_KEY stays server-side. The engine fetches a short-lived
  * ephemeral token from our own API route and uses it for the SDP exchange.
  * No user transcript content is logged — only event types and numeric latencies.
+ *
+ * Function call flow (Phase 3+):
+ *   1. Model sends response with type=function_call output item
+ *   2. Engine accumulates arguments via response.function_call_arguments.delta
+ *   3. On response.done (function-call response): engine POSTs to functionCallUrl
+ *   4. Engine calls onFunctionCallResult with the result (for UI rendering)
+ *   5. Engine sends conversation.item.create + response.create to continue
+ *
+ * Extension: to add new tools (compare_listings, save_listing, schedule_tour,
+ * explain_listing), add cases to executeFunctionCall() below.
  */
 
 // ---------------------------------------------------------------------------
@@ -35,6 +45,18 @@ export interface RealtimeEngineConfig {
    * model greeting. Use for production; leave false in the lab.
    */
   sendGreetingOnConnect?: boolean;
+  /**
+   * Tool definitions to register with the Realtime session.
+   * Passed as-is in the session.update tools array.
+   * Leave undefined for the lab (no function calls).
+   */
+  tools?: readonly unknown[];
+  /**
+   * Base URL for server-side function call execution.
+   * Defaults to '/api/assistant/search' for search_listings.
+   * Override in tests.
+   */
+  functionCallUrl?: string;
 }
 
 export interface RealtimeEngineCallbacks {
@@ -65,7 +87,7 @@ export interface RealtimeEngineCallbacks {
   /** Whisper transcription complete. language is null if field is absent. */
   onTranscriptionCompleted?(language: string | null): void;
 
-  /** OpenAI started generating a response. */
+  /** OpenAI started generating an audio response (not a function call). */
   onResponseCreated?(): void;
   /**
    * First audio chunk received. latencyMs is time from speech_stopped to this
@@ -74,8 +96,15 @@ export interface RealtimeEngineCallbacks {
   onResponseAudioFirstChunk?(latencyMs: number | null): void;
   /** Response audio stream ended. */
   onResponseAudioDone?(): void;
-  /** Full response complete (all modalities). */
+  /** Full audio response complete. Not fired for function-call-only responses. */
   onResponseDone?(): void;
+
+  /**
+   * A server-side function call completed and returned results.
+   * The hook uses this to update the UI recommendations state.
+   * `name` is the function name; `result` is the parsed JSON response.
+   */
+  onFunctionCallResult?(name: string, result: unknown): void;
 }
 
 // ---------------------------------------------------------------------------
@@ -89,6 +118,12 @@ export class RealtimeEngine {
   private setupComplete = false;
   private speechStoppedAt: number | null = null;
   private isRespondingAudio = false;
+
+  // Function call state — tracks the current response's function call, if any
+  private fcCallId: string | null = null;
+  private fcName: string | null = null;
+  private fcArgsBuffer = '';
+  private currentResponseIsFunctionCall = false;
 
   constructor(
     private readonly audioRef: { current: HTMLAudioElement | null },
@@ -225,24 +260,88 @@ export class RealtimeEngine {
   private sendPhase2Setup(): void {
     const dc = this.dc;
     if (!dc || dc.readyState !== 'open') return;
-    dc.send(
-      JSON.stringify({
-        type: 'session.update',
-        session: {
-          type: 'realtime',
-          audio: {
-            input: {
-              turn_detection: { ...this.config.vadConfig, create_response: true },
-            },
-          },
+
+    const session: Record<string, unknown> = {
+      type: 'realtime',
+      audio: {
+        input: {
+          turn_detection: { ...this.config.vadConfig, create_response: true },
         },
-      }),
-    );
+      },
+    };
+
+    if (this.config.tools && this.config.tools.length > 0) {
+      session.tools = this.config.tools;
+      session.tool_choice = 'auto';
+    }
+
+    dc.send(JSON.stringify({ type: 'session.update', session }));
   }
 
   private triggerGreeting(): void {
     const dc = this.dc;
     if (!dc || dc.readyState !== 'open') return;
+    dc.send(JSON.stringify({ type: 'response.create' }));
+  }
+
+  // -------------------------------------------------------------------------
+  // Function call execution
+  // -------------------------------------------------------------------------
+
+  private async executeFunctionCall(callId: string, name: string, argsJson: string): Promise<void> {
+    let result: unknown;
+
+    try {
+      let args: Record<string, unknown>;
+      try {
+        args = JSON.parse(argsJson) as Record<string, unknown>;
+      } catch {
+        args = {};
+      }
+
+      if (name === 'search_listings') {
+        const url = this.config.functionCallUrl ?? '/api/assistant/search';
+        const res = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(args),
+        });
+
+        if (!res.ok) {
+          result = { error: `search_failed_${res.status}`, shown: 0, total: 0, speakCount: 0, results: [] };
+        } else {
+          result = await res.json();
+          // Notify the hook immediately so UI cards appear before the model speaks
+          this.cb.onFunctionCallResult?.(name, result);
+        }
+      } else {
+        // Placeholder for future tools: compare_listings, explain_listing,
+        // save_listing, schedule_tour — add cases here without changing the
+        // rest of the engine.
+        result = { error: `unknown_function:${name}` };
+      }
+    } catch {
+      result = { error: 'function_execution_error', shown: 0, total: 0, speakCount: 0, results: [] };
+    }
+
+    this.sendFunctionResult(callId, result);
+  }
+
+  private sendFunctionResult(callId: string, result: unknown): void {
+    const dc = this.dc;
+    if (!dc || dc.readyState !== 'open') return;
+
+    dc.send(
+      JSON.stringify({
+        type: 'conversation.item.create',
+        item: {
+          type: 'function_call_output',
+          call_id: callId,
+          output: JSON.stringify(result),
+        },
+      }),
+    );
+
     dc.send(JSON.stringify({ type: 'response.create' }));
   }
 
@@ -274,7 +373,6 @@ export class RealtimeEngine {
             dc.send(JSON.stringify({ type: 'input_audio_buffer.clear' }));
             this.sendPhase2Setup();
             if (this.config.sendGreetingOnConnect) {
-              // Small delay so phase-2 update is applied before greeting
               setTimeout(() => this.triggerGreeting(), 300);
             }
           }
@@ -295,8 +393,43 @@ export class RealtimeEngine {
         break;
 
       case 'response.created':
-        this.cb.onResponseCreated?.();
+        // Don't emit yet — we don't know if this is an audio or function-call
+        // response until we see the output items. Reset function-call tracking.
+        this.currentResponseIsFunctionCall = false;
+        this.fcCallId = null;
+        this.fcName = null;
+        this.fcArgsBuffer = '';
         break;
+
+      case 'response.output_item.added': {
+        const item = event.item as Record<string, unknown> | undefined;
+        if (item?.type === 'function_call') {
+          this.currentResponseIsFunctionCall = true;
+          this.fcCallId = typeof item.call_id === 'string' ? item.call_id : null;
+          this.fcName = typeof item.name === 'string' ? item.name : null;
+          this.fcArgsBuffer = '';
+        } else if (item?.type === 'message' && !this.currentResponseIsFunctionCall) {
+          // This is an audio/text response — safe to emit onResponseCreated now
+          this.cb.onResponseCreated?.();
+        }
+        break;
+      }
+
+      case 'response.function_call_arguments.delta': {
+        const delta = typeof event.delta === 'string' ? event.delta : '';
+        this.fcArgsBuffer += delta;
+        break;
+      }
+
+      case 'response.function_call_arguments.done': {
+        // Arguments are complete — update call_id and name from this event in
+        // case they weren't set on output_item.added
+        if (typeof event.call_id === 'string') this.fcCallId = event.call_id;
+        if (typeof event.name === 'string') this.fcName = event.name;
+        const finalArgs = typeof event.arguments === 'string' ? event.arguments : this.fcArgsBuffer;
+        this.fcArgsBuffer = finalArgs;
+        break;
+      }
 
       case 'response.audio.delta':
         if (!this.isRespondingAudio) {
@@ -314,7 +447,22 @@ export class RealtimeEngine {
         break;
 
       case 'response.done':
-        this.cb.onResponseDone?.();
+        if (this.currentResponseIsFunctionCall) {
+          // Execute the function call and send result back to the model
+          const callId = this.fcCallId;
+          const name = this.fcName;
+          const args = this.fcArgsBuffer;
+          this.currentResponseIsFunctionCall = false;
+          this.fcCallId = null;
+          this.fcName = null;
+          this.fcArgsBuffer = '';
+
+          if (callId && name) {
+            void this.executeFunctionCall(callId, name, args);
+          }
+        } else {
+          this.cb.onResponseDone?.();
+        }
         break;
 
       case 'conversation.item.input_audio_transcription.completed': {
@@ -356,5 +504,9 @@ export class RealtimeEngine {
     this.setupComplete = false;
     this.speechStoppedAt = null;
     this.isRespondingAudio = false;
+    this.currentResponseIsFunctionCall = false;
+    this.fcCallId = null;
+    this.fcName = null;
+    this.fcArgsBuffer = '';
   }
 }

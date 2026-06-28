@@ -2,7 +2,8 @@
 
 import { SUPPORTED_LANGUAGES } from '@/lib/assistant/config';
 import AssistantStateDisplay from './AssistantStateDisplay';
-import type { AssistantState } from '@/types/assistant';
+import AssistantListingCard from './AssistantListingCard';
+import type { AssistantState, ListingRecommendation } from '@/types/assistant';
 
 interface AssistantPanelProps {
   open: boolean;
@@ -10,14 +11,15 @@ interface AssistantPanelProps {
   onClose: () => void;
   onCancel: () => void;
   panelRef: React.RefObject<HTMLDivElement>;
+  recommendations?: ListingRecommendation[];
 }
 
 /**
  * Production AI Leasing Assistant panel — voice-only.
  *
  * The assistant communicates entirely via voice (OpenAI Realtime API / WebRTC).
- * No text input, no text transcript, no recommendation cards in Phase 2.
- * Listing integration is Phase 3.
+ * When the model calls search_listings, listing cards appear in a horizontal
+ * scroll strip. No text input, no text transcript.
  *
  * Accessibility:
  * - role="dialog" with aria-modal and aria-labelledby
@@ -30,6 +32,7 @@ export default function AssistantPanel({
   onClose,
   onCancel,
   panelRef,
+  recommendations = [],
 }: AssistantPanelProps) {
   const langLine = SUPPORTED_LANGUAGES.map((l) => l.nameSelf).join(' · ');
   const isActive =
@@ -37,6 +40,8 @@ export default function AssistantPanel({
     displayState === 'processing' ||
     displayState === 'speaking' ||
     displayState === 'greeting';
+
+  const hasCards = recommendations.length > 0;
 
   if (!open) return null;
 
@@ -62,7 +67,7 @@ export default function AssistantPanel({
           'sm:bottom-24 sm:right-6 sm:left-auto sm:w-[380px] sm:rounded-2xl',
           'border border-gray-100',
           'flex flex-col',
-          'max-h-[90vh] sm:max-h-[480px]',
+          'max-h-[90vh] sm:max-h-[560px]',
         ].join(' ')}
       >
         {/* ── Header ── */}
@@ -107,6 +112,30 @@ export default function AssistantPanel({
             </svg>
           </button>
         </div>
+
+        {/* ── Listing cards ── */}
+        {hasCards && (
+          <div
+            className="flex-shrink-0 border-b border-gray-50"
+            aria-label={`${recommendations.length} listing${recommendations.length === 1 ? '' : 's'} found`}
+          >
+            <div
+              className="flex gap-2.5 overflow-x-auto px-4 py-3 scroll-smooth"
+              style={{ scrollbarWidth: 'none' }}
+            >
+              {recommendations.map((listing, i) => (
+                <AssistantListingCard
+                  key={listing.id}
+                  listing={listing}
+                  rank={i + 1}
+                />
+              ))}
+            </div>
+            <p className="pb-2 text-center text-[10px] text-gray-400">
+              {recommendations.length} listing{recommendations.length === 1 ? '' : 's'} · scroll to see more
+            </p>
+          </div>
+        )}
 
         {/* ── State display ── */}
         <div className="flex-1">

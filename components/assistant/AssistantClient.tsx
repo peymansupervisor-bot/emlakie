@@ -20,6 +20,7 @@ export default function AssistantClient() {
 
   const {
     displayState,
+    recommendations,
     open: openSession,
     close: closeSession,
     cancel,
@@ -53,6 +54,7 @@ export default function AssistantClient() {
         onClose={closePanel}
         onCancel={cancel}
         panelRef={panelRef}
+        recommendations={recommendations}
       />
     </>
   );

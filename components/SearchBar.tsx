@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 
 interface Suggestion {
   type: 'city' | 'address' | 'listing';
@@ -12,51 +12,81 @@ interface Suggestion {
 
 type Mode = 'location' | 'describe' | 'nearby';
 
-const MODES: { id: Mode; label: string; sublabel: string; icon: React.ReactNode }[] = [
-  {
-    id: 'location',
-    label: 'Location',
-    sublabel: 'City, ZIP, or address',
-    icon: (
-      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.75" className="h-4 w-4 shrink-0" aria-hidden="true">
-        <circle cx="9" cy="9" r="5.5" />
-        <path d="m16 16-2.5-2.5" strokeLinecap="round" />
-      </svg>
-    ),
-  },
-  {
-    id: 'describe',
-    label: 'Describe',
-    sublabel: 'Your ideal rental',
-    icon: (
-      <svg viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4 shrink-0" aria-hidden="true">
-        <path d="M10.75 2.75a.75.75 0 0 0-1.5 0v1a.75.75 0 0 0 1.5 0v-1ZM10 6.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7ZM17.25 9.25a.75.75 0 0 0 0 1.5h1a.75.75 0 0 0 0-1.5h-1ZM10 17a.75.75 0 0 0-.75.75v1a.75.75 0 0 0 1.5 0v-1A.75.75 0 0 0 10 17ZM2.75 9.25a.75.75 0 0 0 0 1.5h1a.75.75 0 0 0 0-1.5h-1ZM4.22 4.22a.75.75 0 0 0 0 1.06l.707.707a.75.75 0 0 0 1.06-1.06L5.28 4.22a.75.75 0 0 0-1.06 0ZM15.78 4.22a.75.75 0 0 0-1.06 0l-.707.707a.75.75 0 0 0 1.06 1.06l.707-.707a.75.75 0 0 0 0-1.06ZM4.22 15.78a.75.75 0 0 0 1.06 0l.707-.707a.75.75 0 0 0-1.06-1.06l-.707.707a.75.75 0 0 0 0 1.06ZM14.013 14.013a.75.75 0 0 0 0 1.06l.707.707a.75.75 0 0 0 1.06-1.06l-.707-.707a.75.75 0 0 0-1.06 0Z" />
-      </svg>
-    ),
-  },
-  {
-    id: 'nearby',
-    label: 'Nearby',
-    sublabel: 'Use my location',
-    icon: (
-      <svg viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4 shrink-0" aria-hidden="true">
-        <path fillRule="evenodd" d="M9.69 18.933l.003.001C9.89 19.02 10 19 10 19s.11.02.308-.066l.002-.001.006-.003.018-.008a5.741 5.741 0 0 0 .281-.14c.186-.096.446-.24.757-.433.62-.384 1.445-.966 2.274-1.765C15.302 14.988 17 12.493 17 9A7 7 0 1 0 3 9c0 3.492 1.698 5.988 3.355 7.584a13.731 13.731 0 0 0 2.273 1.765 11.842 11.842 0 0 0 .976.544l.062.029.018.008.006.003ZM10 11.25a2.25 2.25 0 1 0 0-4.5 2.25 2.25 0 0 0 0 4.5Z" clipRule="evenodd" />
-      </svg>
-    ),
-  },
-];
+// ---------------------------------------------------------------------------
+// Icons
+// ---------------------------------------------------------------------------
 
-export default function SearchBar({ large = false }: { large?: boolean }) {
+const IconSearch = (
+  <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.75" className="h-4 w-4 shrink-0" aria-hidden="true">
+    <circle cx="9" cy="9" r="5.5" />
+    <path d="m16 16-2.5-2.5" strokeLinecap="round" />
+  </svg>
+);
+
+const IconMic = (
+  <svg viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4 shrink-0" aria-hidden="true">
+    <path d="M10 2a3 3 0 0 0-3 3v5a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" />
+    <path fillRule="evenodd" d="M4.25 9.5a.75.75 0 0 1 .75.75 5 5 0 0 0 10 0 .75.75 0 0 1 1.5 0 6.5 6.5 0 0 1-5.75 6.46V18.5h2a.75.75 0 0 1 0 1.5h-5.5a.75.75 0 0 1 0-1.5h2v-1.79A6.5 6.5 0 0 1 3.5 10.25a.75.75 0 0 1 .75-.75Z" clipRule="evenodd" />
+  </svg>
+);
+
+const IconSun = (
+  <svg viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4 shrink-0" aria-hidden="true">
+    <path d="M10.75 2.75a.75.75 0 0 0-1.5 0v1a.75.75 0 0 0 1.5 0v-1ZM10 6.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7ZM17.25 9.25a.75.75 0 0 0 0 1.5h1a.75.75 0 0 0 0-1.5h-1ZM10 17a.75.75 0 0 0-.75.75v1a.75.75 0 0 0 1.5 0v-1A.75.75 0 0 0 10 17ZM2.75 9.25a.75.75 0 0 0 0 1.5h1a.75.75 0 0 0 0-1.5h-1ZM4.22 4.22a.75.75 0 0 0 0 1.06l.707.707a.75.75 0 0 0 1.06-1.06L5.28 4.22a.75.75 0 0 0-1.06 0ZM15.78 4.22a.75.75 0 0 0-1.06 0l-.707.707a.75.75 0 0 0 1.06 1.06l.707-.707a.75.75 0 0 0 0-1.06ZM4.22 15.78a.75.75 0 0 0 1.06 0l.707-.707a.75.75 0 0 0-1.06-1.06l-.707.707a.75.75 0 0 0 0 1.06ZM14.013 14.013a.75.75 0 0 0 0 1.06l.707.707a.75.75 0 0 0 1.06-1.06l-.707-.707a.75.75 0 0 0-1.06 0Z" />
+  </svg>
+);
+
+const IconPin = (
+  <svg viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4 shrink-0" aria-hidden="true">
+    <path fillRule="evenodd" d="M9.69 18.933l.003.001C9.89 19.02 10 19 10 19s.11.02.308-.066l.002-.001.006-.003.018-.008a5.741 5.741 0 0 0 .281-.14c.186-.096.446-.24.757-.433.62-.384 1.445-.966 2.274-1.765C15.302 14.988 17 12.493 17 9A7 7 0 1 0 3 9c0 3.492 1.698 5.988 3.355 7.584a13.731 13.731 0 0 0 2.273 1.765 11.842 11.842 0 0 0 .976.544l.062.029.018.008.006.003ZM10 11.25a2.25 2.25 0 1 0 0-4.5 2.25 2.25 0 0 0 0 4.5Z" clipRule="evenodd" />
+  </svg>
+);
+
+// ---------------------------------------------------------------------------
+// Component
+// ---------------------------------------------------------------------------
+
+export default function SearchBar({
+  large = false,
+  assistantEnabled = false,
+}: {
+  large?: boolean;
+  assistantEnabled?: boolean;
+}) {
   const router = useRouter();
   const [q, setQ] = useState('');
   const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
   const [open, setOpen] = useState(false);
   const [activeIdx, setActiveIdx] = useState(-1);
-  const [mode, setMode] = useState<Mode>('location');
+  const [mode, setMode] = useState<Mode>(() =>
+    large && assistantEnabled ? 'describe' : 'location',
+  );
   const [interpreting, setInterpreting] = useState(false);
   const [geoState, setGeoState] = useState<'idle' | 'loading' | 'error'>('idle');
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  // Modes config — label and sublabel adapt when assistant is enabled
+  const MODES: { id: Mode; label: string; sublabel: string; icon: React.ReactNode }[] = [
+    {
+      id: 'location',
+      label: 'Location',
+      sublabel: 'City, ZIP, or address',
+      icon: IconSearch,
+    },
+    {
+      id: 'describe',
+      label: assistantEnabled ? 'Ask Emlakie' : 'Describe',
+      sublabel: assistantEnabled ? 'AI voice search' : 'Your ideal rental',
+      icon: assistantEnabled ? IconMic : IconSun,
+    },
+    {
+      id: 'nearby',
+      label: 'Nearby',
+      sublabel: 'Use my location',
+      icon: IconPin,
+    },
+  ];
 
   useEffect(() => {
     if (mode !== 'location') { setSuggestions([]); setOpen(false); return; }
@@ -165,6 +195,11 @@ export default function SearchBar({ large = false }: { large?: boolean }) {
     navigate(active, val);
   }
 
+  // Dispatch a custom event picked up by AssistantClient to open the panel.
+  const openAssistant = useCallback(() => {
+    window.dispatchEvent(new CustomEvent('emlakie:open-assistant'));
+  }, []);
+
   function onKeyDown(e: React.KeyboardEvent) {
     if (!open || suggestions.length === 0) return;
     if (e.key === 'ArrowDown') {
@@ -179,13 +214,15 @@ export default function SearchBar({ large = false }: { large?: boolean }) {
     }
   }
 
-  const placeholder =
-    mode === 'describe'
-      ? 'e.g. "Pet-friendly 2BR near downtown Austin under $2,000"'
-      : 'City, ZIP, address, or neighborhood';
-
   const isDescribe = mode === 'describe';
   const isNearby = mode === 'nearby';
+  const isAskMode = isDescribe && assistantEnabled;
+
+  const placeholder = isDescribe
+    ? assistantEnabled
+      ? 'Find me a pet-friendly two-bedroom under $2,500.'
+      : 'e.g. "Pet-friendly 2BR near downtown Austin under $2,000"'
+    : 'City, ZIP, address, or neighborhood';
 
   // ── Compact (non-homepage) variant ──────────────────────────────────────────
   if (!large) {
@@ -247,7 +284,7 @@ export default function SearchBar({ large = false }: { large?: boolean }) {
       <div className="mb-3 grid grid-cols-3 gap-2" role="tablist" aria-label="Search mode">
         {MODES.map((m) => {
           const isActive = mode === m.id;
-          const isViolet = m.id === 'describe' && isActive;
+          const isAsk = m.id === 'describe' && assistantEnabled;
           return (
             <button
               key={m.id}
@@ -259,16 +296,16 @@ export default function SearchBar({ large = false }: { large?: boolean }) {
               className={[
                 'group relative flex items-center gap-2.5 rounded-2xl border px-3.5 py-3 text-left transition-all duration-200',
                 isActive
-                  ? isViolet
-                    ? 'border-violet-200 bg-white shadow-sm shadow-violet-100'
-                    : 'border-gray-200 bg-white shadow-sm'
+                  ? 'border-brand-200 bg-white shadow-sm shadow-brand-100'
                   : 'border-transparent bg-gray-50 hover:bg-gray-100 hover:border-gray-100',
               ].join(' ')}
             >
               <span className={[
                 'flex h-7 w-7 shrink-0 items-center justify-center rounded-lg transition-colors',
                 isActive
-                  ? isViolet ? 'bg-violet-100 text-violet-600' : 'bg-brand-50 text-brand-600'
+                  ? isAsk
+                    ? 'bg-brand-600 text-white'
+                    : 'bg-brand-50 text-brand-600'
                   : 'bg-gray-100 text-gray-400 group-hover:bg-gray-200 group-hover:text-gray-500',
               ].join(' ')}>
                 {m.icon}
@@ -276,17 +313,13 @@ export default function SearchBar({ large = false }: { large?: boolean }) {
               <span className="min-w-0">
                 <span className={[
                   'block text-[13px] font-semibold leading-tight truncate',
-                  isActive
-                    ? isViolet ? 'text-violet-700' : 'text-gray-900'
-                    : 'text-gray-500 group-hover:text-gray-700',
+                  isActive ? 'text-gray-900' : 'text-gray-500 group-hover:text-gray-700',
                 ].join(' ')}>
                   {m.label}
                 </span>
                 <span className={[
                   'block text-[11px] leading-tight truncate mt-0.5',
-                  isActive
-                    ? isViolet ? 'text-violet-500' : 'text-gray-400'
-                    : 'text-gray-400',
+                  isActive ? 'text-gray-400' : 'text-gray-400',
                 ].join(' ')}>
                   {m.sublabel}
                 </span>
@@ -340,18 +373,26 @@ export default function SearchBar({ large = false }: { large?: boolean }) {
           onSubmit={onSubmit}
           className={[
             'flex w-full overflow-hidden rounded-xl bg-white transition-all duration-200',
-            isDescribe
+            isAskMode
+              ? 'shadow-[0_4px_24px_rgba(22,163,74,0.15)] ring-1 ring-brand-200 hover:shadow-[0_6px_32px_rgba(22,163,74,0.22)]'
+              : isDescribe
               ? 'shadow-[0_4px_24px_rgba(139,92,246,0.15)] ring-1 ring-violet-200 hover:shadow-[0_6px_32px_rgba(139,92,246,0.22)]'
               : 'shadow-[0_4px_24px_rgba(0,0,0,0.10)] hover:shadow-[0_6px_32px_rgba(0,0,0,0.14)]',
           ].join(' ')}
         >
+          {/* Leading icon inside input */}
           {isDescribe && (
-            <span className="flex items-center pl-4 text-violet-400" aria-hidden="true">
-              <svg viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4 shrink-0">
-                <path d="M10.75 2.75a.75.75 0 0 0-1.5 0v1a.75.75 0 0 0 1.5 0v-1ZM10 6.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7ZM17.25 9.25a.75.75 0 0 0 0 1.5h1a.75.75 0 0 0 0-1.5h-1ZM10 17a.75.75 0 0 0-.75.75v1a.75.75 0 0 0 1.5 0v-1A.75.75 0 0 0 10 17ZM2.75 9.25a.75.75 0 0 0 0 1.5h1a.75.75 0 0 0 0-1.5h-1ZM4.22 4.22a.75.75 0 0 0 0 1.06l.707.707a.75.75 0 0 0 1.06-1.06L5.28 4.22a.75.75 0 0 0-1.06 0ZM15.78 4.22a.75.75 0 0 0-1.06 0l-.707.707a.75.75 0 0 0 1.06 1.06l.707-.707a.75.75 0 0 0 0-1.06ZM4.22 15.78a.75.75 0 0 0 1.06 0l.707-.707a.75.75 0 0 0-1.06-1.06l-.707.707a.75.75 0 0 0 0 1.06ZM14.013 14.013a.75.75 0 0 0 0 1.06l.707.707a.75.75 0 0 0 1.06-1.06l-.707-.707a.75.75 0 0 0-1.06 0Z" />
-              </svg>
+            <span
+              className={[
+                'flex items-center pl-4',
+                isAskMode ? 'text-brand-500' : 'text-violet-400',
+              ].join(' ')}
+              aria-hidden="true"
+            >
+              {isAskMode ? IconMic : IconSun}
             </span>
           )}
+
           <label htmlFor="search-q" className="sr-only">Search rentals</label>
           <input
             id="search-q"
@@ -368,11 +409,11 @@ export default function SearchBar({ large = false }: { large?: boolean }) {
             aria-controls="search-suggestions"
             aria-activedescendant={activeIdx >= 0 ? `suggestion-${activeIdx}` : undefined}
             className={[
-              'min-w-0 flex-1 py-4 text-lg text-gray-900 placeholder-gray-300 outline-none',
+              'min-w-0 flex-1 py-4 text-lg text-gray-900 placeholder-gray-400 outline-none',
               isDescribe ? 'px-3 focus:ring-0' : 'px-5 focus:ring-2 focus:ring-inset focus:ring-brand-500',
-              'placeholder-gray-500',
             ].join(' ')}
           />
+
           {q && (
             <button
               type="button"
@@ -385,13 +426,40 @@ export default function SearchBar({ large = false }: { large?: boolean }) {
               </svg>
             </button>
           )}
+
+          {/* Voice CTA button — only when assistant is enabled and in ask mode */}
+          {isAskMode && (
+            <button
+              type="button"
+              onClick={openAssistant}
+              aria-label="Open AI leasing assistant"
+              className={[
+                'flex items-center gap-2 border-l border-brand-100 px-5',
+                'text-sm font-semibold text-brand-700',
+                'transition hover:bg-brand-50',
+                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-500',
+              ].join(' ')}
+            >
+              <svg viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4 shrink-0" aria-hidden="true">
+                <path d="M10 2a3 3 0 0 0-3 3v5a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" />
+                <path fillRule="evenodd" d="M4.25 9.5a.75.75 0 0 1 .75.75 5 5 0 0 0 10 0 .75.75 0 0 1 1.5 0 6.5 6.5 0 0 1-5.75 6.46V18.5h2a.75.75 0 0 1 0 1.5h-5.5a.75.75 0 0 1 0-1.5h2v-1.79A6.5 6.5 0 0 1 3.5 10.25a.75.75 0 0 1 .75-.75Z" clipRule="evenodd" />
+              </svg>
+              <span className="hidden sm:inline whitespace-nowrap">Speak with Emlakie</span>
+            </button>
+          )}
+
+          {/* Submit button */}
           <button
             type="submit"
             aria-label={isDescribe ? 'Search with AI' : 'Search'}
             disabled={interpreting}
             className={[
-              'flex items-center gap-2 px-7 font-semibold text-white transition disabled:opacity-70',
-              isDescribe ? 'bg-violet-600 hover:bg-violet-700' : 'bg-brand-600 hover:bg-brand-700',
+              'flex items-center gap-2 px-5 sm:px-7 font-semibold text-white transition disabled:opacity-70',
+              isAskMode
+                ? 'bg-brand-600 hover:bg-brand-700'
+                : isDescribe
+                ? 'bg-violet-600 hover:bg-violet-700'
+                : 'bg-brand-600 hover:bg-brand-700',
             ].join(' ')}
           >
             {interpreting ? (

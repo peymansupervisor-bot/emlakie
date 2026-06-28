@@ -7,6 +7,7 @@ import TrendingCities from '@/components/TrendingCities';
 import Button from '@/components/ui/Button';
 import SectionHeading from '@/components/ui/SectionHeading';
 import { getListings, getTopStates } from '@/lib/api';
+import { ASSISTANT_ENABLED } from '@/lib/assistant/config';
 
 export const revalidate = 60;
 
@@ -117,13 +118,19 @@ export default async function HomePage() {
           <h1 className="text-center font-serif text-4xl font-bold leading-tight tracking-tight text-gray-900 sm:text-5xl">
             Find your next rental home.
           </h1>
-          <p className="mt-3 text-center text-sm text-gray-600 sm:text-base">
-            Rentals direct from landlords — no broker fees, no middlemen.
-          </p>
+          {ASSISTANT_ENABLED ? (
+            <p className="mt-3 text-center text-sm text-gray-600 sm:text-base">
+              Tell our AI leasing assistant what you&apos;re looking for. It can search live rentals, compare options, and speak multiple languages.
+            </p>
+          ) : (
+            <p className="mt-3 text-center text-sm text-gray-600 sm:text-base">
+              Rentals direct from landlords — no broker fees, no middlemen.
+            </p>
+          )}
 
           {/* Search bar */}
           <div className="mt-8 flex justify-center">
-            <SearchBar large />
+            <SearchBar large assistantEnabled={ASSISTANT_ENABLED} />
           </div>
 
           {/* Property type chips */}

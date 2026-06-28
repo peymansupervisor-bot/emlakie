@@ -28,6 +28,15 @@ export default function AssistantClient() {
 
   const sessionStartedRef = useRef(false);
 
+  // Listen for the custom event fired by SearchBar's "Speak with Emlakie" button.
+  useEffect(() => {
+    function handleOpenRequest() {
+      if (!open) openPanel();
+    }
+    window.addEventListener('emlakie:open-assistant', handleOpenRequest);
+    return () => window.removeEventListener('emlakie:open-assistant', handleOpenRequest);
+  }, [open, openPanel]);
+
   useEffect(() => {
     if (open) {
       sessionStartedRef.current = true;

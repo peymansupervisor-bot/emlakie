@@ -21,9 +21,23 @@ export default async function LandlordsPage({ searchParams }: { searchParams: Pr
     authPage++;
   }
 
-  const [{ data: profileRows }, { data: listingCounts }] = await Promise.all([
+  // Paginate listings to get past Supabase's 1000-row PostgREST cap
+  let allListings: { landlord_id: string | null; status: string | null }[] = [];
+  const PAGE = 1000;
+  let listingPage = 0;
+  while (true) {
+    const { data: batch } = await sb
+      .from('listings')
+      .select('landlord_id, status')
+      .range(listingPage * PAGE, listingPage * PAGE + PAGE - 1);
+    const rows = batch ?? [];
+    allListings = allListings.concat(rows);
+    if (rows.length < PAGE) break;
+    listingPage++;
+  }
+
+  const [{ data: profileRows }] = await Promise.all([
     sb.from('profiles').select('id, first_name, last_name, display_name, phone, phone_verified, email, account_id, created_at'),
-    sb.from('listings').select('landlord_id, status').limit(1000000),
   ]);
 
   const now = new Date();
@@ -34,7 +48,7 @@ export default async function LandlordsPage({ searchParams }: { searchParams: Pr
   );
 
   const countMap: Record<string, { total: number; active: number }> = {};
-  for (const l of listingCounts ?? []) {
+  for (const l of allListings) {
     if (!l.landlord_id) continue;
     if (!countMap[l.landlord_id]) countMap[l.landlord_id] = { total: 0, active: 0 };
     countMap[l.landlord_id].total++;

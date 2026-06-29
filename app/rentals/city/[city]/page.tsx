@@ -26,8 +26,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     ? `${content.intro.slice(0, 155)}…`
     : `Browse rental apartments, houses, and condos in ${label}. Find your next home on EMLAKIE — listed directly by landlords, no broker fees.`;
 
+  const rawCityTitle = content ? content.headline : `Homes for Rent in ${label}`;
+  const cityTitle = rawCityTitle.length <= 51 ? rawCityTitle : { absolute: rawCityTitle.length <= 60 ? rawCityTitle : rawCityTitle.slice(0, 57) + '…' };
   return {
-    title: content ? content.headline : `Homes for Rent in ${label}`,
+    title: cityTitle,
     description,
     alternates: { canonical: `https://emlakie.com/rentals/city/${slug}` },
     openGraph: {

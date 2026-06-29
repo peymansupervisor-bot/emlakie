@@ -19,13 +19,13 @@ export async function generateStaticParams() {
  * bypasses the template entirely and is used verbatim — capped at 60 chars.
  */
 function buildTitle(rawTitle: string): Metadata['title'] {
-  if (rawTitle.length <= 51) {
-    // Template will produce: "<rawTitle> | EMLAKIE" (≤ 60 chars total) ✓
-    return rawTitle;
-  }
-  // Bypass template to keep the full composed title ≤ 60 chars.
-  const truncated = rawTitle.length <= 60 ? rawTitle : rawTitle.slice(0, 57) + '…';
-  return { absolute: truncated };
+  // Template appends " | EMLAKIE" (9 chars). Stay at ≤ 51 to keep total ≤ 60.
+  if (rawTitle.length <= 51) return rawTitle;
+  // For longer titles, bypass the template entirely with an absolute title.
+  // Strip any trailing ellipsis from source data before re-truncating.
+  const clean = rawTitle.replace(/…$/, '').trimEnd();
+  const fits = clean.length <= 60 ? clean : clean.slice(0, 57) + '…';
+  return { absolute: fits };
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {

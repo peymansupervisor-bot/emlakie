@@ -46,6 +46,11 @@ const STATE_CONFIG: Record<
     sublabel: 'Here are some homes that match your request.',
     indicator: <IdleIndicator />,
   },
+  ended: {
+    label: 'Session ended',
+    sublabel: 'Thanks for using Emlakie. Come back any time.',
+    indicator: <IdleIndicator />,
+  },
   error: {
     label: 'Something went wrong',
     sublabel: 'Please close and try again.',

@@ -1,9 +1,10 @@
 'use client';
 
+import { useEffect, useRef } from 'react';
 import { SUPPORTED_LANGUAGES } from '@/lib/assistant/config';
 import AssistantStateDisplay from './AssistantStateDisplay';
 import AssistantListingCard from './AssistantListingCard';
-import type { AssistantState, ListingRecommendation } from '@/types/assistant';
+import type { AssistantState, ListingRecommendation, AssistantActiveFilters } from '@/types/assistant';
 
 interface AssistantPanelProps {
   open: boolean;
@@ -12,6 +13,7 @@ interface AssistantPanelProps {
   onCancel: () => void;
   panelRef: React.RefObject<HTMLDivElement>;
   recommendations?: ListingRecommendation[];
+  activeFilters?: AssistantActiveFilters;
   errorCode?: string;
 }
 
@@ -34,9 +36,18 @@ export default function AssistantPanel({
   onCancel,
   panelRef,
   recommendations = [],
+  activeFilters,
   errorCode,
 }: AssistantPanelProps) {
   const langLine = SUPPORTED_LANGUAGES.map((l) => l.nameSelf).join(' · ');
+  const cardScrollRef = useRef<HTMLDivElement>(null);
+
+  // Item 14 — scroll cards back to start when model begins speaking
+  useEffect(() => {
+    if (displayState === 'speaking' && cardScrollRef.current) {
+      cardScrollRef.current.scrollTo({ left: 0, behavior: 'smooth' });
+    }
+  }, [displayState]);
   const isActive =
     displayState === 'listening' ||
     displayState === 'processing' ||
@@ -115,6 +126,9 @@ export default function AssistantPanel({
           </button>
         </div>
 
+        {/* ── Active filter strip (Item 11) ── */}
+        {activeFilters && <FilterStrip filters={activeFilters} />}
+
         {/* ── Listing cards ── */}
         {hasCards && (
           <div
@@ -122,6 +136,7 @@ export default function AssistantPanel({
             aria-label={`${recommendations.length} listing${recommendations.length === 1 ? '' : 's'} found`}
           >
             <div
+              ref={cardScrollRef}
               className="flex gap-2.5 overflow-x-auto px-4 py-3 scroll-smooth"
               style={{ scrollbarWidth: 'none' }}
             >
@@ -180,5 +195,55 @@ export default function AssistantPanel({
         </div>
       </div>
     </>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Filter strip — shows the active search filters as dismissible chips
+// ---------------------------------------------------------------------------
+
+function FilterStrip({ filters }: { filters: AssistantActiveFilters }) {
+  const chips: string[] = [];
+
+  if (filters.city) chips.push(filters.city);
+  if (filters.zip) chips.push(filters.zip);
+  if (filters.bedrooms) {
+    chips.push(filters.bedrooms === '0' ? 'Studio' : `${filters.bedrooms} bed`);
+  }
+  if (filters.propertyType) {
+    chips.push(filters.propertyType.charAt(0).toUpperCase() + filters.propertyType.slice(1));
+  }
+  if (filters.minPrice && filters.maxPrice) {
+    chips.push(`$${Number(filters.minPrice).toLocaleString()}–$${Number(filters.maxPrice).toLocaleString()}`);
+  } else if (filters.minPrice) {
+    chips.push(`From $${Number(filters.minPrice).toLocaleString()}`);
+  } else if (filters.maxPrice) {
+    chips.push(`Up to $${Number(filters.maxPrice).toLocaleString()}`);
+  }
+  if (filters.amenities) {
+    filters.amenities.split(',').slice(0, 2).forEach((a) => chips.push(a.trim()));
+  }
+
+  if (chips.length === 0) return null;
+
+  return (
+    <div
+      className="flex-shrink-0 border-b border-gray-50 px-4 py-2"
+      aria-label="Active search filters"
+    >
+      <div className="flex items-center gap-1.5 overflow-x-auto" style={{ scrollbarWidth: 'none' }}>
+        <span className="flex-shrink-0 text-[10px] font-medium text-gray-400 uppercase tracking-wide">
+          Searching:
+        </span>
+        {chips.map((chip) => (
+          <span
+            key={chip}
+            className="flex-shrink-0 rounded-full bg-brand-50 px-2 py-0.5 text-[11px] font-medium text-brand-700"
+          >
+            {chip}
+          </span>
+        ))}
+      </div>
+    </div>
   );
 }

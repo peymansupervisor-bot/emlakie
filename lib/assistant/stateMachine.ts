@@ -152,7 +152,7 @@ export function toDisplayState(s: AssistantSessionState): AssistantState {
     case 'speaking':               return 'speaking';
     case 'showingRecommendations': return 'showingRecommendations';
     case 'error':                  return 'error';
-    case 'closed':                 return 'idle';
+    case 'closed':                 return 'ended';
   }
 }
 

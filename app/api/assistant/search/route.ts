@@ -122,5 +122,6 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     shown: results.length,
     speakCount: Math.min(results.length, SPEAK_COUNT),
     results,
+    activeFilters: filters,       // echoed back for the UI filter strip
   });
 }

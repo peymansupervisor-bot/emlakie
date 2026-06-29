@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useCallback } from 'react';
 import { useAssistantPanel } from '@/hooks/assistant/useAssistantPanel';
 import { useRealtimeSession } from '@/hooks/assistant/useRealtimeSession';
 import AssistantLauncher from './AssistantLauncher';
@@ -22,6 +22,7 @@ export default function AssistantClient() {
     sessionState,
     displayState,
     recommendations,
+    activeFilters,
     open: openSession,
     close: closeSession,
     cancel,
@@ -40,13 +41,19 @@ export default function AssistantClient() {
     }
   }, [open, openSession, closeSession]);
 
+  // Graceful close — disconnect immediately but show "Session ended" for 1.5s
+  const handleClose = useCallback(() => {
+    closeSession();
+    setTimeout(() => closePanel(), 1500);
+  }, [closeSession, closePanel]);
+
   return (
     <>
       {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
       <audio ref={audioRef} autoPlay />
 
       <AssistantLauncher
-        onClick={open ? closePanel : openPanel}
+        onClick={open ? handleClose : openPanel}
         panelOpen={open}
         displayState={displayState}
         buttonRef={launcherRef}
@@ -54,10 +61,11 @@ export default function AssistantClient() {
       <AssistantPanel
         open={open}
         displayState={displayState}
-        onClose={closePanel}
+        onClose={handleClose}
         onCancel={cancel}
         panelRef={panelRef}
         recommendations={recommendations}
+        activeFilters={activeFilters ?? undefined}
         errorCode={errorCode}
       />
     </>

@@ -39,6 +39,7 @@ import type {
   AssistantMessage,
   ListingRecommendation,
   AssistantSearchResponse,
+  AssistantActiveFilters,
 } from '@/types/assistant';
 
 export interface UseRealtimeSessionReturn {
@@ -48,6 +49,8 @@ export interface UseRealtimeSessionReturn {
   messages: AssistantMessage[];
   /** Populated when the model calls search_listings. Up to 10 listings. */
   recommendations: ListingRecommendation[];
+  /** Filters from the most recent search_listings call — drives the filter strip. */
+  activeFilters: AssistantActiveFilters | null;
   /** Always false — no text input. */
   inputEnabled: boolean;
   open: () => void;
@@ -62,6 +65,7 @@ export function useRealtimeSession(
 ): UseRealtimeSessionReturn {
   const [sessionState, dispatch] = useReducer(transition, INITIAL_STATE);
   const [recommendations, setRecommendations] = useState<ListingRecommendation[]>([]);
+  const [activeFilters, setActiveFilters] = useState<AssistantActiveFilters | null>(null);
   const engineRef = useRef<RealtimeEngine | null>(null);
 
   // -------------------------------------------------------------------------
@@ -72,6 +76,7 @@ export function useRealtimeSession(
     if (!canOpen(sessionState)) return;
     dispatch({ type: 'OPEN' });
     setRecommendations([]);
+    setActiveFilters(null);
 
     const engine = new RealtimeEngine(
       audioRef,
@@ -97,6 +102,7 @@ export function useRealtimeSession(
           const res = result as AssistantSearchResponse;
           if (Array.isArray(res?.results)) {
             setRecommendations(res.results);
+            if (res.activeFilters) setActiveFilters(res.activeFilters);
             dispatch({ type: 'RECOMMENDATIONS_RECEIVED', recommendations: res.results });
           }
         },
@@ -120,6 +126,7 @@ export function useRealtimeSession(
     engineRef.current?.disconnect();
     engineRef.current = null;
     setRecommendations([]);
+    setActiveFilters(null);
     dispatch({ type: 'CLOSE' });
   }, []);
 
@@ -147,6 +154,7 @@ export function useRealtimeSession(
     displayState: toDisplayState(sessionState),
     messages: [],
     recommendations,
+    activeFilters,
     inputEnabled: false,
     open,
     close,

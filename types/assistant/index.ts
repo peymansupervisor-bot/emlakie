@@ -66,6 +66,7 @@ export type AssistantState =
   | 'processing'
   | 'speaking'
   | 'showingRecommendations'
+  | 'ended'
   | 'error';
 
 // ---------------------------------------------------------------------------
@@ -128,6 +129,17 @@ export interface ListingRecommendation {
   photos: string[];
 }
 
+/** Active search filters — used to render the filter strip in AssistantPanel. */
+export interface AssistantActiveFilters {
+  city?: string;
+  zip?: string;
+  minPrice?: string;
+  maxPrice?: string;
+  bedrooms?: string;
+  propertyType?: string;
+  amenities?: string;
+}
+
 /** Shape of the full response from POST /api/assistant/search. */
 export interface AssistantSearchResponse {
   /** Total matching listings in Supabase. */
@@ -137,6 +149,8 @@ export interface AssistantSearchResponse {
   /** Number the model should summarize aloud (max 3). */
   speakCount: number;
   results: ListingRecommendation[];
+  /** The filters applied in this search — used to render the active filter strip. */
+  activeFilters?: AssistantActiveFilters;
 }
 
 // ---------------------------------------------------------------------------

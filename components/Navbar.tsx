@@ -44,10 +44,7 @@ const menus = [
   },
 ];
 
-// ── Desktop dropdown — fully keyboard accessible (WCAG 2.1 AA) ──────────────
-// Pattern: disclosure button (aria-expanded + aria-controls + aria-haspopup)
-// with roving focus inside the panel via Arrow keys + Home/End.
-// Escape closes and returns focus to the trigger button.
+// ── Desktop dropdown — click-to-open, fully keyboard accessible (WCAG 2.1 AA) ─
 function DropdownMenu({
   menu,
   open,
@@ -63,9 +60,7 @@ function DropdownMenu({
   const panelId = `nav-panel-${id}`;
   const triggerRef = useRef<HTMLButtonElement>(null);
   const itemRefs = useRef<(HTMLAnchorElement | null)[]>([]);
-  const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Re-focus trigger when panel closes via keyboard
   const closeAndRefocus = useCallback(() => {
     onClose();
     triggerRef.current?.focus();
@@ -74,55 +69,22 @@ function DropdownMenu({
   function handleTriggerKeyDown(e: React.KeyboardEvent) {
     if (e.key === 'Enter' || e.key === ' ' || e.key === 'ArrowDown') {
       e.preventDefault();
-      onOpen();
-      // Move focus to first item on next paint
-      requestAnimationFrame(() => itemRefs.current[0]?.focus());
+      if (!open) { onOpen(); requestAnimationFrame(() => itemRefs.current[0]?.focus()); }
     }
     if (e.key === 'Escape') closeAndRefocus();
   }
 
   function handleItemKeyDown(e: React.KeyboardEvent, idx: number) {
-    if (e.key === 'Escape') {
-      e.preventDefault();
-      closeAndRefocus();
-      return;
-    }
-    if (e.key === 'ArrowDown') {
-      e.preventDefault();
-      itemRefs.current[Math.min(idx + 1, menu.items.length - 1)]?.focus();
-    }
-    if (e.key === 'ArrowUp') {
-      e.preventDefault();
-      if (idx === 0) triggerRef.current?.focus();
-      else itemRefs.current[idx - 1]?.focus();
-    }
-    if (e.key === 'Home') {
-      e.preventDefault();
-      itemRefs.current[0]?.focus();
-    }
-    if (e.key === 'End') {
-      e.preventDefault();
-      itemRefs.current[menu.items.length - 1]?.focus();
-    }
-    // Tab closes the panel naturally — let the browser handle it
-    if (e.key === 'Tab') onClose();
-  }
-
-  // Mouse hover helpers with delay to prevent accidental close
-  function handleMouseEnter() {
-    if (closeTimer.current) clearTimeout(closeTimer.current);
-    onOpen();
-  }
-  function handleMouseLeave() {
-    closeTimer.current = setTimeout(onClose, 80);
+    if (e.key === 'Escape') { e.preventDefault(); closeAndRefocus(); return; }
+    if (e.key === 'ArrowDown') { e.preventDefault(); itemRefs.current[Math.min(idx + 1, menu.items.length - 1)]?.focus(); }
+    if (e.key === 'ArrowUp')   { e.preventDefault(); idx === 0 ? triggerRef.current?.focus() : itemRefs.current[idx - 1]?.focus(); }
+    if (e.key === 'Home')      { e.preventDefault(); itemRefs.current[0]?.focus(); }
+    if (e.key === 'End')       { e.preventDefault(); itemRefs.current[menu.items.length - 1]?.focus(); }
+    if (e.key === 'Tab')       onClose();
   }
 
   return (
-    <div
-      className="relative"
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-    >
+    <div className="relative">
       <button
         ref={triggerRef}
         type="button"
@@ -130,12 +92,7 @@ function DropdownMenu({
         aria-expanded={open}
         aria-controls={panelId}
         onKeyDown={handleTriggerKeyDown}
-        onClick={(e) => {
-          // Mouse hover (mouseenter) already opens the menu before onClick fires.
-          // Only handle programmatic activation (e.g. screen readers, detail===0).
-          // Keyboard users go through handleTriggerKeyDown with e.preventDefault().
-          if (e.detail === 0) open ? onClose() : onOpen();
-        }}
+        onClick={() => open ? onClose() : onOpen()}
         className={`flex items-center gap-1 rounded-lg px-3 py-2 font-display text-sm font-medium tracking-tight transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-1 ${
           open ? 'text-gray-900' : 'text-gray-500 hover:text-gray-900'
         }`}
@@ -144,32 +101,24 @@ function DropdownMenu({
         <svg
           viewBox="0 0 10 6"
           className={`h-[9px] w-[9px] transition-transform duration-200 ${open ? 'rotate-180' : ''}`}
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.5"
-          strokeLinecap="round"
+          fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"
           aria-hidden="true"
         >
           <path d="M1 1l4 4 4-4" />
         </svg>
       </button>
 
-      {/* Dropdown panel */}
       <div
         id={panelId}
         role="region"
         aria-label={`${menu.label} menu`}
-        className={`absolute left-1/2 top-full z-50 mt-1 w-64 -translate-x-1/2 transition-all duration-150 ${
-          open
-            ? 'pointer-events-auto translate-y-0 opacity-100'
-            : 'pointer-events-none -translate-y-1 opacity-0'
+        className={`absolute right-0 top-full z-50 mt-1 w-64 transition-all duration-150 ${
+          open ? 'pointer-events-auto translate-y-0 opacity-100' : 'pointer-events-none -translate-y-1 opacity-0'
         }`}
       >
-        {/* Decorative arrow */}
         <div className="mx-auto mb-[-1px] h-2 w-4 overflow-hidden" aria-hidden="true">
           <div className="mx-auto h-3 w-3 origin-bottom-left rotate-45 border-l border-t border-gray-200/80 bg-white shadow-sm" />
         </div>
-
         <div className="overflow-hidden rounded-2xl border border-gray-200/80 bg-white/95 shadow-xl shadow-black/[0.08] backdrop-blur-sm">
           <ul role="list" className="py-2">
             {menu.items.map((item, idx) => (
@@ -256,6 +205,7 @@ export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [openMenu, setOpenMenu] = useState<string | null>(null);
   const [modal, setModal] = useState<'listing' | 'signin' | null>(null);
+  const navRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -267,10 +217,14 @@ export default function Navbar() {
     return () => subscription.unsubscribe();
   }, []);
 
-  // Close any open dropdown when clicking outside
+  // Close open dropdown when clicking outside the nav
   useEffect(() => {
     if (!openMenu) return;
-    function handleClick() { setOpenMenu(null); }
+    function handleClick(e: MouseEvent) {
+      if (navRef.current && !navRef.current.contains(e.target as Node)) {
+        setOpenMenu(null);
+      }
+    }
     document.addEventListener('mousedown', handleClick);
     return () => document.removeEventListener('mousedown', handleClick);
   }, [openMenu]);
@@ -279,7 +233,7 @@ export default function Navbar() {
 
   return (
     <>
-      <header className="sticky top-0 z-50 border-b border-gray-100 bg-white/95 backdrop-blur-sm">
+      <header ref={navRef} className="sticky top-0 z-50 border-b border-gray-100 bg-white/95 backdrop-blur-sm">
         <nav
           aria-label="Main navigation"
           className="mx-auto flex h-[64px] max-w-7xl items-center justify-between gap-4 px-4 sm:px-6"

@@ -1,3 +1,4 @@
+import 'server-only'
 import { createSupabaseServer, createSupabaseAdmin } from '@/lib/supabase-server'
 import { redirect } from 'next/navigation'
 

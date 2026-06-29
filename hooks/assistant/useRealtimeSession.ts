@@ -97,6 +97,7 @@ export function useRealtimeSession(
           const res = result as AssistantSearchResponse;
           if (Array.isArray(res?.results)) {
             setRecommendations(res.results);
+            dispatch({ type: 'RECOMMENDATIONS_RECEIVED', recommendations: res.results });
           }
         },
 
@@ -127,6 +128,7 @@ export function useRealtimeSession(
   // -------------------------------------------------------------------------
 
   const cancel = useCallback(() => {
+    engineRef.current?.cancel();
     dispatch({ type: 'CANCEL' });
   }, []);
 

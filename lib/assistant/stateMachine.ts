@@ -85,11 +85,12 @@ export function transition(
       return state;
 
     case 'VOICE_INPUT':
-      if (phase === 'listening') return { phase: 'thinking', userMessage: '' };
+      if (phase === 'listening' || phase === 'showingRecommendations')
+        return { phase: 'thinking', userMessage: '' };
       return state;
 
     case 'RESPONSE_RECEIVED':
-      if (phase === 'thinking')
+      if (phase === 'thinking' || phase === 'showingRecommendations')
         return { phase: 'speaking', assistantMessage: event.message };
       return state;
 
@@ -105,7 +106,8 @@ export function transition(
     }
 
     case 'SPEAKING_COMPLETE':
-      if (phase === 'speaking') return { phase: 'listening' };
+      if (phase === 'speaking' || phase === 'showingRecommendations')
+        return { phase: 'listening' };
       return state;
 
     case 'ERROR':

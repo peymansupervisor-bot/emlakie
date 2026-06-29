@@ -67,14 +67,7 @@ export default function AssistantLauncher({
       {/* Waveform icon */}
       <WaveformIcon active={isActive} />
 
-      {/* Text — visible on desktop, sr-only on very small screens */}
-      <span className="hidden sm:inline">
-        {panelOpen ? 'Close' : 'Talk to Emlakie'}
-      </span>
-      {/* Always visible on mobile as text (avoids icon-only confusion) */}
-      <span className="sm:hidden">
-        {panelOpen ? 'Close' : 'Talk to Emlakie'}
-      </span>
+      <span>{panelOpen ? 'Close' : 'Talk to Emlakie'}</span>
     </button>
   );
 }

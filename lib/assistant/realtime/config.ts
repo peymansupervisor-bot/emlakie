@@ -61,15 +61,16 @@ export const ASSISTANT_TOOLS = [
         },
         propertyType: {
           type: 'string',
-          enum: ['apartment', 'house', 'condo', 'studio', 'townhouse', 'room', 'adu', 'jadu', 'commercial'],
+          enum: ['apartment', 'house', 'condo', 'studio', 'townhouse', 'room', 'adu', 'jadu'],
           description: 'Property type, if specified.',
         },
         amenities: {
           type: 'string',
           description:
             'Comma-separated list of requested amenities. ' +
-            'Valid values: Pet-friendly, Pool, Gym, In-unit laundry, Parking, Garage, ' +
-            'EV charging, Furnished, Balcony, Air conditioning, Dishwasher, Fireplace.',
+            'Valid values: Pet-friendly, Pool, Gym, In-unit laundry, Laundry in building, ' +
+            'Parking, Garage, EV charging, Furnished, Balcony, Air conditioning, Heating, ' +
+            'Dishwasher, Hardwood floors, Storage, Fireplace.',
         },
         q: {
           type: 'string',

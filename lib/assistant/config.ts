@@ -166,6 +166,7 @@ export const AMENITY_VALUES = [
   'Hardwood floors',
   'EV charging',
   'Storage',
+  'Fireplace',
 ] as const;
 
 export type AmenityValue = typeof AMENITY_VALUES[number];

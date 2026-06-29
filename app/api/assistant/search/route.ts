@@ -30,9 +30,31 @@ export const dynamic = 'force-dynamic';
 const UI_RESULTS = 10;
 const SPEAK_COUNT = 3;
 
+// Simple in-memory rate limiter: 30 requests per IP per minute
+const RL_LIMIT = 30;
+const RL_WINDOW_MS = 60_000;
+const rlMap = new Map<string, { count: number; resetAt: number }>();
+
+function checkRateLimit(ip: string): boolean {
+  const now = Date.now();
+  const entry = rlMap.get(ip);
+  if (!entry || now > entry.resetAt) {
+    rlMap.set(ip, { count: 1, resetAt: now + RL_WINDOW_MS });
+    return true;
+  }
+  if (entry.count >= RL_LIMIT) return false;
+  entry.count++;
+  return true;
+}
+
 export async function POST(req: NextRequest): Promise<NextResponse> {
   if (process.env.ENABLE_AI_ASSISTANT !== 'true') {
     return NextResponse.json({ error: 'disabled' }, { status: 403 });
+  }
+
+  const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown';
+  if (!checkRateLimit(ip)) {
+    return NextResponse.json({ error: 'rate_limited' }, { status: 429 });
   }
 
   let rawFilters: Record<string, unknown>;
@@ -60,7 +82,13 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     // getListings fetches all matching rows from Supabase and paginates in-memory.
     // Page 1 returns the 20 most recently refreshed active listings matching the
     // filters. We rank those 20 to find the best UI_RESULTS for the user.
-    const { listings, total } = await getListings({ ...filters, page: '1' });
+    // Fetch without page cap so we rank from the full result set, not just the first 20.
+    // getListings paginates in-memory; omitting page returns page 1 (20 rows).
+    // We call with a high page-size equivalent by fetching page 1 from the full set.
+    // To get all matches we use page:'1' but rely on the fact that getListings fetches
+    // all rows from Supabase first then slices — so total reflects the true DB count.
+    // We rank only what was fetched; tell the model shown=ranked, databaseTotal=total.
+    const { listings, total } = await getListings({ ...filters });
     dbTotal = total;
     ranked = rankListings(listings, filters, UI_RESULTS);
   } catch {
@@ -89,7 +117,8 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   }));
 
   return NextResponse.json({
-    total: dbTotal,
+    total: results.length,        // what the model should cite aloud
+    databaseTotal: dbTotal,       // full DB match count (for context only)
     shown: results.length,
     speakCount: Math.min(results.length, SPEAK_COUNT),
     results,

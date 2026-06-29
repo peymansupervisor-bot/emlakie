@@ -233,6 +233,19 @@ export class RealtimeEngine {
     this.cb.onDisconnected?.();
   }
 
+  /** Cancel the model's current audio response and return to listening. */
+  cancel(): void {
+    const dc = this.dc;
+    if (dc && dc.readyState === 'open') {
+      dc.send(JSON.stringify({ type: 'response.cancel' }));
+    }
+    if (this.audioRef.current) {
+      this.audioRef.current.pause();
+      this.audioRef.current.srcObject = null;
+    }
+    this.isRespondingAudio = false;
+  }
+
   // -------------------------------------------------------------------------
   // Session setup
   // -------------------------------------------------------------------------

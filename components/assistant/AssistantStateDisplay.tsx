@@ -53,14 +53,48 @@ const STATE_CONFIG: Record<
   },
 };
 
+const ERROR_LABELS: Record<string, { label: string; sublabel: string }> = {
+  mic_permission_denied: {
+    label: 'Microphone blocked',
+    sublabel: 'Please enable your microphone in browser settings, then try again.',
+  },
+  mic_unavailable: {
+    label: 'Microphone unavailable',
+    sublabel: 'No microphone found. Please connect one and try again.',
+  },
+  webrtc_unsupported: {
+    label: 'Browser not supported',
+    sublabel: 'Please try Chrome, Edge, or Safari.',
+  },
+  datachannel_error: {
+    label: 'Connection dropped',
+    sublabel: 'The voice channel dropped. Please close and try again.',
+  },
+  openai_session_failed: {
+    label: 'Session failed',
+    sublabel: 'Could not reach the voice service. Please try again shortly.',
+  },
+  network_error: {
+    label: 'Network error',
+    sublabel: 'Check your connection and try again.',
+  },
+  assistant_not_enabled: {
+    label: 'Assistant unavailable',
+    sublabel: 'The AI assistant is not enabled. Contact support.',
+  },
+  openai_key_missing: {
+    label: 'Configuration error',
+    sublabel: 'Server misconfiguration — code: openai_key_missing.',
+  },
+};
+
 export default function AssistantStateDisplay({ state, errorCode }: AssistantStateDisplayProps) {
-  const cfg = {
-    ...STATE_CONFIG[state],
-    ...(state === 'error' && errorCode === 'mic_permission_denied' && {
-      label: 'Microphone blocked',
-      sublabel: 'Please enable your microphone in your browser settings, then try again.',
-    }),
-  };
+  const errorOverride =
+    state === 'error' && errorCode
+      ? (ERROR_LABELS[errorCode] ?? { label: 'Error', sublabel: `Code: ${errorCode}` })
+      : null;
+
+  const cfg = { ...STATE_CONFIG[state], ...errorOverride };
 
   return (
     <div

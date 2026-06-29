@@ -125,26 +125,17 @@ export async function POST(req: NextRequest) {
   }
   // ─────────────────────────────────────────────────────────────────────────
 
-  // Generate slug from address — reuse the same slug if this address was listed before,
-  // so Google keeps its SEO ranking for the URL across relists of the same property.
+  // Generate slug from address. Reuse the base slug only if it's not currently
+  // taken — preserves SEO ranking when a property is re-listed after being removed.
   const baseSlug = generateListingSlug(address, city, state, zip ?? undefined)
-  const { data: priorAtAddress } = await supabase
+  const { data: collisions } = await supabase
     .from('listings')
     .select('slug')
-    .eq('slug', baseSlug)
-    .limit(1)
-    .single()
+    .like('slug', `${baseSlug}%`)
+  const takenSlugs = new Set((collisions ?? []).map((r: { slug: string }) => r.slug))
   let slug = baseSlug
-  if (!priorAtAddress) {
-    // No prior listing at this address — check for accidental slug collisions on different addresses
-    const { data: collisions } = await supabase
-      .from('listings')
-      .select('slug')
-      .like('slug', `${baseSlug}%`)
-    const takenSlugs = new Set((collisions ?? []).map((r: { slug: string }) => r.slug))
-    let counter = 2
-    while (takenSlugs.has(slug)) slug = `${baseSlug}-${counter++}`
-  }
+  let counter = 2
+  while (takenSlugs.has(slug)) slug = `${baseSlug}-${counter++}`
 
   const { data, error } = await supabase
     .from('listings')

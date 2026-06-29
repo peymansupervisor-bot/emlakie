@@ -37,7 +37,7 @@ export async function POST(req: NextRequest) {
     // Use the landlord's own session so auth.uid() matches the folder path
     const { error } = await supabase.storage
       .from('listing-photos')
-      .upload(fullPath, new Blob([''], { type: 'text/plain' }), { upsert: true });
+      .upload(fullPath, new Blob([''], { type: 'application/octet-stream' }), { upsert: true });
     if (error && !error.message.includes('already exists')) {
       failed.push(`${fullPath}: ${error.message}`);
     }

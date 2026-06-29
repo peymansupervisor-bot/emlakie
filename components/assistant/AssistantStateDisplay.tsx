@@ -22,13 +22,13 @@ const STATE_CONFIG: Record<
     indicator: <ThinkingDots />,
   },
   greeting: {
-    label: 'Hello!',
-    sublabel: 'The assistant is introducing itself.',
-    indicator: <PulsingDot color="brand" />,
+    label: 'Emlakie is speaking',
+    sublabel: 'Your AI leasing assistant is greeting you.',
+    indicator: <SpeakingWave />,
   },
   listening: {
-    label: 'Listening…',
-    sublabel: 'Speak your question — I\'m here to help.',
+    label: 'Your turn',
+    sublabel: 'Speak your question — I\'m listening.',
     indicator: <ListeningWave />,
   },
   processing: {
@@ -37,9 +37,9 @@ const STATE_CONFIG: Record<
     indicator: <ThinkingDots />,
   },
   speaking: {
-    label: 'Speaking',
-    sublabel: 'The assistant is responding.',
-    indicator: <PulsingDot color="brand" />,
+    label: 'Emlakie is speaking',
+    sublabel: 'Tap "Stop speaking" to interrupt at any time.',
+    indicator: <SpeakingWave />,
   },
   showingRecommendations: {
     label: 'Results ready',
@@ -138,6 +138,42 @@ function IdleIndicator() {
       <rect x="27" y="22" width="3.5" height="12" rx="1.75" fill="#16a34a" />
       <rect x="32.5" y="19" width="3.5" height="18" rx="1.75" fill="#16a34a" />
       <rect x="38" y="23" width="3.5" height="10" rx="1.75" fill="#16a34a" />
+    </svg>
+  );
+}
+
+function SpeakingWave() {
+  return (
+    <svg
+      viewBox="0 0 56 56"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+      className="h-14 w-14"
+    >
+      {/* Filled green circle — distinguishes model speaking from user listening */}
+      <circle cx="28" cy="28" r="27" fill="#15803d" opacity="0.12" />
+      <circle cx="28" cy="28" r="20" fill="#16a34a" />
+      {/* White bars animate in a smooth rolling wave — distinct from ListeningWave */}
+      <rect x="16" y="24" width="3.5" height="8" rx="1.75" fill="white"
+        style={{ transformOrigin: '17.75px 28px', animation: 'speakingBar 1.4s ease-in-out infinite' }} />
+      <rect x="21.5" y="21" width="3.5" height="14" rx="1.75" fill="white"
+        style={{ transformOrigin: '23.25px 28px', animation: 'speakingBar 1.4s ease-in-out infinite 0.2s' }} />
+      <rect x="27" y="18" width="3.5" height="20" rx="1.75" fill="white"
+        style={{ transformOrigin: '28.75px 28px', animation: 'speakingBar 1.4s ease-in-out infinite 0.4s' }} />
+      <rect x="32.5" y="21" width="3.5" height="14" rx="1.75" fill="white"
+        style={{ transformOrigin: '34.25px 28px', animation: 'speakingBar 1.4s ease-in-out infinite 0.2s' }} />
+      <rect x="38" y="24" width="3.5" height="8" rx="1.75" fill="white"
+        style={{ transformOrigin: '39.75px 28px', animation: 'speakingBar 1.4s ease-in-out infinite' }} />
+      <style>{`
+        @keyframes speakingBar {
+          0%, 100% { transform: scaleY(0.5); opacity: 0.7; }
+          50% { transform: scaleY(1); opacity: 1; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          rect[style*="speakingBar"] { animation: none !important; }
+        }
+      `}</style>
     </svg>
   );
 }

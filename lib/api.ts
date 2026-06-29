@@ -138,10 +138,10 @@ export async function getHomepageListings(): Promise<Listing[]> {
     const [priorityRes, restRes] = await Promise.all([
       // Tier 0+1: sponsored listings + owner's listings — always included
       base.or(`boosted_until.gt.${now},landlord_id.eq.${OWNER_LANDLORD_ID}`),
-      // Tier 2: everyone else, newest first, capped at 50 to keep it fast
+      // Tier 2: everyone else — no date bias, highest rent handled client-side
       base.not('landlord_id', 'eq', OWNER_LANDLORD_ID)
           .or(`boosted_until.is.null,boosted_until.lte.${now}`)
-          .order('refreshed_at', { ascending: false })
+          .order('monthly_rent', { ascending: false })
           .limit(50),
     ]);
 

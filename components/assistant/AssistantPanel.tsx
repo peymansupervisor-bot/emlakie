@@ -1,7 +1,8 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import { SUPPORTED_LANGUAGES } from '@/lib/assistant/config';
+import { supabase } from '@/lib/supabase';
 import AssistantStateDisplay from './AssistantStateDisplay';
 import AssistantListingCard from './AssistantListingCard';
 import type { AssistantState, ListingRecommendation, AssistantActiveFilters } from '@/types/assistant';
@@ -41,6 +42,14 @@ export default function AssistantPanel({
 }: AssistantPanelProps) {
   const langLine = SUPPORTED_LANGUAGES.map((l) => l.nameSelf).join(' · ');
   const cardScrollRef = useRef<HTMLDivElement>(null);
+  const [saveState, setSaveState] = useState<'idle' | 'saving' | 'saved' | 'signin'>('idle');
+  const [copyState, setCopyState] = useState<'idle' | 'copied'>('idle');
+
+  // Reset save/copy state when recommendations change
+  useEffect(() => {
+    setSaveState('idle');
+    setCopyState('idle');
+  }, [recommendations]);
 
   // Item 14 — scroll cards back to start when model begins speaking
   useEffect(() => {
@@ -48,6 +57,38 @@ export default function AssistantPanel({
       cardScrollRef.current.scrollTo({ left: 0, behavior: 'smooth' });
     }
   }, [displayState]);
+
+  const handleSaveAll = useCallback(async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      setSaveState('signin');
+      return;
+    }
+    setSaveState('saving');
+    try {
+      const res = await fetch('/api/assistant/save', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${session.access_token}`,
+        },
+        body: JSON.stringify({ listing_ids: recommendations.map((r) => r.id) }),
+      });
+      setSaveState(res.ok ? 'saved' : 'idle');
+    } catch {
+      setSaveState('idle');
+    }
+  }, [recommendations]);
+
+  const handleCopyLinks = useCallback(() => {
+    const lines = recommendations
+      .map((r, i) => `${i + 1}. ${r.title} — ${typeof window !== 'undefined' ? window.location.origin : 'https://emlakie.com'}/rentals/${r.slug ?? r.id}`)
+      .join('\n');
+    navigator.clipboard.writeText(lines).then(() => {
+      setCopyState('copied');
+      setTimeout(() => setCopyState('idle'), 2000);
+    });
+  }, [recommendations]);
   const isActive =
     displayState === 'listening' ||
     displayState === 'processing' ||
@@ -151,6 +192,44 @@ export default function AssistantPanel({
             <p className="pb-2 text-center text-[10px] text-gray-400">
               {recommendations.length} listing{recommendations.length === 1 ? '' : 's'} · scroll to see more
             </p>
+          </div>
+        )}
+
+        {/* ── Save / Copy action bar (Item 9) ── */}
+        {hasCards && (
+          <div className="flex-shrink-0 flex items-center gap-2 px-4 py-2 border-b border-gray-50">
+            <button
+              type="button"
+              onClick={handleSaveAll}
+              disabled={saveState === 'saving' || saveState === 'saved'}
+              aria-label="Save all listings to your account"
+              className={[
+                'flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-[11px] font-medium transition',
+                saveState === 'saved'
+                  ? 'bg-brand-50 text-brand-700 cursor-default'
+                  : saveState === 'signin'
+                  ? 'bg-amber-50 text-amber-700'
+                  : 'bg-gray-50 text-gray-600 hover:bg-brand-50 hover:text-brand-700',
+                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500',
+              ].join(' ')}
+            >
+              {saveState === 'saved' ? '✓ Saved' : saveState === 'saving' ? 'Saving…' : saveState === 'signin' ? 'Sign in to save' : '♡ Save all'}
+            </button>
+
+            <button
+              type="button"
+              onClick={handleCopyLinks}
+              aria-label="Copy listing links to clipboard"
+              className={[
+                'flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-[11px] font-medium transition',
+                copyState === 'copied'
+                  ? 'bg-brand-50 text-brand-700'
+                  : 'bg-gray-50 text-gray-600 hover:bg-brand-50 hover:text-brand-700',
+                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500',
+              ].join(' ')}
+            >
+              {copyState === 'copied' ? '✓ Copied' : '⎘ Copy links'}
+            </button>
           </div>
         )}
 

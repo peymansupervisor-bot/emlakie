@@ -194,7 +194,7 @@ export default function RentalsClient({ listings, allMapListings, total, usingSa
 
         {/* Listings panel */}
         <div
-          className={`flex flex-col bg-gray-50 transition-all duration-300 sm:overflow-y-auto ${
+          className={`isolate flex flex-col bg-gray-50 transition-all duration-300 sm:overflow-y-auto ${
             view === 'map'
               ? 'hidden'
               : view === 'split'

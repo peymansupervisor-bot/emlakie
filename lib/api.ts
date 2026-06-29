@@ -54,6 +54,19 @@ function rowToListing(row: Record<string, unknown>): Listing {
     laundry_type: row.laundry_type as string | null | undefined,
     pool: (row.pool as boolean) ?? false,
     pool_type: row.pool_type as string | null | undefined,
+    fireplace: (row.fireplace as boolean) ?? false,
+    fireplace_location: row.fireplace_location as string | null | undefined,
+    parking: (row.parking as boolean) ?? false,
+    parking_spaces: row.parking_spaces != null ? Number(row.parking_spaces) : undefined,
+    parking_type: row.parking_type as string | null | undefined,
+    air_conditioning: (row.air_conditioning as boolean) ?? false,
+    heating_type: row.heating_type as string | null | undefined,
+    pets_policy: row.pets_policy as string | null | undefined,
+    yard: (row.yard as boolean) ?? false,
+    yard_type: row.yard_type as string | null | undefined,
+    utilities_included: (row.utilities_included as string[]) ?? [],
+    lease_terms: (row.lease_terms as string[]) ?? [],
+    smoking_allowed: (row.smoking_allowed as boolean) ?? false,
   };
 }
 

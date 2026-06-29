@@ -31,8 +31,7 @@ const STUDIO_OWNERSHIP = [
   { value: 'condo',     label: 'Condominium (has its own deed, can be sold)' },
 ];
 const AMENITIES_LIST = [
-  'Air conditioning', 'Heating', 'Dishwasher', 'Parking', 'Garage',
-  'Pet-friendly', 'Gym', 'Balcony', 'Hardwood floors', 'EV charging', 'Storage',
+  'Dishwasher', 'Gym', 'Balcony', 'Hardwood floors', 'EV charging', 'Storage',
 ];
 
 const LAUNDRY_OPTIONS = [
@@ -40,6 +39,46 @@ const LAUNDRY_OPTIONS = [
   { value: 'hookup',       label: 'Washer & dryer hookup only' },
   { value: 'in_building',  label: 'Washer & dryer in building (shared)' },
   { value: 'none',         label: 'No laundry on-site' },
+];
+
+const HEATING_OPTIONS = [
+  { value: 'forced_air',  label: 'Forced air (ducted)' },
+  { value: 'central',     label: 'Central heat' },
+  { value: 'baseboard',   label: 'Baseboard / electric' },
+  { value: 'wall_unit',   label: 'Wall unit heater' },
+  { value: 'radiant',     label: 'Radiant / in-floor heat' },
+  { value: 'none',        label: 'No heating' },
+];
+
+const PARKING_TYPES = [
+  { value: 'garage',    label: 'Garage (attached or detached)' },
+  { value: 'carport',   label: 'Carport' },
+  { value: 'assigned',  label: 'Assigned parking spot' },
+  { value: 'lot',       label: 'On-site parking lot' },
+  { value: 'street',    label: 'Street parking' },
+];
+
+const PETS_OPTIONS = [
+  { value: 'no_pets',        label: 'No pets' },
+  { value: 'cats_ok',        label: 'Cats allowed' },
+  { value: 'dogs_ok',        label: 'Dogs allowed' },
+  { value: 'cats_and_dogs',  label: 'Cats & dogs allowed' },
+  { value: 'case_by_case',   label: 'Case by case' },
+];
+
+const UTILITIES_OPTIONS = [
+  'Water', 'Trash', 'Gas', 'Electricity', 'Internet',
+];
+
+const LEASE_TERM_OPTIONS = [
+  { value: 'month_to_month', label: 'Month-to-month' },
+  { value: '6_months',       label: '6 months' },
+  { value: '1_year',         label: '1 year' },
+  { value: '2_years',        label: '2 years' },
+];
+
+const FIREPLACE_LOCATIONS = [
+  'Living room', 'Master bedroom', 'Bedroom', 'Den / family room', 'Multiple',
 ];
 
 type Step = 1 | 2 | 3 | 4;
@@ -66,6 +105,19 @@ interface FormData {
   laundryType: string;
   pool: boolean;
   poolType: string;
+  fireplace: boolean;
+  fireplaceLocation: string;
+  parking: boolean;
+  parkingSpaces: string;
+  parkingType: string;
+  airConditioning: boolean;
+  heatingType: string;
+  petsPolicy: string;
+  yard: boolean;
+  yardType: string;
+  utilitiesIncluded: string[];
+  leaseTerms: string[];
+  smokingAllowed: boolean;
   isBroker: boolean | null;
   licenseNumber: string;
   agentName: string;
@@ -81,6 +133,12 @@ const empty: FormData = {
   phone: '',
   title: '', description: '', amenities: [],
   section8Accepted: false, furnished: false, laundryType: '', pool: false, poolType: '',
+  fireplace: false, fireplaceLocation: '',
+  parking: false, parkingSpaces: '', parkingType: '',
+  airConditioning: false, heatingType: '',
+  petsPolicy: '', yard: false, yardType: '',
+  utilitiesIncluded: [], leaseTerms: [],
+  smokingAllowed: false,
   isBroker: null,
   licenseNumber: '',
   agentName: '',
@@ -454,6 +512,19 @@ export default function NewPropertyPage() {
       if (form.laundryType) fd.append('laundryType', form.laundryType);
       fd.append('pool', String(form.pool));
       if (form.pool && form.poolType) fd.append('poolType', form.poolType);
+      fd.append('fireplace', String(form.fireplace));
+      if (form.fireplace && form.fireplaceLocation) fd.append('fireplaceLocation', form.fireplaceLocation);
+      fd.append('parking', String(form.parking));
+      if (form.parking && form.parkingSpaces) fd.append('parkingSpaces', form.parkingSpaces);
+      if (form.parking && form.parkingType) fd.append('parkingType', form.parkingType);
+      fd.append('airConditioning', String(form.airConditioning));
+      if (form.heatingType) fd.append('heatingType', form.heatingType);
+      if (form.petsPolicy) fd.append('petsPolicy', form.petsPolicy);
+      fd.append('yard', String(form.yard));
+      if (form.yard && form.yardType) fd.append('yardType', form.yardType);
+      fd.append('utilitiesIncluded', JSON.stringify(form.utilitiesIncluded));
+      fd.append('leaseTerms', JSON.stringify(form.leaseTerms));
+      fd.append('smokingAllowed', String(form.smokingAllowed));
       fd.append('listingSource', form.isBroker ? 'broker' : 'owner');
       if (form.isBroker && form.licenseNumber.trim()) fd.append('licenseNumber', form.licenseNumber.trim());
       if (form.isBroker && form.agentName.trim()) fd.append('agentName', form.agentName.trim());
@@ -913,8 +984,199 @@ export default function NewPropertyPage() {
             )}
           </div>
 
+          {/* Air Conditioning */}
           <div>
-            <p className={labelCls} id="amenities-label">Other Amenities</p>
+            <p className={labelCls}>Air conditioning?</p>
+            <div className="flex gap-3">
+              {[{ v: true, l: 'Yes' }, { v: false, l: 'No' }].map(({ v, l }) => (
+                <button key={l} type="button" onClick={() => setForm(f => ({ ...f, airConditioning: v }))}
+                  aria-pressed={form.airConditioning === v}
+                  className={`rounded-full border px-5 py-2 text-sm font-medium transition ${
+                    form.airConditioning === v ? 'border-brand-600 bg-brand-50 text-brand-700' : 'border-gray-300 text-gray-600 hover:border-gray-400'
+                  }`}>{l}</button>
+              ))}
+            </div>
+          </div>
+
+          {/* Heating */}
+          <div>
+            <label htmlFor="heating-type" className={labelCls}>Heating type</label>
+            <select id="heating-type" className={inputCls}
+              value={form.heatingType} onChange={(e) => setForm(f => ({ ...f, heatingType: e.target.value }))}>
+              <option value="">Select heating type…</option>
+              {HEATING_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
+            </select>
+          </div>
+
+          {/* Fireplace */}
+          <div>
+            <p className={labelCls}>Fireplace?</p>
+            <div className="flex gap-3">
+              {[{ v: true, l: 'Yes' }, { v: false, l: 'No' }].map(({ v, l }) => (
+                <button key={l} type="button"
+                  onClick={() => setForm(f => ({ ...f, fireplace: v, fireplaceLocation: v ? f.fireplaceLocation : '' }))}
+                  aria-pressed={form.fireplace === v}
+                  className={`rounded-full border px-5 py-2 text-sm font-medium transition ${
+                    form.fireplace === v ? 'border-brand-600 bg-brand-50 text-brand-700' : 'border-gray-300 text-gray-600 hover:border-gray-400'
+                  }`}>{l}</button>
+              ))}
+            </div>
+            {form.fireplace && (
+              <div className="mt-3 flex flex-wrap gap-2">
+                <p className="w-full text-xs text-gray-500 font-medium">Where is the fireplace?</p>
+                {FIREPLACE_LOCATIONS.map(loc => (
+                  <button key={loc} type="button"
+                    onClick={() => setForm(f => ({ ...f, fireplaceLocation: loc }))}
+                    aria-pressed={form.fireplaceLocation === loc}
+                    className={`rounded-full border px-4 py-1.5 text-sm font-medium transition ${
+                      form.fireplaceLocation === loc ? 'border-brand-600 bg-brand-50 text-brand-700' : 'border-gray-300 text-gray-600 hover:border-gray-400'
+                    }`}>{loc}</button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Parking */}
+          <div>
+            <p className={labelCls}>Parking available?</p>
+            <div className="flex gap-3">
+              {[{ v: true, l: 'Yes' }, { v: false, l: 'No' }].map(({ v, l }) => (
+                <button key={l} type="button"
+                  onClick={() => setForm(f => ({ ...f, parking: v, parkingSpaces: v ? f.parkingSpaces : '', parkingType: v ? f.parkingType : '' }))}
+                  aria-pressed={form.parking === v}
+                  className={`rounded-full border px-5 py-2 text-sm font-medium transition ${
+                    form.parking === v ? 'border-brand-600 bg-brand-50 text-brand-700' : 'border-gray-300 text-gray-600 hover:border-gray-400'
+                  }`}>{l}</button>
+              ))}
+            </div>
+            {form.parking && (
+              <div className="mt-3 space-y-3">
+                <div>
+                  <label htmlFor="parking-spaces" className="block text-xs font-semibold text-gray-600 mb-1">Number of parking spaces</label>
+                  <input id="parking-spaces" type="number" min="1" max="10" className={inputCls} placeholder="e.g. 2"
+                    value={form.parkingSpaces} onChange={(e) => setForm(f => ({ ...f, parkingSpaces: e.target.value }))} />
+                </div>
+                <div>
+                  <p className="text-xs font-semibold text-gray-600 mb-2">Parking type</p>
+                  <div className="flex flex-wrap gap-2">
+                    {PARKING_TYPES.map(o => (
+                      <button key={o.value} type="button"
+                        onClick={() => setForm(f => ({ ...f, parkingType: o.value }))}
+                        aria-pressed={form.parkingType === o.value}
+                        className={`rounded-full border px-4 py-1.5 text-sm font-medium transition ${
+                          form.parkingType === o.value ? 'border-brand-600 bg-brand-50 text-brand-700' : 'border-gray-300 text-gray-600 hover:border-gray-400'
+                        }`}>{o.label}</button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Pets */}
+          <div>
+            <p className={labelCls}>Pet policy</p>
+            <div className="flex flex-wrap gap-2">
+              {PETS_OPTIONS.map(o => (
+                <button key={o.value} type="button"
+                  onClick={() => setForm(f => ({ ...f, petsPolicy: o.value }))}
+                  aria-pressed={form.petsPolicy === o.value}
+                  className={`rounded-full border px-4 py-2 text-sm font-medium transition ${
+                    form.petsPolicy === o.value ? 'border-brand-600 bg-brand-50 text-brand-700' : 'border-gray-300 text-gray-600 hover:border-gray-400'
+                  }`}>{o.label}</button>
+              ))}
+            </div>
+          </div>
+
+          {/* Yard */}
+          <div>
+            <p className={labelCls}>Yard / outdoor space?</p>
+            <div className="flex gap-3">
+              {[{ v: true, l: 'Yes' }, { v: false, l: 'No' }].map(({ v, l }) => (
+                <button key={l} type="button"
+                  onClick={() => setForm(f => ({ ...f, yard: v, yardType: v ? f.yardType : '' }))}
+                  aria-pressed={form.yard === v}
+                  className={`rounded-full border px-5 py-2 text-sm font-medium transition ${
+                    form.yard === v ? 'border-brand-600 bg-brand-50 text-brand-700' : 'border-gray-300 text-gray-600 hover:border-gray-400'
+                  }`}>{l}</button>
+              ))}
+            </div>
+            {form.yard && (
+              <div className="mt-3 flex gap-3">
+                {[{ v: 'private', l: 'Private yard' }, { v: 'shared', l: 'Shared yard' }].map(({ v, l }) => (
+                  <button key={v} type="button" onClick={() => setForm(f => ({ ...f, yardType: v }))}
+                    aria-pressed={form.yardType === v}
+                    className={`rounded-full border px-5 py-2 text-sm font-medium transition ${
+                      form.yardType === v ? 'border-brand-600 bg-brand-50 text-brand-700' : 'border-gray-300 text-gray-600 hover:border-gray-400'
+                    }`}>{l}</button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Utilities included */}
+          <div>
+            <p className={labelCls}>Utilities included in rent <span className="text-gray-400 font-normal">(select all that apply)</span></p>
+            <div className="flex flex-wrap gap-2">
+              {UTILITIES_OPTIONS.map(u => (
+                <button key={u} type="button"
+                  onClick={() => setForm(f => ({
+                    ...f,
+                    utilitiesIncluded: f.utilitiesIncluded.includes(u)
+                      ? f.utilitiesIncluded.filter(x => x !== u)
+                      : [...f.utilitiesIncluded, u],
+                  }))}
+                  aria-pressed={form.utilitiesIncluded.includes(u)}
+                  className={`rounded-full border px-4 py-1.5 text-sm font-medium transition ${
+                    form.utilitiesIncluded.includes(u) ? 'border-brand-600 bg-brand-50 text-brand-700' : 'border-gray-300 text-gray-600 hover:border-gray-400'
+                  }`}>{u}</button>
+              ))}
+              <button type="button"
+                onClick={() => setForm(f => ({ ...f, utilitiesIncluded: f.utilitiesIncluded.includes('None') ? [] : ['None'] }))}
+                aria-pressed={form.utilitiesIncluded.includes('None')}
+                className={`rounded-full border px-4 py-1.5 text-sm font-medium transition ${
+                  form.utilitiesIncluded.includes('None') ? 'border-brand-600 bg-brand-50 text-brand-700' : 'border-gray-300 text-gray-600 hover:border-gray-400'
+                }`}>None included</button>
+            </div>
+          </div>
+
+          {/* Lease terms */}
+          <div>
+            <p className={labelCls}>Lease terms offered <span className="text-gray-400 font-normal">(select all that apply)</span></p>
+            <div className="flex flex-wrap gap-2">
+              {LEASE_TERM_OPTIONS.map(o => (
+                <button key={o.value} type="button"
+                  onClick={() => setForm(f => ({
+                    ...f,
+                    leaseTerms: f.leaseTerms.includes(o.value)
+                      ? f.leaseTerms.filter(x => x !== o.value)
+                      : [...f.leaseTerms, o.value],
+                  }))}
+                  aria-pressed={form.leaseTerms.includes(o.value)}
+                  className={`rounded-full border px-4 py-1.5 text-sm font-medium transition ${
+                    form.leaseTerms.includes(o.value) ? 'border-brand-600 bg-brand-50 text-brand-700' : 'border-gray-300 text-gray-600 hover:border-gray-400'
+                  }`}>{o.label}</button>
+              ))}
+            </div>
+          </div>
+
+          {/* Smoking */}
+          <div>
+            <p className={labelCls}>Smoking allowed?</p>
+            <div className="flex gap-3">
+              {[{ v: true, l: 'Yes' }, { v: false, l: 'No' }].map(({ v, l }) => (
+                <button key={l} type="button" onClick={() => setForm(f => ({ ...f, smokingAllowed: v }))}
+                  aria-pressed={form.smokingAllowed === v}
+                  className={`rounded-full border px-5 py-2 text-sm font-medium transition ${
+                    form.smokingAllowed === v ? 'border-brand-600 bg-brand-50 text-brand-700' : 'border-gray-300 text-gray-600 hover:border-gray-400'
+                  }`}>{l}</button>
+              ))}
+            </div>
+          </div>
+
+          {/* Other Amenities */}
+          <div>
+            <p className={labelCls} id="amenities-label">Other amenities</p>
             <div className="flex flex-wrap gap-2" role="group" aria-labelledby="amenities-label">
               {AMENITIES_LIST.map((a) => (
                 <button key={a} type="button" onClick={() => toggleAmenity(a)}

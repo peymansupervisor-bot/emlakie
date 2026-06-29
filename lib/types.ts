@@ -39,6 +39,19 @@ export interface Listing {
   laundry_type?: string | null;
   pool?: boolean;
   pool_type?: string | null;
+  fireplace?: boolean;
+  fireplace_location?: string | null;
+  parking?: boolean;
+  parking_spaces?: number | null;
+  parking_type?: string | null;
+  air_conditioning?: boolean;
+  heating_type?: string | null;
+  pets_policy?: string | null;
+  yard?: boolean;
+  yard_type?: string | null;
+  utilities_included?: string[];
+  lease_terms?: string[];
+  smoking_allowed?: boolean;
 }
 
 export interface ListingFilters {

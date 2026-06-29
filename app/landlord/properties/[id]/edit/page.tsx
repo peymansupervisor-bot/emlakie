@@ -19,8 +19,7 @@ const PROPERTY_TYPES = [
 ];
 
 const AMENITIES_LIST = [
-  'Air conditioning', 'Heating', 'Dishwasher', 'Parking', 'Garage',
-  'Pet-friendly', 'Gym', 'Balcony', 'Hardwood floors', 'EV charging', 'Storage',
+  'Dishwasher', 'Gym', 'Balcony', 'Hardwood floors', 'EV charging', 'Storage',
 ];
 
 const LAUNDRY_OPTIONS = [
@@ -28,6 +27,44 @@ const LAUNDRY_OPTIONS = [
   { value: 'hookup',      label: 'Washer & dryer hookup only' },
   { value: 'in_building', label: 'Washer & dryer in building (shared)' },
   { value: 'none',        label: 'No laundry on-site' },
+];
+
+const HEATING_OPTIONS = [
+  { value: 'forced_air',  label: 'Forced air (ducted)' },
+  { value: 'central',     label: 'Central heat' },
+  { value: 'baseboard',   label: 'Baseboard / electric' },
+  { value: 'wall_unit',   label: 'Wall unit heater' },
+  { value: 'radiant',     label: 'Radiant / in-floor heat' },
+  { value: 'none',        label: 'No heating' },
+];
+
+const PARKING_TYPES = [
+  { value: 'garage',   label: 'Garage (attached or detached)' },
+  { value: 'carport',  label: 'Carport' },
+  { value: 'assigned', label: 'Assigned parking spot' },
+  { value: 'lot',      label: 'On-site parking lot' },
+  { value: 'street',   label: 'Street parking' },
+];
+
+const PETS_OPTIONS = [
+  { value: 'no_pets',       label: 'No pets' },
+  { value: 'cats_ok',       label: 'Cats allowed' },
+  { value: 'dogs_ok',       label: 'Dogs allowed' },
+  { value: 'cats_and_dogs', label: 'Cats & dogs allowed' },
+  { value: 'case_by_case',  label: 'Case by case' },
+];
+
+const UTILITIES_OPTIONS = ['Water', 'Trash', 'Gas', 'Electricity', 'Internet'];
+
+const LEASE_TERM_OPTIONS = [
+  { value: 'month_to_month', label: 'Month-to-month' },
+  { value: '6_months',       label: '6 months' },
+  { value: '1_year',         label: '1 year' },
+  { value: '2_years',        label: '2 years' },
+];
+
+const FIREPLACE_LOCATIONS = [
+  'Living room', 'Master bedroom', 'Bedroom', 'Den / family room', 'Multiple',
 ];
 
 const inputCls = 'w-full rounded-xl border border-gray-300 px-4 py-3 text-sm outline-none focus:border-brand-600 focus:ring-0';
@@ -59,6 +96,19 @@ export default function EditListingPage() {
     laundryType: '' as string,
     pool: false as boolean,
     poolType: '' as string,
+    fireplace: false as boolean,
+    fireplaceLocation: '' as string,
+    parking: false as boolean,
+    parkingSpaces: '' as string,
+    parkingType: '' as string,
+    airConditioning: false as boolean,
+    heatingType: '' as string,
+    petsPolicy: '' as string,
+    yard: false as boolean,
+    yardType: '' as string,
+    utilitiesIncluded: [] as string[],
+    leaseTerms: [] as string[],
+    smokingAllowed: false as boolean,
     isBroker: false as boolean,
   });
   const [busy, setBusy] = useState(false);
@@ -91,6 +141,19 @@ export default function EditListingPage() {
         laundryType: l.laundry_type ?? '',
         pool: l.pool ?? false,
         poolType: l.pool_type ?? '',
+        fireplace: l.fireplace ?? false,
+        fireplaceLocation: l.fireplace_location ?? '',
+        parking: l.parking ?? false,
+        parkingSpaces: l.parking_spaces != null ? String(l.parking_spaces) : '',
+        parkingType: l.parking_type ?? '',
+        airConditioning: l.air_conditioning ?? false,
+        heatingType: l.heating_type ?? '',
+        petsPolicy: l.pets_policy ?? '',
+        yard: l.yard ?? false,
+        yardType: l.yard_type ?? '',
+        utilitiesIncluded: l.utilities_included ?? [],
+        leaseTerms: l.lease_terms ?? [],
+        smokingAllowed: l.smoking_allowed ?? false,
         isBroker: l.listing_source === 'broker',
       });
     }).catch(() => setListing(null));
@@ -139,6 +202,19 @@ export default function EditListingPage() {
         laundry_type: form.laundryType || null,
         pool: form.pool,
         pool_type: form.pool && form.poolType ? form.poolType : null,
+        fireplace: form.fireplace,
+        fireplace_location: form.fireplace && form.fireplaceLocation ? form.fireplaceLocation : null,
+        parking: form.parking,
+        parking_spaces: form.parking && form.parkingSpaces ? Number(form.parkingSpaces) : null,
+        parking_type: form.parking && form.parkingType ? form.parkingType : null,
+        air_conditioning: form.airConditioning,
+        heating_type: form.heatingType || null,
+        pets_policy: form.petsPolicy || null,
+        yard: form.yard,
+        yard_type: form.yard && form.yardType ? form.yardType : null,
+        utilities_included: form.utilitiesIncluded,
+        lease_terms: form.leaseTerms,
+        smoking_allowed: form.smokingAllowed,
         listing_source: form.isBroker ? 'broker' : 'owner',
       });
       setSaved(true);
@@ -353,9 +429,187 @@ export default function EditListingPage() {
           )}
         </div>
 
-        {/* Amenities */}
+        {/* Air Conditioning */}
         <div>
-          <p className={labelCls}>Other Amenities</p>
+          <p className={labelCls}>Air conditioning?</p>
+          <div className="flex gap-3">
+            {[{ v: true, l: 'Yes' }, { v: false, l: 'No' }].map(({ v, l }) => (
+              <button key={l} type="button" onClick={() => setForm(f => ({ ...f, airConditioning: v }))}
+                className={`rounded-full border px-5 py-2 text-sm font-medium transition ${
+                  form.airConditioning === v ? 'border-brand-600 bg-brand-50 text-brand-700' : 'border-gray-300 text-gray-600 hover:border-gray-400'
+                }`}>{l}</button>
+            ))}
+          </div>
+        </div>
+
+        {/* Heating */}
+        <div>
+          <label htmlFor="edit-heating-type" className={labelCls}>Heating type</label>
+          <select id="edit-heating-type" className={inputCls}
+            value={form.heatingType} onChange={(e) => setForm(f => ({ ...f, heatingType: e.target.value }))}>
+            <option value="">Select heating type…</option>
+            {HEATING_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
+          </select>
+        </div>
+
+        {/* Fireplace */}
+        <div>
+          <p className={labelCls}>Fireplace?</p>
+          <div className="flex gap-3">
+            {[{ v: true, l: 'Yes' }, { v: false, l: 'No' }].map(({ v, l }) => (
+              <button key={l} type="button"
+                onClick={() => setForm(f => ({ ...f, fireplace: v, fireplaceLocation: v ? f.fireplaceLocation : '' }))}
+                className={`rounded-full border px-5 py-2 text-sm font-medium transition ${
+                  form.fireplace === v ? 'border-brand-600 bg-brand-50 text-brand-700' : 'border-gray-300 text-gray-600 hover:border-gray-400'
+                }`}>{l}</button>
+            ))}
+          </div>
+          {form.fireplace && (
+            <div className="mt-3 flex flex-wrap gap-2">
+              <p className="w-full text-xs text-gray-500 font-medium">Where is the fireplace?</p>
+              {FIREPLACE_LOCATIONS.map(loc => (
+                <button key={loc} type="button"
+                  onClick={() => setForm(f => ({ ...f, fireplaceLocation: loc }))}
+                  className={`rounded-full border px-4 py-1.5 text-sm font-medium transition ${
+                    form.fireplaceLocation === loc ? 'border-brand-600 bg-brand-50 text-brand-700' : 'border-gray-300 text-gray-600 hover:border-gray-400'
+                  }`}>{loc}</button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Parking */}
+        <div>
+          <p className={labelCls}>Parking available?</p>
+          <div className="flex gap-3">
+            {[{ v: true, l: 'Yes' }, { v: false, l: 'No' }].map(({ v, l }) => (
+              <button key={l} type="button"
+                onClick={() => setForm(f => ({ ...f, parking: v, parkingSpaces: v ? f.parkingSpaces : '', parkingType: v ? f.parkingType : '' }))}
+                className={`rounded-full border px-5 py-2 text-sm font-medium transition ${
+                  form.parking === v ? 'border-brand-600 bg-brand-50 text-brand-700' : 'border-gray-300 text-gray-600 hover:border-gray-400'
+                }`}>{l}</button>
+            ))}
+          </div>
+          {form.parking && (
+            <div className="mt-3 space-y-3">
+              <div>
+                <label htmlFor="edit-parking-spaces" className="block text-xs font-semibold text-gray-600 mb-1">Number of parking spaces</label>
+                <input id="edit-parking-spaces" type="number" min="1" max="10" className={inputCls} placeholder="e.g. 2"
+                  value={form.parkingSpaces} onChange={(e) => setForm(f => ({ ...f, parkingSpaces: e.target.value }))} />
+              </div>
+              <div>
+                <p className="text-xs font-semibold text-gray-600 mb-2">Parking type</p>
+                <div className="flex flex-wrap gap-2">
+                  {PARKING_TYPES.map(o => (
+                    <button key={o.value} type="button"
+                      onClick={() => setForm(f => ({ ...f, parkingType: o.value }))}
+                      className={`rounded-full border px-4 py-1.5 text-sm font-medium transition ${
+                        form.parkingType === o.value ? 'border-brand-600 bg-brand-50 text-brand-700' : 'border-gray-300 text-gray-600 hover:border-gray-400'
+                      }`}>{o.label}</button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Pets */}
+        <div>
+          <p className={labelCls}>Pet policy</p>
+          <div className="flex flex-wrap gap-2">
+            {PETS_OPTIONS.map(o => (
+              <button key={o.value} type="button"
+                onClick={() => setForm(f => ({ ...f, petsPolicy: o.value }))}
+                className={`rounded-full border px-4 py-2 text-sm font-medium transition ${
+                  form.petsPolicy === o.value ? 'border-brand-600 bg-brand-50 text-brand-700' : 'border-gray-300 text-gray-600 hover:border-gray-400'
+                }`}>{o.label}</button>
+            ))}
+          </div>
+        </div>
+
+        {/* Yard */}
+        <div>
+          <p className={labelCls}>Yard / outdoor space?</p>
+          <div className="flex gap-3">
+            {[{ v: true, l: 'Yes' }, { v: false, l: 'No' }].map(({ v, l }) => (
+              <button key={l} type="button"
+                onClick={() => setForm(f => ({ ...f, yard: v, yardType: v ? f.yardType : '' }))}
+                className={`rounded-full border px-5 py-2 text-sm font-medium transition ${
+                  form.yard === v ? 'border-brand-600 bg-brand-50 text-brand-700' : 'border-gray-300 text-gray-600 hover:border-gray-400'
+                }`}>{l}</button>
+            ))}
+          </div>
+          {form.yard && (
+            <div className="mt-3 flex gap-3">
+              {[{ v: 'private', l: 'Private yard' }, { v: 'shared', l: 'Shared yard' }].map(({ v, l }) => (
+                <button key={v} type="button" onClick={() => setForm(f => ({ ...f, yardType: v }))}
+                  className={`rounded-full border px-5 py-2 text-sm font-medium transition ${
+                    form.yardType === v ? 'border-brand-600 bg-brand-50 text-brand-700' : 'border-gray-300 text-gray-600 hover:border-gray-400'
+                  }`}>{l}</button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Utilities included */}
+        <div>
+          <p className={labelCls}>Utilities included in rent <span className="text-gray-400 font-normal">(select all that apply)</span></p>
+          <div className="flex flex-wrap gap-2">
+            {UTILITIES_OPTIONS.map(u => (
+              <button key={u} type="button"
+                onClick={() => setForm(f => ({
+                  ...f,
+                  utilitiesIncluded: f.utilitiesIncluded.includes(u)
+                    ? f.utilitiesIncluded.filter(x => x !== u)
+                    : [...f.utilitiesIncluded, u],
+                }))}
+                className={`rounded-full border px-4 py-1.5 text-sm font-medium transition ${
+                  form.utilitiesIncluded.includes(u) ? 'border-brand-600 bg-brand-50 text-brand-700' : 'border-gray-300 text-gray-600 hover:border-gray-400'
+                }`}>{u}</button>
+            ))}
+            <button type="button"
+              onClick={() => setForm(f => ({ ...f, utilitiesIncluded: f.utilitiesIncluded.includes('None') ? [] : ['None'] }))}
+              className={`rounded-full border px-4 py-1.5 text-sm font-medium transition ${
+                form.utilitiesIncluded.includes('None') ? 'border-brand-600 bg-brand-50 text-brand-700' : 'border-gray-300 text-gray-600 hover:border-gray-400'
+              }`}>None included</button>
+          </div>
+        </div>
+
+        {/* Lease terms */}
+        <div>
+          <p className={labelCls}>Lease terms offered <span className="text-gray-400 font-normal">(select all that apply)</span></p>
+          <div className="flex flex-wrap gap-2">
+            {LEASE_TERM_OPTIONS.map(o => (
+              <button key={o.value} type="button"
+                onClick={() => setForm(f => ({
+                  ...f,
+                  leaseTerms: f.leaseTerms.includes(o.value)
+                    ? f.leaseTerms.filter(x => x !== o.value)
+                    : [...f.leaseTerms, o.value],
+                }))}
+                className={`rounded-full border px-4 py-1.5 text-sm font-medium transition ${
+                  form.leaseTerms.includes(o.value) ? 'border-brand-600 bg-brand-50 text-brand-700' : 'border-gray-300 text-gray-600 hover:border-gray-400'
+                }`}>{o.label}</button>
+            ))}
+          </div>
+        </div>
+
+        {/* Smoking */}
+        <div>
+          <p className={labelCls}>Smoking allowed?</p>
+          <div className="flex gap-3">
+            {[{ v: true, l: 'Yes' }, { v: false, l: 'No' }].map(({ v, l }) => (
+              <button key={l} type="button" onClick={() => setForm(f => ({ ...f, smokingAllowed: v }))}
+                className={`rounded-full border px-5 py-2 text-sm font-medium transition ${
+                  form.smokingAllowed === v ? 'border-brand-600 bg-brand-50 text-brand-700' : 'border-gray-300 text-gray-600 hover:border-gray-400'
+                }`}>{l}</button>
+            ))}
+          </div>
+        </div>
+
+        {/* Other Amenities */}
+        <div>
+          <p className={labelCls}>Other amenities</p>
           <div className="flex flex-wrap gap-2">
             {AMENITIES_LIST.map((a) => (
               <button key={a} type="button" onClick={() => toggleAmenity(a)}

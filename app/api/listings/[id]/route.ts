@@ -23,6 +23,9 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
     'status', 'virtual_tour_url', 'ownership_type', 'bedrooms', 'bathrooms',
     'living_area_sqft', 'property_type', 'address', 'city', 'state', 'zip', 'listing_source',
     'section_8_accepted', 'furnished', 'laundry_type', 'pool', 'pool_type',
+    'fireplace', 'fireplace_location', 'parking', 'parking_spaces', 'parking_type',
+    'air_conditioning', 'heating_type', 'pets_policy', 'yard', 'yard_type',
+    'utilities_included', 'lease_terms', 'smoking_allowed',
     'building_name', 'agent_name', 'license_number'])
   const ALLOWED_STATUS = new Set(['active', 'inactive', 'lease_in_progress', 'coming_soon', 'rented'])
 

@@ -161,12 +161,15 @@ export async function GET(req: NextRequest) {
     const database = sb();
     const results: Array<{ path: string; violations: Violation[]; passes: number; incomplete: number; error?: string }> = [];
 
-    // Launch a single real browser instance for the entire audit run
+    // Launch a single real browser instance for the entire audit run.
+    // Chromium binary is downloaded at runtime from GitHub releases to avoid
+    // bundling a 50MB binary into the serverless function.
     const chromium = await import('@sparticuz/chromium');
     const { chromium: playwrightChromium } = await import('playwright-core');
+    const CHROMIUM_URL = 'https://github.com/Sparticuz/chromium/releases/download/v149.0.0/chromium-v149.0.0-pack.tar';
     const browser = await playwrightChromium.launch({
       args: chromium.default.args,
-      executablePath: await chromium.default.executablePath(),
+      executablePath: await chromium.default.executablePath(CHROMIUM_URL),
       headless: true,
     });
 

@@ -33,6 +33,7 @@ export interface Listing {
   virtual_phone?: string | null;
   building_name?: string | null;
   refreshed_at?: string | null;
+  boosted_until?: string | null;
 }
 
 export interface ListingFilters {

@@ -47,7 +47,13 @@ const schema = {
 
 export default async function TownhomesPage() {
   const { listings } = await getListings({ propertyType: 'townhouse' });
-  const featured = listings.slice(0, 6);
+  const now = Date.now();
+  const sorted = [...listings].sort((a, b) => {
+    const aB = a.boosted_until && new Date(a.boosted_until).getTime() > now ? 1 : 0;
+    const bB = b.boosted_until && new Date(b.boosted_until).getTime() > now ? 1 : 0;
+    return bB - aB;
+  });
+  const featured = sorted.slice(0, 6);
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6">

@@ -103,7 +103,13 @@ export default async function HomePage() {
   const [{ listings }] = await Promise.all([
     getListings(),
   ]);
-  const featured = listings.slice(0, 6);
+  const now = Date.now();
+  const sorted = [...listings].sort((a, b) => {
+    const aB = a.boosted_until && new Date(a.boosted_until).getTime() > now ? 1 : 0;
+    const bB = b.boosted_until && new Date(b.boosted_until).getTime() > now ? 1 : 0;
+    return bB - aB;
+  });
+  const featured = sorted.slice(0, 6);
 
   return (
     <>

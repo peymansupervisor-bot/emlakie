@@ -48,6 +48,7 @@ function rowToListing(row: Record<string, unknown>): Listing {
       || (row.profiles as { virtual_phone?: string; phone?: string } | null)?.phone
       || null,
     refreshed_at: (row.refreshed_at ?? row.updated_at ?? row.created_at) as string | null | undefined,
+    boosted_until: row.boosted_until as string | null | undefined,
   };
 }
 

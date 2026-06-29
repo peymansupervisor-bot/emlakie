@@ -9,6 +9,34 @@ import { getAllCities } from '@/lib/api';
 import { logError } from '@/lib/log-error'
 
 export const dynamic = 'force-dynamic'
+
+const REPO = 'peymansupervisor-bot/emlakie';
+const GITHUB_API = 'https://api.github.com';
+
+// Commit a signed audit report JSON to ada-reports/ in the repo for tamper-evident court records.
+async function commitAuditReport(report: Record<string, unknown>): Promise<void> {
+  const token = process.env.GITHUB_TOKEN;
+  if (!token) return;
+
+  const date = new Date().toISOString().slice(0, 10);
+  const filePath = `ada-reports/${date}-${report.run_id}.json`;
+  const content = JSON.stringify(report, null, 2);
+  const encoded = Buffer.from(content).toString('base64');
+
+  // Create the file (never update — each run gets a unique filename)
+  await fetch(`${GITHUB_API}/repos/${REPO}/contents/${filePath}`, {
+    method: 'PUT',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      Accept: 'application/vnd.github.v3+json',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      message: `ada-audit: ${date} — ${report.pages} pages, ${report.total_violations} violations`,
+      content: encoded,
+    }),
+  });
+}
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://emlakie.com';
 const ADMIN_EMAIL = 'peymansupervisor@gmail.com';
 
@@ -270,10 +298,34 @@ export async function GET(req: NextRequest) {
       }
     }
 
+    const report = {
+      run_id: runId,
+      scanned_at: new Date().toISOString(),
+      site: SITE_URL,
+      axe_version: axeVersion,
+      pages: results.length,
+      total_violations: withViolations.reduce((n, r) => n + r.violations.length, 0),
+      total_critical: totalCritical,
+      total_serious: totalSerious,
+      cure: cureResult,
+      results: results.map((r) => ({
+        path: r.path,
+        url: `${SITE_URL}${r.path}`,
+        violation_count: r.violations.length,
+        violations: r.violations,
+        passes: r.passes,
+        incomplete: r.incomplete,
+        error: r.error,
+      })),
+    };
+
+    // Commit tamper-evident report to GitHub for court-grade audit trail
+    await commitAuditReport(report);
+
     return NextResponse.json({
       run_id: runId,
       pages: results.length,
-      total_violations: withViolations.reduce((n, r) => n + r.violations.length, 0),
+      total_violations: report.total_violations,
       total_critical: totalCritical,
       axe_version: axeVersion,
       cure: cureResult,

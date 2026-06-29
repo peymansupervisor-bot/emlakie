@@ -13,31 +13,14 @@ export async function POST() {
 
     const admin = adminClient();
 
-    // Check if they already have one — never overwrite
-    const { data: profile } = await admin
-      .from('profiles')
-      .select('account_id')
-      .eq('id', user.id)
-      .maybeSingle();
-
-    if (profile?.account_id) {
-      return NextResponse.json({ account_id: profile.account_id });
-    }
-
-    // Get the next sequence value directly from the DB
-    const { data: seqRow } = await admin
-      .rpc('next_account_id');
-
-    if (!seqRow) return NextResponse.json({ error: 'Could not generate account ID' }, { status: 500 });
-
-    const { error } = await admin
-      .from('profiles')
-      .update({ account_id: seqRow })
-      .eq('id', user.id);
+    // Atomic: sequence advances only if profile update succeeds — no gaps
+    const { data: accountId, error } = await admin
+      .rpc('assign_account_id', { p_user_id: user.id });
 
     if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+    if (!accountId) return NextResponse.json({ error: 'Could not generate account ID' }, { status: 500 });
 
-    return NextResponse.json({ account_id: seqRow });
+    return NextResponse.json({ account_id: accountId });
   } catch (_err) {
     const _msg = _err instanceof Error ? _err.message : String(_err);
     const _stack = _err instanceof Error ? _err.stack : undefined;

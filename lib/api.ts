@@ -67,6 +67,7 @@ function rowToListing(row: Record<string, unknown>): Listing {
     utilities_included: (row.utilities_included as string[]) ?? [],
     lease_terms: (row.lease_terms as string[]) ?? [],
     smoking_allowed: (row.smoking_allowed as boolean) ?? false,
+    appliances: (row.appliances as string[]) ?? [],
   };
 }
 

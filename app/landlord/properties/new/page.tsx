@@ -81,6 +81,11 @@ const FIREPLACE_LOCATIONS = [
   'Living room', 'Master bedroom', 'Bedroom', 'Den / family room', 'Multiple',
 ];
 
+const APPLIANCES_OPTIONS = [
+  'Refrigerator', 'Stove / oven', 'Dishwasher', 'Microwave',
+  'Garbage disposal', 'Range hood', 'Freezer',
+];
+
 type Step = 1 | 2 | 3 | 4;
 
 
@@ -118,6 +123,7 @@ interface FormData {
   utilitiesIncluded: string[];
   leaseTerms: string[];
   smokingAllowed: boolean;
+  appliances: string[];
   isBroker: boolean | null;
   licenseNumber: string;
   agentName: string;
@@ -139,6 +145,7 @@ const empty: FormData = {
   petsPolicy: '', yard: false, yardType: '',
   utilitiesIncluded: [], leaseTerms: [],
   smokingAllowed: false,
+  appliances: [],
   isBroker: null,
   licenseNumber: '',
   agentName: '',
@@ -525,6 +532,7 @@ export default function NewPropertyPage() {
       fd.append('utilitiesIncluded', JSON.stringify(form.utilitiesIncluded));
       fd.append('leaseTerms', JSON.stringify(form.leaseTerms));
       fd.append('smokingAllowed', String(form.smokingAllowed));
+      fd.append('appliances', JSON.stringify(form.appliances));
       fd.append('listingSource', form.isBroker ? 'broker' : 'owner');
       if (form.isBroker && form.licenseNumber.trim()) fd.append('licenseNumber', form.licenseNumber.trim());
       if (form.isBroker && form.agentName.trim()) fd.append('agentName', form.agentName.trim());
@@ -1171,6 +1179,32 @@ export default function NewPropertyPage() {
                     form.smokingAllowed === v ? 'border-brand-600 bg-brand-50 text-brand-700' : 'border-gray-300 text-gray-600 hover:border-gray-400'
                   }`}>{l}</button>
               ))}
+            </div>
+          </div>
+
+          {/* Appliances */}
+          <div>
+            <p className={labelCls}>Appliances included <span className="text-gray-400 font-normal">(select all that apply)</span></p>
+            <div className="flex flex-wrap gap-2">
+              {APPLIANCES_OPTIONS.map(a => (
+                <button key={a} type="button"
+                  onClick={() => setForm(f => ({
+                    ...f,
+                    appliances: f.appliances.includes(a)
+                      ? f.appliances.filter(x => x !== a)
+                      : [...f.appliances, a],
+                  }))}
+                  aria-pressed={form.appliances.includes(a)}
+                  className={`rounded-full border px-4 py-1.5 text-sm font-medium transition ${
+                    form.appliances.includes(a) ? 'border-brand-600 bg-brand-50 text-brand-700' : 'border-gray-300 text-gray-600 hover:border-gray-400'
+                  }`}>{a}</button>
+              ))}
+              <button type="button"
+                onClick={() => setForm(f => ({ ...f, appliances: f.appliances.includes('None') ? [] : ['None'] }))}
+                aria-pressed={form.appliances.includes('None')}
+                className={`rounded-full border px-4 py-1.5 text-sm font-medium transition ${
+                  form.appliances.includes('None') ? 'border-brand-600 bg-brand-50 text-brand-700' : 'border-gray-300 text-gray-600 hover:border-gray-400'
+                }`}>None included</button>
             </div>
           </div>
 

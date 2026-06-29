@@ -52,6 +52,7 @@ export interface Listing {
   utilities_included?: string[];
   lease_terms?: string[];
   smoking_allowed?: boolean;
+  appliances?: string[];
 }
 
 export interface ListingFilters {

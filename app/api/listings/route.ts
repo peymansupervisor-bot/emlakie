@@ -77,6 +77,7 @@ export async function GET(req: NextRequest) {
     utilities_included: row.utilities_included ?? [],
     lease_terms: row.lease_terms ?? [],
     smoking_allowed: row.smoking_allowed ?? false,
+    appliances: row.appliances ?? [],
   }))
   return NextResponse.json(mapped)
 }
@@ -195,6 +196,7 @@ export async function POST(req: NextRequest) {
       utilities_included: JSON.parse(formData.get('utilitiesIncluded') as string || '[]'),
       lease_terms: JSON.parse(formData.get('leaseTerms') as string || '[]'),
       smoking_allowed: formData.get('smokingAllowed') === 'true',
+      appliances: JSON.parse(formData.get('appliances') as string || '[]'),
       photos: photoUrls,
       available_date: formData.get('availableFrom') as string || null,
       status: 'active',

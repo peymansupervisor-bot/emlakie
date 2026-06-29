@@ -67,6 +67,11 @@ const FIREPLACE_LOCATIONS = [
   'Living room', 'Master bedroom', 'Bedroom', 'Den / family room', 'Multiple',
 ];
 
+const APPLIANCES_OPTIONS = [
+  'Refrigerator', 'Stove / oven', 'Dishwasher', 'Microwave',
+  'Garbage disposal', 'Range hood', 'Freezer',
+];
+
 const inputCls = 'w-full rounded-xl border border-gray-300 px-4 py-3 text-sm outline-none focus:border-brand-600 focus:ring-0';
 const labelCls = 'block text-sm font-semibold text-gray-700 mb-1';
 
@@ -109,6 +114,7 @@ export default function EditListingPage() {
     utilitiesIncluded: [] as string[],
     leaseTerms: [] as string[],
     smokingAllowed: false as boolean,
+    appliances: [] as string[],
     isBroker: false as boolean,
   });
   const [busy, setBusy] = useState(false);
@@ -154,6 +160,7 @@ export default function EditListingPage() {
         utilitiesIncluded: l.utilities_included ?? [],
         leaseTerms: l.lease_terms ?? [],
         smokingAllowed: l.smoking_allowed ?? false,
+        appliances: l.appliances ?? [],
         isBroker: l.listing_source === 'broker',
       });
     }).catch(() => setListing(null));
@@ -215,6 +222,7 @@ export default function EditListingPage() {
         utilities_included: form.utilitiesIncluded,
         lease_terms: form.leaseTerms,
         smoking_allowed: form.smokingAllowed,
+        appliances: form.appliances,
         listing_source: form.isBroker ? 'broker' : 'owner',
       });
       setSaved(true);
@@ -604,6 +612,30 @@ export default function EditListingPage() {
                   form.smokingAllowed === v ? 'border-brand-600 bg-brand-50 text-brand-700' : 'border-gray-300 text-gray-600 hover:border-gray-400'
                 }`}>{l}</button>
             ))}
+          </div>
+        </div>
+
+        {/* Appliances */}
+        <div>
+          <p className={labelCls}>Appliances included <span className="text-gray-400 font-normal">(select all that apply)</span></p>
+          <div className="flex flex-wrap gap-2">
+            {APPLIANCES_OPTIONS.map(a => (
+              <button key={a} type="button"
+                onClick={() => setForm(f => ({
+                  ...f,
+                  appliances: f.appliances.includes(a)
+                    ? f.appliances.filter(x => x !== a)
+                    : [...f.appliances, a],
+                }))}
+                className={`rounded-full border px-4 py-1.5 text-sm font-medium transition ${
+                  form.appliances.includes(a) ? 'border-brand-600 bg-brand-50 text-brand-700' : 'border-gray-300 text-gray-600 hover:border-gray-400'
+                }`}>{a}</button>
+            ))}
+            <button type="button"
+              onClick={() => setForm(f => ({ ...f, appliances: f.appliances.includes('None') ? [] : ['None'] }))}
+              className={`rounded-full border px-4 py-1.5 text-sm font-medium transition ${
+                form.appliances.includes('None') ? 'border-brand-600 bg-brand-50 text-brand-700' : 'border-gray-300 text-gray-600 hover:border-gray-400'
+              }`}>None included</button>
           </div>
         </div>
 

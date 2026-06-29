@@ -83,9 +83,23 @@ function extractOgProp(html: string, prop: string): string | null {
   return m ? m[1].trim() : null;
 }
 
+function decodeHtmlEntities(str: string): string {
+  return str
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#x27;/g, "'")
+    .replace(/&#39;/g, "'")
+    .replace(/&apos;/g, "'")
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&#x([0-9a-fA-F]+);/g, (_, hex) => String.fromCodePoint(parseInt(hex, 16)))
+    .replace(/&#(\d+);/g, (_, dec) => String.fromCodePoint(parseInt(dec, 10)));
+}
+
 function extractTitle(html: string): string | null {
   const m = html.match(/<title[^>]*>([^<]+)<\/title>/i);
-  return m ? m[1].replace(/\s+/g, ' ').trim() : null;
+  return m ? decodeHtmlEntities(m[1].replace(/\s+/g, ' ').trim()) : null;
 }
 
 function extractCanonical(html: string): string | null {

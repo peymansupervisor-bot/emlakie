@@ -118,6 +118,7 @@ export class RealtimeEngine {
   private setupComplete = false;
   private speechStoppedAt: number | null = null;
   private isRespondingAudio = false;
+  private micTrack: MediaStreamTrack | null = null;
 
   // Function call state — tracks the current response's function call, if any
   private fcCallId: string | null = null;
@@ -155,6 +156,7 @@ export class RealtimeEngine {
       return;
     }
     this.stream = stream;
+    this.micTrack = stream.getAudioTracks()[0] ?? null;
     this.cb.onMicGranted?.();
 
     // Step 2: Ephemeral token
@@ -246,10 +248,13 @@ export class RealtimeEngine {
       dc.send(JSON.stringify({ type: 'response.cancel' }));
     }
     if (this.audioRef.current) {
+      // Pause audio but keep srcObject — nulling it breaks the WebRTC pipeline
+      // and prevents subsequent responses from playing.
       this.audioRef.current.pause();
-      this.audioRef.current.srcObject = null;
     }
     this.isRespondingAudio = false;
+    // Unmute mic immediately so user can speak after cancelling
+    if (this.micTrack) this.micTrack.enabled = true;
   }
 
   // -------------------------------------------------------------------------
@@ -284,7 +289,10 @@ export class RealtimeEngine {
       type: 'realtime',
       audio: {
         input: {
-          turn_detection: { ...this.config.vadConfig, create_response: true },
+          // create_response stays false — we send explicit response.create after
+          // every user turn via onSpeechStopped. This prevents OpenAI from
+          // auto-firing responses to mic noise or the model's own echo.
+          turn_detection: { ...this.config.vadConfig, create_response: false },
         },
       },
     };
@@ -409,6 +417,11 @@ export class RealtimeEngine {
       case 'input_audio_buffer.speech_stopped':
         this.speechStoppedAt = Date.now();
         this.cb.onSpeechStopped?.();
+        // Explicitly trigger response — required because create_response:false
+        // prevents OpenAI from auto-responding (which caused the self-talk loop).
+        if (this.dc && this.dc.readyState === 'open') {
+          this.dc.send(JSON.stringify({ type: 'response.create' }));
+        }
         break;
 
       case 'response.created':
@@ -453,6 +466,10 @@ export class RealtimeEngine {
       case 'response.audio.delta':
         if (!this.isRespondingAudio) {
           this.isRespondingAudio = true;
+          // Mute mic while model is speaking — prevents its voice from leaking
+          // back into the VAD as user speech (echo loop) regardless of whether
+          // the browser's echoCancellation handles WebRTC srcObject audio.
+          if (this.micTrack) this.micTrack.enabled = false;
           const latency =
             this.speechStoppedAt !== null ? Date.now() - this.speechStoppedAt : null;
           this.speechStoppedAt = null;
@@ -462,6 +479,8 @@ export class RealtimeEngine {
 
       case 'response.audio.done':
         this.isRespondingAudio = false;
+        // Unmute mic — user can speak again
+        if (this.micTrack) this.micTrack.enabled = true;
         this.cb.onResponseAudioDone?.();
         break;
 

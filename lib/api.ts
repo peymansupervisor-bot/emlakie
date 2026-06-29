@@ -131,13 +131,21 @@ export async function getListings(filters: ListingFilters = {}): Promise<Listing
     }
     if (filters.ownerDirect === '1') query = query.eq('listing_source', 'owner');
 
-    const { data, error } = await query.order('refreshed_at', { ascending: false });
+    const { data, error } = await query;
     if (error) throw error;
+
+    const now = Date.now();
+    const sorted = (data ?? []).slice().sort((a, b) => {
+      const aSponsor = a.boosted_until && new Date(a.boosted_until).getTime() > now ? 1 : 0;
+      const bSponsor = b.boosted_until && new Date(b.boosted_until).getTime() > now ? 1 : 0;
+      if (bSponsor !== aSponsor) return bSponsor - aSponsor;
+      return Number(b.monthly_rent ?? 0) - Number(a.monthly_rent ?? 0);
+    });
 
     const page = Number(filters.page ?? 1);
     const pageSize = 20;
-    const total = data?.length ?? 0;
-    const listings = (data ?? []).slice((page - 1) * pageSize, page * pageSize).map(rowToListing);
+    const total = sorted.length;
+    const listings = sorted.slice((page - 1) * pageSize, page * pageSize).map(rowToListing);
     return { listings, total, usingSampleData: false };
   } catch {
     return { listings: [], total: 0, usingSampleData: false };

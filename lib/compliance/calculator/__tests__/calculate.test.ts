@@ -869,6 +869,45 @@ describe('specific numeric examples (worked out by hand)', () => {
   })
 })
 
+// ── 16. Rate format canonical test ──────────────────────────────────────────
+//
+// This test is the single source of truth for the rate storage convention.
+// numeric_value MUST be stored in percent form. 2.75 = 2.75%, NOT 0.0275.
+// The engine divides by 100 internally. Storing 0.0275 would produce
+// interest 100× too small.
+
+describe('rate format: percent form (canonical)', () => {
+  it('numeric_value=2.75 / deposit=$2000 / 365 days → totalInterest=$55.00', () => {
+    // 2000 × (2.75 / 100) × (365 / 365) = 55.00
+    const result = calculateInterest(
+      makeInput({
+        depositAmount: 2000,
+        depositReceivedDate: '2023-01-01',
+        depositReturnDate: '2024-01-01',   // exactly 365 days (2023 is not a leap year)
+        rates: [makeRate({ numeric_value: 2.75, effective_from: '2000-01-01' })],
+      }),
+    )
+    expect(result.status).toBe('calculated')
+    expect(result.totalDays).toBe(365)
+    expect(result.periods[0].annualRatePercent).toBe(2.75)
+    expect(result.totalInterest).toBe(55.00)
+  })
+
+  it('storing 0.0275 instead of 2.75 would give the wrong answer (0.55, not 55.00)', () => {
+    // This test documents the hazard — do not store decimal fractions.
+    const wrongResult = calculateInterest(
+      makeInput({
+        depositAmount: 2000,
+        depositReceivedDate: '2023-01-01',
+        depositReturnDate: '2024-01-01',
+        rates: [makeRate({ numeric_value: 0.0275 })],  // WRONG: should be 2.75
+      }),
+    )
+    expect(wrongResult.totalInterest).toBe(0.55)  // 100× too small
+    expect(wrongResult.totalInterest).not.toBe(55.00)
+  })
+})
+
 // ── Helpers (used by rounding test) ─────────────────────────────────────────
 
 function roundCents(n: number): number {

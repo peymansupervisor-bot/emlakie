@@ -87,9 +87,12 @@ export function buildPeriodBreakdown(
 
     const year = yearOf(segStart)
     const yearDays = daysInYear(year)
-    const annualRatePercent = rate.numeric_value
 
-    // Raw (unrounded) interest for this segment
+    // RATE FORMAT: numeric_value is stored in PERCENT form.
+    //   2.75  → 2.75%  ✓ correct
+    //   0.0275 → 0.0275% ✗ wrong — do NOT store decimal fractions
+    // This engine divides by 100 here. Never pre-divide when storing rates.
+    const annualRatePercent = rate.numeric_value
     const interest = depositAmount * (annualRatePercent / 100) * (days / yearDays)
 
     periods.push({

@@ -182,6 +182,13 @@ const rules: LegalRuleRow[] = [
 ]
 
 // ── Rates ─────────────────────────────────────────────────────────────────────
+//
+// IMPORTANT — numeric_value is stored in PERCENT form, not decimal form.
+//   2.75  = 2.75%   ← CORRECT
+//   0.0275 = 0.0275% ← WRONG
+//
+// The calculation engine divides by 100 internally:
+//   interest = depositAmount × (numeric_value / 100) × days / daysInYear
 
 const rates: RateRow[] = [
   // LA v1: 2% from 2015 to 2022
@@ -193,7 +200,7 @@ const rates: RateRow[] = [
     rate_key: 'annual_interest_rate',
     effective_from: '2015-07-01',
     effective_to: '2021-12-31',
-    numeric_value: 0.02,
+    numeric_value: 2.0,          // 2.0% — NOT 0.02
     rate_source_description: 'Fixed at 2% per LAMC §49.99',
     rate_source_url: null,
     is_published: true,
@@ -208,7 +215,7 @@ const rates: RateRow[] = [
     rate_key: 'annual_interest_rate',
     effective_from: '2022-01-01',
     effective_to: null,
-    numeric_value: 0.0275,
+    numeric_value: 2.75,         // 2.75% — NOT 0.0275
     rate_source_description: 'Passbook savings rate per LAMC §49.99.2',
     rate_source_url: null,
     is_published: true,
@@ -223,7 +230,7 @@ const rates: RateRow[] = [
     rate_key: 'annual_interest_rate',
     effective_from: '2019-03-01',
     effective_to: null,
-    numeric_value: 0.0155,
+    numeric_value: 1.55,         // 1.55% — NOT 0.0155
     rate_source_description: 'Set annually by SF Rent Board',
     rate_source_url: null,
     is_published: true,
@@ -238,7 +245,7 @@ const rates: RateRow[] = [
     rate_key: 'annual_interest_rate',
     effective_from: '2025-01-01',
     effective_to: null,
-    numeric_value: 0.03,
+    numeric_value: 3.0,          // 3.0% — NOT 0.03
     rate_source_description: 'Proposed 2025 rate (draft, not yet approved)',
     rate_source_url: null,
     is_published: false,

@@ -40,7 +40,7 @@ describe('engine.resolve()', () => {
         ruleTypeId: IDS.RT_SECURITY_DEPOSIT,
       })
       expect(result.rates).toHaveLength(1)
-      expect(result.rates[0].numeric_value).toBe(0.0275)
+      expect(result.rates[0].numeric_value).toBe(2.75)  // percent form: 2.75 = 2.75%
     })
 
     it('returns both active exemptions', async () => {
@@ -90,7 +90,7 @@ describe('engine.resolve()', () => {
         ruleTypeId: IDS.RT_SECURITY_DEPOSIT,
         asOfDate: new Date('2018-06-01'),
       })
-      expect(result.rates[0].numeric_value).toBe(0.02)
+      expect(result.rates[0].numeric_value).toBe(2.0)  // percent form: 2.0 = 2%
     })
   })
 
@@ -103,7 +103,7 @@ describe('engine.resolve()', () => {
         ruleTypeId: IDS.RT_SECURITY_DEPOSIT,
       })
       expect(result.status).toBe('rule_found')
-      expect(result.rates[0].numeric_value).toBe(0.0155)
+      expect(result.rates[0].numeric_value).toBe(1.55)  // percent form: 1.55 = 1.55%
     })
 
     it('returns the SF affordable housing exemption', async () => {

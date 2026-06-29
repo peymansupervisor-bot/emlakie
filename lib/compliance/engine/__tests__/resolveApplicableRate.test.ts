@@ -10,7 +10,7 @@ describe('resolveApplicableRate', () => {
     const rates = await resolveApplicableRate(repo, { legalRuleId: IDS.RULE_LA_V2 })
     expect(rates).toHaveLength(1)
     expect(rates[0].id).toBe(IDS.RATE_LA_2022)
-    expect(rates[0].numeric_value).toBe(0.0275)
+    expect(rates[0].numeric_value).toBe(2.75)  // percent form: 2.75 = 2.75%
     expect(rates[0].is_published).toBe(true)
   })
 
@@ -48,13 +48,13 @@ describe('resolveApplicableRate', () => {
     })
     expect(rates).toHaveLength(1)
     expect(rates[0].id).toBe(IDS.RATE_LA_2015)
-    expect(rates[0].numeric_value).toBe(0.02)
+    expect(rates[0].numeric_value).toBe(2.0)  // percent form: 2.0 = 2%
   })
 
   it('returns the SF rate', async () => {
     const rates = await resolveApplicableRate(repo, { legalRuleId: IDS.RULE_SF })
     expect(rates).toHaveLength(1)
-    expect(rates[0].numeric_value).toBe(0.0155)
+    expect(rates[0].numeric_value).toBe(1.55)  // percent form: 1.55 = 1.55%
   })
 
   it('returns empty array for a rule with no rates', async () => {

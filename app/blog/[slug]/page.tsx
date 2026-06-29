@@ -20,7 +20,7 @@ export async function generateStaticParams() {
  */
 function buildTitle(rawTitle: string): Metadata['title'] {
   // Template appends " | EMLAKIE" (9 chars). Stay at ≤ 51 to keep total ≤ 60.
-  if (rawTitle.length <= 51) return rawTitle;
+  if (rawTitle.length <= 50) return rawTitle;
   // For longer titles, bypass the template entirely with an absolute title.
   // Strip any trailing ellipsis from source data before re-truncating.
   const clean = rawTitle.replace(/…$/, '').trimEnd();
@@ -35,14 +35,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const title = buildTitle(post.title);
   const ogTitle = typeof title === 'string' ? title : (title as { absolute: string }).absolute;
+  const description = post.description.length <= 160 ? post.description : post.description.slice(0, 157) + '…';
 
   return {
     title,
-    description: post.description,
+    description,
     alternates: { canonical: `https://emlakie.com/blog/${slug}` },
     openGraph: {
       title: ogTitle,
-      description: post.description,
+      description,
       type: 'article',
       url: `https://emlakie.com/blog/${slug}`,
       publishedTime: post.date,
@@ -51,7 +52,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     twitter: {
       card: 'summary_large_image',
       title: ogTitle,
-      description: post.description,
+      description,
       images: ['/og-image.png'],
     },
   };

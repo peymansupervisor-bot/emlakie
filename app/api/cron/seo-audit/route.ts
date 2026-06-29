@@ -240,7 +240,8 @@ async function auditPage(path: string): Promise<SeoPageResult> {
   const canonicalUrl = extractCanonical(html);
   const hasCanonical = canonicalUrl !== null;
   const expectedCanonical = `${SITE_URL}${path}`;
-  const canonicalMatches = canonicalUrl !== null && (canonicalUrl === expectedCanonical || canonicalUrl === expectedCanonical + '/');
+  const normalizeUrl = (u: string) => u.replace(/\/$/, '');
+  const canonicalMatches = canonicalUrl !== null && normalizeUrl(canonicalUrl) === normalizeUrl(expectedCanonical);
   const ogTitle = extractOgProp(html, 'title') !== null;
   const ogDescription = extractOgProp(html, 'description') !== null;
   const ogImage = extractOgProp(html, 'image') !== null;

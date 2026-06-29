@@ -299,8 +299,8 @@ export default function SearchBar({ large = false, showVoice = false }: { large?
                 <span className={[
                   'block text-[11px] leading-tight truncate mt-0.5',
                   isActive
-                    ? isViolet ? 'text-violet-500' : 'text-gray-400'
-                    : 'text-gray-400',
+                    ? isViolet ? 'text-violet-600' : 'text-gray-500'
+                    : 'text-gray-500',
                 ].join(' ')}>
                   {m.sublabel}
                 </span>

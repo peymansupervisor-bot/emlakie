@@ -29,16 +29,26 @@ export async function POST(req: NextRequest) {
       if (listing_id && days) {
         const supabase = createClient(
           process.env.NEXT_PUBLIC_SUPABASE_URL!,
-          process.env.SUPABASE_SERVICE_KEY!,
+          process.env.SUPABASE_SERVICE_ROLE_KEY!,
         );
 
         const boostedUntil = new Date();
         boostedUntil.setDate(boostedUntil.getDate() + Number(days));
 
-        await supabase
+        const { error: boostErr } = await supabase
           .from('listings')
           .update({ boosted_until: boostedUntil.toISOString() })
           .eq('id', listing_id);
+
+        if (boostErr) {
+          await logError({
+            source: 'Stripe-webhook',
+            message: `Failed to apply boost for listing ${listing_id}`,
+            details: boostErr.message,
+            endpoint: 'POST /api/stripe-webhook',
+            http_status: 500,
+          });
+        }
       }
     }
 

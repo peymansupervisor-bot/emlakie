@@ -80,7 +80,7 @@ export default function Footer() {
           <div>
             <p className="font-semibold text-gray-600">Listing Accuracy</p>
             <p className="mt-1">
-              Listing information on this site is deemed reliable but is not guaranteed to be accurate by EMLAKIE LLC.
+              Listing information on this site is deemed reliable but EMLAKIE LLC does not guarantee the accuracy of all the information herein.
               Some listings may be subject to prior lease, withdrawal, or change without notice. All information
               should be independently verified by the renter prior to entering into any rental agreement. EMLAKIE
               LLC assumes no liability for inaccuracies, errors, or omissions in any listing data displayed on

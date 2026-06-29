@@ -523,16 +523,32 @@ export default function EditListingPage() {
 
         {/* Pets */}
         <div>
-          <p className={labelCls}>Pet policy</p>
-          <div className="flex flex-wrap gap-2">
-            {PETS_OPTIONS.map(o => (
-              <button key={o.value} type="button"
-                onClick={() => setForm(f => ({ ...f, petsPolicy: o.value }))}
-                className={`rounded-full border px-4 py-2 text-sm font-medium transition ${
-                  form.petsPolicy === o.value ? 'border-brand-600 bg-brand-50 text-brand-700' : 'border-gray-300 text-gray-600 hover:border-gray-400'
-                }`}>{o.label}</button>
-            ))}
+          <p className={labelCls}>Pets allowed?</p>
+          <div className="flex gap-3">
+            {[{ v: true, l: 'Yes' }, { v: false, l: 'No' }].map(({ v, l }) => {
+              const isYes = form.petsPolicy !== 'no_pets';
+              const active = v ? isYes : !isYes;
+              return (
+                <button key={l} type="button"
+                  onClick={() => setForm(f => ({ ...f, petsPolicy: v ? 'cats_and_dogs' : 'no_pets' }))}
+                  className={`rounded-full border px-5 py-2 text-sm font-medium transition ${
+                    active ? 'border-brand-600 bg-brand-50 text-brand-700' : 'border-gray-300 text-gray-600 hover:border-gray-400'
+                  }`}>{l}</button>
+              );
+            })}
           </div>
+          {form.petsPolicy !== 'no_pets' && (
+            <div className="mt-3 flex flex-wrap gap-2">
+              <p className="w-full text-xs font-semibold text-gray-600">Which pets are allowed?</p>
+              {PETS_OPTIONS.filter(o => o.value !== 'no_pets').map(o => (
+                <button key={o.value} type="button"
+                  onClick={() => setForm(f => ({ ...f, petsPolicy: o.value }))}
+                  className={`rounded-full border px-4 py-1.5 text-sm font-medium transition ${
+                    form.petsPolicy === o.value ? 'border-brand-600 bg-brand-50 text-brand-700' : 'border-gray-300 text-gray-600 hover:border-gray-400'
+                  }`}>{o.label}</button>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Yard */}

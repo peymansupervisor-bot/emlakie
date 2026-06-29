@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { AdminRole } from '@/lib/admin/auth'
+import type { AdminRole } from '@/lib/admin/auth'
 
 const NAV = [
   {

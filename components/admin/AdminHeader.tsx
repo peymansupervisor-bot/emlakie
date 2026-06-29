@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
-import { AdminRole } from '@/lib/admin/auth'
+import type { AdminRole } from '@/lib/admin/auth'
 
 interface Props {
   email: string

@@ -130,7 +130,12 @@ function DropdownMenu({
         aria-expanded={open}
         aria-controls={panelId}
         onKeyDown={handleTriggerKeyDown}
-        onClick={() => (open ? onClose() : onOpen())}
+        onClick={(e) => {
+          // Mouse hover (mouseenter) already opens the menu before onClick fires.
+          // Only handle programmatic activation (e.g. screen readers, detail===0).
+          // Keyboard users go through handleTriggerKeyDown with e.preventDefault().
+          if (e.detail === 0) open ? onClose() : onOpen();
+        }}
         className={`flex items-center gap-1 rounded-lg px-3 py-2 font-display text-sm font-medium tracking-tight transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-1 ${
           open ? 'text-gray-900' : 'text-gray-500 hover:text-gray-900'
         }`}

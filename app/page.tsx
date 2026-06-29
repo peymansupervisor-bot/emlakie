@@ -115,7 +115,7 @@ export default async function HomePage() {
 
   const tier = (l: { boosted_until?: string | null; landlord_id?: string | null }) => {
     if (l.boosted_until && new Date(l.boosted_until).getTime() > now) return 0; // sponsored
-    if (l.landlord_id === 'EM-1') return 1;                                      // owner's listings
+    if (l.landlord_id === 'da34cd86-ffa8-49f9-96d5-0daa3dec8953') return 1;       // owner's listings (EM-1)
     return 2;                                                                     // everyone else
   };
 

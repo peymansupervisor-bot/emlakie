@@ -19,12 +19,15 @@ export default function AssistantClient() {
     useAssistantPanel();
 
   const {
+    sessionState,
     displayState,
     recommendations,
     open: openSession,
     close: closeSession,
     cancel,
   } = useRealtimeSession(audioRef);
+
+  const errorCode = sessionState.phase === 'error' ? sessionState.code : undefined;
 
   const sessionStartedRef = useRef(false);
 
@@ -55,6 +58,7 @@ export default function AssistantClient() {
         onCancel={cancel}
         panelRef={panelRef}
         recommendations={recommendations}
+        errorCode={errorCode}
       />
     </>
   );

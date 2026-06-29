@@ -4,6 +4,7 @@ import type { AssistantState } from '@/types/assistant';
 
 interface AssistantStateDisplayProps {
   state: AssistantState;
+  errorCode?: string;
 }
 
 const STATE_CONFIG: Record<
@@ -52,8 +53,14 @@ const STATE_CONFIG: Record<
   },
 };
 
-export default function AssistantStateDisplay({ state }: AssistantStateDisplayProps) {
-  const cfg = STATE_CONFIG[state];
+export default function AssistantStateDisplay({ state, errorCode }: AssistantStateDisplayProps) {
+  const cfg = {
+    ...STATE_CONFIG[state],
+    ...(state === 'error' && errorCode === 'mic_permission_denied' && {
+      label: 'Microphone blocked',
+      sublabel: 'Please enable your microphone in your browser settings, then try again.',
+    }),
+  };
 
   return (
     <div

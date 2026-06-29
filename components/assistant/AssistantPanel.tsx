@@ -12,6 +12,7 @@ interface AssistantPanelProps {
   onCancel: () => void;
   panelRef: React.RefObject<HTMLDivElement>;
   recommendations?: ListingRecommendation[];
+  errorCode?: string;
 }
 
 /**
@@ -33,6 +34,7 @@ export default function AssistantPanel({
   onCancel,
   panelRef,
   recommendations = [],
+  errorCode,
 }: AssistantPanelProps) {
   const langLine = SUPPORTED_LANGUAGES.map((l) => l.nameSelf).join(' · ');
   const isActive =
@@ -139,7 +141,7 @@ export default function AssistantPanel({
 
         {/* ── State display ── */}
         <div className="flex-1">
-          <AssistantStateDisplay state={displayState} />
+          <AssistantStateDisplay state={displayState} errorCode={errorCode} />
         </div>
 
         {/* ── Cancel button (visible while assistant is speaking) ── */}

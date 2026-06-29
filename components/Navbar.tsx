@@ -293,41 +293,39 @@ export default function Navbar() {
             <Logo className="h-9" textClassName="text-2xl" />
           </Link>
 
-          {/* Desktop dropdowns */}
-          <div className="hidden items-center gap-0.5 md:flex" role="list">
+          {/* Desktop nav + CTAs — all right-aligned */}
+          <div className="hidden items-center gap-1 md:flex">
             {menus.map((menu) => (
-              <div role="listitem" key={menu.label}>
-                <DropdownMenu
-                  menu={menu}
-                  open={openMenu === menu.label}
-                  onOpen={() => setOpenMenu(menu.label)}
-                  onClose={() => setOpenMenu(null)}
-                />
-              </div>
+              <DropdownMenu
+                key={menu.label}
+                menu={menu}
+                open={openMenu === menu.label}
+                onOpen={() => setOpenMenu(menu.label)}
+                onClose={() => setOpenMenu(null)}
+              />
             ))}
-          </div>
 
-          {/* Desktop right CTAs */}
-          <div className="hidden items-center gap-3 md:flex">
-            {auth === 'in' ? (
-              <>
-                <Button href="/landlord" variant="ghost" size="md">My Rentals</Button>
-                <Button href="/landlord/properties/new" size="md">+ New Listing</Button>
-              </>
-            ) : (
-              <>
-                <button
-                  type="button"
-                  onClick={() => setModal('signin')}
-                  className="rounded-lg px-3 py-2 font-display text-sm font-medium tracking-tight text-gray-500 transition hover:text-gray-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-1"
-                >
-                  Sign In
-                </button>
-                <Button type="button" size="md" onClick={() => setModal('listing')}>
-                  List Free
-                </Button>
-              </>
-            )}
+            <div className="ml-3 flex items-center gap-3 border-l border-gray-200 pl-3">
+              {auth === 'in' ? (
+                <>
+                  <Button href="/landlord" variant="ghost" size="md">My Rentals</Button>
+                  <Button href="/landlord/properties/new" size="md">+ New Listing</Button>
+                </>
+              ) : (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => setModal('signin')}
+                    className="rounded-lg px-3 py-2 font-display text-sm font-medium tracking-tight text-gray-500 transition hover:text-gray-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-1"
+                  >
+                    Sign In
+                  </button>
+                  <Button type="button" size="md" onClick={() => setModal('listing')}>
+                    List Free
+                  </Button>
+                </>
+              )}
+            </div>
           </div>
 
           {/* Mobile right side */}

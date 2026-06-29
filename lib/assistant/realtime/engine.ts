@@ -118,6 +118,7 @@ export class RealtimeEngine {
   private setupComplete = false;
   private speechStoppedAt: number | null = null;
   private isRespondingAudio = false;
+  private isResponseActive = false;
   private micTrack: MediaStreamTrack | null = null;
 
   // Function call state — tracks the current response's function call, if any
@@ -417,16 +418,21 @@ export class RealtimeEngine {
       case 'input_audio_buffer.speech_stopped':
         this.speechStoppedAt = Date.now();
         this.cb.onSpeechStopped?.();
-        // Explicitly trigger response — required because create_response:false
-        // prevents OpenAI from auto-responding (which caused the self-talk loop).
-        if (this.dc && this.dc.readyState === 'open') {
+        // Only send response.create if no response is currently active.
+        // Sending it while a response is running causes the OpenAI error
+        // "conversation_already_has_active_response" and triggers self-talk.
+        if (this.dc && this.dc.readyState === 'open' && !this.isResponseActive) {
           this.dc.send(JSON.stringify({ type: 'response.create' }));
         }
         break;
 
       case 'response.created':
-        // Don't emit yet — we don't know if this is an audio or function-call
-        // response until we see the output items. Reset function-call tracking.
+        // Mark response active immediately — mute mic now, not at first audio
+        // chunk. The gap between response.created and response.audio.delta
+        // (~300–500ms) is when model audio leaked into the mic and caused
+        // VAD to fire speech_stopped, creating the self-talk loop.
+        this.isResponseActive = true;
+        if (this.micTrack) this.micTrack.enabled = false;
         this.currentResponseIsFunctionCall = false;
         this.fcCallId = null;
         this.fcName = null;
@@ -479,12 +485,15 @@ export class RealtimeEngine {
 
       case 'response.audio.done':
         this.isRespondingAudio = false;
-        // Unmute mic — user can speak again
-        if (this.micTrack) this.micTrack.enabled = true;
         this.cb.onResponseAudioDone?.();
         break;
 
       case 'response.done':
+        // Response fully complete — unmute mic and clear active flag.
+        // Unmuting here (not at response.audio.done) ensures the mic stays
+        // muted for the full duration including any trailing processing.
+        this.isResponseActive = false;
+        if (this.micTrack) this.micTrack.enabled = true;
         if (this.currentResponseIsFunctionCall) {
           // Execute the function call and send result back to the model
           const callId = this.fcCallId;

@@ -133,16 +133,17 @@ export async function getHomepageListings(): Promise<Listing[]> {
   try {
     const sb = supabaseAdmin();
     const now = new Date().toISOString();
-    const base = sb.from('listings').select('*').eq('status', 'active').gt('expires_at', now);
 
     const [priorityRes, restRes] = await Promise.all([
       // Tier 0+1: sponsored listings + owner's listings — always included
-      base.or(`boosted_until.gt.${now},landlord_id.eq.${OWNER_LANDLORD_ID}`),
-      // Tier 2: everyone else, newest first, capped at 50 to keep it fast
-      base.not('landlord_id', 'eq', OWNER_LANDLORD_ID)
-          .or(`boosted_until.is.null,boosted_until.lte.${now}`)
-          .order('refreshed_at', { ascending: false })
-          .limit(50),
+      sb.from('listings').select('*').eq('status', 'active').gt('expires_at', now)
+        .or(`boosted_until.gt.${now},landlord_id.eq.${OWNER_LANDLORD_ID}`),
+      // Tier 2: everyone else, newest first, capped at 50
+      sb.from('listings').select('*').eq('status', 'active').gt('expires_at', now)
+        .not('landlord_id', 'eq', OWNER_LANDLORD_ID)
+        .or(`boosted_until.is.null,boosted_until.lte.${now}`)
+        .order('refreshed_at', { ascending: false })
+        .limit(50),
     ]);
 
     const priority = (priorityRes.data ?? []).map(rowToListing);

@@ -10,15 +10,25 @@ export default async function LandlordsPage({ searchParams }: { searchParams: Pr
   const { q } = await searchParams;
   const sb = adminClient();
 
-  const [{ data: profileRows }, { data: listingCounts }, { data: authUsers }] = await Promise.all([
-    sb.from('profiles').select('id, first_name, last_name, display_name, phone, phone_verified, email, account_id, created_at').limit(500),
+  // Fetch all pages of auth users
+  let allAuthUsers: { id: string; banned_until?: string | null }[] = [];
+  let authPage = 1;
+  while (true) {
+    const { data: page } = await sb.auth.admin.listUsers({ perPage: 1000, page: authPage });
+    const users = page?.users ?? [];
+    allAuthUsers = allAuthUsers.concat(users);
+    if (users.length < 1000) break;
+    authPage++;
+  }
+
+  const [{ data: profileRows }, { data: listingCounts }] = await Promise.all([
+    sb.from('profiles').select('id, first_name, last_name, display_name, phone, phone_verified, email, account_id, created_at'),
     sb.from('listings').select('landlord_id, status').limit(1000000),
-    sb.auth.admin.listUsers({ perPage: 1000 }),
   ]);
 
   const now = new Date();
   const bannedIds = new Set(
-    (authUsers?.users ?? [])
+    allAuthUsers
       .filter(u => u.banned_until && new Date(u.banned_until) > now)
       .map(u => u.id)
   );

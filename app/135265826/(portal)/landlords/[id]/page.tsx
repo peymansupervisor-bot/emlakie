@@ -66,6 +66,7 @@ export default async function LandlordProfilePage({ params }: { params: Promise<
             {profile.account_id && (
               <p className="text-xs text-gray-400 font-mono mt-0.5">Account {profile.account_id}</p>
             )}
+            <p className="text-[10px] text-gray-600 font-mono mt-0.5 select-all">{profile.id}</p>
           </div>
           <div className="text-xs text-gray-500">
             Joined {new Date(profile.created_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}

@@ -137,6 +137,7 @@ export default async function LandlordsPage({ searchParams }: { searchParams: Pr
                       {p.account_id
                         ? <span className={isSuspended ? 'text-red-400' : 'text-gray-400'}>{p.account_id}</span>
                         : <span className="text-amber-500">missing</span>}
+                      <div className="mt-0.5 text-[10px] text-gray-600 select-all">{p.id}</div>
                     </td>
                     <td className="px-4 py-3 whitespace-nowrap">
                       <span className={`font-semibold ${isSuspended ? 'text-red-300' : 'text-white'}`}>{name}</span>

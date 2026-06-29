@@ -24,6 +24,9 @@
     "functions": {
           "app/api/listings/route.ts": {
                   "maxDuration": 60
+          },
+          "app/api/cron/ada-audit/route.ts": {
+                  "maxDuration": 300
           }
     }
 }

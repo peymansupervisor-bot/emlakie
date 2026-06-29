@@ -52,41 +52,40 @@ interface Violation {
   nodes: number;
 }
 
-async function auditPage(path: string): Promise<{
+async function auditPage(
+  path: string,
+  browser: import('playwright-core').Browser,
+): Promise<{
   violations: Violation[];
   passes: number;
   incomplete: number;
 }> {
   const url = `${SITE_URL}${path}`;
-  const res = await fetch(url, {
-    headers: { 'User-Agent': 'EMLAKIE-ADA-Auditor/1.0' },
-    signal: AbortSignal.timeout(15000),
-  });
-  if (!res.ok) throw new Error(`HTTP ${res.status} fetching ${url}`);
-  const html = await res.text();
-
-  const { JSDOM } = await import('jsdom');
   const axeCore = await import('axe-core');
-
-  const dom = new JSDOM(html, { url, runScripts: 'outside-only' });
-  dom.window.eval(axeCore.source);
-
-  const results = await (dom.window as unknown as { axe: typeof axeCore }).axe.run(
-    dom.window.document,
-    { runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21aa', 'best-practice'] } }
-  );
-
-  return {
-    violations: results.violations.map((v) => ({
-      id: v.id,
-      impact: v.impact ?? null,
-      description: v.description,
-      helpUrl: v.helpUrl,
-      nodes: v.nodes.length,
-    })),
-    passes: results.passes.length,
-    incomplete: results.incomplete.length,
-  };
+  const page = await browser.newPage();
+  try {
+    await page.goto(url, { waitUntil: 'networkidle', timeout: 20000 });
+    // Inject axe-core into the live rendered page and run it
+    await page.addScriptTag({ content: axeCore.source });
+    const results = await page.evaluate(async () => {
+      return await (window as unknown as { axe: { run: (opts: unknown) => Promise<{ violations: unknown[]; passes: unknown[]; incomplete: unknown[] }> } }).axe.run({
+        runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21aa', 'best-practice'] },
+      });
+    });
+    return {
+      violations: (results.violations as Array<{ id: string; impact: string | null; description: string; helpUrl: string; nodes: unknown[] }>).map((v) => ({
+        id: v.id,
+        impact: v.impact ?? null,
+        description: v.description,
+        helpUrl: v.helpUrl,
+        nodes: v.nodes.length,
+      })),
+      passes: results.passes.length,
+      incomplete: results.incomplete.length,
+    };
+  } finally {
+    await page.close();
+  }
 }
 
 function sb() {
@@ -162,9 +161,19 @@ export async function GET(req: NextRequest) {
     const database = sb();
     const results: Array<{ path: string; violations: Violation[]; passes: number; incomplete: number; error?: string }> = [];
 
+    // Launch a single real browser instance for the entire audit run
+    const chromium = await import('@sparticuz/chromium');
+    const { chromium: playwrightChromium } = await import('playwright-core');
+    const browser = await playwrightChromium.launch({
+      args: chromium.default.args,
+      executablePath: await chromium.default.executablePath(),
+      headless: true,
+    });
+
+    try {
     for (const path of pagesToAudit) {
       try {
-        const { violations, passes, incomplete } = await auditPage(path);
+        const { violations, passes, incomplete } = await auditPage(path, browser);
         results.push({ path, violations, passes, incomplete });
 
         // Insert immutable audit record
@@ -198,6 +207,9 @@ export async function GET(req: NextRequest) {
           scanned_at: new Date().toISOString(),
         });
       }
+    }
+    } finally {
+      await browser.close();
     }
 
     // Record this successful run in system_health so the health probe can track it

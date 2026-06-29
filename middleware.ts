@@ -24,7 +24,25 @@ export async function middleware(request: NextRequest) {
   )
 
   // Refresh session — keeps access token alive on every request
-  await supabase.auth.getUser()
+  const { data: { user } } = await supabase.auth.getUser()
+
+  // ── Admin route protection ────────────────────────────────────────────────
+  // /admin/login and /admin/unauthorized are always accessible.
+  // All other /admin/* routes require a valid Supabase session at the edge.
+  // Fine-grained compliance_admin_users checks happen server-side in the layout.
+  const { pathname } = request.nextUrl
+  const isAdminRoute = pathname.startsWith('/admin')
+  const isAdminPublic =
+    pathname === '/admin/login' ||
+    pathname.startsWith('/admin/login/') ||
+    pathname === '/admin/unauthorized' ||
+    pathname.startsWith('/admin/unauthorized/')
+
+  if (isAdminRoute && !isAdminPublic && !user) {
+    const loginUrl = request.nextUrl.clone()
+    loginUrl.pathname = '/admin/login'
+    return NextResponse.redirect(loginUrl)
+  }
 
   return supabaseResponse
 }

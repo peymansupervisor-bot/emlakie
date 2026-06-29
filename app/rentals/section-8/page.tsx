@@ -40,7 +40,8 @@ const schema = {
 export default async function Section8Page() {
   const { listings } = await getListings();
   const section8 = listings.filter(l =>
-    l.amenities?.some(a => /section.8|voucher|hcv|hud/i.test(a)) ||
+    l.section_8_accepted === true ||
+    l.amenities?.some((a: string) => /section.8|voucher|hcv|hud/i.test(a)) ||
     /section.8|voucher accepted|housing voucher|hcv/i.test(l.description ?? '') ||
     /section.8|voucher/i.test(l.title ?? '')
   ).slice(0, 6);

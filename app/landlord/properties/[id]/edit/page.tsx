@@ -19,9 +19,15 @@ const PROPERTY_TYPES = [
 ];
 
 const AMENITIES_LIST = [
-  'Air conditioning', 'Heating', 'In-unit laundry', 'Laundry in building',
-  'Dishwasher', 'Parking', 'Garage', 'Pet-friendly', 'Pool', 'Gym',
-  'Balcony', 'Furnished', 'Hardwood floors', 'EV charging', 'Storage',
+  'Air conditioning', 'Heating', 'Dishwasher', 'Parking', 'Garage',
+  'Pet-friendly', 'Gym', 'Balcony', 'Hardwood floors', 'EV charging', 'Storage',
+];
+
+const LAUNDRY_OPTIONS = [
+  { value: 'in_unit',     label: 'Washer & dryer in unit' },
+  { value: 'hookup',      label: 'Washer & dryer hookup only' },
+  { value: 'in_building', label: 'Washer & dryer in building (shared)' },
+  { value: 'none',        label: 'No laundry on-site' },
 ];
 
 const inputCls = 'w-full rounded-xl border border-gray-300 px-4 py-3 text-sm outline-none focus:border-brand-600 focus:ring-0';
@@ -48,6 +54,11 @@ export default function EditListingPage() {
     virtualTourUrl: '',
     buildingName: '',
     amenities: [] as string[],
+    section8Accepted: false as boolean,
+    furnished: false as boolean,
+    laundryType: '' as string,
+    pool: false as boolean,
+    poolType: '' as string,
     isBroker: false as boolean,
   });
   const [busy, setBusy] = useState(false);
@@ -75,6 +86,11 @@ export default function EditListingPage() {
         virtualTourUrl: l.virtual_tour_url ?? '',
         buildingName: l.building_name ?? '',
         amenities: l.amenities ?? [],
+        section8Accepted: l.section_8_accepted ?? false,
+        furnished: l.furnished ?? false,
+        laundryType: l.laundry_type ?? '',
+        pool: l.pool ?? false,
+        poolType: l.pool_type ?? '',
         isBroker: l.listing_source === 'broker',
       });
     }).catch(() => setListing(null));
@@ -118,6 +134,11 @@ export default function EditListingPage() {
         virtual_tour_url: form.virtualTourUrl || null,
         building_name: form.buildingName.trim() || null,
         amenities: form.amenities,
+        section_8_accepted: form.section8Accepted,
+        furnished: form.furnished,
+        laundry_type: form.laundryType || null,
+        pool: form.pool,
+        pool_type: form.pool && form.poolType ? form.poolType : null,
         listing_source: form.isBroker ? 'broker' : 'owner',
       });
       setSaved(true);
@@ -272,9 +293,69 @@ export default function EditListingPage() {
           </p>
         </div>
 
+        {/* Section 8 */}
+        <div>
+          <p className={labelCls}>Do you accept Section 8 / Housing Choice Vouchers?</p>
+          <div className="flex gap-3">
+            {[{ v: true, l: 'Yes' }, { v: false, l: 'No' }].map(({ v, l }) => (
+              <button key={l} type="button" onClick={() => setForm(f => ({ ...f, section8Accepted: v }))}
+                className={`rounded-full border px-5 py-2 text-sm font-medium transition ${
+                  form.section8Accepted === v ? 'border-brand-600 bg-brand-50 text-brand-700' : 'border-gray-300 text-gray-600 hover:border-gray-400'
+                }`}>{l}</button>
+            ))}
+          </div>
+        </div>
+
+        {/* Furnished */}
+        <div>
+          <p className={labelCls}>Is the unit furnished?</p>
+          <div className="flex gap-3">
+            {[{ v: true, l: 'Furnished' }, { v: false, l: 'Unfurnished' }].map(({ v, l }) => (
+              <button key={l} type="button" onClick={() => setForm(f => ({ ...f, furnished: v }))}
+                className={`rounded-full border px-5 py-2 text-sm font-medium transition ${
+                  form.furnished === v ? 'border-brand-600 bg-brand-50 text-brand-700' : 'border-gray-300 text-gray-600 hover:border-gray-400'
+                }`}>{l}</button>
+            ))}
+          </div>
+        </div>
+
+        {/* Laundry */}
+        <div>
+          <label htmlFor="edit-laundry-type" className={labelCls}>Washer & Dryer</label>
+          <select id="edit-laundry-type" className={inputCls}
+            value={form.laundryType} onChange={(e) => setForm(f => ({ ...f, laundryType: e.target.value }))}>
+            <option value="">Select laundry option…</option>
+            {LAUNDRY_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
+          </select>
+        </div>
+
+        {/* Pool */}
+        <div>
+          <p className={labelCls}>Swimming Pool</p>
+          <div className="flex gap-3">
+            {[{ v: true, l: 'Yes' }, { v: false, l: 'No' }].map(({ v, l }) => (
+              <button key={l} type="button"
+                onClick={() => setForm(f => ({ ...f, pool: v, poolType: v ? f.poolType : '' }))}
+                className={`rounded-full border px-5 py-2 text-sm font-medium transition ${
+                  form.pool === v ? 'border-brand-600 bg-brand-50 text-brand-700' : 'border-gray-300 text-gray-600 hover:border-gray-400'
+                }`}>{l}</button>
+            ))}
+          </div>
+          {form.pool && (
+            <div className="mt-3 flex gap-3">
+              {[{ v: 'private', l: 'Private pool' }, { v: 'community', l: 'Community pool' }].map(({ v, l }) => (
+                <button key={v} type="button" onClick={() => setForm(f => ({ ...f, poolType: v }))}
+                  className={`rounded-full border px-5 py-2 text-sm font-medium transition ${
+                    form.poolType === v ? 'border-brand-600 bg-brand-50 text-brand-700' : 'border-gray-300 text-gray-600 hover:border-gray-400'
+                  }`}>{l}</button>
+              ))}
+            </div>
+          )}
+        </div>
+
         {/* Amenities */}
         <div>
-          <p className={labelCls}>Amenities</p>
+          <p className={labelCls}>Other Amenities</p>
           <div className="flex flex-wrap gap-2">
             {AMENITIES_LIST.map((a) => (
               <button key={a} type="button" onClick={() => toggleAmenity(a)}

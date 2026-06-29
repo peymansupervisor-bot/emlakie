@@ -59,6 +59,11 @@ export async function GET(req: NextRequest) {
     virtual_tour_url: row.virtual_tour_url,
     slug: row.slug,
     expiresAt: row.expires_at,
+    section_8_accepted: row.section_8_accepted ?? false,
+    furnished: row.furnished ?? false,
+    laundry_type: row.laundry_type ?? null,
+    pool: row.pool ?? false,
+    pool_type: row.pool_type ?? null,
   }))
   return NextResponse.json(mapped)
 }
@@ -159,6 +164,11 @@ export async function POST(req: NextRequest) {
       license_number: formData.get('licenseNumber') as string || null,
       virtual_tour_url: formData.get('virtualTourUrl') as string || null,
       amenities,
+      section_8_accepted: formData.get('section8Accepted') === 'true',
+      furnished: formData.get('furnished') === 'true',
+      laundry_type: formData.get('laundryType') as string || null,
+      pool: formData.get('pool') === 'true',
+      pool_type: formData.get('poolType') as string || null,
       photos: photoUrls,
       available_date: formData.get('availableFrom') as string || null,
       status: 'active',

@@ -40,7 +40,8 @@ const schema = {
 export default async function FurnishedPage() {
   const { listings } = await getListings();
   const furnished = listings.filter(l =>
-    l.amenities?.some(a => /furnished/i.test(a)) ||
+    l.furnished === true ||
+    l.amenities?.some((a: string) => /furnished/i.test(a)) ||
     /furnished/i.test(l.description ?? '') ||
     /furnished/i.test(l.title ?? '')
   ).slice(0, 6);

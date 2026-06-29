@@ -34,6 +34,11 @@ export interface Listing {
   building_name?: string | null;
   refreshed_at?: string | null;
   boosted_until?: string | null;
+  section_8_accepted?: boolean;
+  furnished?: boolean;
+  laundry_type?: string | null;
+  pool?: boolean;
+  pool_type?: string | null;
 }
 
 export interface ListingFilters {

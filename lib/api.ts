@@ -49,6 +49,11 @@ function rowToListing(row: Record<string, unknown>): Listing {
       || null,
     refreshed_at: (row.refreshed_at ?? row.updated_at ?? row.created_at) as string | null | undefined,
     boosted_until: row.boosted_until as string | null | undefined,
+    section_8_accepted: (row.section_8_accepted as boolean) ?? false,
+    furnished: (row.furnished as boolean) ?? false,
+    laundry_type: row.laundry_type as string | null | undefined,
+    pool: (row.pool as boolean) ?? false,
+    pool_type: row.pool_type as string | null | undefined,
   };
 }
 

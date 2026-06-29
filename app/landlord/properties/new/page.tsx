@@ -31,9 +31,15 @@ const STUDIO_OWNERSHIP = [
   { value: 'condo',     label: 'Condominium (has its own deed, can be sold)' },
 ];
 const AMENITIES_LIST = [
-  'Air conditioning', 'Heating', 'In-unit laundry', 'Laundry in building',
-  'Dishwasher', 'Parking', 'Garage', 'Pet-friendly', 'Pool', 'Gym',
-  'Balcony', 'Furnished', 'Hardwood floors', 'EV charging', 'Storage',
+  'Air conditioning', 'Heating', 'Dishwasher', 'Parking', 'Garage',
+  'Pet-friendly', 'Gym', 'Balcony', 'Hardwood floors', 'EV charging', 'Storage',
+];
+
+const LAUNDRY_OPTIONS = [
+  { value: 'in_unit',      label: 'Washer & dryer in unit' },
+  { value: 'hookup',       label: 'Washer & dryer hookup only' },
+  { value: 'in_building',  label: 'Washer & dryer in building (shared)' },
+  { value: 'none',         label: 'No laundry on-site' },
 ];
 
 type Step = 1 | 2 | 3 | 4;
@@ -55,6 +61,11 @@ interface FormData {
   title: string;
   description: string;
   amenities: string[];
+  section8Accepted: boolean;
+  furnished: boolean;
+  laundryType: string;
+  pool: boolean;
+  poolType: string;
   isBroker: boolean | null;
   licenseNumber: string;
   agentName: string;
@@ -69,6 +80,7 @@ const empty: FormData = {
   sqft: '', price: '', availableFrom: '',
   phone: '',
   title: '', description: '', amenities: [],
+  section8Accepted: false, furnished: false, laundryType: '', pool: false, poolType: '',
   isBroker: null,
   licenseNumber: '',
   agentName: '',
@@ -437,6 +449,11 @@ export default function NewPropertyPage() {
       fd.append('propertyType', form.propertyType);
       fd.append('availableFrom', form.availableFrom);
       fd.append('amenities', JSON.stringify(form.amenities));
+      fd.append('section8Accepted', String(form.section8Accepted));
+      fd.append('furnished', String(form.furnished));
+      if (form.laundryType) fd.append('laundryType', form.laundryType);
+      fd.append('pool', String(form.pool));
+      if (form.pool && form.poolType) fd.append('poolType', form.poolType);
       fd.append('listingSource', form.isBroker ? 'broker' : 'owner');
       if (form.isBroker && form.licenseNumber.trim()) fd.append('licenseNumber', form.licenseNumber.trim());
       if (form.isBroker && form.agentName.trim()) fd.append('agentName', form.agentName.trim());
@@ -832,8 +849,72 @@ export default function NewPropertyPage() {
               value={form.virtualTourUrl} onChange={(e) => set('virtualTourUrl', e.target.value)} />
             <p className="mt-1 text-xs text-gray-500">Paste a Matterport 3D tour or YouTube walkthrough link. Renters can view it directly on your listing.</p>
           </div>
+          {/* Section 8 */}
           <div>
-            <p className={labelCls} id="amenities-label">Amenities</p>
+            <p className={labelCls}>Do you accept Section 8 / Housing Choice Vouchers?</p>
+            <div className="flex gap-3">
+              {[{ v: true, l: 'Yes' }, { v: false, l: 'No' }].map(({ v, l }) => (
+                <button key={l} type="button" onClick={() => setForm(f => ({ ...f, section8Accepted: v }))}
+                  aria-pressed={form.section8Accepted === v}
+                  className={`rounded-full border px-5 py-2 text-sm font-medium transition ${
+                    form.section8Accepted === v ? 'border-brand-600 bg-brand-50 text-brand-700' : 'border-gray-300 text-gray-600 hover:border-gray-400'
+                  }`}>{l}</button>
+              ))}
+            </div>
+          </div>
+
+          {/* Furnished */}
+          <div>
+            <p className={labelCls}>Is the unit furnished?</p>
+            <div className="flex gap-3">
+              {[{ v: true, l: 'Furnished' }, { v: false, l: 'Unfurnished' }].map(({ v, l }) => (
+                <button key={l} type="button" onClick={() => setForm(f => ({ ...f, furnished: v }))}
+                  aria-pressed={form.furnished === v}
+                  className={`rounded-full border px-5 py-2 text-sm font-medium transition ${
+                    form.furnished === v ? 'border-brand-600 bg-brand-50 text-brand-700' : 'border-gray-300 text-gray-600 hover:border-gray-400'
+                  }`}>{l}</button>
+              ))}
+            </div>
+          </div>
+
+          {/* Laundry */}
+          <div>
+            <label htmlFor="laundry-type" className={labelCls}>Washer & Dryer</label>
+            <select id="laundry-type" className={inputCls}
+              value={form.laundryType} onChange={(e) => setForm(f => ({ ...f, laundryType: e.target.value }))}>
+              <option value="">Select laundry option…</option>
+              {LAUNDRY_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
+            </select>
+          </div>
+
+          {/* Pool */}
+          <div>
+            <p className={labelCls}>Swimming Pool</p>
+            <div className="flex gap-3">
+              {[{ v: true, l: 'Yes' }, { v: false, l: 'No' }].map(({ v, l }) => (
+                <button key={l} type="button"
+                  onClick={() => setForm(f => ({ ...f, pool: v, poolType: v ? f.poolType : '' }))}
+                  aria-pressed={form.pool === v}
+                  className={`rounded-full border px-5 py-2 text-sm font-medium transition ${
+                    form.pool === v ? 'border-brand-600 bg-brand-50 text-brand-700' : 'border-gray-300 text-gray-600 hover:border-gray-400'
+                  }`}>{l}</button>
+              ))}
+            </div>
+            {form.pool && (
+              <div className="mt-3 flex gap-3">
+                {[{ v: 'private', l: 'Private pool' }, { v: 'community', l: 'Community pool' }].map(({ v, l }) => (
+                  <button key={v} type="button" onClick={() => setForm(f => ({ ...f, poolType: v }))}
+                    aria-pressed={form.poolType === v}
+                    className={`rounded-full border px-5 py-2 text-sm font-medium transition ${
+                      form.poolType === v ? 'border-brand-600 bg-brand-50 text-brand-700' : 'border-gray-300 text-gray-600 hover:border-gray-400'
+                    }`}>{l}</button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <div>
+            <p className={labelCls} id="amenities-label">Other Amenities</p>
             <div className="flex flex-wrap gap-2" role="group" aria-labelledby="amenities-label">
               {AMENITIES_LIST.map((a) => (
                 <button key={a} type="button" onClick={() => toggleAmenity(a)}

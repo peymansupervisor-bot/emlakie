@@ -232,7 +232,7 @@ export default function ListingCard({
               </span>
             ) : (
               <span className="rounded-full bg-blue-600/85 px-2.5 py-1 text-[11px] font-semibold text-white backdrop-blur-sm">
-                Listed by a Broker
+                By Broker
               </span>
             )}
           </div>

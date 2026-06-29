@@ -6,7 +6,7 @@ import SearchBar from '@/components/SearchBar';
 import TrendingCities from '@/components/TrendingCities';
 import Button from '@/components/ui/Button';
 import SectionHeading from '@/components/ui/SectionHeading';
-import { getListings, getTopStates } from '@/lib/api';
+import { getHomepageListings, getTopStates } from '@/lib/api';
 import { ASSISTANT_ENABLED } from '@/lib/assistant/config';
 
 export const revalidate = 60;
@@ -100,8 +100,8 @@ const BROWSE_STATES = [
 ];
 
 export default async function HomePage() {
-  const [{ listings }] = await Promise.all([
-    getListings(),
+  const [listings] = await Promise.all([
+    getHomepageListings(),
   ]);
   const now = Date.now();
 

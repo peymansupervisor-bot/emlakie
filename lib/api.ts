@@ -125,6 +125,36 @@ export async function getListings(filters: ListingFilters = {}): Promise<Listing
   }
 }
 
+// EM-1 landlord UUID — used to guarantee owner listings always appear on homepage
+const OWNER_LANDLORD_ID = 'da34cd86-ffa8-49f9-96d5-0daa3dec8953';
+
+export async function getHomepageListings(): Promise<Listing[]> {
+  noStore();
+  try {
+    const sb = supabaseAdmin();
+    const now = new Date().toISOString();
+    const base = sb.from('listings').select('*').eq('status', 'active').gt('expires_at', now);
+
+    const [priorityRes, restRes] = await Promise.all([
+      // Tier 0+1: sponsored listings + owner's listings — always included
+      base.or(`boosted_until.gt.${now},landlord_id.eq.${OWNER_LANDLORD_ID}`),
+      // Tier 2: everyone else, newest first, capped at 50 to keep it fast
+      base.not('landlord_id', 'eq', OWNER_LANDLORD_ID)
+          .or(`boosted_until.is.null,boosted_until.lte.${now}`)
+          .order('refreshed_at', { ascending: false })
+          .limit(50),
+    ]);
+
+    const priority = (priorityRes.data ?? []).map(rowToListing);
+    const rest = (restRes.data ?? []).map(rowToListing);
+    const priorityIds = new Set(priority.map(l => l.id));
+    const merged = [...priority, ...rest.filter(l => !priorityIds.has(l.id))];
+    return merged;
+  } catch {
+    return [];
+  }
+}
+
 export async function getAllMappableListings(): Promise<Pick<Listing, 'id' | 'lat' | 'lng' | 'price' | 'address' | 'slug'>[]> {
   noStore();
   try {

@@ -67,10 +67,12 @@ export default function Footer() {
 
           {/* Platform disclaimer */}
           <p>
-            EMLAKIE is a direct-rental platform connecting property owners and tenants without the need for a
-            broker. Listings marked <strong>By Owner</strong> are posted by the property owner. Listings
-            marked <strong>Broker Listed</strong> are submitted by licensed real estate professionals on behalf
-            of their clients. No brokerage, agency, or property management services are provided by EMLAKIE LLC
+            EMLAKIE is a direct-rental platform connecting property owners and tenants. Listings marked{" "}
+            <strong>Broker Listed</strong> are submitted by licensed real estate professionals on behalf of
+            their clients. All other listings are expected to be posted by the property owner or someone acting
+            on behalf of the property owner. EMLAKIE LLC does not verify the validity of property information
+            or the identity of property owners, and accepts no responsibility for any assumed knowledge by
+            website users. No brokerage, agency, or property management services are provided by EMLAKIE LLC
             through this site. No content constitutes legal, financial, or professional advice.
           </p>
 

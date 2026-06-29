@@ -1,0 +1,717 @@
+{
+  "run_id": "9f2a184b-8e3a-4bcc-8a05-55062e3f4bab",
+  "scanned_at": "2026-06-29T08:42:24.299Z",
+  "site": "https://emlakie.com",
+  "axe_version": "4.12.1",
+  "pages": 77,
+  "total_violations": 1,
+  "total_critical": 0,
+  "total_serious": 1,
+  "cure": {
+    "fixed": 0,
+    "skipped": 0,
+    "summary": []
+  },
+  "results": [
+    {
+      "path": "/",
+      "url": "https://emlakie.com/",
+      "violation_count": 1,
+      "violations": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
+          "helpUrl": "https://dequeuniversity.com/rules/axe/4.12/color-contrast?application=axeAPI",
+          "nodes": 53
+        }
+      ],
+      "passes": 50,
+      "incomplete": 1
+    },
+    {
+      "path": "/rentals",
+      "url": "https://emlakie.com/rentals",
+      "violation_count": 0,
+      "violations": [],
+      "passes": 0,
+      "incomplete": 0,
+      "error": "Error: browser.newPage: Target page, context or browser has been closed"
+    },
+    {
+      "path": "/contact",
+      "url": "https://emlakie.com/contact",
+      "violation_count": 0,
+      "violations": [],
+      "passes": 0,
+      "incomplete": 0,
+      "error": "Error: browser.newPage: Target page, context or browser has been closed"
+    },
+    {
+      "path": "/how-it-works",
+      "url": "https://emlakie.com/how-it-works",
+      "violation_count": 0,
+      "violations": [],
+      "passes": 0,
+      "incomplete": 0,
+      "error": "Error: browser.newPage: Target page, context or browser has been closed"
+    },
+    {
+      "path": "/landlords",
+      "url": "https://emlakie.com/landlords",
+      "violation_count": 0,
+      "violations": [],
+      "passes": 0,
+      "incomplete": 0,
+      "error": "Error: browser.newPage: Target page, context or browser has been closed"
+    },
+    {
+      "path": "/landlord/login",
+      "url": "https://emlakie.com/landlord/login",
+      "violation_count": 0,
+      "violations": [],
+      "passes": 0,
+      "incomplete": 0,
+      "error": "Error: browser.newPage: Target page, context or browser has been closed"
+    },
+    {
+      "path": "/support",
+      "url": "https://emlakie.com/support",
+      "violation_count": 0,
+      "violations": [],
+      "passes": 0,
+      "incomplete": 0,
+      "error": "Error: browser.newPage: Target page, context or browser has been closed"
+    },
+    {
+      "path": "/cities",
+      "url": "https://emlakie.com/cities",
+      "violation_count": 0,
+      "violations": [],
+      "passes": 0,
+      "incomplete": 0,
+      "error": "Error: browser.newPage: Target page, context or browser has been closed"
+    },
+    {
+      "path": "/rent-check",
+      "url": "https://emlakie.com/rent-check",
+      "violation_count": 0,
+      "violations": [],
+      "passes": 0,
+      "incomplete": 0,
+      "error": "Error: browser.newPage: Target page, context or browser has been closed"
+    },
+    {
+      "path": "/rent-estimate",
+      "url": "https://emlakie.com/rent-estimate",
+      "violation_count": 0,
+      "violations": [],
+      "passes": 0,
+      "incomplete": 0,
+      "error": "Error: browser.newPage: Target page, context or browser has been closed"
+    },
+    {
+      "path": "/app",
+      "url": "https://emlakie.com/app",
+      "violation_count": 0,
+      "violations": [],
+      "passes": 0,
+      "incomplete": 0,
+      "error": "Error: browser.newPage: Target page, context or browser has been closed"
+    },
+    {
+      "path": "/accessibility",
+      "url": "https://emlakie.com/accessibility",
+      "violation_count": 0,
+      "violations": [],
+      "passes": 0,
+      "incomplete": 0,
+      "error": "Error: browser.newPage: Target page, context or browser has been closed"
+    },
+    {
+      "path": "/privacy",
+      "url": "https://emlakie.com/privacy",
+      "violation_count": 0,
+      "violations": [],
+      "passes": 0,
+      "incomplete": 0,
+      "error": "Error: browser.newPage: Target page, context or browser has been closed"
+    },
+    {
+      "path": "/terms",
+      "url": "https://emlakie.com/terms",
+      "violation_count": 0,
+      "violations": [],
+      "passes": 0,
+      "incomplete": 0,
+      "error": "Error: browser.newPage: Target page, context or browser has been closed"
+    },
+    {
+      "path": "/disclaimer",
+      "url": "https://emlakie.com/disclaimer",
+      "violation_count": 0,
+      "violations": [],
+      "passes": 0,
+      "incomplete": 0,
+      "error": "Error: browser.newPage: Target page, context or browser has been closed"
+    },
+    {
+      "path": "/rentals/furnished",
+      "url": "https://emlakie.com/rentals/furnished",
+      "violation_count": 0,
+      "violations": [],
+      "passes": 0,
+      "incomplete": 0,
+      "error": "Error: browser.newPage: Target page, context or browser has been closed"
+    },
+    {
+      "path": "/rentals/pet-friendly",
+      "url": "https://emlakie.com/rentals/pet-friendly",
+      "violation_count": 0,
+      "violations": [],
+      "passes": 0,
+      "incomplete": 0,
+      "error": "Error: browser.newPage: Target page, context or browser has been closed"
+    },
+    {
+      "path": "/rentals/section-8",
+      "url": "https://emlakie.com/rentals/section-8",
+      "violation_count": 0,
+      "violations": [],
+      "passes": 0,
+      "incomplete": 0,
+      "error": "Error: browser.newPage: Target page, context or browser has been closed"
+    },
+    {
+      "path": "/rentals/short-term",
+      "url": "https://emlakie.com/rentals/short-term",
+      "violation_count": 0,
+      "violations": [],
+      "passes": 0,
+      "incomplete": 0,
+      "error": "Error: browser.newPage: Target page, context or browser has been closed"
+    },
+    {
+      "path": "/rentals/state/california",
+      "url": "https://emlakie.com/rentals/state/california",
+      "violation_count": 0,
+      "violations": [],
+      "passes": 0,
+      "incomplete": 0,
+      "error": "Error: browser.newPage: Target page, context or browser has been closed"
+    },
+    {
+      "path": "/blog",
+      "url": "https://emlakie.com/blog",
+      "violation_count": 0,
+      "violations": [],
+      "passes": 0,
+      "incomplete": 0,
+      "error": "Error: browser.newPage: Target page, context or browser has been closed"
+    },
+    {
+      "path": "/rentals/city/bakersfield",
+      "url": "https://emlakie.com/rentals/city/bakersfield",
+      "violation_count": 0,
+      "violations": [],
+      "passes": 0,
+      "incomplete": 0,
+      "error": "Error: browser.newPage: Target page, context or browser has been closed"
+    },
+    {
+      "path": "/rentals/city/los-angeles",
+      "url": "https://emlakie.com/rentals/city/los-angeles",
+      "violation_count": 0,
+      "violations": [],
+      "passes": 0,
+      "incomplete": 0,
+      "error": "Error: browser.newPage: Target page, context or browser has been closed"
+    },
+    {
+      "path": "/rentals/city/philadelphia",
+      "url": "https://emlakie.com/rentals/city/philadelphia",
+      "violation_count": 0,
+      "violations": [],
+      "passes": 0,
+      "incomplete": 0,
+      "error": "Error: browser.newPage: Target page, context or browser has been closed"
+    },
+    {
+      "path": "/rentals/city/west-hollywood",
+      "url": "https://emlakie.com/rentals/city/west-hollywood",
+      "violation_count": 0,
+      "violations": [],
+      "passes": 0,
+      "incomplete": 0,
+      "error": "Error: browser.newPage: Target page, context or browser has been closed"
+    },
+    {
+      "path": "/rentals/city/dana-point",
+      "url": "https://emlakie.com/rentals/city/dana-point",
+      "violation_count": 0,
+      "violations": [],
+      "passes": 0,
+      "incomplete": 0,
+      "error": "Error: browser.newPage: Target page, context or browser has been closed"
+    },
+    {
+      "path": "/rentals/city/santa-monica",
+      "url": "https://emlakie.com/rentals/city/santa-monica",
+      "violation_count": 0,
+      "violations": [],
+      "passes": 0,
+      "incomplete": 0,
+      "error": "Error: browser.newPage: Target page, context or browser has been closed"
+    },
+    {
+      "path": "/rentals/city/santa-ana",
+      "url": "https://emlakie.com/rentals/city/santa-ana",
+      "violation_count": 0,
+      "violations": [],
+      "passes": 0,
+      "incomplete": 0,
+      "error": "Error: browser.newPage: Target page, context or browser has been closed"
+    },
+    {
+      "path": "/blog/bakersfield-renters-guide",
+      "url": "https://emlakie.com/blog/bakersfield-renters-guide",
+      "violation_count": 0,
+      "violations": [],
+      "passes": 0,
+      "incomplete": 0,
+      "error": "Error: browser.newPage: Target page, context or browser has been closed"
+    },
+    {
+      "path": "/blog/average-rent-los-angeles-2026",
+      "url": "https://emlakie.com/blog/average-rent-los-angeles-2026",
+      "violation_count": 0,
+      "violations": [],
+      "passes": 0,
+      "incomplete": 0,
+      "error": "Error: browser.newPage: Target page, context or browser has been closed"
+    },
+    {
+      "path": "/blog/best-neighborhoods-rent-los-angeles",
+      "url": "https://emlakie.com/blog/best-neighborhoods-rent-los-angeles",
+      "violation_count": 0,
+      "violations": [],
+      "passes": 0,
+      "incomplete": 0,
+      "error": "Error: browser.newPage: Target page, context or browser has been closed"
+    },
+    {
+      "path": "/blog/how-to-apply-rental-los-angeles",
+      "url": "https://emlakie.com/blog/how-to-apply-rental-los-angeles",
+      "violation_count": 0,
+      "violations": [],
+      "passes": 0,
+      "incomplete": 0,
+      "error": "Error: browser.newPage: Target page, context or browser has been closed"
+    },
+    {
+      "path": "/blog/landlord-guide-listing-rental-la",
+      "url": "https://emlakie.com/blog/landlord-guide-listing-rental-la",
+      "violation_count": 0,
+      "violations": [],
+      "passes": 0,
+      "incomplete": 0,
+      "error": "Error: browser.newPage: Target page, context or browser has been closed"
+    },
+    {
+      "path": "/blog/average-rent-seattle-2026",
+      "url": "https://emlakie.com/blog/average-rent-seattle-2026",
+      "violation_count": 0,
+      "violations": [],
+      "passes": 0,
+      "incomplete": 0,
+      "error": "Error: browser.newPage: Target page, context or browser has been closed"
+    },
+    {
+      "path": "/blog/average-rent-new-york-city-2026",
+      "url": "https://emlakie.com/blog/average-rent-new-york-city-2026",
+      "violation_count": 0,
+      "violations": [],
+      "passes": 0,
+      "incomplete": 0,
+      "error": "Error: browser.newPage: Target page, context or browser has been closed"
+    },
+    {
+      "path": "/blog/average-rent-chicago-2026",
+      "url": "https://emlakie.com/blog/average-rent-chicago-2026",
+      "violation_count": 0,
+      "violations": [],
+      "passes": 0,
+      "incomplete": 0,
+      "error": "Error: browser.newPage: Target page, context or browser has been closed"
+    },
+    {
+      "path": "/blog/average-rent-austin-2026",
+      "url": "https://emlakie.com/blog/average-rent-austin-2026",
+      "violation_count": 0,
+      "violations": [],
+      "passes": 0,
+      "incomplete": 0,
+      "error": "Error: browser.newPage: Target page, context or browser has been closed"
+    },
+    {
+      "path": "/blog/average-rent-miami-2026",
+      "url": "https://emlakie.com/blog/average-rent-miami-2026",
+      "violation_count": 0,
+      "violations": [],
+      "passes": 0,
+      "incomplete": 0,
+      "error": "Error: browser.newPage: Target page, context or browser has been closed"
+    },
+    {
+      "path": "/blog/average-rent-phoenix-2026",
+      "url": "https://emlakie.com/blog/average-rent-phoenix-2026",
+      "violation_count": 0,
+      "violations": [],
+      "passes": 0,
+      "incomplete": 0,
+      "error": "Error: browser.newPage: Target page, context or browser has been closed"
+    },
+    {
+      "path": "/blog/average-rent-denver-2026",
+      "url": "https://emlakie.com/blog/average-rent-denver-2026",
+      "violation_count": 0,
+      "violations": [],
+      "passes": 0,
+      "incomplete": 0,
+      "error": "Error: browser.newPage: Target page, context or browser has been closed"
+    },
+    {
+      "path": "/blog/average-rent-atlanta-2026",
+      "url": "https://emlakie.com/blog/average-rent-atlanta-2026",
+      "violation_count": 0,
+      "violations": [],
+      "passes": 0,
+      "incomplete": 0,
+      "error": "Error: browser.newPage: Target page, context or browser has been closed"
+    },
+    {
+      "path": "/blog/average-rent-houston-2026",
+      "url": "https://emlakie.com/blog/average-rent-houston-2026",
+      "violation_count": 0,
+      "violations": [],
+      "passes": 0,
+      "incomplete": 0,
+      "error": "Error: browser.newPage: Target page, context or browser has been closed"
+    },
+    {
+      "path": "/blog/average-rent-las-vegas-2026",
+      "url": "https://emlakie.com/blog/average-rent-las-vegas-2026",
+      "violation_count": 0,
+      "violations": [],
+      "passes": 0,
+      "incomplete": 0,
+      "error": "Error: browser.newPage: Target page, context or browser has been closed"
+    },
+    {
+      "path": "/blog/average-rent-kansas-city-2026",
+      "url": "https://emlakie.com/blog/average-rent-kansas-city-2026",
+      "violation_count": 0,
+      "violations": [],
+      "passes": 0,
+      "incomplete": 0,
+      "error": "Error: browser.newPage: Target page, context or browser has been closed"
+    },
+    {
+      "path": "/blog/average-rent-omaha-nebraska-2026",
+      "url": "https://emlakie.com/blog/average-rent-omaha-nebraska-2026",
+      "violation_count": 0,
+      "violations": [],
+      "passes": 0,
+      "incomplete": 0,
+      "error": "Error: browser.newPage: Target page, context or browser has been closed"
+    },
+    {
+      "path": "/blog/average-rent-san-francisco-2026",
+      "url": "https://emlakie.com/blog/average-rent-san-francisco-2026",
+      "violation_count": 0,
+      "violations": [],
+      "passes": 0,
+      "incomplete": 0,
+      "error": "Error: browser.newPage: Target page, context or browser has been closed"
+    },
+    {
+      "path": "/blog/average-rent-boston-2026",
+      "url": "https://emlakie.com/blog/average-rent-boston-2026",
+      "violation_count": 0,
+      "violations": [],
+      "passes": 0,
+      "incomplete": 0,
+      "error": "Error: browser.newPage: Target page, context or browser has been closed"
+    },
+    {
+      "path": "/blog/average-rent-nashville-2026",
+      "url": "https://emlakie.com/blog/average-rent-nashville-2026",
+      "violation_count": 0,
+      "violations": [],
+      "passes": 0,
+      "incomplete": 0,
+      "error": "Error: browser.newPage: Target page, context or browser has been closed"
+    },
+    {
+      "path": "/blog/average-rent-dallas-2026",
+      "url": "https://emlakie.com/blog/average-rent-dallas-2026",
+      "violation_count": 0,
+      "violations": [],
+      "passes": 0,
+      "incomplete": 0,
+      "error": "Error: browser.newPage: Target page, context or browser has been closed"
+    },
+    {
+      "path": "/blog/average-rent-tampa-2026",
+      "url": "https://emlakie.com/blog/average-rent-tampa-2026",
+      "violation_count": 0,
+      "violations": [],
+      "passes": 0,
+      "incomplete": 0,
+      "error": "Error: browser.newPage: Target page, context or browser has been closed"
+    },
+    {
+      "path": "/blog/how-much-rent-can-i-afford",
+      "url": "https://emlakie.com/blog/how-much-rent-can-i-afford",
+      "violation_count": 0,
+      "violations": [],
+      "passes": 0,
+      "incomplete": 0,
+      "error": "Error: browser.newPage: Target page, context or browser has been closed"
+    },
+    {
+      "path": "/blog/first-time-renter-guide",
+      "url": "https://emlakie.com/blog/first-time-renter-guide",
+      "violation_count": 0,
+      "violations": [],
+      "passes": 0,
+      "incomplete": 0,
+      "error": "Error: browser.newPage: Target page, context or browser has been closed"
+    },
+    {
+      "path": "/blog/how-to-screen-tenants",
+      "url": "https://emlakie.com/blog/how-to-screen-tenants",
+      "violation_count": 0,
+      "violations": [],
+      "passes": 0,
+      "incomplete": 0,
+      "error": "Error: browser.newPage: Target page, context or browser has been closed"
+    },
+    {
+      "path": "/blog/moving-checklist-renters",
+      "url": "https://emlakie.com/blog/moving-checklist-renters",
+      "violation_count": 0,
+      "violations": [],
+      "passes": 0,
+      "incomplete": 0,
+      "error": "Error: browser.newPage: Target page, context or browser has been closed"
+    },
+    {
+      "path": "/blog/renting-with-pets-guide",
+      "url": "https://emlakie.com/blog/renting-with-pets-guide",
+      "violation_count": 0,
+      "violations": [],
+      "passes": 0,
+      "incomplete": 0,
+      "error": "Error: browser.newPage: Target page, context or browser has been closed"
+    },
+    {
+      "path": "/blog/california-tenant-rights-guide",
+      "url": "https://emlakie.com/blog/california-tenant-rights-guide",
+      "violation_count": 0,
+      "violations": [],
+      "passes": 0,
+      "incomplete": 0,
+      "error": "Error: browser.newPage: Target page, context or browser has been closed"
+    },
+    {
+      "path": "/blog/furnished-vs-unfurnished-rentals",
+      "url": "https://emlakie.com/blog/furnished-vs-unfurnished-rentals",
+      "violation_count": 0,
+      "violations": [],
+      "passes": 0,
+      "incomplete": 0,
+      "error": "Error: browser.newPage: Target page, context or browser has been closed"
+    },
+    {
+      "path": "/blog/how-to-write-rental-listing",
+      "url": "https://emlakie.com/blog/how-to-write-rental-listing",
+      "violation_count": 0,
+      "violations": [],
+      "passes": 0,
+      "incomplete": 0,
+      "error": "Error: browser.newPage: Target page, context or browser has been closed"
+    },
+    {
+      "path": "/blog/security-deposit-laws-by-state",
+      "url": "https://emlakie.com/blog/security-deposit-laws-by-state",
+      "violation_count": 0,
+      "violations": [],
+      "passes": 0,
+      "incomplete": 0,
+      "error": "Error: browser.newPage: Target page, context or browser has been closed"
+    },
+    {
+      "path": "/blog/average-rent-san-diego-2026",
+      "url": "https://emlakie.com/blog/average-rent-san-diego-2026",
+      "violation_count": 0,
+      "violations": [],
+      "passes": 0,
+      "incomplete": 0,
+      "error": "Error: browser.newPage: Target page, context or browser has been closed"
+    },
+    {
+      "path": "/blog/average-rent-portland-2026",
+      "url": "https://emlakie.com/blog/average-rent-portland-2026",
+      "violation_count": 0,
+      "violations": [],
+      "passes": 0,
+      "incomplete": 0,
+      "error": "Error: browser.newPage: Target page, context or browser has been closed"
+    },
+    {
+      "path": "/blog/average-rent-charlotte-2026",
+      "url": "https://emlakie.com/blog/average-rent-charlotte-2026",
+      "violation_count": 0,
+      "violations": [],
+      "passes": 0,
+      "incomplete": 0,
+      "error": "Error: browser.newPage: Target page, context or browser has been closed"
+    },
+    {
+      "path": "/blog/out-of-state-landlord-guide-kansas-city",
+      "url": "https://emlakie.com/blog/out-of-state-landlord-guide-kansas-city",
+      "violation_count": 0,
+      "violations": [],
+      "passes": 0,
+      "incomplete": 0,
+      "error": "Error: browser.newPage: Target page, context or browser has been closed"
+    },
+    {
+      "path": "/blog/out-of-state-landlord-guide-omaha",
+      "url": "https://emlakie.com/blog/out-of-state-landlord-guide-omaha",
+      "violation_count": 0,
+      "violations": [],
+      "passes": 0,
+      "incomplete": 0,
+      "error": "Error: browser.newPage: Target page, context or browser has been closed"
+    },
+    {
+      "path": "/blog/out-of-state-landlord-guide-cleveland",
+      "url": "https://emlakie.com/blog/out-of-state-landlord-guide-cleveland",
+      "violation_count": 0,
+      "violations": [],
+      "passes": 0,
+      "incomplete": 0,
+      "error": "Error: browser.newPage: Target page, context or browser has been closed"
+    },
+    {
+      "path": "/blog/out-of-state-landlord-guide-jacksonville",
+      "url": "https://emlakie.com/blog/out-of-state-landlord-guide-jacksonville",
+      "violation_count": 0,
+      "violations": [],
+      "passes": 0,
+      "incomplete": 0,
+      "error": "Error: browser.newPage: Target page, context or browser has been closed"
+    },
+    {
+      "path": "/blog/la-rso-rent-increase-2026-tenant-guide",
+      "url": "https://emlakie.com/blog/la-rso-rent-increase-2026-tenant-guide",
+      "violation_count": 0,
+      "violations": [],
+      "passes": 0,
+      "incomplete": 0,
+      "error": "Error: browser.newPage: Target page, context or browser has been closed"
+    },
+    {
+      "path": "/blog/la-rso-rent-increase-2026-landlord-guide",
+      "url": "https://emlakie.com/blog/la-rso-rent-increase-2026-landlord-guide",
+      "violation_count": 0,
+      "violations": [],
+      "passes": 0,
+      "incomplete": 0,
+      "error": "Error: browser.newPage: Target page, context or browser has been closed"
+    },
+    {
+      "path": "/blog/la-rso-vs-ab1482-2026",
+      "url": "https://emlakie.com/blog/la-rso-vs-ab1482-2026",
+      "violation_count": 0,
+      "violations": [],
+      "passes": 0,
+      "incomplete": 0,
+      "error": "Error: browser.newPage: Target page, context or browser has been closed"
+    },
+    {
+      "path": "/blog/la-right-to-counsel-notice-landlord-requirements-2026",
+      "url": "https://emlakie.com/blog/la-right-to-counsel-notice-landlord-requirements-2026",
+      "violation_count": 0,
+      "violations": [],
+      "passes": 0,
+      "incomplete": 0,
+      "error": "Error: browser.newPage: Target page, context or browser has been closed"
+    },
+    {
+      "path": "/blog/la-right-to-counsel-tenant-guide-2026",
+      "url": "https://emlakie.com/blog/la-right-to-counsel-tenant-guide-2026",
+      "violation_count": 0,
+      "violations": [],
+      "passes": 0,
+      "incomplete": 0,
+      "error": "Error: browser.newPage: Target page, context or browser has been closed"
+    },
+    {
+      "path": "/blog/adult-family-homes-federal-way-wa",
+      "url": "https://emlakie.com/blog/adult-family-homes-federal-way-wa",
+      "violation_count": 0,
+      "violations": [],
+      "passes": 0,
+      "incomplete": 0,
+      "error": "Error: browser.newPage: Target page, context or browser has been closed"
+    },
+    {
+      "path": "/blog/renters-insurance-why-every-tenant-needs-it-2026",
+      "url": "https://emlakie.com/blog/renters-insurance-why-every-tenant-needs-it-2026",
+      "violation_count": 0,
+      "violations": [],
+      "passes": 0,
+      "incomplete": 0,
+      "error": "Error: browser.newPage: Target page, context or browser has been closed"
+    },
+    {
+      "path": "/blog/apartment-safety-hazards-insurance-liability-2026",
+      "url": "https://emlakie.com/blog/apartment-safety-hazards-insurance-liability-2026",
+      "violation_count": 0,
+      "violations": [],
+      "passes": 0,
+      "incomplete": 0,
+      "error": "Error: browser.newPage: Target page, context or browser has been closed"
+    },
+    {
+      "path": "/blog/average-rent-west-hollywood-2026",
+      "url": "https://emlakie.com/blog/average-rent-west-hollywood-2026",
+      "violation_count": 0,
+      "violations": [],
+      "passes": 0,
+      "incomplete": 0,
+      "error": "Error: browser.newPage: Target page, context or browser has been closed"
+    },
+    {
+      "path": "/blog/average-rent-beverly-hills-2026",
+      "url": "https://emlakie.com/blog/average-rent-beverly-hills-2026",
+      "violation_count": 0,
+      "violations": [],
+      "passes": 0,
+      "incomplete": 0,
+      "error": "Error: browser.newPage: Target page, context or browser has been closed"
+    },
+    {
+      "path": "/blog/average-rent-bakersfield-2026",
+      "url": "https://emlakie.com/blog/average-rent-bakersfield-2026",
+      "violation_count": 0,
+      "violations": [],
+      "passes": 0,
+      "incomplete": 0,
+      "error": "Error: browser.newPage: Target page, context or browser has been closed"
+    }
+  ]
+}

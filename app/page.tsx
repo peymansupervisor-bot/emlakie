@@ -104,11 +104,33 @@ export default async function HomePage() {
     getListings(),
   ]);
   const now = Date.now();
-  const sorted = [...listings].sort((a, b) => {
-    const aB = a.boosted_until && new Date(a.boosted_until).getTime() > now ? 1 : 0;
-    const bB = b.boosted_until && new Date(b.boosted_until).getTime() > now ? 1 : 0;
-    return bB - aB;
-  });
+
+  // Deterministic daily seed — changes at midnight UTC, same for all visitors
+  const daySeed = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+  const seedNum = parseInt(daySeed, 10);
+  const seededRand = (i: number) => {
+    const x = Math.sin(seedNum + i) * 10000;
+    return x - Math.floor(x);
+  };
+
+  const tier = (l: { boosted_until?: string | null; landlord_id?: string | null }) => {
+    if (l.boosted_until && new Date(l.boosted_until).getTime() > now) return 0; // sponsored
+    if (l.landlord_id === 'EM-1') return 1;                                      // owner's listings
+    return 2;                                                                     // everyone else
+  };
+
+  const sorted = [...listings]
+    .map((l, i) => ({ l, i }))
+    .sort((a, b) => {
+      const tA = tier(a.l), tB = tier(b.l);
+      if (tA !== tB) return tA - tB;
+      if (tA < 2) return (b.l.price ?? 0) - (a.l.price ?? 0); // tiers 0&1: highest rent first
+      // tier 2: daily-seeded shuffle, highest rent first within same day
+      const rA = seededRand(a.i), rB = seededRand(b.i);
+      return rA !== rB ? rA - rB : (b.l.price ?? 0) - (a.l.price ?? 0);
+    })
+    .map(({ l }) => l);
+
   const featured = sorted.slice(0, 6);
 
   return (

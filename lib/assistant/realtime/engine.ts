@@ -223,7 +223,14 @@ export class RealtimeEngine {
         },
       });
 
-      if (!sdpRes.ok) throw new Error(`sdp_exchange_${sdpRes.status}`);
+      if (!sdpRes.ok) {
+        let oaiCode = '';
+        try {
+          const errBody = (await sdpRes.json()) as { error?: { code?: string; message?: string } };
+          oaiCode = errBody?.error?.code ?? errBody?.error?.message ?? '';
+        } catch { /* body was not JSON (e.g. plain text SDP error) */ }
+        throw new Error(`sdp_exchange_${sdpRes.status}${oaiCode ? `:${oaiCode}` : ''}`);
+      }
 
       const answerSdp = await sdpRes.text();
       await pc.setRemoteDescription({ type: 'answer', sdp: answerSdp });

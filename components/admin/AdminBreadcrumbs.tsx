@@ -8,6 +8,8 @@ const SEGMENT_LABELS: Record<string, string> = {
   jurisdictions: 'Jurisdictions',
   'rule-types': 'Rule Types',
   rules: 'Legal Rules',
+  new: 'New',
+  edit: 'Edit',
   rates: 'Rates',
   exemptions: 'Exemptions',
   citations: 'Citations',

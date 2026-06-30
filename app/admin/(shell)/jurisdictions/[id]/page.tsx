@@ -157,6 +157,37 @@ export default async function JurisdictionDetailPage({ params, searchParams }: P
         </div>
       </div>
 
+      {/* Legal Rules quick link */}
+      <div className="rounded-xl border border-gray-200 bg-white p-5">
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="text-sm font-semibold text-gray-900">Legal Rules</h3>
+            <p className="mt-0.5 text-xs text-gray-500">
+              View rule versions, version history, and create new rules for this jurisdiction.
+            </p>
+          </div>
+          <div className="flex gap-2 shrink-0">
+            <Link
+              href={`/admin/jurisdictions/${jurisdiction.id}/rules`}
+              className="rounded-lg border border-gray-300 px-3 py-1.5 text-sm font-semibold text-gray-600 hover:bg-gray-50 transition"
+            >
+              View Rules
+            </Link>
+            {canWrite && (
+              <Link
+                href={`/admin/jurisdictions/${jurisdiction.id}/rules/new`}
+                className="inline-flex items-center gap-1 rounded-lg bg-green-600 px-3 py-1.5 text-sm font-semibold text-white hover:bg-green-700 transition"
+              >
+                <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+                </svg>
+                New Rule
+              </Link>
+            )}
+          </div>
+        </div>
+      </div>
+
       {/* Admin actions — editor/superadmin only */}
       {canWrite && (
         <div className="grid gap-4 sm:grid-cols-2">

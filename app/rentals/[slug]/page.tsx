@@ -220,11 +220,16 @@ export default async function ListingPage({ params }: Props) {
             {listing.address}, {listing.city}
             {listing.state ? `, ${listing.state}` : ''} {listing.zip ?? ''}
           </p>
+          {isRented && listing.rentedDate && (
+            <p className="mt-1 text-sm font-semibold text-blue-700">
+              Rented on {new Date(listing.rentedDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+            </p>
+          )}
           <div className="mt-2">
             <ReportButton listingId={listing.id} />
           </div>
 
-          {listing.description && (
+          {!isRented && listing.description && (
             <div className="mt-8 rounded-2xl border border-gray-100 bg-gray-50 px-6 py-5">
               <h2 className="text-lg font-bold text-gray-900">Home highlights</h2>
               <p className="mt-3 whitespace-pre-line text-[15px] leading-7 text-gray-600">
@@ -365,26 +370,34 @@ export default async function ListingPage({ params }: Props) {
       </div>
 
       {/* Property Facts & Sales History */}
-      {propData && (propData.yearBuilt || propData.livingArea || propData.lotSize || propData.priceHistory.length > 0) && (
+      {(isRented && listing.rentedDate) || (propData && (propData.yearBuilt || propData.livingArea || propData.lotSize || propData.priceHistory.length > 0)) ? (
         <section className="mt-12 space-y-6">
           {/* Property Facts */}
-          {(propData.yearBuilt || propData.livingArea || propData.lotSize) && (
+          {(isRented && listing.rentedDate) || propData?.yearBuilt || propData?.livingArea || propData?.lotSize ? (
             <div>
               <h2 className="mb-4 text-xl font-bold text-gray-900">Property Facts</h2>
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
-                {propData.yearBuilt && (
+                {isRented && listing.rentedDate && (
+                  <div className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
+                    <p className="text-xs font-medium uppercase tracking-wide text-gray-500">Rented Date</p>
+                    <p className="mt-1 text-lg font-bold text-gray-900">
+                      {new Date(listing.rentedDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+                    </p>
+                  </div>
+                )}
+                {propData?.yearBuilt && (
                   <div className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
                     <p className="text-xs font-medium uppercase tracking-wide text-gray-500">Year Built</p>
                     <p className="mt-1 text-lg font-bold text-gray-900">{propData.yearBuilt}</p>
                   </div>
                 )}
-                {propData.livingArea && (
+                {propData?.livingArea && (
                   <div className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
                     <p className="text-xs font-medium uppercase tracking-wide text-gray-500">Living Area</p>
                     <p className="mt-1 text-lg font-bold text-gray-900">{propData.livingArea.toLocaleString()} sqft</p>
                   </div>
                 )}
-                {propData.lotSize && (
+                {propData?.lotSize && (
                   <div className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
                     <p className="text-xs font-medium uppercase tracking-wide text-gray-500">Lot Size</p>
                     <p className="mt-1 text-lg font-bold text-gray-900">{propData.lotSize.toLocaleString()} sqft</p>
@@ -392,10 +405,10 @@ export default async function ListingPage({ params }: Props) {
                 )}
               </div>
             </div>
-          )}
+          ) : null}
 
           {/* Sales & Price History */}
-          {propData.priceHistory.length > 0 && (
+          {propData && propData.priceHistory.length > 0 && (
             <div>
               <h2 className="mb-4 text-xl font-bold text-gray-900">Sales &amp; Price History</h2>
               <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
@@ -438,7 +451,7 @@ export default async function ListingPage({ params }: Props) {
             </div>
           )}
         </section>
-      )}
+      ) : null}
 
       {/* Similar active listings — shown on rented/expired pages for SEO + conversion */}
       {isUnavailable && similarActive.length > 0 && (

@@ -18,6 +18,7 @@ export interface Listing {
   photos: string[];
   status: string;
   availableFrom?: string;
+  rentedDate?: string | null;
   view_count?: number;
   isSample?: boolean;
   dom?: number;

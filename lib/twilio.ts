@@ -66,7 +66,10 @@ export async function getOrProvisionVirtualPhone(userId: string, postalCode?: st
     const db = adminClient();
     const { data } = await db.from('profiles').select('virtual_phone, phone').eq('id', userId).single();
 
-    if (data?.virtual_phone) return data.virtual_phone;
+    // Only provision if the landlord has a real phone on file — without it
+    // the virtual number has nowhere to forward calls.
+    if (!data?.phone) return null;
+    if (data.virtual_phone) return data.virtual_phone;
 
     return await provisionNumber(userId, postalCode, city, state);
   } catch (err) {

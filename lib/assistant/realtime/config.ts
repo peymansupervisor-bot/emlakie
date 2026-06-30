@@ -11,9 +11,14 @@ export const REALTIME_SDP_URL = 'https://api.openai.com/v1/realtime/calls';
 
 export const REALTIME_VAD_CONFIG = {
   type: 'server_vad' as const,
-  threshold: 0.5,
+  // Raised from 0.5 (default) to 0.8 — requires clearly audible speech to
+  // trigger VAD. Ambient noise (TV, music, traffic) typically sits 40–60 dB
+  // below a speaking voice and will not cross this threshold.
+  threshold: 0.8,
   prefix_padding_ms: 300,
-  silence_duration_ms: 500,
+  // Raised from 500 ms to 1000 ms — prevents brief noise gaps from being
+  // misread as a completed turn.
+  silence_duration_ms: 1000,
 };
 
 /** Production token endpoint — requires only ENABLE_AI_ASSISTANT. */

@@ -159,9 +159,7 @@ export async function POST(req: NextRequest) {
   let counter = 2
   while (takenSlugs.has(slug)) slug = `${baseSlug}-${counter++}`
 
-  const { data, error } = await supabase
-    .from('listings')
-    .insert({
+  const insertPayload = {
       landlord_id: user.id,
       slug,
       title: formData.get('title') as string,
@@ -204,13 +202,22 @@ export async function POST(req: NextRequest) {
       available_date: formData.get('availableFrom') as string || null,
       status: 'active',
       expires_at: new Date(Date.now() + 45 * 24 * 60 * 60 * 1000).toISOString(),
-    })
-    .select()
-    .single()
+  }
 
-  if (error) {
-    await logError({ source: 'Listing Create', message: error.message, user_id: user.id, endpoint: 'POST /api/listings', http_status: 500, context: { address, city, state } });
-    return NextResponse.json({ error: 'Something went wrong' }, { status: 500 })
+  // Retry up to 3 times on unique slug constraint violations (concurrent submissions).
+  let data: Record<string, unknown> | null = null;
+  for (let attempt = 0; attempt < 3; attempt++) {
+    if (attempt > 0) insertPayload.slug = `${baseSlug}-${counter++}`;
+    const { data: row, error } = await supabase.from('listings').insert(insertPayload).select().single();
+    if (!error) { data = row; break; }
+    if (!error.message.includes('listings_slug_key')) {
+      await logError({ source: 'Listing Create', message: error.message, user_id: user.id, endpoint: 'POST /api/listings', http_status: 500, context: { address, city, state } });
+      return NextResponse.json({ error: 'Something went wrong' }, { status: 500 });
+    }
+  }
+  if (!data) {
+    await logError({ source: 'Listing Create', message: 'slug conflict unresolved after retries', user_id: user.id, endpoint: 'POST /api/listings', http_status: 500, context: { address, city, state } });
+    return NextResponse.json({ error: 'Something went wrong' }, { status: 500 });
   }
 
   // Geocode address to lat/lng so nearby scores & schools always show

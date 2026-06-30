@@ -37,7 +37,7 @@ export async function submitToIndexNow(pathsOrUrls: string[]): Promise<void> {
         keyLocation: `${SITE_URL}/${INDEXNOW_KEY}.txt`,
         urlList,
       }),
-      signal: AbortSignal.timeout(8000),
+      signal: AbortSignal.timeout(15000),
     });
 
     // 200 and 202 are both success; anything else is worth recording.

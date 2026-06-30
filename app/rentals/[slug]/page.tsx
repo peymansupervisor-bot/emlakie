@@ -103,6 +103,21 @@ export default async function ListingPage({ params }: Props) {
   const virtualPhone = !isUnavailable ? listing.virtual_phone : null;
   const similarActive = similar.filter((l) => l.id !== listing.id && l.status === 'active').slice(0, 3);
 
+  // Once a listing is off-market, stop serving the landlord's interior photos —
+  // the unit's actual condition/contents may have changed and the landlord's
+  // photo rights are tied to the active listing period. Show a Street View
+  // exterior shot instead, same as Zillow does for sold/rented homes.
+  const mapsKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
+  const streetViewLocation = listing.lat && listing.lng
+    ? `${listing.lat},${listing.lng}`
+    : fullAddress
+    ? encodeURIComponent(fullAddress)
+    : null;
+  const offMarketPhoto = isUnavailable && mapsKey && streetViewLocation
+    ? [`https://maps.googleapis.com/maps/api/streetview?size=1200x800&location=${streetViewLocation}&fov=90&pitch=0&key=${mapsKey}`]
+    : null;
+  const galleryPhotos = offMarketPhoto ?? (isUnavailable ? [] : listing.photos ?? []);
+
   const breadcrumbSchema = {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
@@ -176,7 +191,7 @@ export default async function ListingPage({ params }: Props) {
       )}
 
       <div className="mt-4">
-        <Gallery photos={listing.photos ?? []} title={listing.title} />
+        <Gallery photos={galleryPhotos} title={listing.title} />
       </div>
 
       <div className="mt-8 flex flex-col gap-10 lg:flex-row">

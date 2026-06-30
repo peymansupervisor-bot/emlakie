@@ -55,6 +55,13 @@ export async function POST(req: NextRequest) {
     if (!body.path) return NextResponse.json({ error: 'Missing path' }, { status: 400 })
     const { path } = body
 
+    // Enforce that the path belongs to the authenticated user.
+    // Path format: {userId}/{folder}/{filename} — the first segment must match.
+    const pathOwner = path.split('/')[0]
+    if (pathOwner !== user.id) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+    }
+
     const adminStorage = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.SUPABASE_SERVICE_KEY!,

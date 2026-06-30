@@ -206,12 +206,12 @@ export async function createLegalRule(
     await db.from('compliance_rule_change_history').insert({
       entity_type: 'legal_rule',
       entity_id: prevCurrent.id,
-      change_type: 'superseded',
+      change_type: 'deprecate',
       field_changed: 'is_current',
       previous_value_json: { is_current: true, superseded_date: null },
       new_value_json: { is_current: false, superseded_date: input.effective_date },
       change_notes: `Superseded by v${version}: ${input.change_reason}`,
-      changed_by: admin.auth_user_id,
+      changed_by: admin.id,
       changed_at: new Date().toISOString(),
     })
   }
@@ -246,7 +246,7 @@ export async function createLegalRule(
     previous_value_json: null,
     new_value_json: { ...input, version_number: version, is_current: true },
     change_notes: input.change_reason,
-    changed_by: admin.auth_user_id,
+    changed_by: admin.id,
     changed_at: new Date().toISOString(),
   })
 

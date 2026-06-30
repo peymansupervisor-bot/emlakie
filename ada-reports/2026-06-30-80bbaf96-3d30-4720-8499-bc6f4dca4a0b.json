@@ -1,0 +1,42 @@
+{
+  "run_id": "80bbaf96-3d30-4720-8499-bc6f4dca4a0b",
+  "scanned_at": "2026-06-30T23:38:50.889Z",
+  "site": "https://emlakie.com",
+  "axe_version": "4.12.1",
+  "pages": 2,
+  "total_violations": 1,
+  "total_critical": 0,
+  "total_serious": 1,
+  "cure": {
+    "fixed": 0,
+    "skipped": 0,
+    "summary": []
+  },
+  "results": [
+    {
+      "path": "/",
+      "url": "https://emlakie.com/",
+      "violation_count": 1,
+      "violations": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
+          "helpUrl": "https://dequeuniversity.com/rules/axe/4.12/color-contrast?application=axeAPI",
+          "nodes": 9
+        }
+      ],
+      "passes": 50,
+      "incomplete": 2
+    },
+    {
+      "path": "/rentals",
+      "url": "https://emlakie.com/rentals",
+      "violation_count": 0,
+      "violations": [],
+      "passes": 0,
+      "incomplete": 0,
+      "error": "Error: browser.newPage: Target page, context or browser has been closed\nBrowser logs:\n\n<launching> /tmp/chromium --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,BoundaryEventDispatchTracksNodeRemoval,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,Translate,AutoDeElevate,RenderDocument,OptimizationHints,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --ash-no-nudges --disable-domain-reliability --disable-print-preview --disk-cache-size=33554432 --no-default-browser-check --no-pings --single-process --font-render-hinting=none --disable-features=AudioServiceOutOfProcess,IsolateOrigins,site-per-process --enable-features=SharedArrayBuffer --ignore-gpu-blocklist --in-process-gpu --use-gl=angle --use-angle=swiftshader --enable-unsafe-swiftshader --allow-running-insecure-content --disable-setuid-sandbox --disable-site-isolation-trials --disable-web-security --headless='shell' --no-sandbox --no-zygote --user-data-dir=/tmp/playwright_chromiumdev_profile-MedVdE --remote-debugging-pipe --no-startup-window\n<launched> pid=40\n[pid=40][err] [0630/233648.436408:ERROR:../third_party/blink/renderer/platform/fonts/linux/font_unique_name_lookup_linux.cc:21] @font-face src: local() instantiation only available when connected to browser process.\n[pid=40][err] [0630/233648.452560:ERROR:../third_party/blink/renderer/platform/fonts/linux/font_unique_name_lookup_linux.cc:21] @font-face src: local() instantiation only available when connected to browser process."
+    }
+  ]
+}

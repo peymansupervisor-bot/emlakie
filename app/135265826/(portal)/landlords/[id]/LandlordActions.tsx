@@ -9,7 +9,7 @@ function nameOf(l: Landlord) {
   return [l.first_name, l.last_name].filter(Boolean).join(' ') || l.display_name || l.email?.split('@')[0] || 'Unknown';
 }
 
-export default function LandlordActions({ landlordId, isBanned }: { landlordId: string; isBanned: boolean }) {
+export default function LandlordActions({ landlordId, isBanned, hasVirtualPhone }: { landlordId: string; isBanned: boolean; hasVirtualPhone?: boolean }) {
   const router = useRouter();
   const [busy, setBusy] = useState(false);
   const [showSuspendModal, setShowSuspendModal] = useState(false);
@@ -58,6 +58,25 @@ export default function LandlordActions({ landlordId, isBanned }: { landlordId: 
     router.refresh();
   }
 
+  async function provisionPhone() {
+    if (!confirm('Provision a Twilio virtual phone number for this landlord?')) return;
+    setBusy(true);
+    const res = await fetch('/api/admin/provision-phone', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ landlordId }),
+    });
+    setBusy(false);
+    if (res.ok) {
+      const { phone } = await res.json();
+      alert(`Provisioned: ${phone}`);
+      router.refresh();
+    } else {
+      const { error } = await res.json().catch(() => ({ error: 'Unknown error' }));
+      alert(`Failed: ${error}`);
+    }
+  }
+
   async function deleteAccount() {
     if (!confirm('Permanently delete this landlord account and ALL their listings? This cannot be undone.')) return;
     if (!confirm('Are you absolutely sure? This is irreversible.')) return;
@@ -85,6 +104,15 @@ export default function LandlordActions({ landlordId, isBanned }: { landlordId: 
             className="rounded-xl bg-amber-700 px-4 py-2 text-sm font-semibold text-white hover:bg-amber-600 transition disabled:opacity-50"
           >
             {busy ? 'Working…' : 'Suspend Account'}
+          </button>
+        )}
+        {!hasVirtualPhone && (
+          <button
+            onClick={provisionPhone}
+            disabled={busy}
+            className="rounded-xl bg-blue-700 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-600 transition disabled:opacity-50"
+          >
+            {busy ? 'Working…' : 'Provision Phone'}
           </button>
         )}
         <button

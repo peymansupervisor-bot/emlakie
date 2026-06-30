@@ -11,13 +11,14 @@ export default async function LandlordProfilePage({ params }: { params: Promise<
 
   const [{ data: profile }, { data: authUser }] = await Promise.all([
     sb.from('profiles')
-      .select('id, first_name, last_name, display_name, phone, phone_verified, email, account_id, created_at')
+      .select('id, first_name, last_name, display_name, phone, phone_verified, email, account_id, created_at, virtual_phone')
       .eq('id', id)
       .maybeSingle(),
     sb.auth.admin.getUserById(id),
   ]);
 
-  if (!profile) notFound();
+  // Show the page even for ghost users (auth account exists but no profile row)
+  if (!authUser.user) notFound();
 
   const { data: listings } = await sb
     .from('listings')
@@ -25,10 +26,13 @@ export default async function LandlordProfilePage({ params }: { params: Promise<
     .eq('landlord_id', id)
     .order('created_at', { ascending: false });
 
+  const displayEmail = profile?.email ?? authUser.user.email ?? null;
+  const joinedAt = profile?.created_at ?? authUser.user.created_at;
+
   const name =
-    [profile.first_name, profile.last_name].filter(Boolean).join(' ') ||
-    profile.display_name ||
-    profile.email?.split('@')[0] ||
+    [profile?.first_name, profile?.last_name].filter(Boolean).join(' ') ||
+    profile?.display_name ||
+    displayEmail?.split('@')[0] ||
     'Unknown';
 
   const isBanned = !!authUser.user?.banned_until &&
@@ -63,38 +67,41 @@ export default async function LandlordProfilePage({ params }: { params: Promise<
                 </span>
               )}
             </div>
-            {profile.account_id && (
+            {profile?.account_id && (
               <p className="text-xs text-gray-400 font-mono mt-0.5">Account {profile.account_id}</p>
             )}
-            <p className="text-[10px] text-gray-600 font-mono mt-0.5 select-all">{profile.id}</p>
+            {!profile && (
+              <span className="mt-1 inline-block rounded bg-purple-700 px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-white">No Profile</span>
+            )}
+            <p className="text-[10px] text-gray-600 font-mono mt-0.5 select-all">{id}</p>
           </div>
           <div className="text-xs text-gray-500">
-            Joined {new Date(profile.created_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+            Joined {new Date(joinedAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
           </div>
         </div>
 
         <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div>
             <p className="text-[10px] uppercase tracking-wider text-gray-500 mb-1">Email</p>
-            <p className="text-sm text-white">{profile.email ?? '—'}</p>
+            <p className="text-sm text-white">{displayEmail ?? '—'}</p>
           </div>
           <div>
             <p className="text-[10px] uppercase tracking-wider text-gray-500 mb-1">Phone</p>
             <p className="text-sm text-white flex items-center gap-1">
-              {profile.phone ?? '—'}
-              {profile.phone_verified && (
+              {profile?.phone ?? '—'}
+              {profile?.phone_verified && (
                 <span className="text-[10px] font-bold text-green-400 bg-green-900/40 rounded px-1 py-0.5">verified</span>
               )}
             </p>
           </div>
           <div>
-            <p className="text-[10px] uppercase tracking-wider text-gray-500 mb-1">User ID</p>
-            <p className="text-xs text-gray-400 font-mono break-all">{profile.id}</p>
+            <p className="text-[10px] uppercase tracking-wider text-gray-500 mb-1">Virtual Phone</p>
+            <p className="text-sm text-white">{profile?.virtual_phone ?? <span className="text-amber-400">Not provisioned</span>}</p>
           </div>
         </div>
 
         <div className="mt-6 pt-6 border-t border-gray-800">
-          <LandlordActions landlordId={id} isBanned={isBanned} />
+          <LandlordActions landlordId={id} isBanned={isBanned} hasVirtualPhone={!!profile?.virtual_phone} />
         </div>
       </div>
 

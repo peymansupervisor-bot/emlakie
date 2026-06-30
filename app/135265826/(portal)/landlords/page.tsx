@@ -17,18 +17,19 @@ export default async function LandlordsPage({ searchParams }: { searchParams: Pr
   const { q } = await searchParams;
   const sb = adminClient();
 
-  // Fetch all pages of auth users
-  let allAuthUsers: { id: string; banned_until?: string | null }[] = [];
+  // Fetch ALL auth users — this is the authoritative source; no user is ever missed
+  type AuthUser = { id: string; email?: string; created_at?: string; banned_until?: string | null };
+  let allAuthUsers: AuthUser[] = [];
   let authPage = 1;
   while (true) {
     const { data: page } = await sb.auth.admin.listUsers({ perPage: 1000, page: authPage });
-    const users = page?.users ?? [];
+    const users = (page?.users ?? []) as AuthUser[];
     allAuthUsers = allAuthUsers.concat(users);
     if (users.length < 1000) break;
     authPage++;
   }
 
-  // Paginate listings to get past Supabase's 1000-row PostgREST cap
+  // Paginate listings
   let allListings: { landlord_id: string | null; status: string | null }[] = [];
   const PAGE = 1000;
   let listingPage = 0;
@@ -43,11 +44,12 @@ export default async function LandlordsPage({ searchParams }: { searchParams: Pr
     listingPage++;
   }
 
-  const [{ data: profileRows }] = await Promise.all([
-    sb.from('profiles').select('id, first_name, last_name, display_name, phone, phone_verified, email, account_id, created_at'),
-  ]);
+  const { data: profileRows } = await sb
+    .from('profiles')
+    .select('id, first_name, last_name, display_name, phone, phone_verified, email, account_id, created_at');
 
   const now = new Date();
+
   const bannedIds = new Set(
     allAuthUsers
       .filter(u => u.banned_until && new Date(u.banned_until) > now)
@@ -62,61 +64,52 @@ export default async function LandlordsPage({ searchParams }: { searchParams: Pr
     if (l.status === 'active') countMap[l.landlord_id].active++;
   }
 
-  // Synthetic rows for auth users who have listings but no profile row
-  type ProfileRow = NonNullable<typeof profileRows>[number] & { noProfile?: boolean };
-  const profileIds = new Set((profileRows ?? []).map((p) => p.id));
-  const ghostRows: ProfileRow[] = allAuthUsers
-    .filter((u) => countMap[u.id] && !profileIds.has(u.id))
-    .map((u) => ({
-      id: u.id,
-      first_name: null,
-      last_name: null,
-      display_name: null,
-      phone: null,
-      phone_verified: false,
-      email: null,
-      account_id: null,
-      created_at: now.toISOString(),
-      noProfile: true,
-    }));
+  // Build profile lookup by id
+  type Profile = NonNullable<typeof profileRows>[number];
+  const profileById = new Map<string, Profile>();
+  for (const p of profileRows ?? []) profileById.set(p.id, p);
 
-  // Fetch emails for ghost users from auth
-  const ghostEmails: Record<string, string> = {};
-  for (const u of allAuthUsers) {
-    if (ghostRows.some((g) => g.id === u.id)) {
-      const authUser = u as { id: string; email?: string };
-      if (authUser.email) ghostEmails[u.id] = authUser.email;
-    }
-  }
-  for (const g of ghostRows) {
-    if (ghostEmails[g.id]) g.email = ghostEmails[g.id];
-  }
+  // Every auth user becomes a row; profile fields are merged if available
+  type Row = {
+    id: string;
+    email: string | null;
+    authCreatedAt: string | null;
+    profile: Profile | null;
+  };
 
-  const allRows: ProfileRow[] = [...(profileRows ?? []), ...ghostRows];
+  const allRows: Row[] = allAuthUsers.map((u) => ({
+    id: u.id,
+    email: u.email ?? null,
+    authCreatedAt: u.created_at ?? null,
+    profile: profileById.get(u.id) ?? null,
+  }));
 
-  function accountNum(id: string | null): number {
+  function accountNum(id: string | null | undefined): number {
     if (!id) return Infinity;
     const m = id.match(/\d+$/);
     return m ? parseInt(m[0], 10) : Infinity;
   }
 
-  let rows = allRows.filter((p) => {
+  let rows = allRows.filter((r) => {
     if (!q) return true;
     const lower = q.toLowerCase();
+    const p = r.profile;
     return (
-      p.email?.toLowerCase().includes(lower) ||
-      p.first_name?.toLowerCase().includes(lower) ||
-      p.last_name?.toLowerCase().includes(lower) ||
-      p.display_name?.toLowerCase().includes(lower) ||
-      p.phone?.includes(q) ||
-      p.account_id?.toLowerCase().includes(lower)
+      r.email?.toLowerCase().includes(lower) ||
+      p?.email?.toLowerCase().includes(lower) ||
+      p?.first_name?.toLowerCase().includes(lower) ||
+      p?.last_name?.toLowerCase().includes(lower) ||
+      p?.display_name?.toLowerCase().includes(lower) ||
+      p?.phone?.includes(q) ||
+      p?.account_id?.toLowerCase().includes(lower) ||
+      r.id.toLowerCase().includes(lower)
     );
   });
 
-  rows = rows.sort((a, b) => accountNum(a.account_id) - accountNum(b.account_id));
+  rows = rows.sort((a, b) => accountNum(a.profile?.account_id) - accountNum(b.profile?.account_id));
 
   const total = rows.length;
-  const missingIdCount = allRows.filter((p) => !p.account_id).length;
+  const missingIdCount = allRows.filter((r) => !r.profile?.account_id).length;
 
   return (
     <div>
@@ -131,7 +124,7 @@ export default async function LandlordsPage({ searchParams }: { searchParams: Pr
             <input
               name="q"
               defaultValue={q}
-              placeholder="Search name, email, phone…"
+              placeholder="Search name, email, phone, UUID…"
               className="rounded-xl bg-gray-800 border border-gray-700 px-3 py-2 text-sm text-white placeholder-gray-500 outline-none focus:border-green-500 w-64"
             />
             <button
@@ -163,34 +156,48 @@ export default async function LandlordsPage({ searchParams }: { searchParams: Pr
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-800">
-              {rows.map((p) => {
+              {rows.map((r) => {
+                const p = r.profile;
+                const hasProfile = !!p;
                 const name =
-                  [p.first_name, p.last_name].filter(Boolean).join(' ') ||
-                  p.display_name ||
+                  [p?.first_name, p?.last_name].filter(Boolean).join(' ') ||
+                  p?.display_name ||
                   '—';
-                const counts = countMap[p.id];
-                const isSuspended = bannedIds.has(p.id);
-                const isGhost = (p as ProfileRow).noProfile;
+                const counts = countMap[r.id];
+                const isSuspended = bannedIds.has(r.id);
+                const displayEmail = p?.email ?? r.email;
+                const joinedDate = p?.created_at ?? r.authCreatedAt;
                 return (
-                  <tr key={p.id} className={`hover:bg-gray-900/50 transition ${isSuspended ? 'bg-red-950/20' : isGhost ? 'bg-purple-950/20' : !p.account_id ? 'bg-amber-950/20' : ''}`}>
+                  <tr
+                    key={r.id}
+                    className={`hover:bg-gray-900/50 transition ${
+                      isSuspended
+                        ? 'bg-red-950/20'
+                        : !hasProfile
+                        ? 'bg-purple-950/20'
+                        : !p?.account_id
+                        ? 'bg-amber-950/20'
+                        : ''
+                    }`}
+                  >
                     <td className="px-4 py-3 text-xs font-mono">
-                      {p.account_id
+                      {p?.account_id
                         ? <span className={isSuspended ? 'text-red-400' : 'text-gray-400'}>{p.account_id}</span>
                         : <span className="text-amber-500">missing</span>}
-                      <div className="mt-0.5 text-[10px] text-gray-600 select-all">{p.id}</div>
+                      <div className="mt-0.5 text-[10px] text-gray-600 select-all">{r.id}</div>
                     </td>
                     <td className="px-4 py-3 whitespace-nowrap">
                       <span className={`font-semibold ${isSuspended ? 'text-red-300' : 'text-white'}`}>{name}</span>
                       {isSuspended && (
                         <span className="ml-2 rounded bg-red-600 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-widest text-white">Suspended</span>
                       )}
-                      {isGhost && (
+                      {!hasProfile && (
                         <span className="ml-2 rounded bg-purple-700 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-widest text-white">No Profile</span>
                       )}
                     </td>
-                    <td className="px-4 py-3 text-gray-300 whitespace-nowrap">{p.email ?? '—'}</td>
+                    <td className="px-4 py-3 text-gray-300 whitespace-nowrap">{displayEmail ?? '—'}</td>
                     <td className="px-4 py-3 text-gray-300 whitespace-nowrap">
-                      {p.phone ? (
+                      {p?.phone ? (
                         <span className="flex items-center gap-1">
                           {fmtPhone(p.phone)}
                           {p.phone_verified && (
@@ -213,11 +220,11 @@ export default async function LandlordsPage({ searchParams }: { searchParams: Pr
                       )}
                     </td>
                     <td className="px-4 py-3 text-xs text-gray-400 whitespace-nowrap">
-                      {new Date(p.created_at).toLocaleDateString()}
+                      {joinedDate ? new Date(joinedDate).toLocaleDateString() : '—'}
                     </td>
                     <td className="px-4 py-3">
                       <Link
-                        href={`/135265826/landlords/${p.id}`}
+                        href={`/135265826/landlords/${r.id}`}
                         className="inline-block rounded-lg bg-gray-800 border border-gray-700 px-3 py-1 text-xs font-semibold text-gray-200 hover:bg-gray-700 hover:text-white transition"
                       >
                         View →

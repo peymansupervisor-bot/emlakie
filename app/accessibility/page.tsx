@@ -144,6 +144,8 @@ export default function AccessibilityPage() {
           </p>
           <div className="mt-4 space-y-1">
             <p>EMLAKIE LLC</p>
+            <p>8549 Wilshire Blvd. #1288</p>
+            <p>Beverly Hills, CA 90211</p>
             <p>
               📧{' '}
               <a href="mailto:support@emlakie.com" className="font-semibold text-brand-600 hover:text-brand-700">

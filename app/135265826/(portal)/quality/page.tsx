@@ -179,7 +179,15 @@ export default async function QualityPage() {
                       {new Date(l.created_at).toLocaleDateString()}
                     </td>
                     <td className="px-4 py-3">
-                      <span className="rounded-full bg-green-900 px-2 py-0.5 text-xs font-semibold text-green-300">
+                      <span
+                        className={`rounded-full px-2 py-0.5 text-xs font-semibold ${
+                          l.status === 'active'
+                            ? 'bg-green-900 text-green-300'
+                            : l.status === 'suspended'
+                            ? 'bg-red-900 text-red-300'
+                            : 'bg-gray-800 text-gray-400'
+                        }`}
+                      >
                         {l.status}
                       </span>
                     </td>

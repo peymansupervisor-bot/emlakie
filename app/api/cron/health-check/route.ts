@@ -386,11 +386,14 @@ async function checkDailyCron(): Promise<CheckResult> {
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.SUPABASE_SERVICE_KEY ?? process.env.SUPABASE_SERVICE_ROLE_KEY!,
     );
+    // Exclude rows written by this health check itself ("Last ran Xh ago") to avoid
+    // a feedback loop. Only rows written by the actual cron have substantive messages.
     const { data } = await sb
       .from('system_health')
-      .select('checked_at')
+      .select('checked_at, message')
       .eq('service', 'Daily Alert Cron')
       .eq('status', 'ok')
+      .not('message', 'ilike', 'Last ran%')
       .order('checked_at', { ascending: false })
       .limit(1)
       .maybeSingle();
@@ -399,7 +402,7 @@ async function checkDailyCron(): Promise<CheckResult> {
     const lastRun = new Date(data.checked_at);
     const hoursAgo = (Date.now() - lastRun.getTime()) / 3_600_000;
     if (hoursAgo > 26) return { service: 'Daily Alert Cron', status: 'down', message: `Last successful run ${Math.round(hoursAgo)}h ago — may have missed a day` };
-    return { service: 'Daily Alert Cron', status: 'ok', message: `Last ran ${Math.round(hoursAgo)}h ago` };
+    return { service: 'Daily Alert Cron', status: 'ok', message: `Last ran ${Math.round(hoursAgo)}h ago · ${data.message}` };
   } catch (e: unknown) {
     return { service: 'Daily Alert Cron', status: 'down', message: String(e) };
   }

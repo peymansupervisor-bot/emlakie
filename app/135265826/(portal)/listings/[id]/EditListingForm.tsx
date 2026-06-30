@@ -2,6 +2,14 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
+const UNIT_TYPES = ['apartment', 'condo', 'townhouse'];
+
+function splitAddressUnit(address: string): { address: string; unit: string } {
+  const m = address.match(/^(.*?)\s+((?:apt|unit|#)\s*\S+)$/i);
+  if (m) return { address: m[1].trim(), unit: m[2].trim() };
+  return { address, unit: '' };
+}
+
 interface Listing {
   id: string;
   title: string;
@@ -36,7 +44,7 @@ export default function EditListingForm({ listing }: { listing: Listing }) {
   const [form, setForm] = useState({
     title: listing.title ?? '',
     description: listing.description ?? '',
-    address: listing.address ?? '',
+    ...splitAddressUnit(listing.address ?? ''),
     city: listing.city ?? '',
     state: listing.state ?? '',
     zip: listing.zip ?? '',
@@ -69,6 +77,7 @@ export default function EditListingForm({ listing }: { listing: Listing }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...form,
+          address: form.unit.trim() ? `${form.address.trim()} ${form.unit.trim()}` : form.address.trim(),
           monthly_rent: toNum(form.monthly_rent),
           bedrooms: toNum(form.bedrooms),
           bathrooms: toNum(form.bathrooms),
@@ -119,6 +128,12 @@ export default function EditListingForm({ listing }: { listing: Listing }) {
             <label className={label}>Street Address</label>
             <input className={field} value={form.address} onChange={e => set('address', e.target.value)} />
           </div>
+          {UNIT_TYPES.includes(form.property_type) && (
+            <div className="sm:col-span-2">
+              <label className={label}>Unit Number {form.property_type !== 'townhouse' ? '*' : '(optional)'}</label>
+              <input className={field} placeholder="e.g. Apt 4, Unit 2B, #301" value={form.unit} onChange={e => set('unit', e.target.value)} />
+            </div>
+          )}
           <div>
             <label className={label}>City</label>
             <input className={field} value={form.city} onChange={e => set('city', e.target.value)} />

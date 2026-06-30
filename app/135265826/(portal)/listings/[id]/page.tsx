@@ -11,7 +11,7 @@ export default async function EditListingPage({ params }: { params: Promise<{ id
 
   const { data: listing, error: listingError } = await sb
     .from('listings')
-    .select('id, title, description, address, city, state, zip, monthly_rent, bedrooms, bathrooms, living_area_sqft, status, property_type, available_date, landlord_id, slug, listing_source, agent_name, office_name, license_number')
+    .select('id, title, description, address, city, state, zip, monthly_rent, deposit, bedrooms, bathrooms, living_area_sqft, status, property_type, available_date, landlord_id, slug, listing_source, agent_name, office_name, license_number, virtual_tour_url, building_name, section_8_accepted, furnished, laundry_type, pool, pool_type, fireplace, fireplace_location, parking, parking_spaces, parking_type, air_conditioning, heating_type, pets_policy, yard, yard_type, utilities_included, lease_terms, smoking_allowed, appliances, amenities')
     .eq('id', id)
     .maybeSingle();
 

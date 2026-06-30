@@ -58,7 +58,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title: `${listing.title}${statusLabel}${titlePriceSuffix}`,
     description: shortDesc,
     alternates: { canonical: canonicalUrl },
-    ...(isUnavailableForIndex && { robots: { index: false, follow: false } }),
+    // follow: true lets crawlers pass link equity through to the "similar active
+    // listings" links on this page instead of treating it as a dead end.
+    ...(isUnavailableForIndex && { robots: { index: false, follow: true } }),
     openGraph: {
       title: `${listing.title}${titlePriceSuffix}`,
       description: shortDesc,

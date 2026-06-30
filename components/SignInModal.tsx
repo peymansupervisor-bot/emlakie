@@ -154,7 +154,7 @@ export default function SignInModal({
     e.preventDefault();
     if (!firstName.trim()) { setError('First name is required.'); return; }
     if (!lastName.trim())  { setError('Last name is required.'); return; }
-    if (phone.replace(/\D/g, '').length !== 10) { setError('Enter a valid 10-digit phone number.'); return; }
+    if (!/^\(\d{3}\) \d{3}-\d{4}$/.test(phone)) { setError('Enter phone as (555) 000-0000.'); return; }
     setBusy(true); setError('');
     try {
       await signUpWithPassword(email.trim().toLowerCase(), password);
@@ -414,6 +414,7 @@ export default function SignInModal({
                     type="tel"
                     value={phone}
                     onChange={(e) => setPhone(formatPhone(e.target.value))}
+                    onKeyDown={(e) => { if (e.key.length === 1 && !/[\d]/.test(e.key)) e.preventDefault(); }}
                     placeholder="(555) 000-0000"
                     autoComplete="tel"
                     required

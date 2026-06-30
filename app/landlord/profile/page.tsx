@@ -72,8 +72,7 @@ export default function ProfilePage() {
     e.preventDefault();
     if (!form.first_name.trim()) { setError('First name is required.'); return; }
     if (!form.last_name.trim())  { setError('Last name is required.'); return; }
-    const digits = form.phone.replace(/\D/g, '');
-    if (digits.length < 10) { setError('Enter a valid 10-digit phone number.'); return; }
+    if (!/^\(\d{3}\) \d{3}-\d{4}$/.test(form.phone)) { setError('Enter phone as (555) 000-0000.'); return; }
     setError('');
     setBusy(true);
     try {
@@ -180,6 +179,7 @@ export default function ProfilePage() {
             type="tel"
             value={form.phone}
             onChange={(e) => setForm((f) => ({ ...f, phone: formatPhone(e.target.value) }))}
+            onKeyDown={(e) => { if (e.key.length === 1 && !/[\d]/.test(e.key)) e.preventDefault(); }}
             placeholder="(555) 000-0000"
           />
           <p className="mt-1 text-xs text-gray-500">Used to contact you about your listings.</p>

@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import ListingCard from './ListingCard';
 import SaveSearchModal from './SaveSearchModal';
+import Footer from './Footer';
 import { Listing } from '@/lib/types';
 import { pointInPolygon } from '@/lib/geo';
 
@@ -206,13 +207,15 @@ export default function RentalsClient({ listings, allMapListings, total, page = 
       {/* ── Body ── */}
       <div className="flex">
 
-        {/* Listings panel */}
+        {/* Listings panel — in split view this scrolls independently so the
+            map stays put, Redfin/Zillow-style; the footer lives at the
+            bottom of this same scroll area instead of the whole page. */}
         <div
           className={`isolate flex flex-col bg-gray-50 transition-all duration-300 ${
             view === 'map'
               ? 'hidden'
               : view === 'split'
-              ? 'w-full sm:w-1/2'
+              ? 'w-full sm:w-1/2 sm:h-[calc(100vh-120px)] sm:overflow-y-auto'
               : 'w-full'
           }`}
         >
@@ -288,9 +291,13 @@ export default function RentalsClient({ listings, allMapListings, total, page = 
               )}
             </div>
           )}
+
+          <Footer />
         </div>
 
-        {/* Map panel — sticky so it stays in view as listings scroll */}
+        {/* Map panel — fixed height alongside the listings panel's own
+            scroll area, so it never moves while listings (and the footer)
+            scroll underneath it */}
         {hasMappable && (
           <div
             style={{ isolation: 'isolate' }}
@@ -298,7 +305,7 @@ export default function RentalsClient({ listings, allMapListings, total, page = 
               view === 'list'
                 ? 'hidden'
                 : view === 'split'
-                ? 'hidden sm:block sm:w-1/2 sm:sticky sm:top-0 sm:h-screen'
+                ? 'hidden sm:block sm:w-1/2 sm:h-[calc(100vh-120px)]'
                 : 'w-full h-[calc(100vh-120px)]'
             }`}
           >

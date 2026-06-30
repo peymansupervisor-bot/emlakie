@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { Inter, Plus_Jakarta_Sans, Playfair_Display } from 'next/font/google';
 import Navbar from '@/components/Navbar';
-import Footer from '@/components/Footer';
+import ConditionalFooter from '@/components/ConditionalFooter';
 import CookieBanner from '@/components/CookieBanner';
 import GoogleAnalytics from '@/components/GoogleAnalytics';
 import ErrorReporter from '@/components/ErrorReporter';
@@ -66,7 +66,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <a href="#main-content" className="skip-link">Skip to main content</a>
         <Navbar />
         <main id="main-content" className="min-h-[60vh]">{children}</main>
-        <Footer />
+        <ConditionalFooter />
         <CookieBanner />
         <ErrorReporter />
         <AssistantShell />

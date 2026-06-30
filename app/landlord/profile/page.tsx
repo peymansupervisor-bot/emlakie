@@ -179,7 +179,6 @@ export default function ProfilePage() {
             type="tel"
             value={form.phone}
             onChange={(e) => setForm((f) => ({ ...f, phone: formatPhone(e.target.value) }))}
-            onKeyDown={(e) => { if (e.key.length === 1 && !/[\d]/.test(e.key)) e.preventDefault(); }}
             placeholder="(555) 000-0000"
           />
           <p className="mt-1 text-xs text-gray-500">Used to contact you about your listings.</p>

@@ -414,7 +414,6 @@ export default function SignInModal({
                     type="tel"
                     value={phone}
                     onChange={(e) => setPhone(formatPhone(e.target.value))}
-                    onKeyDown={(e) => { if (e.key.length === 1 && !/[\d]/.test(e.key)) e.preventDefault(); }}
                     placeholder="(555) 000-0000"
                     autoComplete="tel"
                     required

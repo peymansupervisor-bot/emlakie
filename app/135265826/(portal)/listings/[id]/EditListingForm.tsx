@@ -164,6 +164,8 @@ export default function EditListingForm({ listing }: { listing: Listing }) {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
+  const [aiGenerating, setAiGenerating] = useState(false);
+  const [aiError, setAiError] = useState('');
 
   const f = 'bg-gray-800 border border-gray-700 rounded-xl px-3 py-2 text-sm text-white placeholder-gray-500 outline-none focus:border-green-500 w-full';
   const lbl = 'block text-[11px] uppercase tracking-wider text-gray-400 mb-1';
@@ -191,6 +193,39 @@ export default function EditListingForm({ listing }: { listing: Listing }) {
     return `rounded-full border px-5 py-2 text-sm font-medium transition cursor-pointer ${
       (form as Record<string, unknown>)[key] === val ? 'border-green-500 bg-green-900/30 text-green-300' : 'border-gray-700 text-gray-400 hover:border-gray-500'
     }`;
+  }
+
+  async function generateDescription() {
+    setAiGenerating(true);
+    setAiError('');
+    try {
+      const res = await fetch('/api/listings/generate-description', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          address: form.address,
+          city: form.city,
+          state: form.state,
+          propertyType: form.property_type,
+          bedrooms: form.bedrooms,
+          bathrooms: form.bathrooms,
+          sqft: form.living_area_sqft,
+          price: form.monthly_rent,
+          amenities: form.amenities,
+        }),
+      });
+      if (res.ok) {
+        const { description } = await res.json();
+        set('description', description);
+      } else {
+        const d = await res.json().catch(() => ({}));
+        setAiError(d.error || 'Failed to generate description. Please try again.');
+      }
+    } catch {
+      setAiError('Unable to reach the AI service. Please check your connection and try again.');
+    } finally {
+      setAiGenerating(false);
+    }
   }
 
   async function save() {
@@ -297,7 +332,18 @@ export default function EditListingForm({ listing }: { listing: Listing }) {
           <input className={f} value={form.title} onChange={e => set('title', e.target.value)} />
         </div>
         <div>
-          <label className={lbl}>Description</label>
+          <div className="flex items-center justify-between mb-1">
+            <label className={lbl + ' mb-0'}>Description</label>
+            <button
+              type="button"
+              onClick={generateDescription}
+              disabled={aiGenerating}
+              className="text-xs font-semibold text-green-400 hover:text-green-300 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {aiGenerating ? 'Writing…' : '✨ Write with AI'}
+            </button>
+          </div>
+          {aiError && <p className="mb-1 text-xs text-red-400">{aiError}</p>}
           <textarea className={f + ' min-h-[140px] resize-y'} value={form.description} onChange={e => set('description', e.target.value)} />
           <p className="mt-1 text-xs text-gray-500">{form.description.length} chars</p>
         </div>

@@ -89,6 +89,7 @@ export default async function ListingPage({ params }: Props) {
       id: listing.id,
       city: listing.city,
       state: listing.state,
+      zip: listing.zip,
       bedrooms: listing.bedrooms,
       bathrooms: listing.bathrooms,
       sqft: listing.sqft,

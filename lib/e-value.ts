@@ -144,6 +144,7 @@ export async function calculateEValue(listing: {
   id: string
   city: string
   state?: string
+  zip?: string
   bedrooms: number
   bathrooms: number
   sqft?: number
@@ -153,20 +154,49 @@ export async function calculateEValue(listing: {
 }): Promise<EValueResult> {
   const sb = supabase()
 
-  // Try exact bedroom match first; widen to ±1 only if fewer than 3 results
-  let { data: exactComps } = await sb
-    .from('listings')
-    .select('monthly_rent, living_area_sqft, bedrooms, property_type')
-    .eq('city', listing.city)
-    .eq('status', 'active')
-    .neq('id', listing.id)
-    .eq('bedrooms', listing.bedrooms)
-    .limit(50)
+  // 1. Try zip code + exact bedrooms (most precise — same micro-market)
+  let comps: { monthly_rent: number; living_area_sqft: number; bedrooms: number; property_type: string }[] = []
+  if (listing.zip) {
+    const { data } = await sb
+      .from('listings')
+      .select('monthly_rent, living_area_sqft, bedrooms, property_type')
+      .eq('zip', listing.zip)
+      .eq('status', 'active')
+      .neq('id', listing.id)
+      .eq('bedrooms', listing.bedrooms)
+      .limit(50)
+    comps = data ?? []
+  }
 
-  exactComps = exactComps ?? []
+  // 2. Widen to zip ±1 bedroom if still thin
+  if (comps.length < 3 && listing.zip) {
+    const { data } = await sb
+      .from('listings')
+      .select('monthly_rent, living_area_sqft, bedrooms, property_type')
+      .eq('zip', listing.zip)
+      .eq('status', 'active')
+      .neq('id', listing.id)
+      .gte('bedrooms', listing.bedrooms - 1)
+      .lte('bedrooms', listing.bedrooms + 1)
+      .limit(50)
+    comps = data ?? []
+  }
 
-  let comps = exactComps
-  if (exactComps.length < 3) {
+  // 3. Fall back to city + exact bedrooms
+  if (comps.length < 3) {
+    const { data: exactComps } = await sb
+      .from('listings')
+      .select('monthly_rent, living_area_sqft, bedrooms, property_type')
+      .eq('city', listing.city)
+      .eq('status', 'active')
+      .neq('id', listing.id)
+      .eq('bedrooms', listing.bedrooms)
+      .limit(50)
+    comps = exactComps ?? []
+  }
+
+  // 4. Widen to city ±1 bedroom as last resort
+  if (comps.length < 3) {
     const { data: wideComps } = await sb
       .from('listings')
       .select('monthly_rent, living_area_sqft, bedrooms, property_type')

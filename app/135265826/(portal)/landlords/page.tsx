@@ -4,6 +4,13 @@ import BackfillButton from './BackfillButton';
 
 export const dynamic = 'force-dynamic';
 
+function fmtPhone(raw: string | null | undefined) {
+  if (!raw) return '—';
+  const d = raw.replace(/\D/g, '').slice(-10);
+  if (d.length !== 10) return raw;
+  return `(${d.slice(0,3)}) ${d.slice(3,6)}-${d.slice(6)}`;
+}
+
 interface SearchParams { q?: string }
 
 export default async function LandlordsPage({ searchParams }: { searchParams: Promise<SearchParams> }) {
@@ -149,7 +156,7 @@ export default async function LandlordsPage({ searchParams }: { searchParams: Pr
                     <td className="px-4 py-3 text-gray-300 whitespace-nowrap">
                       {p.phone ? (
                         <span className="flex items-center gap-1">
-                          {p.phone}
+                          {fmtPhone(p.phone)}
                           {p.phone_verified && (
                             <span className="text-[10px] font-bold text-green-400 bg-green-900/40 rounded px-1 py-0.5">✓</span>
                           )}

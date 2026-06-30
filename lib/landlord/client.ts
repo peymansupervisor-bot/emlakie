@@ -39,7 +39,7 @@ export async function updateProfile(payload: { first_name: string; last_name: st
   const display_name = `${payload.first_name} ${payload.last_name}`.trim();
   const { error } = await supabase
     .from('profiles')
-    .update({ first_name: payload.first_name.trim(), last_name: payload.last_name.trim(), phone: payload.phone.trim(), display_name, phone_verified: payload.phone_verified ?? false })
+    .update({ first_name: payload.first_name.trim(), last_name: payload.last_name.trim(), phone: payload.phone.replace(/\D/g, '').slice(-10), display_name, phone_verified: payload.phone_verified ?? false })
     .eq('id', user.id);
   if (error) throw new Error(error.message);
   // Fire welcome email on first profile completion (non-blocking)

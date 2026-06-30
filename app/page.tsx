@@ -193,7 +193,7 @@ export default async function HomePage() {
               ))}
             </div>
           ) : (
-            <div className="rounded-2xl border border-dashed border-gray-200 py-16 text-center text-gray-400">
+            <div className="rounded-2xl border border-dashed border-gray-200 py-16 text-center text-gray-600">
               <p className="text-sm">New listings arriving soon.</p>
               <Link href="/landlord/login" className="mt-3 inline-block text-sm font-semibold text-brand-600 transition hover:text-brand-700">
                 List your property →
@@ -249,7 +249,7 @@ export default async function HomePage() {
               <h2 className="mt-2 font-serif text-3xl font-bold text-gray-900">
                 List your rental.<br />Keep every dollar.
               </h2>
-              <p className="mt-3 text-gray-500">
+              <p className="mt-3 text-gray-700">
                 Post for free in under 5 minutes. Direct inquiries from renters. No commissions, ever.
               </p>
               <div className="mt-6 flex flex-wrap gap-5">
@@ -259,7 +259,7 @@ export default async function HomePage() {
                   'Direct messaging',
                   'No commissions',
                 ].map((f) => (
-                  <span key={f} className="flex items-center gap-1.5 text-sm text-gray-500">
+                  <span key={f} className="flex items-center gap-1.5 text-sm text-gray-700">
                     <svg viewBox="0 0 16 16" className="h-3.5 w-3.5 shrink-0 fill-brand-500" aria-hidden="true">
                       <path fillRule="evenodd" d="M12.416 3.376a.75.75 0 0 1 .208 1.04l-5 7.5a.75.75 0 0 1-1.154.114l-3-3a.75.75 0 0 1 1.06-1.06l2.353 2.353 4.493-6.74a.75.75 0 0 1 1.04-.207Z" clipRule="evenodd" />
                     </svg>
@@ -302,7 +302,7 @@ export default async function HomePage() {
               <Link
                 key={l.href}
                 href={l.href}
-                className="py-1 text-sm text-gray-500 transition hover:text-brand-600"
+                className="py-1 text-sm text-gray-600 transition hover:text-brand-600"
               >
                 {l.label}
               </Link>

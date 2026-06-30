@@ -178,7 +178,18 @@ export default function ListingCard({
   const insightResult = deriveInsight(listing);
   const insight = insightResult?.text ?? null;
   const badges = smartBadges(listing.amenities ?? []);
-  const avail = availLabel(listing.availableFrom);
+  // avail and isSponsored depend on the current time. Initialise to safe
+  // server-render values and update after hydration to avoid #425/#422 errors.
+  const [avail, setAvail] = useState<string | null>(null);
+  const [isSponsored, setIsSponsored] = useState(false);
+  useEffect(() => {
+    setAvail(availLabel(listing.availableFrom));
+    setIsSponsored(
+      !listing.isSample &&
+        !!listing.boosted_until &&
+        new Date(listing.boosted_until).getTime() > Date.now(),
+    );
+  }, [listing.availableFrom, listing.boosted_until, listing.isSample]);
   const isNew = listing.dom != null && listing.dom <= 1;
   const domText =
     listing.dom != null && listing.dom > 1 && listing.dom <= 30
@@ -214,7 +225,7 @@ export default function ListingCard({
         )}
 
         {/* Top-left: sponsored badge (boosted listings only) */}
-        {!listing.isSample && listing.boosted_until && new Date(listing.boosted_until).getTime() > Date.now() && (
+        {isSponsored && (
           <div className="absolute left-3 top-3 z-20">
             <span className="flex items-center gap-1 rounded-full bg-amber-700 px-2.5 py-1 text-[11px] font-bold text-white shadow-sm">
               <svg viewBox="0 0 16 16" className="h-3 w-3 fill-current" aria-hidden="true"><path d="M8 1l1.9 3.9 4.1.6-3 2.9.7 4.1L8 10.4l-3.7 1.9.7-4.1-3-2.9 4.1-.6z"/></svg>
@@ -224,7 +235,7 @@ export default function ListingCard({
         )}
 
         {/* Top-left: source badge (non-sponsored) */}
-        {(listing.isSample || (!listing.isSample && listing.listing_source === 'broker' && !(listing.boosted_until && new Date(listing.boosted_until).getTime() > Date.now()))) && (
+        {(listing.isSample || (!listing.isSample && listing.listing_source === 'broker' && !isSponsored)) && (
           <div className="absolute left-3 top-3 z-20">
             {listing.isSample ? (
               <span className="rounded-full bg-gray-800/70 px-2.5 py-1 text-[11px] font-semibold text-white backdrop-blur-sm">

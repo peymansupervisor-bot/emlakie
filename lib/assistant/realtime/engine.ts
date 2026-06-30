@@ -116,6 +116,7 @@ export class RealtimeEngine {
   private dc: RTCDataChannel | null = null;
   private stream: MediaStream | null = null;
   private setupComplete = false;
+  private speechStartedAt: number | null = null;
   private speechStoppedAt: number | null = null;
   private isRespondingAudio = false;
   private isResponseActive = false;
@@ -412,19 +413,25 @@ export class RealtimeEngine {
         break;
 
       case 'input_audio_buffer.speech_started':
+        this.speechStartedAt = Date.now();
         this.cb.onSpeechStarted?.(this.isRespondingAudio);
         break;
 
-      case 'input_audio_buffer.speech_stopped':
-        this.speechStoppedAt = Date.now();
+      case 'input_audio_buffer.speech_stopped': {
+        const now = Date.now();
+        this.speechStoppedAt = now;
+        const speechDuration = this.speechStartedAt ? now - this.speechStartedAt : 0;
+        this.speechStartedAt = null;
         this.cb.onSpeechStopped?.();
-        // Only send response.create if no response is currently active.
-        // Sending it while a response is running causes the OpenAI error
-        // "conversation_already_has_active_response" and triggers self-talk.
-        if (this.dc && this.dc.readyState === 'open' && !this.isResponseActive) {
+        // Guard 1: skip if a response is already active (prevents self-talk loop).
+        // Guard 2: skip if the audio was shorter than 600 ms — genuine questions
+        // are at least a few syllables; noise bursts (TV, cough, door slam) are
+        // typically much shorter and should be silently discarded.
+        if (this.dc && this.dc.readyState === 'open' && !this.isResponseActive && speechDuration >= 600) {
           this.dc.send(JSON.stringify({ type: 'response.create' }));
         }
         break;
+      }
 
       case 'response.created':
         // Mark response active immediately — mute mic now, not at first audio

@@ -5,7 +5,10 @@ interface Props {
 }
 
 export default function CallButton({ virtualPhone }: Props) {
-  const formatted = virtualPhone.replace(/^\+1(\d{3})(\d{3})(\d{4})$/, '($1) $2-$3');
+  const digits = virtualPhone.replace(/\D/g, '').slice(-10);
+  const formatted = digits.length === 10
+    ? `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`
+    : virtualPhone;
 
   return (
     <div className="mb-4 rounded-xl border border-gray-200 bg-gray-50 px-4 py-4">

@@ -62,13 +62,45 @@ export default async function LandlordsPage({ searchParams }: { searchParams: Pr
     if (l.status === 'active') countMap[l.landlord_id].active++;
   }
 
+  // Synthetic rows for auth users who have listings but no profile row
+  type ProfileRow = NonNullable<typeof profileRows>[number] & { noProfile?: boolean };
+  const profileIds = new Set((profileRows ?? []).map((p) => p.id));
+  const ghostRows: ProfileRow[] = allAuthUsers
+    .filter((u) => countMap[u.id] && !profileIds.has(u.id))
+    .map((u) => ({
+      id: u.id,
+      first_name: null,
+      last_name: null,
+      display_name: null,
+      phone: null,
+      phone_verified: false,
+      email: null,
+      account_id: null,
+      created_at: now.toISOString(),
+      noProfile: true,
+    }));
+
+  // Fetch emails for ghost users from auth
+  const ghostEmails: Record<string, string> = {};
+  for (const u of allAuthUsers) {
+    if (ghostRows.some((g) => g.id === u.id)) {
+      const authUser = u as { id: string; email?: string };
+      if (authUser.email) ghostEmails[u.id] = authUser.email;
+    }
+  }
+  for (const g of ghostRows) {
+    if (ghostEmails[g.id]) g.email = ghostEmails[g.id];
+  }
+
+  const allRows: ProfileRow[] = [...(profileRows ?? []), ...ghostRows];
+
   function accountNum(id: string | null): number {
     if (!id) return Infinity;
     const m = id.match(/\d+$/);
     return m ? parseInt(m[0], 10) : Infinity;
   }
 
-  let rows = (profileRows ?? []).filter((p) => {
+  let rows = allRows.filter((p) => {
     if (!q) return true;
     const lower = q.toLowerCase();
     return (
@@ -84,7 +116,7 @@ export default async function LandlordsPage({ searchParams }: { searchParams: Pr
   rows = rows.sort((a, b) => accountNum(a.account_id) - accountNum(b.account_id));
 
   const total = rows.length;
-  const missingIdCount = (profileRows ?? []).filter((p) => !p.account_id).length;
+  const missingIdCount = allRows.filter((p) => !p.account_id).length;
 
   return (
     <div>
@@ -138,8 +170,9 @@ export default async function LandlordsPage({ searchParams }: { searchParams: Pr
                   '—';
                 const counts = countMap[p.id];
                 const isSuspended = bannedIds.has(p.id);
+                const isGhost = (p as ProfileRow).noProfile;
                 return (
-                  <tr key={p.id} className={`hover:bg-gray-900/50 transition ${isSuspended ? 'bg-red-950/20' : !p.account_id ? 'bg-amber-950/20' : ''}`}>
+                  <tr key={p.id} className={`hover:bg-gray-900/50 transition ${isSuspended ? 'bg-red-950/20' : isGhost ? 'bg-purple-950/20' : !p.account_id ? 'bg-amber-950/20' : ''}`}>
                     <td className="px-4 py-3 text-xs font-mono">
                       {p.account_id
                         ? <span className={isSuspended ? 'text-red-400' : 'text-gray-400'}>{p.account_id}</span>
@@ -150,6 +183,9 @@ export default async function LandlordsPage({ searchParams }: { searchParams: Pr
                       <span className={`font-semibold ${isSuspended ? 'text-red-300' : 'text-white'}`}>{name}</span>
                       {isSuspended && (
                         <span className="ml-2 rounded bg-red-600 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-widest text-white">Suspended</span>
+                      )}
+                      {isGhost && (
+                        <span className="ml-2 rounded bg-purple-700 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-widest text-white">No Profile</span>
                       )}
                     </td>
                     <td className="px-4 py-3 text-gray-300 whitespace-nowrap">{p.email ?? '—'}</td>

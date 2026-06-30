@@ -20,9 +20,11 @@ export default async function LandlordsPage({ searchParams }: { searchParams: Pr
   // Fetch ALL auth users — this is the authoritative source; no user is ever missed
   type AuthUser = { id: string; email?: string; created_at?: string; banned_until?: string | null };
   let allAuthUsers: AuthUser[] = [];
+  let listUsersError: string | null = null;
   let authPage = 1;
   while (true) {
-    const { data: page } = await sb.auth.admin.listUsers({ perPage: 1000, page: authPage });
+    const { data: page, error: pageError } = await sb.auth.admin.listUsers({ perPage: 1000, page: authPage });
+    if (pageError) { listUsersError = pageError.message; break; }
     const users = (page?.users ?? []) as AuthUser[];
     allAuthUsers = allAuthUsers.concat(users);
     if (users.length < 1000) break;
@@ -113,6 +115,11 @@ export default async function LandlordsPage({ searchParams }: { searchParams: Pr
 
   return (
     <div>
+      {listUsersError && (
+        <div className="mb-4 rounded-xl border border-red-700 bg-red-950/40 px-4 py-3 text-sm text-red-300">
+          ⚠ Auth user fetch error — list may be incomplete: {listUsersError}
+        </div>
+      )}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-6">
         <div>
           <h1 className="text-xl font-extrabold text-white">Registered Landlords</h1>

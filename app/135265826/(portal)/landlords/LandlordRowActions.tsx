@@ -12,9 +12,14 @@ export default function LandlordRowActions({ id, noProfile }: { id: string; noPr
     if (!confirm('Permanently delete this account and all their listings? This cannot be undone.')) return;
     if (!confirm('Are you absolutely sure?')) return;
     setBusy(true);
-    await fetch(`/api/admin/landlords/${id}`, { method: 'DELETE' });
+    const res = await fetch(`/api/admin/landlords/${id}`, { method: 'DELETE' });
     setBusy(false);
-    router.refresh();
+    if (!res.ok) {
+      const { error } = await res.json().catch(() => ({ error: 'Unknown error' }));
+      alert(`Delete failed: ${error}`);
+      return;
+    }
+    window.location.reload();
   }
 
   return (

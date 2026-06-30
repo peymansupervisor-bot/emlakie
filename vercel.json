@@ -1,6 +1,10 @@
 {
   "crons": [
     {
+      "path": "/api/cron/critical-check",
+      "schedule": "*/30 * * * *"
+    },
+    {
       "path": "/api/cron/bridge-sync",
       "schedule": "0 6 * * *"
     },
@@ -27,6 +31,9 @@
           },
           "app/api/cron/ada-audit/route.ts": {
                   "maxDuration": 300
+          },
+          "app/api/cron/critical-check/route.ts": {
+                  "maxDuration": 30
           }
     }
 }

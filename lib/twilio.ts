@@ -131,6 +131,34 @@ export async function maybeReleaseVirtualPhone(userId: string): Promise<void> {
   }
 }
 
+/** Release the current virtual number (if any) and provision a fresh one in the correct area. */
+export async function forceReprovisionVirtualPhone(userId: string, postalCode?: string, city?: string, state?: string): Promise<string | null> {
+  try {
+    const db = adminClient();
+    const { data: profile } = await db.from('profiles').select('virtual_phone').eq('id', userId).single();
+
+    if (profile?.virtual_phone) {
+      const client = twilioClient();
+      const numbers = await client.incomingPhoneNumbers.list({ phoneNumber: profile.virtual_phone });
+      if (numbers[0]) await client.incomingPhoneNumbers(numbers[0].sid).remove();
+      await db.from('profiles').update({ virtual_phone: null }).eq('id', userId);
+    }
+
+    return await provisionNumber(userId, postalCode, city, state);
+  } catch (err) {
+    console.error('[twilio] forceReprovisionVirtualPhone error for', userId, err);
+    await logError({
+      source: 'Twilio Reprovision',
+      message: err instanceof Error ? err.message : String(err),
+      details: err instanceof Error ? err.stack : undefined,
+      user_id: userId,
+      endpoint: 'forceReprovisionVirtualPhone',
+      context: { postalCode, city, state },
+    });
+    return null;
+  }
+}
+
 /** Look up the real phone number for an inbound virtual number. */
 export async function getRealPhoneForVirtual(virtualPhone: string): Promise<string | null> {
   try {

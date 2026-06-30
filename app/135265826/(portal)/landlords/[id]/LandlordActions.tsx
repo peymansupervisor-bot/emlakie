@@ -58,23 +58,32 @@ export default function LandlordActions({ landlordId, isBanned, hasVirtualPhone 
     router.refresh();
   }
 
-  async function provisionPhone() {
-    if (!confirm('Provision a Twilio virtual phone number for this landlord?')) return;
+  async function callProvisionApi(reprovision: boolean) {
     setBusy(true);
     const res = await fetch('/api/admin/provision-phone', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ landlordId }),
+      body: JSON.stringify({ landlordId, reprovision }),
     });
     setBusy(false);
     if (res.ok) {
       const { phone } = await res.json();
-      alert(`Provisioned: ${phone}`);
+      alert(`${reprovision ? 'Re-provisioned' : 'Provisioned'}: ${phone}`);
       router.refresh();
     } else {
       const { error } = await res.json().catch(() => ({ error: 'Unknown error' }));
       alert(`Failed: ${error}`);
     }
+  }
+
+  async function provisionPhone() {
+    if (!confirm('Provision a Twilio virtual phone number for this landlord?')) return;
+    await callProvisionApi(false);
+  }
+
+  async function reprovisionPhone() {
+    if (!confirm('Release the current number and provision a new one in the correct area? The old number will stop working immediately.')) return;
+    await callProvisionApi(true);
   }
 
   async function deleteAccount() {
@@ -106,13 +115,21 @@ export default function LandlordActions({ landlordId, isBanned, hasVirtualPhone 
             {busy ? 'Working…' : 'Suspend Account'}
           </button>
         )}
-        {!hasVirtualPhone && (
+        {!hasVirtualPhone ? (
           <button
             onClick={provisionPhone}
             disabled={busy}
             className="rounded-xl bg-blue-700 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-600 transition disabled:opacity-50"
           >
             {busy ? 'Working…' : 'Provision Phone'}
+          </button>
+        ) : (
+          <button
+            onClick={reprovisionPhone}
+            disabled={busy}
+            className="rounded-xl bg-blue-900 border border-blue-700 px-4 py-2 text-sm font-semibold text-blue-200 hover:bg-blue-700 hover:text-white transition disabled:opacity-50"
+          >
+            {busy ? 'Working…' : 'Re-provision Phone'}
           </button>
         )}
         <button

@@ -143,7 +143,9 @@ export async function getListings(filters: ListingFilters = {}): Promise<Listing
     });
 
     const total = sorted.length;
-    const listings = sorted.map(rowToListing);
+    const page = Math.max(1, Number(filters.page ?? 1));
+    const pageSize = 20;
+    const listings = sorted.slice((page - 1) * pageSize, page * pageSize).map(rowToListing);
     return { listings, total, usingSampleData: false };
   } catch {
     return { listings: [], total: 0, usingSampleData: false };

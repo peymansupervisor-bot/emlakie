@@ -93,6 +93,7 @@ export default async function RentalsPage({
           listings={listings}
           allMapListings={allMapListings}
           total={total}
+          page={Math.max(1, Number(searchParams.page ?? 1))}
           usingSampleData={usingSampleData}
           heading={heading}
           filters={searchParams as Record<string, string>}

@@ -2,6 +2,7 @@
 
 import { useState, useRef, useCallback, useEffect } from 'react';
 import dynamic from 'next/dynamic';
+import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import ListingCard from './ListingCard';
 import SaveSearchModal from './SaveSearchModal';
@@ -12,18 +13,30 @@ const MapView = dynamic(() => import('./MapView'), { ssr: false });
 
 type View = 'list' | 'map' | 'split';
 
+const PAGE_SIZE = 20;
+
 interface Props {
   listings: Listing[];
   allMapListings?: Pick<Listing, 'id' | 'lat' | 'lng' | 'price' | 'address' | 'slug'>[];
   total: number;
+  page?: number;
   usingSampleData: boolean;
   heading: string;
   filters?: Record<string, string>;
   searchLabel?: string;
 }
 
-export default function RentalsClient({ listings, allMapListings, total, usingSampleData, heading, filters = {}, searchLabel = 'All rentals' }: Props) {
+export default function RentalsClient({ listings, allMapListings, total, page = 1, usingSampleData, heading, filters = {}, searchLabel = 'All rentals' }: Props) {
   const [activeId, setActiveId] = useState<string | null>(null);
+  const totalPages = Math.ceil(total / PAGE_SIZE);
+
+  function pageUrl(p: number) {
+    const params = new URLSearchParams({ ...filters, page: String(p) });
+    params.delete('page');
+    if (p > 1) params.set('page', String(p));
+    const qs = params.toString();
+    return `/rentals${qs ? `?${qs}` : ''}`;
+  }
   const [view, setView] = useState<'list' | 'map' | 'split'>('split');
   const [showSaveModal, setShowSaveModal] = useState(false);
   const [alertBanner, setAlertBanner] = useState<string | null>(null);
@@ -241,6 +254,40 @@ export default function RentalsClient({ listings, allMapListings, total, usingSa
           )}
 
 
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="flex items-center justify-center gap-1.5 border-t border-gray-200 bg-white py-4">
+              {page > 1 && (
+                <Link
+                  href={pageUrl(page - 1)}
+                  className="rounded-lg border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-600 hover:bg-gray-50 transition"
+                >
+                  ← Prev
+                </Link>
+              )}
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+                <Link
+                  key={p}
+                  href={pageUrl(p)}
+                  className={`rounded-lg border px-3 py-1.5 text-sm font-semibold transition ${
+                    p === page
+                      ? 'border-brand-600 bg-brand-600 text-white'
+                      : 'border-gray-300 text-gray-600 hover:bg-gray-50'
+                  }`}
+                >
+                  {p}
+                </Link>
+              ))}
+              {page < totalPages && (
+                <Link
+                  href={pageUrl(page + 1)}
+                  className="rounded-lg border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-600 hover:bg-gray-50 transition"
+                >
+                  Next →
+                </Link>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Map panel */}

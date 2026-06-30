@@ -58,14 +58,19 @@ export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ 
     const sb = adminClient();
 
     // Delete all their listings first
-    await sb.from('listings').delete().eq('landlord_id', id);
+    const { error: listingsErr } = await sb.from('listings').delete().eq('landlord_id', id);
+    if (listingsErr) return NextResponse.json({ error: listingsErr.message }, { status: 500 });
 
     // Delete the profile row (not cascaded automatically)
-    await sb.from('profiles').delete().eq('id', id);
+    const { error: profileErr } = await sb.from('profiles').delete().eq('id', id);
+    if (profileErr) return NextResponse.json({ error: profileErr.message }, { status: 500 });
 
-    // Delete the auth user
+    // Delete the auth user — orphaned profile rows have no matching auth user,
+    // so "not found" here just means there's nothing left to delete, not a failure.
     const { error } = await sb.auth.admin.deleteUser(id);
-    if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+    if (error && !/not.?found/i.test(error.message)) {
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
 
     return NextResponse.json({ ok: true });
   } catch (_err) {

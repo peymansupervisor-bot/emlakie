@@ -2,6 +2,7 @@ import { adminClient } from '@/lib/moderator';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import LandlordActions from './LandlordActions';
+import { fmtPhone } from '@/lib/format-phone';
 
 export const dynamic = 'force-dynamic';
 
@@ -88,7 +89,7 @@ export default async function LandlordProfilePage({ params }: { params: Promise<
           <div>
             <p className="text-[10px] uppercase tracking-wider text-gray-500 mb-1">Phone</p>
             <p className="text-sm text-white flex items-center gap-1">
-              {profile?.phone ?? '—'}
+              {fmtPhone(profile?.phone)}
               {profile?.phone_verified && (
                 <span className="text-[10px] font-bold text-green-400 bg-green-900/40 rounded px-1 py-0.5">verified</span>
               )}
@@ -96,7 +97,9 @@ export default async function LandlordProfilePage({ params }: { params: Promise<
           </div>
           <div>
             <p className="text-[10px] uppercase tracking-wider text-gray-500 mb-1">Virtual Phone</p>
-            <p className="text-sm text-white">{profile?.virtual_phone ?? <span className="text-amber-400">Not provisioned</span>}</p>
+            <p className="text-sm text-white">
+              {profile?.virtual_phone ? fmtPhone(profile.virtual_phone) : <span className="text-amber-400">Not provisioned</span>}
+            </p>
           </div>
         </div>
 

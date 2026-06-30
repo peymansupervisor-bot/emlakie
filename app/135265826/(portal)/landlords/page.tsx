@@ -1,15 +1,10 @@
 import { adminClient } from '@/lib/moderator';
 import BackfillButton from './BackfillButton';
 import LandlordRowActions from './LandlordRowActions';
+import { fmtPhone } from '@/lib/format-phone';
 
 export const dynamic = 'force-dynamic';
 
-function fmtPhone(raw: string | null | undefined) {
-  if (!raw) return '—';
-  const d = raw.replace(/\D/g, '').slice(-10);
-  if (d.length !== 10) return raw;
-  return `(${d.slice(0,3)}) ${d.slice(3,6)}-${d.slice(6)}`;
-}
 
 interface SearchParams { q?: string }
 
@@ -71,20 +66,42 @@ export default async function LandlordsPage({ searchParams }: { searchParams: Pr
   const profileById = new Map<string, Profile>();
   for (const p of profileRows ?? []) profileById.set(p.id, p);
 
-  // Every auth user becomes a row; profile fields are merged if available
+  // Union of auth users + profile rows — a user appears if EITHER exists
   type Row = {
     id: string;
     email: string | null;
     authCreatedAt: string | null;
     profile: Profile | null;
+    noAuthAccount: boolean;
   };
 
-  const allRows: Row[] = allAuthUsers.map((u) => ({
-    id: u.id,
-    email: u.email ?? null,
-    authCreatedAt: u.created_at ?? null,
-    profile: profileById.get(u.id) ?? null,
-  }));
+  const authUserMap = new Map(allAuthUsers.map((u) => [u.id, u]));
+
+  // Start with all auth users
+  const rowMap = new Map<string, Row>();
+  for (const u of allAuthUsers) {
+    rowMap.set(u.id, {
+      id: u.id,
+      email: u.email ?? null,
+      authCreatedAt: u.created_at ?? null,
+      profile: profileById.get(u.id) ?? null,
+      noAuthAccount: false,
+    });
+  }
+  // Add any profile rows whose auth account is missing (orphaned profiles)
+  for (const p of profileRows ?? []) {
+    if (!rowMap.has(p.id)) {
+      rowMap.set(p.id, {
+        id: p.id,
+        email: p.email ?? null,
+        authCreatedAt: p.created_at ?? null,
+        profile: p,
+        noAuthAccount: true,
+      });
+    }
+  }
+
+  const allRows: Row[] = Array.from(rowMap.values());
 
   function accountNum(id: string | null | undefined): number {
     if (!id) return Infinity;

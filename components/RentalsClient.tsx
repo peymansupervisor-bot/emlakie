@@ -79,7 +79,7 @@ export default function RentalsClient({ listings, allMapListings, total, page = 
   const hasMappable = listings.some((l) => l.lat != null && l.lng != null);
 
   return (
-    <div className="flex flex-col sm:h-[calc(100vh-64px)] sm:overflow-hidden">
+    <div className="flex flex-col">
       {/* ── Alert banner ── */}
       {alertBanner && (
         <div className="flex items-center justify-between bg-green-600 px-4 py-2.5 text-sm font-medium text-white">
@@ -204,11 +204,11 @@ export default function RentalsClient({ listings, allMapListings, total, page = 
       </div>
 
       {/* ── Body ── */}
-      <div className="flex sm:flex-1 sm:overflow-hidden sm:min-h-0">
+      <div className="flex">
 
         {/* Listings panel */}
         <div
-          className={`isolate flex flex-col bg-gray-50 transition-all duration-300 sm:overflow-y-auto ${
+          className={`isolate flex flex-col bg-gray-50 transition-all duration-300 ${
             view === 'map'
               ? 'hidden'
               : view === 'split'
@@ -290,7 +290,7 @@ export default function RentalsClient({ listings, allMapListings, total, page = 
           )}
         </div>
 
-        {/* Map panel */}
+        {/* Map panel — sticky so it stays in view as listings scroll */}
         {hasMappable && (
           <div
             style={{ isolation: 'isolate' }}
@@ -298,8 +298,8 @@ export default function RentalsClient({ listings, allMapListings, total, page = 
               view === 'list'
                 ? 'hidden'
                 : view === 'split'
-                ? 'hidden sm:block sm:w-1/2'
-                : 'w-full'
+                ? 'hidden sm:block sm:w-1/2 sm:sticky sm:top-0 sm:h-screen'
+                : 'w-full h-[calc(100vh-120px)]'
             }`}
           >
             <MapView

@@ -22,10 +22,7 @@ interface Props {
   searchLabel?: string;
 }
 
-export default function RentalsClient({ listings: initialListings, allMapListings, total, usingSampleData, heading, filters = {}, searchLabel = 'All rentals' }: Props) {
-  const [listings, setListings] = useState<Listing[]>(initialListings);
-  const [page, setPage] = useState(1);
-  const [loadingMore, setLoadingMore] = useState(false);
+export default function RentalsClient({ listings, allMapListings, total, usingSampleData, heading, filters = {}, searchLabel = 'All rentals' }: Props) {
   const [activeId, setActiveId] = useState<string | null>(null);
   const [view, setView] = useState<'list' | 'map' | 'split'>('split');
   const [showSaveModal, setShowSaveModal] = useState(false);
@@ -33,20 +30,6 @@ export default function RentalsClient({ listings: initialListings, allMapListing
   const [drawMode, setDrawMode] = useState(false);
   const [polygon, setPolygon] = useState<[number, number][] | null>(null);
 
-  const hasMore = listings.length < total;
-
-  async function loadMore() {
-    setLoadingMore(true);
-    const nextPage = page + 1;
-    const params = new URLSearchParams({ ...filters, page: String(nextPage) });
-    const res = await fetch(`/api/search?${params}`);
-    if (res.ok) {
-      const data = await res.json();
-      setListings((prev) => [...prev, ...(data.listings ?? [])]);
-      setPage(nextPage);
-    }
-    setLoadingMore(false);
-  }
 
   const filteredListings = polygon
     ? listings.filter((l) => l.lat != null && l.lng != null && pointInPolygon([l.lat!, l.lng!], polygon))
@@ -226,7 +209,7 @@ export default function RentalsClient({ listings: initialListings, allMapListing
             </div>
           )}
 
-          {initialListings.length === 0 ? (
+          {listings.length === 0 ? (
             <div className="mt-20 text-center">
               <p className="text-lg font-semibold text-gray-900">No homes match those filters</p>
               <p className="mt-2 text-sm text-gray-500">Try widening your search.</p>
@@ -257,17 +240,7 @@ export default function RentalsClient({ listings: initialListings, allMapListing
             </div>
           )}
 
-          {hasMore && (
-            <div className="flex justify-center py-6">
-              <button
-                onClick={loadMore}
-                disabled={loadingMore}
-                className="rounded-xl border border-gray-300 bg-white px-6 py-2.5 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition disabled:opacity-50"
-              >
-                {loadingMore ? 'Loading…' : `Show more (${total - listings.length} remaining)`}
-              </button>
-            </div>
-          )}
+
         </div>
 
         {/* Map panel */}

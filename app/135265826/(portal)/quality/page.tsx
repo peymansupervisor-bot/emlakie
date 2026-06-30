@@ -188,7 +188,7 @@ export default async function QualityPage() {
                             : 'bg-gray-800 text-gray-400'
                         }`}
                       >
-                        {l.status}
+                        {l.status?.toUpperCase()}
                       </span>
                     </td>
                   </tr>

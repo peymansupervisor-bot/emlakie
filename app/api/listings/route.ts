@@ -242,7 +242,7 @@ export async function POST(req: NextRequest) {
 
   // If this is a referred landlord's first listing, qualify the referral and
   // grant both parties a free 30-day boost (auto-applied here). Fire-and-forget.
-  qualifyReferralOnFirstListing(user.id, data.id).catch(() => {});
+  qualifyReferralOnFirstListing(user.id, data.id as string).catch(() => {});
 
   return NextResponse.json(data, { status: 201 })
 }

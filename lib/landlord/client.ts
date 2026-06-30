@@ -32,14 +32,21 @@ function toTitleCase(str: string): string {
   return str.trim().replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
-export async function updateProfile(payload: { first_name: string; last_name: string; phone: string; phone_verified?: boolean }): Promise<void> {
+export async function updateProfile(payload: { first_name?: string; last_name?: string; phone: string; phone_verified?: boolean }): Promise<void> {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error('Not signed in.');
-  payload = { ...payload, first_name: toTitleCase(payload.first_name), last_name: toTitleCase(payload.last_name) };
-  const display_name = `${payload.first_name} ${payload.last_name}`.trim();
+  const updates: Record<string, unknown> = {
+    phone: payload.phone.replace(/\D/g, '').slice(-10),
+    phone_verified: payload.phone_verified ?? false,
+  };
+  if (payload.first_name) updates.first_name = toTitleCase(payload.first_name).trim();
+  if (payload.last_name) updates.last_name = toTitleCase(payload.last_name).trim();
+  if (payload.first_name && payload.last_name) {
+    updates.display_name = `${toTitleCase(payload.first_name)} ${toTitleCase(payload.last_name)}`.trim();
+  }
   const { error } = await supabase
     .from('profiles')
-    .update({ first_name: payload.first_name.trim(), last_name: payload.last_name.trim(), phone: payload.phone.replace(/\D/g, '').slice(-10), display_name, phone_verified: payload.phone_verified ?? false })
+    .update(updates)
     .eq('id', user.id);
   if (error) throw new Error(error.message);
   // Fire welcome email on first profile completion (non-blocking)

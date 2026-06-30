@@ -11,10 +11,10 @@ const UNIT_REQUIRED_TYPES = ['apartment', 'condo'];
 const UNIT_OPTIONAL_TYPES = ['townhouse'];
 
 // Extract unit suffix (Apt 4, #301, Unit 2B) from an address string
-function splitAddressUnit(address: string): { street: string; unit: string } {
+function splitAddressUnit(address: string): { address: string; unit: string } {
   const m = address.match(/^(.*?)\s+((?:apt|unit|#)\s*\S+)$/i);
-  if (m) return { street: m[1].trim(), unit: m[2].trim() };
-  return { street: address, unit: '' };
+  if (m) return { address: m[1].trim(), unit: m[2].trim() };
+  return { address, unit: '' };
 }
 
 const PROPERTY_TYPES = [

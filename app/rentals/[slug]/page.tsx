@@ -32,11 +32,17 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!listing) return { title: 'Listing not found' };
   const canonicalSlug = listing.slug ?? listing.id;
   const canonicalUrl = `https://emlakie.com/rentals/${canonicalSlug}`;
-  const statusLabel = listing.status === 'rented' ? ' [Rented]' : listing.status === 'expired' ? ' [Expired]' : '';
-  const shortDesc = listing.description && listing.description.length > 20
+  const isRentedForMeta = listing.status === 'rented';
+  const statusLabel = isRentedForMeta ? ' [Rented]' : listing.status === 'expired' ? ' [Expired]' : '';
+  // Rent amount is a private lease term, not public record like a home sale price —
+  // don't keep broadcasting it (title/description/social cards) once the unit is rented.
+  const titlePriceSuffix = isRentedForMeta ? '' : ` — ${formatPrice(listing.price)}`;
+  const shortDesc = !isRentedForMeta && listing.description && listing.description.length > 20
     ? listing.description.length > 155
       ? listing.description.slice(0, 155).replace(/\s+\S*$/, '') + '…'
       : listing.description
+    : isRentedForMeta
+    ? `${formatBeds(listing.bedrooms)}, ${formatBaths(listing.bathrooms)} ${formatPropertyType(listing.property_type)} in ${listing.city}, ${listing.state} — no longer available.`
     : `${formatBeds(listing.bedrooms)}, ${formatBaths(listing.bathrooms)} ${formatPropertyType(listing.property_type)} for rent at ${formatPrice(listing.price)}/mo in ${listing.city}, ${listing.state}. Contact the landlord directly on EMLAKIE — no broker fees.`;
   const rawPhoto = listing.photos?.[0] ?? null;
   // Route all OG images through our /api/og-image proxy which converts any format to JPEG.
@@ -49,12 +55,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     : [{ url: '/og-image.png', width: 1200, height: 630, alt: 'EMLAKIE' }];
   const isUnavailableForIndex = listing.status === 'rented' || listing.status === 'expired';
   return {
-    title: `${listing.title}${statusLabel} — ${formatPrice(listing.price)}`,
+    title: `${listing.title}${statusLabel}${titlePriceSuffix}`,
     description: shortDesc,
     alternates: { canonical: canonicalUrl },
     ...(isUnavailableForIndex && { robots: { index: false, follow: false } }),
     openGraph: {
-      title: `${listing.title} — ${formatPrice(listing.price)}`,
+      title: `${listing.title}${titlePriceSuffix}`,
       description: shortDesc,
       type: 'website',
       url: canonicalUrl,
@@ -62,7 +68,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     },
     twitter: {
       card: 'summary_large_image',
-      title: `${listing.title} — ${formatPrice(listing.price)}`,
+      title: `${listing.title}${titlePriceSuffix}`,
       description: shortDesc,
       images: ogPhotoUrl ? [ogPhotoUrl] : ['/og-image.png'],
     },
@@ -132,18 +138,22 @@ export default async function ListingPage({ params }: Props) {
     '@context': 'https://schema.org',
     '@type': 'RealEstateListing',
     name: listing.title,
-    description: listing.description ?? '',
+    description: isRented ? '' : listing.description ?? '',
     url: `https://emlakie.com/rentals/${listing.slug ?? listing.id}`,
-    image: listing.photos?.length
-      ? listing.photos.map(p => ({ '@type': 'ImageObject', url: p, width: 1200, height: 800 }))
+    image: galleryPhotos.length
+      ? galleryPhotos.map(p => ({ '@type': 'ImageObject', url: p, width: 1200, height: 800 }))
       : [{ '@type': 'ImageObject', url: 'https://emlakie.com/og-image.png', width: 1200, height: 630 }],
-    offers: {
-      '@type': 'Offer',
-      price: listing.price,
-      priceCurrency: 'USD',
-      priceSpecification: { '@type': 'UnitPriceSpecification', price: listing.price, priceCurrency: 'USD', unitCode: 'MON' },
-      availability: listing.status === 'active' ? 'https://schema.org/InStock' : 'https://schema.org/SoldOut',
-    },
+    // Rent amount is a private lease term, not public record — don't keep
+    // publishing it via structured data once the unit is rented.
+    ...(!isRented && {
+      offers: {
+        '@type': 'Offer',
+        price: listing.price,
+        priceCurrency: 'USD',
+        priceSpecification: { '@type': 'UnitPriceSpecification', price: listing.price, priceCurrency: 'USD', unitCode: 'MON' },
+        availability: listing.status === 'active' ? 'https://schema.org/InStock' : 'https://schema.org/SoldOut',
+      },
+    }),
     address: {
       '@type': 'PostalAddress',
       streetAddress: listing.address ?? '',
@@ -200,7 +210,9 @@ export default async function ListingPage({ params }: Props) {
           <h1 className="text-2xl font-extrabold text-gray-900 leading-snug">{listing.title}</h1>
 
           <div className="mt-3 flex flex-wrap items-center gap-3">
-            <span className="text-3xl font-extrabold text-brand-700">{formatPrice(listing.price)}</span>
+            {!isRented && (
+              <span className="text-3xl font-extrabold text-brand-700">{formatPrice(listing.price)}</span>
+            )}
             {isRented && (
               <span className="rounded-full bg-blue-100 px-3 py-1 text-sm font-bold text-blue-800">Rented</span>
             )}

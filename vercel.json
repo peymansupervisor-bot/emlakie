@@ -26,8 +26,7 @@
                   "maxDuration": 60
           },
           "app/api/cron/ada-audit/route.ts": {
-                  "maxDuration": 300,
-                  "memory": 3009
+                  "maxDuration": 300
           }
     }
 }

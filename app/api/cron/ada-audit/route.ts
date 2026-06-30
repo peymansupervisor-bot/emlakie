@@ -195,7 +195,9 @@ export async function GET(req: NextRequest) {
     // bundling a 50MB binary into the serverless function.
     const chromium = await import('@sparticuz/chromium');
     const { chromium: playwrightChromium } = await import('playwright-core');
-    const CHROMIUM_URL = 'https://github.com/Sparticuz/chromium/releases/download/v149.0.0/chromium-v149.0.0-pack.tar';
+    // v149's GitHub release split the single pack.tar into per-arch assets —
+    // Vercel serverless functions run x64, so request that one explicitly.
+    const CHROMIUM_URL = 'https://github.com/Sparticuz/chromium/releases/download/v149.0.0/chromium-v149.0.0-pack.x64.tar';
     const browser = await playwrightChromium.launch({
       args: chromium.default.args,
       executablePath: await chromium.default.executablePath(CHROMIUM_URL),

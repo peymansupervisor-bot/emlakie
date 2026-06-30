@@ -7,6 +7,16 @@ import { deleteListing, getMyListing, updateListing } from '@/lib/landlord/clien
 import { LandlordListing } from '@/lib/landlord/types';
 import AddressField from '@/components/AddressField';
 
+const UNIT_REQUIRED_TYPES = ['apartment', 'condo'];
+const UNIT_OPTIONAL_TYPES = ['townhouse'];
+
+// Extract unit suffix (Apt 4, #301, Unit 2B) from an address string
+function splitAddressUnit(address: string): { street: string; unit: string } {
+  const m = address.match(/^(.*?)\s+((?:apt|unit|#)\s*\S+)$/i);
+  if (m) return { street: m[1].trim(), unit: m[2].trim() };
+  return { street: address, unit: '' };
+}
+
 const PROPERTY_TYPES = [
   { value: 'house',     label: 'House' },
   { value: 'apartment', label: 'Apartment' },
@@ -82,6 +92,7 @@ export default function EditListingPage() {
   const [listing, setListing] = useState<LandlordListing | null | undefined>(undefined);
   const [form, setForm] = useState({
     address: '',
+    unit: '',
     city: '',
     state: '',
     zip: '',
@@ -127,7 +138,7 @@ export default function EditListingPage() {
       setListing(l);
       if (!l) return;
       setForm({
-        address: l.address ?? '',
+        ...splitAddressUnit(l.address ?? ''),
         city: l.city ?? '',
         state: l.state ?? '',
         zip: l.zip ?? '',
@@ -181,6 +192,7 @@ export default function EditListingPage() {
 
   async function handleSave() {
     if (!form.address.trim()) { setError('Street address is required.'); return; }
+    if (UNIT_REQUIRED_TYPES.includes(form.propertyType) && !form.unit.trim()) { setError('Unit number is required for this property type.'); return; }
     if (!form.city.trim() || !form.state.trim() || !form.zip.trim()) { setError('City, state, and ZIP are required.'); return; }
     if (!form.title.trim()) { setError('Title is required.'); return; }
     if (!form.price || isNaN(+form.price) || +form.price < 100) { setError('Enter a valid monthly rent.'); return; }
@@ -189,7 +201,7 @@ export default function EditListingPage() {
     setBusy(true);
     try {
       const result = await updateListing(id, {
-        address: form.address.trim(),
+        address: form.unit.trim() ? `${form.address.trim()} ${form.unit.trim()}` : form.address.trim(),
         city: form.city.trim(),
         state: form.state.trim(),
         zip: form.zip.trim(),
@@ -272,6 +284,19 @@ export default function EditListingPage() {
             onSelect={(address, city, state, zip) => setForm((f) => ({ ...f, address, city, state, zip }))}
           />
         </div>
+        {(UNIT_REQUIRED_TYPES.includes(form.propertyType) || UNIT_OPTIONAL_TYPES.includes(form.propertyType)) && (
+          <div>
+            <label className={labelCls}>
+              Unit number {UNIT_REQUIRED_TYPES.includes(form.propertyType) ? '*' : '(optional)'}
+            </label>
+            <input
+              className={inputCls}
+              placeholder="e.g. Apt 4, Unit 2B, #301"
+              value={form.unit}
+              onChange={(e) => setForm((f) => ({ ...f, unit: e.target.value }))}
+            />
+          </div>
+        )}
         <div className="grid grid-cols-3 gap-4">
           <div className="col-span-1">
             <label className={labelCls}>City *</label>

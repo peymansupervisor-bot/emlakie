@@ -89,8 +89,12 @@ const APPLIANCES_OPTIONS = [
 type Step = 1 | 2 | 3 | 4;
 
 
+const UNIT_REQUIRED_TYPES = ['apartment', 'condo'];
+const UNIT_OPTIONAL_TYPES = ['townhouse'];
+
 interface FormData {
   address: string;
+  unit: string;
   city: string;
   state: string;
   zip: string;
@@ -132,7 +136,7 @@ interface FormData {
 }
 
 const empty: FormData = {
-  address: '', city: '', state: '', zip: '',
+  address: '', unit: '', city: '', state: '', zip: '',
   propertyType: 'house', ownershipType: '',
   bedrooms: '1', bathrooms: '1',
   sqft: '', price: '', availableFrom: '',
@@ -453,6 +457,7 @@ export default function NewPropertyPage() {
         if (!form.officeName.trim()) return 'Please enter your brokerage or office name.';
       }
       if (!form.address.trim()) return 'Address is required.';
+      if (UNIT_REQUIRED_TYPES.includes(form.propertyType) && !form.unit.trim()) return 'Unit number is required for this property type.';
       if (!form.city.trim()) return 'City is required.';
       if (!form.state.trim()) return 'State is required.';
       if (!form.price.trim() || isNaN(+form.price) || +form.price < 100) return 'Enter a valid monthly rent.';
@@ -503,7 +508,10 @@ export default function NewPropertyPage() {
       const fd = new FormData();
       fd.append('title', form.title);
       fd.append('description', form.description);
-      fd.append('address', form.address);
+      const fullAddress = form.unit.trim()
+        ? `${form.address.trim()} ${form.unit.trim()}`
+        : form.address.trim();
+      fd.append('address', fullAddress);
       fd.append('city', form.city);
       fd.append('state', form.state);
       fd.append('zip', form.zip);
@@ -748,6 +756,20 @@ export default function NewPropertyPage() {
               onType={(address) => setForm((f) => ({ ...f, address }))}
             />
           </div>
+          {(UNIT_REQUIRED_TYPES.includes(form.propertyType) || UNIT_OPTIONAL_TYPES.includes(form.propertyType)) && (
+            <div>
+              <label htmlFor="new-unit" className={labelCls}>
+                Unit number {UNIT_REQUIRED_TYPES.includes(form.propertyType) ? '*' : '(optional)'}
+              </label>
+              <input
+                id="new-unit"
+                className={inputCls}
+                placeholder="e.g. Apt 4, Unit 2B, #301"
+                value={form.unit}
+                onChange={(e) => set('unit', e.target.value)}
+              />
+            </div>
+          )}
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label htmlFor="new-city" className={labelCls}>City *</label>

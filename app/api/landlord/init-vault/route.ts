@@ -4,12 +4,6 @@ import { logError } from '@/lib/log-error';
 
 export const dynamic = 'force-dynamic';
 
-const VAULT_FOLDERS = [
-  'photos/.keep',
-  'documents/.keep',
-  'media/.keep',
-];
-
 export async function POST(req: NextRequest) {
   const token = req.headers.get('authorization')?.replace('Bearer ', '');
   if (!token) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -30,31 +24,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: true, skipped: true });
   }
 
-  const failed: string[] = [];
-
-  for (const path of VAULT_FOLDERS) {
-    const fullPath = `${user.id}/${path}`;
-    // Use the landlord's own session so auth.uid() matches the folder path
-    const { error } = await supabase.storage
-      .from('listing-photos')
-      .upload(fullPath, new Blob([''], { type: 'application/octet-stream' }), { upsert: true });
-    if (error && !error.message.includes('already exists')) {
-      failed.push(`${fullPath}: ${error.message}`);
-    }
-  }
-
-  if (failed.length > 0) {
-    // Log every failure — this must never be silent
-    await logError({
-      source: 'VaultInit',
-      message: `Storage vault init failed for landlord ${profile?.account_id ?? user.id}`,
-      details: failed.join(' | '),
-      endpoint: 'POST /api/landlord/init-vault',
-      http_status: 500,
-    });
-    return NextResponse.json({ error: 'Vault init failed', details: failed }, { status: 500 });
-  }
-
+  // Supabase Storage folders are virtual — they are created implicitly when the
+  // first real file is uploaded. No placeholder files are needed. Just mark the
+  // vault as initialized so the health probe stops reporting it as missing.
   const { error: updateErr } = await admin
     .from('profiles')
     .update({ folder_initialized_at: new Date().toISOString() })
@@ -68,8 +40,7 @@ export async function POST(req: NextRequest) {
       endpoint: 'POST /api/landlord/init-vault',
       http_status: 500,
     });
-    // Storage folders were created — return ok so landlord isn't blocked.
-    // Next login will retry marking initialized.
+    return NextResponse.json({ error: 'Vault init failed', details: updateErr.message }, { status: 500 });
   }
 
   return NextResponse.json({ ok: true });

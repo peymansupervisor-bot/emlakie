@@ -144,10 +144,11 @@ export async function POST(req: NextRequest) {
   }
   // ─────────────────────────────────────────────────────────────────────────
 
-  // Generate slug from address. Reuse the base slug only if it's not currently
-  // taken — preserves SEO ranking when a property is re-listed after being removed.
+  // Generate slug from address. Use the admin client so all existing slugs are
+  // visible regardless of status or landlord — prevents the race condition where
+  // concurrent submits both compute the same counter and hit the unique constraint.
   const baseSlug = generateListingSlug(address, city, state, zip ?? undefined)
-  const { data: collisions } = await supabase
+  const { data: collisions } = await adminSb
     .from('listings')
     .select('slug')
     .like('slug', `${baseSlug}%`)

@@ -3,8 +3,6 @@ import { getModeratorSession, adminClient } from '@/lib/moderator';
 
 export const dynamic = 'force-dynamic';
 
-const VAULT_FOLDERS = ['photos/.keep', 'documents/.keep', 'media/.keep'];
-
 export async function POST() {
   const session = await getModeratorSession();
   if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -21,24 +19,14 @@ export async function POST() {
   if (queryErr) return NextResponse.json({ error: queryErr.message }, { status: 500 });
   if (!profiles?.length) return NextResponse.json({ initialised: 0, total: 0 });
 
-  let initialised = 0;
-  const now = new Date().toISOString();
+  const ids = profiles.map((p) => p.id);
 
-  for (const profile of profiles) {
-    // Create the vault folders in storage using service role
-    for (const folder of VAULT_FOLDERS) {
-      await sb.storage
-        .from('listing-photos')
-        .upload(`${profile.id}/${folder}`, new Blob([''], { type: 'application/octet-stream' }), { upsert: true });
-    }
+  const { error: updateErr } = await sb
+    .from('profiles')
+    .update({ folder_initialized_at: new Date().toISOString() })
+    .in('id', ids);
 
-    const { error: updateErr } = await sb
-      .from('profiles')
-      .update({ folder_initialized_at: now })
-      .eq('id', profile.id);
+  if (updateErr) return NextResponse.json({ error: updateErr.message }, { status: 500 });
 
-    if (!updateErr) initialised++;
-  }
-
-  return NextResponse.json({ initialised, total: profiles.length });
+  return NextResponse.json({ initialised: ids.length, total: ids.length });
 }

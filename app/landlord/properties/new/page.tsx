@@ -470,14 +470,12 @@ export default function NewPropertyPage() {
     if (step === 2) {
       if (!form.title.trim()) return 'Add a listing title.';
       if (form.description.length < 30) return 'Description must be at least 30 characters.';
+      if (!form.heatingType) return 'Heating type is required — landlords are legally obligated to disclose heating in most states.';
       if (filterWarnings.length > 0) return 'Please remove the flagged language before continuing.';
     }
     if (step === 3) {
       const ready = photoItems.filter((p) => !p.uploading && !p.error && p.medium);
       if (ready.length < 1) return 'Please add at least 1 photo before continuing.';
-    }
-    if (step === 4) {
-      if (!form.heatingType) return 'Heating type is required — landlords are legally obligated to disclose heating in most states.';
     }
     return '';
   }
@@ -494,7 +492,12 @@ export default function NewPropertyPage() {
     setError('');
     try {
       // ── Step 1: persist phone to profile (collected in wizard Step 1) ────────
-      await updateProfile({ first_name: profileName.first_name, last_name: profileName.last_name, phone: form.phone });
+      // Only update name fields if they are non-empty to avoid clearing existing profile data
+      await updateProfile({
+        ...(profileName.first_name ? { first_name: profileName.first_name } : {}),
+        ...(profileName.last_name ? { last_name: profileName.last_name } : {}),
+        phone: form.phone,
+      });
 
       // ── Step 2: get auth user ──────────────────────────────────────────────
       console.log('[submit] step 1: getting auth user');

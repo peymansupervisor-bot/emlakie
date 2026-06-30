@@ -64,7 +64,7 @@ export async function POST(req: NextRequest) {
 
     const adminStorage = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_KEY!,
+      process.env.SUPABASE_SERVICE_KEY ?? process.env.SUPABASE_SERVICE_ROLE_KEY!,
     ).storage
 
     const { data: rawData, error: downloadErr } = await adminStorage.from('listing-photos').download(path)

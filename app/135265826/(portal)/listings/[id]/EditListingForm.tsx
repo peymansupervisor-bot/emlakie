@@ -69,7 +69,7 @@ const LEASE_TERM_OPTIONS = [
 ];
 const FIREPLACE_LOCATIONS = ['Living room', 'Master bedroom', 'Bedroom', 'Den / family room', 'Multiple'];
 const APPLIANCES_OPTIONS = ['Refrigerator', 'Stove / oven', 'Dishwasher', 'Microwave', 'Garbage disposal', 'Range hood', 'Freezer'];
-const AMENITIES_LIST = ['Dishwasher', 'Gym', 'Balcony', 'Hardwood floors', 'EV charging', 'Storage'];
+const AMENITIES_LIST = ['Gym', 'Balcony', 'Hardwood floors', 'EV charging', 'Storage'];
 
 interface Listing {
   id: string;

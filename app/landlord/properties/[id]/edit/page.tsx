@@ -29,7 +29,7 @@ const PROPERTY_TYPES = [
 ];
 
 const AMENITIES_LIST = [
-  'Dishwasher', 'Gym', 'Balcony', 'Hardwood floors', 'EV charging', 'Storage',
+  'Gym', 'Balcony', 'Hardwood floors', 'EV charging', 'Storage',
 ];
 
 const LAUNDRY_OPTIONS = [

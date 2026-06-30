@@ -31,7 +31,7 @@ const STUDIO_OWNERSHIP = [
   { value: 'condo',     label: 'Condominium (has its own deed, can be sold)' },
 ];
 const AMENITIES_LIST = [
-  'Dishwasher', 'Gym', 'Balcony', 'Hardwood floors', 'EV charging', 'Storage',
+  'Gym', 'Balcony', 'Hardwood floors', 'EV charging', 'Storage',
 ];
 
 const LAUNDRY_OPTIONS = [

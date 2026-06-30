@@ -63,7 +63,13 @@ export default function RentalsClient({ listings, allMapListings, total, page = 
     setClearSignal((n) => n + 1);
   };
   const cardRefs = useRef<Map<string, HTMLDivElement>>(new Map());
+  const listingsPanelRef = useRef<HTMLDivElement>(null);
   const searchParams = useSearchParams();
+
+  useEffect(() => {
+    listingsPanelRef.current?.scrollTo({ top: 0 });
+    window.scrollTo({ top: 0 });
+  }, [page]);
 
   useEffect(() => {
     const alert = searchParams.get('alert');
@@ -211,6 +217,7 @@ export default function RentalsClient({ listings, allMapListings, total, page = 
             map stays put, Redfin/Zillow-style; the footer lives at the
             bottom of this same scroll area instead of the whole page. */}
         <div
+          ref={listingsPanelRef}
           className={`isolate flex flex-col bg-gray-50 transition-all duration-300 ${
             view === 'map'
               ? 'hidden'

@@ -204,6 +204,7 @@ export async function GET(req: NextRequest) {
 
     try {
     for (const path of pagesToAudit) {
+      if (!browser.isConnected()) break; // stop gracefully if browser crashed
       try {
         const { violations, passes, incomplete } = await auditPage(path, browser);
         results.push({ path, violations, passes, incomplete });

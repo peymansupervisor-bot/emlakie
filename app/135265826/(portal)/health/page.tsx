@@ -2,6 +2,7 @@ import { adminClient } from '@/lib/moderator';
 import RunHealthCheckButton from '../RunHealthCheckButton';
 import BackfillVaultsButton from './BackfillVaultsButton';
 import TriggerAlertCronButton from './TriggerAlertCronButton';
+import TriggerAdaAuditButton from './TriggerAdaAuditButton';
 
 export const dynamic = 'force-dynamic';
 
@@ -120,6 +121,9 @@ export default async function HealthPage() {
               <div className="shrink-0 text-right">
                 {name === 'Data Isolation (RLS)' && row?.message?.includes('vault') && (
                   <div className="mb-2"><BackfillVaultsButton /></div>
+                )}
+                {name === 'ADA Audit' && (
+                  <div className="mb-2"><TriggerAdaAuditButton /></div>
                 )}
                 {name === 'Daily Alert Cron' && (
                   <div className="mb-2"><TriggerAlertCronButton /></div>

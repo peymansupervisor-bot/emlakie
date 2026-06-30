@@ -3,7 +3,9 @@ import { getModeratorSession } from '@/lib/moderator';
 
 import { logError } from '@/lib/log-error'
 
-export const dynamic = 'force-dynamic'
+export const dynamic = 'force-dynamic';
+export const maxDuration = 300;
+
 export async function POST(req: NextRequest) {
   try {
     const session = await getModeratorSession();
@@ -19,7 +21,8 @@ export async function POST(req: NextRequest) {
     });
 
     if (!res.ok) return NextResponse.json({ error: 'ADA audit failed' }, { status: 502 });
-    return NextResponse.json({ ok: true });
+    const data = await res.json().catch(() => ({}));
+    return NextResponse.json({ ok: true, ...data });
   } catch (_err) {
     const _msg = _err instanceof Error ? _err.message : String(_err);
     const _stack = _err instanceof Error ? _err.stack : undefined;

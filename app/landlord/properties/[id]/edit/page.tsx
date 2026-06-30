@@ -197,6 +197,7 @@ export default function EditListingPage() {
     if (!form.title.trim()) { setError('Title is required.'); return; }
     if (!form.price || isNaN(+form.price) || +form.price < 100) { setError('Enter a valid monthly rent.'); return; }
     if (form.description.length < 30) { setError('Description must be at least 30 characters.'); return; }
+    if (!form.heatingType) { setError('Heating type is required — landlords are legally obligated to disclose heating in most states.'); return; }
     setError('');
     setBusy(true);
     try {
@@ -477,7 +478,7 @@ export default function EditListingPage() {
 
         {/* Heating */}
         <div>
-          <label htmlFor="edit-heating-type" className={labelCls}>Heating type</label>
+          <label htmlFor="edit-heating-type" className={labelCls}>Heating type *</label>
           <select id="edit-heating-type" className={inputCls}
             value={form.heatingType} onChange={(e) => setForm(f => ({ ...f, heatingType: e.target.value }))}>
             <option value="">Select heating type…</option>

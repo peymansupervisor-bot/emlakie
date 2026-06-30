@@ -476,6 +476,9 @@ export default function NewPropertyPage() {
       const ready = photoItems.filter((p) => !p.uploading && !p.error && p.medium);
       if (ready.length < 1) return 'Please add at least 1 photo before continuing.';
     }
+    if (step === 4) {
+      if (!form.heatingType) return 'Heating type is required — landlords are legally obligated to disclose heating in most states.';
+    }
     return '';
   }
 
@@ -1030,7 +1033,7 @@ export default function NewPropertyPage() {
 
           {/* Heating */}
           <div>
-            <label htmlFor="heating-type" className={labelCls}>Heating type</label>
+            <label htmlFor="heating-type" className={labelCls}>Heating type *</label>
             <select id="heating-type" className={inputCls}
               value={form.heatingType} onChange={(e) => setForm(f => ({ ...f, heatingType: e.target.value }))}>
               <option value="">Select heating type…</option>

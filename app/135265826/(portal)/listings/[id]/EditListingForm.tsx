@@ -194,6 +194,7 @@ export default function EditListingForm({ listing }: { listing: Listing }) {
   }
 
   async function save() {
+    if (!form.heating_type) { setError('Heating type is required — legally required disclosure in most states.'); return; }
     setSaving(true);
     setError('');
     setSuccess(false);
@@ -404,9 +405,9 @@ export default function EditListingForm({ listing }: { listing: Listing }) {
 
         {/* Heating */}
         <div>
-          <label className={lbl}>Heating Type</label>
-          <select className={f} value={form.heating_type} onChange={e => set('heating_type', e.target.value)}>
-            <option value="">Select…</option>
+          <label className={lbl}>Heating Type *</label>
+          <select className={`${f} ${!form.heating_type ? 'border-red-600' : ''}`} value={form.heating_type} onChange={e => set('heating_type', e.target.value)}>
+            <option value="">Select heating type…</option>
             {HEATING_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
           </select>
         </div>

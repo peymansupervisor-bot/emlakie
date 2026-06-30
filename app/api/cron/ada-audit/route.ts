@@ -248,10 +248,13 @@ export async function GET(req: NextRequest) {
     }
 
     // Record this successful run in system_health so the health probe can track it
+    const pagesNote = results.length < pagesToAudit.length
+      ? `${results.length}/${pagesToAudit.length} pages scanned (browser disconnected early)`
+      : `${results.length} pages scanned`;
     await database.from('system_health').insert({
       service: 'ADA Audit',
       status: results.every((r) => !r.error) ? 'ok' : 'degraded',
-      message: `Run ${runId} — ${pagesToAudit.length} pages scanned`,
+      message: `Run ${runId} — ${pagesNote}`,
     });
 
     // Send alert if any critical or serious violations found

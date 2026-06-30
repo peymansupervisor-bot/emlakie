@@ -179,7 +179,8 @@ async function sendAlertEmail(newViolations: { path: string; violations: Violati
 export async function GET(req: NextRequest) {
   try {
     const authHeader = req.headers.get('authorization');
-    if (authHeader?.replace('Bearer ', '') !== process.env.CRON_SECRET) {
+    const secret = authHeader?.replace('Bearer ', '');
+    if (!secret || secret !== process.env.CRON_SECRET) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -245,11 +246,15 @@ export async function GET(req: NextRequest) {
       await browser.close();
     }
 
-    // Record this successful run in system_health so the health probe can track it
+    // Record this run in system_health. Allow up to 20% of pages to error before
+    // marking the run degraded — some pages may timeout transiently on networkidle.
+    const errorCount = results.filter((r) => r.error).length;
+    const successCount = results.length - errorCount;
+    const auditStatus = errorCount / results.length > 0.2 ? 'degraded' : 'ok';
     await database.from('system_health').insert({
       service: 'ADA Audit',
-      status: results.every((r) => !r.error) ? 'ok' : 'degraded',
-      message: `Run ${runId} — ${pagesToAudit.length} pages scanned`,
+      status: auditStatus,
+      message: `Run ${runId} — ${successCount}/${results.length} pages scanned${errorCount > 0 ? `, ${errorCount} errors` : ''}`,
     });
 
     // Send alert if any critical or serious violations found

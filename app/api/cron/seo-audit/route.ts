@@ -382,7 +382,8 @@ async function sendAlertEmail(newIssues: SeoPageResult[], totalErrors: number) {
 export async function GET(req: NextRequest) {
   try {
     const authHeader = req.headers.get('authorization');
-    if (authHeader?.replace('Bearer ', '') !== process.env.CRON_SECRET) {
+    const secret = authHeader?.replace('Bearer ', '');
+    if (!secret || secret !== process.env.CRON_SECRET) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 

@@ -1,6 +1,6 @@
 import { adminClient } from '@/lib/moderator';
-import Link from 'next/link';
 import BackfillButton from './BackfillButton';
+import LandlordRowActions from './LandlordRowActions';
 
 export const dynamic = 'force-dynamic';
 
@@ -223,12 +223,7 @@ export default async function LandlordsPage({ searchParams }: { searchParams: Pr
                       {joinedDate ? new Date(joinedDate).toLocaleDateString() : '—'}
                     </td>
                     <td className="px-4 py-3">
-                      <Link
-                        href={`/135265826/landlords/${r.id}`}
-                        className="inline-block rounded-lg bg-gray-800 border border-gray-700 px-3 py-1 text-xs font-semibold text-gray-200 hover:bg-gray-700 hover:text-white transition"
-                      >
-                        View →
-                      </Link>
+                      <LandlordRowActions id={r.id} noProfile={!hasProfile} />
                     </td>
                   </tr>
                 );

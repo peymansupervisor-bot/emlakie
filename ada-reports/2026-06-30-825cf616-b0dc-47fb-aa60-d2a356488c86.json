@@ -1,0 +1,42 @@
+{
+  "run_id": "825cf616-b0dc-47fb-aa60-d2a356488c86",
+  "scanned_at": "2026-06-30T23:26:24.867Z",
+  "site": "https://emlakie.com",
+  "axe_version": "4.12.1",
+  "pages": 2,
+  "total_violations": 1,
+  "total_critical": 0,
+  "total_serious": 1,
+  "cure": {
+    "fixed": 0,
+    "skipped": 0,
+    "summary": []
+  },
+  "results": [
+    {
+      "path": "/",
+      "url": "https://emlakie.com/",
+      "violation_count": 1,
+      "violations": [
+        {
+          "id": "color-contrast",
+          "impact": "serious",
+          "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
+          "helpUrl": "https://dequeuniversity.com/rules/axe/4.12/color-contrast?application=axeAPI",
+          "nodes": 9
+        }
+      ],
+      "passes": 50,
+      "incomplete": 2
+    },
+    {
+      "path": "/rentals",
+      "url": "https://emlakie.com/rentals",
+      "violation_count": 0,
+      "violations": [],
+      "passes": 0,
+      "incomplete": 0,
+      "error": "Error: browser.newPage: Target page, context or browser has been closed"
+    }
+  ]
+}

@@ -405,9 +405,9 @@ export default function EditListingPage() {
 
         {/* Section 8 */}
         <div>
-          <p className={labelCls}>Do you accept Section 8 / Housing Choice Vouchers?</p>
+          <p className={labelCls}>Section 8 / Housing Choice Vouchers</p>
           <div className="flex gap-3">
-            {[{ v: true, l: 'Yes' }, { v: false, l: 'No' }].map(({ v, l }) => (
+            {[{ v: true, l: 'Accepted' }, { v: false, l: 'Contact landlord' }].map(({ v, l }) => (
               <button key={l} type="button" onClick={() => setForm(f => ({ ...f, section8Accepted: v }))}
                 className={`rounded-full border px-5 py-2 text-sm font-medium transition ${
                   form.section8Accepted === v ? 'border-brand-600 bg-brand-50 text-brand-700' : 'border-gray-300 text-gray-600 hover:border-gray-400'

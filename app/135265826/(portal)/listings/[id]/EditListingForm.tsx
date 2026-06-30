@@ -364,7 +364,7 @@ export default function EditListingForm({ listing }: { listing: Listing }) {
           <div className="flex gap-3">
             {[true, false].map(v => (
               <button key={String(v)} type="button" onClick={() => set('section_8_accepted', v)} className={yesno('section_8_accepted', v)}>
-                {v ? 'Accepted' : 'Not accepted'}
+                {v ? 'Accepted' : 'Contact landlord'}
               </button>
             ))}
           </div>

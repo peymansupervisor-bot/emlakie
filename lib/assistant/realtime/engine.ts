@@ -121,6 +121,8 @@ export class RealtimeEngine {
   private isRespondingAudio = false;
   private isResponseActive = false;
   private micTrack: MediaStreamTrack | null = null;
+  /** Set by disconnect() to abort an in-progress connect() across await points. */
+  private cancelled = false;
 
   // Function call state — tracks the current response's function call, if any
   private fcCallId: string | null = null;
@@ -157,6 +159,9 @@ export class RealtimeEngine {
       this.cb.onError?.(code);
       return;
     }
+    // Guard: disconnect() may have been called while getUserMedia was awaiting.
+    // this.stream was not yet set, so cleanupResources() missed this local stream.
+    if (this.cancelled) { stream.getTracks().forEach((t) => t.stop()); return; }
     this.stream = stream;
     this.micTrack = stream.getAudioTracks()[0] ?? null;
     this.cb.onMicGranted?.();
@@ -173,6 +178,8 @@ export class RealtimeEngine {
       }
       ephemeralKey = data.value;
     } catch (err) {
+      // If we were cancelled, cleanupResources() already stopped the stream.
+      if (this.cancelled) return;
       stream.getTracks().forEach((t) => t.stop());
       this.stream = null;
       this.cb.onError?.(
@@ -180,12 +187,14 @@ export class RealtimeEngine {
       );
       return;
     }
+    if (this.cancelled) return;
 
     // Step 3: RTCPeerConnection
     let pc: RTCPeerConnection;
     try {
       pc = new RTCPeerConnection();
     } catch {
+      if (this.cancelled) return;
       stream.getTracks().forEach((t) => t.stop());
       this.stream = null;
       this.cb.onError?.('webrtc_unsupported');
@@ -228,8 +237,10 @@ export class RealtimeEngine {
 
       const answerSdp = await sdpRes.text();
       await pc.setRemoteDescription({ type: 'answer', sdp: answerSdp });
+      if (this.cancelled) return;
       this.cb.onConnecting?.();
     } catch (err) {
+      if (this.cancelled) return;
       this.cleanupResources();
       this.cb.onError?.(
         err instanceof Error ? err.message.slice(0, 80) : 'sdp_error',
@@ -239,6 +250,7 @@ export class RealtimeEngine {
 
   /** Cleanly stop the session. Safe to call multiple times. */
   disconnect(): void {
+    this.cancelled = true;
     this.cleanupResources();
     this.cb.onDisconnected?.();
   }
@@ -554,10 +566,12 @@ export class RealtimeEngine {
     this.pc = null;
     this.stream?.getTracks().forEach((t) => t.stop());
     this.stream = null;
+    this.micTrack = null;
     if (this.audioRef.current) this.audioRef.current.srcObject = null;
     this.setupComplete = false;
     this.speechStoppedAt = null;
     this.isRespondingAudio = false;
+    this.isResponseActive = false;
     this.currentResponseIsFunctionCall = false;
     this.fcCallId = null;
     this.fcName = null;

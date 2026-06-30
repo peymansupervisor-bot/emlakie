@@ -31,6 +31,7 @@ export default function AssistantClient() {
   const errorCode = sessionState.phase === 'error' ? sessionState.code : undefined;
 
   const sessionStartedRef = useRef(false);
+  const closePanelTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     if (open) {
@@ -41,10 +42,21 @@ export default function AssistantClient() {
     }
   }, [open, openSession, closeSession]);
 
-  // Graceful close — disconnect immediately but show "Session ended" for 1.5s
+  // Clear any pending close-panel timer on unmount
+  useEffect(() => {
+    return () => {
+      if (closePanelTimerRef.current) clearTimeout(closePanelTimerRef.current);
+    };
+  }, []);
+
+  // Disconnect immediately; keep panel visible for 1.5s so the user sees "Session ended"
   const handleClose = useCallback(() => {
     closeSession();
-    setTimeout(() => closePanel(), 1500);
+    if (closePanelTimerRef.current) clearTimeout(closePanelTimerRef.current);
+    closePanelTimerRef.current = setTimeout(() => {
+      closePanelTimerRef.current = null;
+      closePanel();
+    }, 1500);
   }, [closeSession, closePanel]);
 
   return (

@@ -198,8 +198,15 @@ export async function GET(req: NextRequest) {
     // v149's GitHub release split the single pack.tar into per-arch assets —
     // Vercel serverless functions run x64, so request that one explicitly.
     const CHROMIUM_URL = 'https://github.com/Sparticuz/chromium/releases/download/v149.0.0/chromium-v149.0.0-pack.x64.tar';
+    // @sparticuz/chromium defaults to --single-process to save memory in tight
+    // environments, but that mode has no renderer/browser process isolation —
+    // a single failed @font-face local() lookup (from next/font's fallback-font
+    // metrics, present on every page) crashes the entire browser instead of
+    // just that page's render. Now that the function has more memory headroom,
+    // drop it so a renderer crash doesn't take down the whole audit run.
+    const launchArgs = chromium.default.args.filter((arg) => arg !== '--single-process');
     const browser = await playwrightChromium.launch({
-      args: chromium.default.args,
+      args: launchArgs,
       executablePath: await chromium.default.executablePath(CHROMIUM_URL),
       headless: true,
     });

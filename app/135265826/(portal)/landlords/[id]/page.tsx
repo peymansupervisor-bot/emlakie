@@ -12,7 +12,7 @@ export default async function LandlordProfilePage({ params }: { params: Promise<
 
   const [{ data: profile }, { data: authUser }] = await Promise.all([
     sb.from('profiles')
-      .select('id, first_name, last_name, display_name, phone, phone_verified, email, account_id, created_at, virtual_phone')
+      .select('id, first_name, last_name, display_name, phone, phone_verified, email, account_id, created_at, virtual_phone, welcome_sent')
       .eq('id', id)
       .maybeSingle(),
     sb.auth.admin.getUserById(id),
@@ -104,7 +104,7 @@ export default async function LandlordProfilePage({ params }: { params: Promise<
         </div>
 
         <div className="mt-6 pt-6 border-t border-gray-800">
-          <LandlordActions landlordId={id} isBanned={isBanned} hasVirtualPhone={!!profile?.virtual_phone} />
+          <LandlordActions landlordId={id} isBanned={isBanned} hasVirtualPhone={!!profile?.virtual_phone} welcomeSent={!!profile?.welcome_sent} />
         </div>
       </div>
 

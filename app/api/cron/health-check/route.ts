@@ -11,14 +11,24 @@ interface CheckResult { service: string; status: Status; message: string }
 
 const ADMIN_EMAIL = 'support@emlakie.com';
 
+// Vercel's platform fetch cache intercepts outbound fetch() calls (including
+// Supabase's REST requests) regardless of this route's force-dynamic setting,
+// which was silently serving stale "latest row" reads for checks like
+// checkADAAudit(). Force every Supabase client here to bypass it.
+function freshClient(key: string) {
+  return createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, key, {
+    global: { fetch: (input, init) => fetch(input, { ...init, cache: 'no-store' }) },
+  });
+}
+function sbService() {
+  return freshClient(process.env.SUPABASE_SERVICE_KEY ?? process.env.SUPABASE_SERVICE_ROLE_KEY!);
+}
+
 // ─── individual probes ────────────────────────────────────────────────────────
 
 async function checkSupabase(): Promise<CheckResult> {
   try {
-    const sb = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_KEY ?? process.env.SUPABASE_SERVICE_ROLE_KEY!,
-    );
+    const sb = sbService();
     const { error } = await sb.from('listings').select('id').limit(1);
     if (error) return { service: 'Supabase', status: 'down', message: error.message };
     return { service: 'Supabase', status: 'ok', message: 'Database reachable' };
@@ -229,11 +239,7 @@ async function checkAppleSignIn(): Promise<CheckResult> {
 
 async function checkPhotoSystem(): Promise<CheckResult> {
   try {
-    const { createClient: createSB } = await import('@supabase/supabase-js');
-    const sb = createSB(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_KEY ?? process.env.SUPABASE_SERVICE_ROLE_KEY!,
-    );
+    const sb = sbService();
 
     // 1. Verify storage bucket is accessible
     const { error: listErr } = await sb.storage.from('listing-photos').list('', { limit: 1 });
@@ -277,10 +283,7 @@ async function checkPhotoSystem(): Promise<CheckResult> {
 
 async function checkADAAudit(): Promise<CheckResult> {
   try {
-    const sb = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_KEY ?? process.env.SUPABASE_SERVICE_ROLE_KEY!,
-    );
+    const sb = sbService();
     // Only look at rows written by the audit cron itself (message starts with "Run ").
     // Rows written by this health check (e.g. "Last audit was Xh ago") are excluded
     // to prevent a feedback loop where stale health-check rows shadow fresh audit rows.
@@ -309,10 +312,7 @@ async function checkIsolationPolicies(): Promise<CheckResult> {
     // pg_policies is a Postgres system catalog — not accessible via PostgREST.
     // Instead, verify RLS behaviorally: an unauthenticated anon client must get
     // zero rows from sensitive tables (RLS blocks all reads without a valid JWT).
-    const anonClient = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    );
+    const anonClient = freshClient(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!);
 
     const tables = ['profiles', 'applications', 'conversations'];
     const checks = await Promise.all(
@@ -339,10 +339,7 @@ async function checkIsolationPolicies(): Promise<CheckResult> {
     }
 
     // Also check for uninitialised landlord vaults
-    const sb = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_KEY ?? process.env.SUPABASE_SERVICE_ROLE_KEY!,
-    );
+    const sb = sbService();
     const { data: uninit } = await sb
       .from('profiles')
       .select('account_id, id')
@@ -382,10 +379,7 @@ async function checkSmartDescriptions(): Promise<CheckResult> {
 
 async function checkDailyCron(): Promise<CheckResult> {
   try {
-    const sb = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_KEY ?? process.env.SUPABASE_SERVICE_ROLE_KEY!,
-    );
+    const sb = sbService();
     // Exclude rows written by this health check itself ("Last ran Xh ago") to avoid
     // a feedback loop. Only rows written by the actual cron have substantive messages.
     const { data } = await sb
@@ -483,10 +477,7 @@ export async function GET(req: NextRequest) {
     );
 
     // Store all results
-    const sb = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_KEY ?? process.env.SUPABASE_SERVICE_ROLE_KEY!,
-    );
+    const sb = sbService();
     await sb.from('system_health').insert(
       results.map((r) => ({ service: r.service, status: r.status, message: r.message }))
     );

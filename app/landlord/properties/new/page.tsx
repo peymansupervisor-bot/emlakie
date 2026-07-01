@@ -268,6 +268,8 @@ export default function NewPropertyPage() {
   const filterTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [profileName, setProfileName] = useState({ first_name: '', last_name: '' });
   const [profileHasPhone, setProfileHasPhone] = useState(false);
+  const [autofillLoading, setAutofillLoading] = useState(false);
+  const [autofillApplied, setAutofillApplied] = useState(false);
 
   useEffect(() => {
     getProfile().then((p) => {
@@ -287,6 +289,48 @@ export default function NewPropertyPage() {
     if (digits.length > 3) return `(${digits.slice(0,3)}) ${digits.slice(3)}`;
     if (digits.length > 0) return `(${digits}`;
     return '';
+  }
+
+  // Pre-fills bedrooms/bathrooms/sqft/propertyType from public property records
+  // once an address is selected. Only fills fields the landlord hasn't already
+  // changed from their defaults — never overwrites something they've typed.
+  async function lookupPropertyDetails(address: string, city: string, state: string, zip: string) {
+    setAutofillApplied(false);
+    setAutofillLoading(true);
+    try {
+      const params = new URLSearchParams({ address, city, state, zip });
+      const res = await fetch(`/api/properties/lookup?${params.toString()}`);
+      const data = await res.json();
+      if (!data.found) return;
+
+      setForm((f) => {
+        const next = { ...f };
+        let changed = false;
+        if (f.bedrooms === empty.bedrooms && data.bedrooms != null) {
+          next.bedrooms = String(Math.min(6, Math.max(0, Math.round(data.bedrooms))));
+          changed = true;
+        }
+        if (f.bathrooms === empty.bathrooms && data.bathrooms != null) {
+          const rounded = Math.round(data.bathrooms * 2) / 2;
+          next.bathrooms = String(Math.min(4, Math.max(1, rounded)));
+          changed = true;
+        }
+        if (!f.sqft && data.sqft != null) {
+          next.sqft = String(data.sqft);
+          changed = true;
+        }
+        if (f.propertyType === empty.propertyType && data.propertyType) {
+          next.propertyType = data.propertyType;
+          changed = true;
+        }
+        if (changed) setAutofillApplied(true);
+        return next;
+      });
+    } catch {
+      // Silent — landlord just fills the form manually, same as before this existed.
+    } finally {
+      setAutofillLoading(false);
+    }
   }
 
   async function checkContent(text: string) {
@@ -756,11 +800,20 @@ export default function NewPropertyPage() {
             <label htmlFor="new-address" className={labelCls}>Street address *</label>
             <AddressField
               id="new-address"
-              onSelect={(address, city, state, zip) =>
-                setForm((f) => ({ ...f, address, city, state, zip }))
-              }
+              onSelect={(address, city, state, zip) => {
+                setForm((f) => ({ ...f, address, city, state, zip }));
+                lookupPropertyDetails(address, city, state, zip);
+              }}
               onType={(address) => setForm((f) => ({ ...f, address }))}
             />
+            {autofillLoading && (
+              <p className="mt-1.5 text-xs text-gray-500">Looking up property details…</p>
+            )}
+            {!autofillLoading && autofillApplied && (
+              <p className="mt-1.5 text-xs text-brand-700">
+                ✓ Bedrooms, bathrooms, sq ft, and property type auto-filled from public records — please verify.
+              </p>
+            )}
           </div>
           {(UNIT_REQUIRED_TYPES.includes(form.propertyType) || UNIT_OPTIONAL_TYPES.includes(form.propertyType)) && (
             <div>

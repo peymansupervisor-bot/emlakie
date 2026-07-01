@@ -9,13 +9,45 @@ async function auth() {
   return await getModeratorSession();
 }
 
-// PATCH: suspend, unsuspend, or manually resend the welcome email for a landlord
-// body: { action: 'suspend' | 'unsuspend' | 'resend_welcome' }
+// PATCH: suspend, unsuspend, edit profile fields, or manually resend the welcome email for a landlord
+// body: { action: 'suspend' | 'unsuspend' | 'resend_welcome' | 'edit_profile' }
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     if (!await auth()) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     const { id } = await params;
-    const { action, listing_action, reassign_to } = await req.json();
+    const { action, listing_action, reassign_to, first_name, last_name, phone } = await req.json();
+
+    if (action === 'edit_profile') {
+      const sb = adminClient();
+      const { data: existing, error: fetchErr } = await sb
+        .from('profiles')
+        .select('first_name, last_name')
+        .eq('id', id)
+        .maybeSingle();
+      if (fetchErr) return NextResponse.json({ error: fetchErr.message }, { status: 500 });
+      if (!existing) return NextResponse.json({ error: 'This landlord has no profile row to edit' }, { status: 400 });
+
+      const updates: Record<string, unknown> = {};
+      if (typeof first_name === 'string') updates.first_name = first_name.trim() || null;
+      if (typeof last_name === 'string') updates.last_name = last_name.trim() || null;
+      if (typeof phone === 'string') {
+        const digits = phone.replace(/\D/g, '');
+        if (digits && digits.length !== 10) {
+          return NextResponse.json({ error: 'Phone must be a valid 10-digit US number' }, { status: 400 });
+        }
+        updates.phone = digits || null;
+        updates.phone_verified = false;
+      }
+
+      const nextFirst = 'first_name' in updates ? (updates.first_name as string | null) : existing.first_name;
+      const nextLast = 'last_name' in updates ? (updates.last_name as string | null) : existing.last_name;
+      if (nextFirst || nextLast) updates.display_name = [nextFirst, nextLast].filter(Boolean).join(' ');
+
+      const { error } = await sb.from('profiles').update(updates).eq('id', id);
+      if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+
+      return NextResponse.json({ ok: true });
+    }
 
     if (action === 'resend_welcome') {
       const sb = adminClient();

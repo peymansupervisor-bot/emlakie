@@ -2,6 +2,7 @@ import { adminClient } from '@/lib/moderator';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import LandlordActions from './LandlordActions';
+import EditProfileForm from './EditProfileForm';
 import { fmtPhone } from '@/lib/format-phone';
 
 export const dynamic = 'force-dynamic';
@@ -94,6 +95,14 @@ export default async function LandlordProfilePage({ params }: { params: Promise<
                 <span className="text-[10px] font-bold text-green-400 bg-green-900/40 rounded px-1 py-0.5">verified</span>
               )}
             </p>
+            {profile && (
+              <EditProfileForm
+                landlordId={id}
+                firstName={profile.first_name}
+                lastName={profile.last_name}
+                phone={profile.phone}
+              />
+            )}
           </div>
           <div>
             <p className="text-[10px] uppercase tracking-wider text-gray-500 mb-1">Virtual Phone</p>

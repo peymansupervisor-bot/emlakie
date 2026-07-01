@@ -9,8 +9,7 @@ export default function Footer() {
           <div className="max-w-sm">
             <Logo className="h-7" textClassName="text-xl" />
             <p className="mt-3 text-sm text-gray-600">
-              The simple way to find your next rental home — and the easiest way
-              for landlords to fill them.
+              The simple way to find your next tenant.
             </p>
           </div>
 

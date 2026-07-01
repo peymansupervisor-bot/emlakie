@@ -6,6 +6,12 @@ const nextConfig = {
         serverActions: {
                 bodySizeLimit: '50mb',
         },
+        // Pages marked force-dynamic must always show fresh data — the client
+        // router cache was serving up-to-30s-stale RSC payloads after edits
+        // made outside the app (e.g. direct Supabase edits), undermining that.
+        staleTimes: {
+                dynamic: 0,
+        },
   },
   productionBrowserSourceMaps: false,
   images: {

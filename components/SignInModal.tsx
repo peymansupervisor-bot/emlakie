@@ -184,7 +184,7 @@ export default function SignInModal({
     catch (err) { setError(err instanceof Error ? err.message : 'Could not sign in.'); setBusy(false); }
   }
 
-  const PasswordField = ({ autoComplete, label, id }: { autoComplete: string; label: string; id: string }) => (
+  const passwordField = (autoComplete: string, label: string, id: string) => (
     <div>
       <label htmlFor={id} className={labelClass}>{label}</label>
       <div className="relative">
@@ -342,7 +342,7 @@ export default function SignInModal({
                     className={inputClass}
                   />
                 </div>
-                <PasswordField autoComplete="current-password" label="Password" id="modal-password" />
+                {passwordField('current-password', 'Password', 'modal-password')}
                 <div className="text-right">
                   <button
                     type="button"
@@ -432,7 +432,7 @@ export default function SignInModal({
                     className={inputClass}
                   />
                 </div>
-                <PasswordField autoComplete="new-password" label="Password (min 8 characters)" id="modal-signup-password" />
+                {passwordField('new-password', 'Password (min 8 characters)', 'modal-signup-password')}
                 <button type="submit" disabled={busy} className={btnPrimary}>
                   {busy ? 'Creating account…' : 'Create Account — It\'s Free'}
                 </button>

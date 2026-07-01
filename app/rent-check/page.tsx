@@ -10,7 +10,8 @@ type Result = {
   low: number;
   high: number;
   broadened: boolean;
-  samples: { address: string; city: string; state: string; price: number; href: string }[];
+  source: 'emlakie' | 'market-data';
+  samples: { address: string; city: string; state: string; price: number; href: string | null }[];
   insufficient?: never;
 } | { insufficient: true; count: number };
 
@@ -38,7 +39,7 @@ const rentCheckFaqs = [
   },
   {
     q: 'What data is this based on?',
-    a: 'Results are based on active rental listings posted directly by landlords on EMLAKIE. We show you the market low, average, median, and high for your city and bedroom count.',
+    a: 'Results are based on active rental listings — from landlords posting directly on EMLAKIE where we have enough local coverage, or broader real-time market listings in cities where EMLAKIE inventory is still growing. Either way, we show you real listings, never a synthesized estimate, along with the market low, average, median, and high for your city and bedroom count.',
   },
   {
     q: 'My rent is above market — what can I do?',
@@ -250,20 +251,36 @@ export default function RentCheckPage() {
                 </p>
               )}
 
+              {result.source === 'market-data' && (
+                <p className="mt-4 text-center text-xs text-gray-400">
+                  EMLAKIE listings in {form.city} are still growing, so this comparison is backed by broader market data instead.
+                </p>
+              )}
+
               {/* Sample listings */}
               {result.samples.length > 0 && (
                 <div className="mt-8">
                   <h2 className="text-sm font-bold text-gray-700 mb-3">Listings used in this comparison</h2>
                   <div className="space-y-2">
                     {result.samples.map(s => (
-                      <Link
-                        key={s.href}
-                        href={s.href}
-                        className="flex items-center justify-between rounded-xl border border-gray-100 bg-gray-50 px-4 py-3 text-sm transition hover:border-brand-200 hover:bg-brand-50"
-                      >
-                        <span className="text-gray-700">{s.address}, {s.city}</span>
-                        <span className="font-bold text-brand-700">{formatPrice(s.price)}/mo</span>
-                      </Link>
+                      s.href ? (
+                        <Link
+                          key={`${s.address}-${s.price}`}
+                          href={s.href}
+                          className="flex items-center justify-between rounded-xl border border-gray-100 bg-gray-50 px-4 py-3 text-sm transition hover:border-brand-200 hover:bg-brand-50"
+                        >
+                          <span className="text-gray-700">{s.address}, {s.city}</span>
+                          <span className="font-bold text-brand-700">{formatPrice(s.price)}/mo</span>
+                        </Link>
+                      ) : (
+                        <div
+                          key={`${s.address}-${s.price}`}
+                          className="flex items-center justify-between rounded-xl border border-gray-100 bg-gray-50 px-4 py-3 text-sm"
+                        >
+                          <span className="text-gray-700">{s.address}, {s.city}</span>
+                          <span className="font-bold text-gray-700">{formatPrice(s.price)}/mo</span>
+                        </div>
+                      )
                     ))}
                   </div>
                 </div>

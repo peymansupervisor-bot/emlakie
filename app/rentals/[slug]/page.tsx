@@ -95,6 +95,7 @@ export default async function ListingPage({ params }: Props) {
   const [eValue, { listings: similar }, propData] = await Promise.all([
     calculateEValue({
       id: listing.id,
+      address: fullAddress,
       city: listing.city,
       state: listing.state,
       zip: listing.zip,

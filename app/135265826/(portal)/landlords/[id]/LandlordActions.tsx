@@ -9,7 +9,7 @@ function nameOf(l: Landlord) {
   return [l.first_name, l.last_name].filter(Boolean).join(' ') || l.display_name || l.email?.split('@')[0] || 'Unknown';
 }
 
-export default function LandlordActions({ landlordId, isBanned, hasVirtualPhone }: { landlordId: string; isBanned: boolean; hasVirtualPhone?: boolean }) {
+export default function LandlordActions({ landlordId, isBanned, hasVirtualPhone, welcomeSent }: { landlordId: string; isBanned: boolean; hasVirtualPhone?: boolean; welcomeSent?: boolean }) {
   const router = useRouter();
   const [busy, setBusy] = useState(false);
   const [showSuspendModal, setShowSuspendModal] = useState(false);
@@ -86,6 +86,24 @@ export default function LandlordActions({ landlordId, isBanned, hasVirtualPhone 
     await callProvisionApi(true);
   }
 
+  async function sendWelcomeEmail() {
+    if (!confirm('Send the welcome email to this landlord now?')) return;
+    setBusy(true);
+    const res = await fetch('/api/admin/send-welcome-email', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ landlordId }),
+    });
+    setBusy(false);
+    if (res.ok) {
+      alert('Welcome email sent.');
+      router.refresh();
+    } else {
+      const { error } = await res.json().catch(() => ({ error: 'Unknown error' }));
+      alert(`Failed: ${error}`);
+    }
+  }
+
   async function deleteAccount() {
     if (!confirm('Permanently delete this landlord account and ALL their listings? This cannot be undone.')) return;
     if (!confirm('Are you absolutely sure? This is irreversible.')) return;
@@ -130,6 +148,15 @@ export default function LandlordActions({ landlordId, isBanned, hasVirtualPhone 
             className="rounded-xl bg-blue-900 border border-blue-700 px-4 py-2 text-sm font-semibold text-blue-200 hover:bg-blue-700 hover:text-white transition disabled:opacity-50"
           >
             {busy ? 'Working…' : 'Re-provision Phone'}
+          </button>
+        )}
+        {!welcomeSent && (
+          <button
+            onClick={sendWelcomeEmail}
+            disabled={busy}
+            className="rounded-xl bg-teal-700 px-4 py-2 text-sm font-semibold text-white hover:bg-teal-600 transition disabled:opacity-50"
+          >
+            {busy ? 'Working…' : 'Send Welcome Email'}
           </button>
         )}
         <button

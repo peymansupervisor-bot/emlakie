@@ -104,6 +104,7 @@ export default async function ListingPage({ params }: Props) {
       property_type: listing.property_type,
       ownership_type: listing.ownership_type,
       price: listing.price,
+      e_rent_override: listing.e_rent_override,
     }),
     getListings({ city: listing.city }),
     getPropertyData(fullAddress),

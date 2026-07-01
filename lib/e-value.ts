@@ -44,6 +44,7 @@ export interface EValueResult {
   lastRent: number
   propertyType: string
   ownershipType?: string | null
+  isManualOverride?: boolean
 }
 
 const DEFAULT_CAP_RATE = 0.055   // 5.5% — coastal/high-demand markets
@@ -151,7 +152,28 @@ export async function calculateEValue(listing: {
   property_type: string
   ownership_type?: string | null
   price: number
+  e_rent_override?: number | null
 }): Promise<EValueResult> {
+  if (listing.e_rent_override && listing.e_rent_override > 0) {
+    const eRent = listing.e_rent_override
+    const capRate = getCapRate(listing.city)
+    const sellable = canSellIndividually(listing.property_type, listing.ownership_type)
+    return {
+      eRent,
+      eSale: sellable ? roundToNearest((eRent * 12) / capRate, 1000) : null,
+      showSale: sellable,
+      saleNotApplicableReason: saleNotApplicableReason(listing.property_type, listing.ownership_type),
+      confidence: 'high',
+      comparablesCount: 0,
+      priceRange: { min: roundToNearest(eRent * 0.93, 25), max: roundToNearest(eRent * 1.07, 25) },
+      capRate: capRate * 100,
+      lastRent: listing.price,
+      propertyType: listing.property_type,
+      ownershipType: listing.ownership_type,
+      isManualOverride: true,
+    }
+  }
+
   const sb = supabase()
 
   // 1. Try zip code + exact bedrooms (most precise — same micro-market)

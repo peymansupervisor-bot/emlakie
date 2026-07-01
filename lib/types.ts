@@ -14,6 +14,7 @@ export interface Listing {
   sqft: number;
   property_type: 'apartment' | 'house' | 'condo' | 'studio' | 'townhouse' | 'room' | 'adu' | 'jadu' | 'commercial';
   ownership_type?: 'apartment' | 'condo' | 'adu' | 'jadu' | null;
+  e_rent_override?: number | null;
   amenities: string[];
   photos: string[];
   status: string;

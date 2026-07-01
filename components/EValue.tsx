@@ -57,9 +57,11 @@ export default function EValue({ ev }: { ev: EValueResult }) {
             </span>
           </div>
           <p className="mt-0.5 text-sm text-gray-500">
-            {ev.comparablesCount >= 3
-              ? `Automated rental market estimate based on ${ev.comparablesCount} active comparables in this area`
-              : 'Based on asking price — insufficient market comparables in this area'}
+            {ev.isManualOverride
+              ? 'Estimate set by EMLAKIE based on direct market knowledge of this property'
+              : ev.comparablesCount >= 3
+                ? `Automated rental market estimate based on ${ev.comparablesCount} active comparables in this area`
+                : 'Based on asking price — insufficient market comparables in this area'}
           </p>
         </div>
         <span className={`flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-semibold ${conf.color}`}>

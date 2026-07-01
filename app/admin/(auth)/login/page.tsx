@@ -1,11 +1,8 @@
 'use client'
 
 import { useState, FormEvent } from 'react'
-import { useRouter } from 'next/navigation'
-import { supabase } from '@/lib/supabase'
 
 export default function AdminLoginPage() {
-  const router = useRouter()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
@@ -16,18 +13,26 @@ export default function AdminLoginPage() {
     setError(null)
     setLoading(true)
 
-    const { error: authError } = await supabase.auth.signInWithPassword({ email, password })
+    // Sign-in must go through a server route using the cookie-based
+    // @supabase/ssr client (same one middleware.ts / requireAdmin() read) —
+    // lib/supabase.ts's client stores its session in localStorage, which
+    // those checks never see, leaving the whole /admin area unreachable.
+    const res = await fetch('/api/admin/compliance-login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
+    })
 
-    if (authError) {
-      setError('Invalid email or password.')
+    if (!res.ok) {
+      const { error: msg } = await res.json().catch(() => ({ error: 'Sign-in failed.' }))
+      setError(msg ?? 'Sign-in failed.')
       setLoading(false)
       return
     }
 
-    // Let middleware verify admin status — redirect to admin root.
-    // If the user has no compliance_admin_users row the layout will
-    // redirect them to /admin/unauthorized before any page renders.
-    router.replace('/admin')
+    // Full navigation so the browser sends the freshly-set cookies on the
+    // very next request.
+    window.location.href = '/admin'
   }
 
   return (

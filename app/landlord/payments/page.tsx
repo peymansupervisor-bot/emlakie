@@ -1,7 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { getMyListings, getToken } from '@/lib/landlord/client';
 import { LandlordListing } from '@/lib/landlord/types';
@@ -31,10 +30,7 @@ const BOOST_OPTIONS = [
   },
 ];
 
-const ADMIN_BYPASS_SECRET = process.env.NEXT_PUBLIC_ADMIN_BYPASS_SECRET ?? '';
-
 export default function BoostPage() {
-  const router = useRouter();
   const [listings, setListings] = useState<LandlordListing[]>([]);
   const [selected, setSelected] = useState<string>('');
   const [plan, setPlan] = useState(BOOST_OPTIONS[1].id);
@@ -45,24 +41,6 @@ export default function BoostPage() {
       if (data.length > 0) setSelected(data[0].id);
     }).catch(() => {});
   }, []);
-
-  async function handleAdminBoost() {
-    if (!selected) return;
-    setLoading(true);
-    try {
-      const res = await fetch('/api/admin/boost-listing', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'x-admin-secret': ADMIN_BYPASS_SECRET },
-        body: JSON.stringify({ listingId: selected, planId: plan }),
-      });
-      const { error } = await res.json();
-      if (error) { alert(error); setLoading(false); return; }
-      router.push('/landlord/payments/success');
-    } catch {
-      alert('Something went wrong.');
-      setLoading(false);
-    }
-  }
 
   async function handleBoost() {
     if (!selected) return;
@@ -212,15 +190,6 @@ export default function BoostPage() {
           <p className="mt-3 text-center text-xs text-gray-500">
             Secure checkout · No subscription · Cancel anytime
           </p>
-          {ADMIN_BYPASS_SECRET && (
-            <button
-              onClick={handleAdminBoost}
-              disabled={loading}
-              className="mt-3 w-full rounded-xl border border-gray-300 py-2 text-xs font-semibold text-gray-500 transition hover:bg-gray-100 disabled:opacity-50"
-            >
-              Admin: Activate boost without payment
-            </button>
-          )}
         </div>
       )}
     </div>

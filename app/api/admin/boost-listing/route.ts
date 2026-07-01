@@ -2,14 +2,14 @@ export const dynamic = 'force-dynamic';
 
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { getModeratorSession } from '@/lib/moderator';
 
 import { logError } from '@/lib/log-error'
 const DAYS: Record<string, number> = { '7day': 7, '30day': 30, '90day': 90 };
 
 export async function POST(req: NextRequest) {
   try {
-    const adminSecret = req.headers.get('x-admin-secret');
-    if (!adminSecret || adminSecret !== process.env.ADMIN_BYPASS_SECRET) {
+    if (!await getModeratorSession()) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 

@@ -1,7 +1,5 @@
 'use client'
 
-import { useRouter } from 'next/navigation'
-import { supabase } from '@/lib/supabase'
 import type { AdminRole } from '@/lib/admin/auth'
 
 interface Props {
@@ -12,12 +10,16 @@ interface Props {
 }
 
 export default function AdminHeader({ email, fullName, role, title }: Props) {
-  const router = useRouter()
   const displayName = fullName ?? email.split('@')[0]
 
   async function handleLogout() {
-    await supabase.auth.signOut()
-    router.replace('/admin/login')
+    // This area's session lives in cookies (set by the @supabase/ssr server
+    // client at login, read by middleware.ts and requireAdmin()) — signing
+    // out must go through a server route using that same client, not
+    // lib/supabase.ts's localStorage-based client, or the cookie session
+    // (and full admin access) stays alive indefinitely.
+    await fetch('/api/admin/auth/logout', { method: 'POST' })
+    window.location.href = '/admin/login'
   }
 
   return (

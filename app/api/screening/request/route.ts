@@ -32,9 +32,23 @@ export async function POST(req: NextRequest) {
 
     const admin = createSupabaseAdmin();
 
-    // Save tenant_email back to application if provided
+    // Verify the listing actually belongs to this landlord before creating
+    // anything against it or touching its applications — listing_id and
+    // application_id both come straight from the client.
+    const { data: ownedListing } = await admin
+      .from('listings')
+      .select('id, landlord_id')
+      .eq('id', listing_id)
+      .single();
+    if (!ownedListing || ownedListing.landlord_id !== user.id) {
+      return NextResponse.json({ error: 'Listing not found' }, { status: 404 });
+    }
+
+    // Save tenant_email back to application if provided — scoped to the
+    // verified listing so a caller can't overwrite another landlord's
+    // application by passing an arbitrary application_id.
     if (application_id && tenant_email) {
-      await admin.from('applications').update({ tenant_email }).eq('id', application_id);
+      await admin.from('applications').update({ tenant_email }).eq('id', application_id).eq('listing_id', listing_id);
     }
 
     // Create screening request

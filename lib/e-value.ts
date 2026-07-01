@@ -1,5 +1,23 @@
 import { createClient } from '@supabase/supabase-js'
-import { getRentEstimate } from './rentcast'
+import { getRentEstimate, RentcastPropertyType } from './rentcast'
+
+// Maps EMLAKIE's internal property_type to RentCast's AVM propertyType enum.
+// Without this, RentCast can't size the comps correctly (e.g. it matched a
+// 2,500 sqft 2bd/2ba townhouse against 1bd studio comps and returned a rent
+// estimate 3x too low) — bedrooms/bathrooms/squareFootage alone aren't enough,
+// the AVM needs the type too. Returns undefined for types RentCast has no
+// clean equivalent for (ADU/JADU), which just omits the param rather than
+// guessing wrong.
+function toRentcastPropertyType(propertyType: string, ownershipType?: string | null): RentcastPropertyType | undefined {
+  switch (propertyType) {
+    case 'house':      return 'Single Family'
+    case 'condo':       return 'Condo'
+    case 'townhouse':   return 'Townhouse'
+    case 'apartment':   return 'Apartment'
+    case 'studio':      return ownershipType === 'condo' ? 'Condo' : 'Apartment'
+    default:            return undefined
+  }
+}
 
 // Property types that always have an individual deed — can be sold as standalone units
 export const ALWAYS_SALEABLE   = ['house', 'condo', 'townhouse'] as const
@@ -244,7 +262,12 @@ export async function calculateEValue(listing: {
     // Too few in-house comps — this is where EMLAKIE's own data is thinnest
     // (new markets, low inventory). Back the estimate with RentCast's
     // licensed nationwide AVM instead of falling through to raw asking price.
-    const rc = listing.address ? await getRentEstimate(listing.address) : null
+    const rc = listing.address ? await getRentEstimate(listing.address, {
+      bedrooms: listing.bedrooms,
+      bathrooms: listing.bathrooms,
+      squareFootage: listing.sqft,
+      propertyType: toRentcastPropertyType(listing.property_type, listing.ownership_type),
+    }) : null
     if (rc?.rent && rc.rent > 0) {
       eRent = roundToNearest(rc.rent, 25)
       dataSource = 'market-data'

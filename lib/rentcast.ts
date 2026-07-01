@@ -7,6 +7,18 @@ function headers(key: string) {
   };
 }
 
+// RentCast's AVM property type enum. Without one of these, RentCast can't
+// tell a 2,500 sqft townhouse from a studio and will match comps for the
+// wrong kind of unit entirely.
+export type RentcastPropertyType = 'Single Family' | 'Condo' | 'Townhouse' | 'Apartment' | 'Manufactured';
+
+export interface RentcastPropertyDetails {
+  bedrooms?: number;
+  bathrooms?: number;
+  squareFootage?: number;
+  propertyType?: RentcastPropertyType;
+}
+
 export interface RentcastValueEstimate {
   price: number | null;
   priceRangeLow: number | null;
@@ -37,13 +49,19 @@ interface AvmResponse {
   comparables?: unknown[];
 }
 
-async function fetchAvm(path: string, address: string): Promise<AvmResponse | null> {
+async function fetchAvm(path: string, address: string, details?: RentcastPropertyDetails): Promise<AvmResponse | null> {
   const key = process.env.RENTCAST_API_KEY;
   if (!key) return null;
 
+  const params = new URLSearchParams({ address });
+  if (details?.bedrooms != null) params.set('bedrooms', String(details.bedrooms));
+  if (details?.bathrooms != null) params.set('bathrooms', String(details.bathrooms));
+  if (details?.squareFootage) params.set('squareFootage', String(details.squareFootage));
+  if (details?.propertyType) params.set('propertyType', details.propertyType);
+
   try {
     const res = await fetch(
-      `${BASE_URL}${path}?address=${encodeURIComponent(address)}`,
+      `${BASE_URL}${path}?${params.toString()}`,
       { headers: headers(key), next: { revalidate: 86400 } }
     );
     if (!res.ok) return null;
@@ -53,9 +71,12 @@ async function fetchAvm(path: string, address: string): Promise<AvmResponse | nu
   }
 }
 
-// Sale price estimate (AVM) for a given address
-export async function getValueEstimate(address: string): Promise<RentcastValueEstimate | null> {
-  const data = await fetchAvm('/avm/value', address);
+// Sale price estimate (AVM) for a given address. Always pass bedrooms/bathrooms/
+// squareFootage/propertyType when known — without them RentCast falls back to
+// whatever it can infer from the address alone, which produces wildly wrong
+// estimates for units it can't size correctly (e.g. multi-unit street addresses).
+export async function getValueEstimate(address: string, details?: RentcastPropertyDetails): Promise<RentcastValueEstimate | null> {
+  const data = await fetchAvm('/avm/value', address, details);
   if (!data) return null;
 
   return {
@@ -68,9 +89,10 @@ export async function getValueEstimate(address: string): Promise<RentcastValueEs
   };
 }
 
-// Monthly rent estimate (AVM) for a given address
-export async function getRentEstimate(address: string): Promise<RentcastRentEstimate | null> {
-  const data = await fetchAvm('/avm/rent/long-term', address);
+// Monthly rent estimate (AVM) for a given address. See getValueEstimate for why
+// `details` matters.
+export async function getRentEstimate(address: string, details?: RentcastPropertyDetails): Promise<RentcastRentEstimate | null> {
+  const data = await fetchAvm('/avm/rent/long-term', address, details);
   if (!data) return null;
 
   return {

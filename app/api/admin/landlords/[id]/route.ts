@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getModeratorSession, adminClient } from '@/lib/moderator';
+import { sendWelcomeEmail } from '@/lib/welcome-email';
 
 import { logError } from '@/lib/log-error'
 
@@ -8,13 +9,30 @@ async function auth() {
   return await getModeratorSession();
 }
 
-// PATCH: suspend or unsuspend a landlord
-// body: { action: 'suspend' | 'unsuspend' }
+// PATCH: suspend, unsuspend, or manually resend the welcome email for a landlord
+// body: { action: 'suspend' | 'unsuspend' | 'resend_welcome' }
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     if (!await auth()) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     const { id } = await params;
     const { action, listing_action, reassign_to } = await req.json();
+
+    if (action === 'resend_welcome') {
+      const sb = adminClient();
+      const { data: profile, error: profileErr } = await sb
+        .from('profiles')
+        .select('display_name, first_name, phone, email')
+        .eq('id', id)
+        .single();
+      if (profileErr || !profile?.email) return NextResponse.json({ error: 'Landlord has no email on file' }, { status: 400 });
+
+      const firstName = profile.first_name ?? profile.display_name?.split(' ')[0] ?? 'there';
+      const profileComplete = !!(profile.first_name && profile.phone);
+      await sendWelcomeEmail({ email: profile.email, firstName, profileComplete });
+      await sb.from('profiles').update({ welcome_sent: true }).eq('id', id);
+
+      return NextResponse.json({ ok: true });
+    }
 
     if (action !== 'suspend' && action !== 'unsuspend') {
       return NextResponse.json({ error: 'Invalid action' }, { status: 400 });

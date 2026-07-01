@@ -7,7 +7,7 @@ export default function Footer() {
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6">
         <div className="flex flex-col gap-8 md:flex-row md:justify-between">
           <div className="max-w-sm">
-            <Logo className="h-7" textClassName="text-xl" />
+            <Logo className="h-7" />
             <p className="mt-3 text-sm text-gray-600">
               The simple way to find your next tenant.
             </p>

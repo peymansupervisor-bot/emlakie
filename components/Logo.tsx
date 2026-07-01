@@ -2,24 +2,19 @@ import Image from 'next/image';
 
 export default function Logo({
   className = 'h-8',
-  textClassName = 'text-2xl',
+  variant = 'green',
 }: {
   className?: string;
-  textClassName?: string;
+  variant?: 'green' | 'white';
 }) {
   return (
-    <span className={`inline-flex items-center gap-2.5 ${className}`}>
-      <Image
-        src="/logo.png"
-        alt=""
-        width={40}
-        height={40}
-        className="h-full w-auto rounded-md"
-        priority
-      />
-      <span className={`${textClassName} font-extrabold tracking-tight text-gray-900 whitespace-nowrap`}>
-        EMLAK<span className="text-brand-600">IE</span>
-      </span>
-    </span>
+    <Image
+      src={`/logo-mark-${variant}.png`}
+      alt="EMLAKIE"
+      width={1276}
+      height={229}
+      className={`w-auto ${className}`}
+      priority
+    />
   );
 }

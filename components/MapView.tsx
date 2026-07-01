@@ -31,19 +31,51 @@ export default function MapView({ listings, activeId, onMarkerClick, drawMode = 
   const mappableRef = useRef(mappable);
   mappableRef.current = mappable;
 
-  const buildIcon = useCallback((price: number, active: boolean, L: any) => {
+  /**
+   * Build a Leaflet divIcon for a price-bubble map marker.
+   *
+   * WCAG 2.1 AA — aria-command-name fix:
+   * Leaflet markers rendered with divIcon receive a focusable DOM element
+   * (tabindex="0") but no accessible name, causing axe to flag them as
+   * aria-command-name violations (one per listing).  We fix this by:
+   *   1. Adding role="button" to the outer wrapper so the element has a
+   *      concrete ARIA role that supports naming.
+   *   2. Adding aria-label with the listing price so keyboard / AT users
+   *      hear a meaningful description when they focus each marker.
+   * The aria-label is injected directly into the HTML string because
+   * Leaflet's divIcon renders via innerHTML.
+   */
+  const buildIcon = useCallback((price: number, active: boolean, L: any, listing?: Pick<Listing, 'address' | 'city' | 'state' | 'bedrooms' | 'property_type'>) => {
     const label = formatPrice(price);
     const bg = active ? '#16a34a' : '#fff';
     const textColor = active ? '#fff' : '#111827';
     const shadow = active ? '0 3px 10px rgba(22,163,74,0.5)' : '0 2px 6px rgba(0,0,0,0.22)';
     const scale = active ? 'scale(1.12)' : 'scale(1)';
-    // Leaf-and-heart pin shape: rounded top-left/top-right/bottom-left like the Emlakie logo, pointed bottom-right tip
+
+    // Build a human-readable accessible label for the marker.
+    // e.g. "2-bedroom apartment in Los Angeles, CA — $2,500/mo"
+    const bedroomPart = listing
+      ? listing.bedrooms === 0
+        ? 'Studio'
+        : `${listing.bedrooms}-bedroom${listing.property_type ? ` ${listing.property_type}` : ''}`
+      : 'Rental';
+    const locationPart = listing
+      ? listing.city
+        ? `in ${listing.city}${listing.state ? `, ${listing.state}` : ''}`
+        : ''
+      : '';
+    const ariaLabel = `${bedroomPart}${locationPart ? ` ${locationPart}` : ''} — ${label}/mo. Click to view listing.`;
+
     return L.divIcon({
       className: '',
       iconAnchor: [14, 36],
       html: `
-        <div style="position:relative;display:inline-block;transform:${scale};transition:all 0.15s ease;cursor:pointer;">
-          <svg width="28" height="36" viewBox="0 0 28 36" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:block;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.25));">
+        <div
+          role="button"
+          aria-label="${ariaLabel.replace(/"/g, '&quot;')}"
+          style="position:relative;display:inline-block;transform:${scale};transition:all 0.15s ease;cursor:pointer;"
+        >
+          <svg width="28" height="36" viewBox="0 0 28 36" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="display:block;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.25));">
             <path d="M14 2C7.373 2 2 7.373 2 14c0 9 12 22 12 22s12-13 12-22C26 7.373 20.627 2 14 2z" fill="${bg}" stroke="${active ? '#16a34a' : '#d1d5db'}" stroke-width="1.5"/>
             <path d="M14 10.5c-0.6-1.2-2-2-3.5-1.8C8.6 9 7.5 10.5 7.5 12c0 3 4 5.5 6.5 7 2.5-1.5 6.5-4 6.5-7 0-1.5-1.1-3-3-3.3C15.9 8.5 14.6 9.3 14 10.5z" fill="${active ? '#fff' : '#16a34a'}"/>
           </svg>
@@ -59,8 +91,24 @@ export default function MapView({ listings, activeId, onMarkerClick, drawMode = 
     });
     current.forEach((listing) => {
       if (!markersRef.current.has(listing.id)) {
-        const marker = L.marker([listing.lat!, listing.lng!], { icon: buildIcon(listing.price, false, L) }).addTo(map);
+        const marker = L.marker([listing.lat!, listing.lng!], {
+          icon: buildIcon(listing.price, false, L, listing),
+          // Provide a keyboard-accessible title for the marker's focus element.
+          // Leaflet sets this as the title attribute on the focusable <div>,
+          // which serves as an additional accessible-name fallback.
+          title: `${listing.address ?? listing.city ?? 'Rental'} — ${formatPrice(listing.price)}/mo`,
+          alt: `${listing.address ?? listing.city ?? 'Rental'} — ${formatPrice(listing.price)}/mo`,
+        }).addTo(map);
         marker.on('click', () => onMarkerClick(listing.id));
+
+        // Keyboard activation: allow Enter/Space on the focused marker element
+        // so keyboard users can trigger the same click handler.
+        marker.on('keypress', (e: KeyboardEvent) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            onMarkerClick(listing.id);
+          }
+        });
+
         markersRef.current.set(listing.id, marker);
       }
     });
@@ -248,7 +296,7 @@ export default function MapView({ listings, activeId, onMarkerClick, drawMode = 
     markersRef.current.forEach((marker, id) => {
       const listing = listings.find((l) => l.id === id);
       if (!listing) return;
-      marker.setIcon(buildIcon(listing.price, id === activeId, L));
+      marker.setIcon(buildIcon(listing.price, id === activeId, L, listing));
     });
     if (activeId) {
       const listing = listings.find((l) => l.id === activeId);
@@ -266,11 +314,20 @@ export default function MapView({ listings, activeId, onMarkerClick, drawMode = 
     <>
       <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
       {drawMode && (
-        <div className="absolute left-1/2 top-3 z-[1000] -translate-x-1/2 rounded-full bg-green-600 px-4 py-1.5 text-xs font-semibold text-white shadow-lg pointer-events-none">
-          Hold & drag to draw your search area
+        <div className="absolute left-1/2 top-3 z-[1000] -translate-x-1/2 rounded-full bg-green-600 px-4 py-1.5 text-xs font-semibold text-white shadow-lg pointer-events-none" aria-live="polite" aria-atomic="true">
+          Hold &amp; drag to draw your search area
         </div>
       )}
-      <div ref={containerRef} className="relative h-full w-full" />
+      {/* role="application" tells assistive technology this region uses
+          custom keyboard interactions (map pan/zoom), so the AT passes
+          keyboard events through rather than intercepting them. The
+          aria-label gives the region a meaningful name. */}
+      <div
+        ref={containerRef}
+        role="application"
+        aria-label="Rental listings map"
+        className="relative h-full w-full"
+      />
     </>
   );
 }

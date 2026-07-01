@@ -49,6 +49,14 @@ export default function LandlordLayout({ children }: { children: React.ReactNode
           headers: { Authorization: `Bearer ${token}` },
         }).catch(() => {}); // fire-and-forget, non-blocking
 
+        // Send the welcome email as soon as the landlord is authenticated —
+        // don't wait on profile completion, so it reaches them before they
+        // might drop off. /api/welcome is idempotent (guards on welcome_sent).
+        fetch('/api/welcome', {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${token}` },
+        }).catch(() => {});
+
         // Attribute a referral if the landlord arrived via a referral link.
         // Idempotent server-side; clear the code once handed off.
         let ref: string | null = null;

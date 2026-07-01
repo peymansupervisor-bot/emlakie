@@ -49,8 +49,6 @@ export async function updateProfile(payload: { first_name?: string; last_name?: 
     .update(updates)
     .eq('id', user.id);
   if (error) throw new Error(error.message);
-  // Fire welcome email on first profile completion (non-blocking)
-  api('/api/welcome', { method: 'POST' }).catch(() => {});
 }
 
 export async function signInWithOAuth(provider: 'google' | 'facebook' | 'apple'): Promise<void> {

@@ -58,7 +58,8 @@ export async function POST(req: NextRequest) {
       const unsubscribeUrl = `${siteUrl}/api/landlord/news-unsubscribe?token=${p.news_unsubscribe_token}`;
       const html = buildLandlordNewsEmail({ badge, title, bodyHtml, unsubscribeUrl });
       await resend.emails.send({
-        from: 'EMLAKIE Update <update@emlakie.com>',
+        from: 'EMLAKIE Update <noreply@emlakie.com>',
+        replyTo: 'noreply@emlakie.com',
         to: p.email as string,
         subject,
         html,

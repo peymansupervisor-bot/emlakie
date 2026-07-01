@@ -8,6 +8,7 @@ import { deactivateListing, extendListing, getApplications, getMyListing, markRe
 import { Application, LandlordListing } from '@/lib/landlord/types';
 import { formatBaths, formatBeds, formatPrice, formatSqft } from '@/lib/format';
 import PhotoManager from '@/components/PhotoManager';
+import { MAX_LISTING_EXTENSIONS } from '@/lib/listing-lifecycle';
 
 type Tab = 'overview' | 'inquiries' | 'photos';
 
@@ -76,8 +77,11 @@ export default function PropertyDashboardPage() {
   async function handleExtend() {
     setActionBusy(true);
     try {
-      const updated = await extendListing(id);
-      setListing(updated);
+      await extendListing(id);
+      // Refetch through the mapped getMyListing() response (camelCase fields like
+      // expiresAt/extensionCount) rather than trusting the raw row the extend route
+      // returns, so the expiry badge and remaining-extensions count stay accurate.
+      setListing(await getMyListing(id));
       setActionMsg('Listing extended by 45 days.');
     } catch (e) {
       setActionMsg(e instanceof Error ? e.message : 'Could not extend.');
@@ -150,6 +154,7 @@ export default function PropertyDashboardPage() {
   }
 
   const pending = applications.filter((a) => a.status === 'pending');
+  const extensionsLeft = Math.max(0, MAX_LISTING_EXTENSIONS - (listing.extensionCount ?? 0));
 
   return (
     <div>
@@ -188,10 +193,16 @@ export default function PropertyDashboardPage() {
               className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 transition hover:border-brand-400 hover:text-brand-700">
               Edit listing
             </Link>
-            <button onClick={handleExtend} disabled={actionBusy}
-              className="rounded-lg bg-brand-700 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-800 disabled:opacity-60">
-              Extend 45 days
-            </button>
+            {extensionsLeft > 0 ? (
+              <button onClick={handleExtend} disabled={actionBusy}
+                className="rounded-lg bg-brand-700 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-800 disabled:opacity-60">
+                Extend 45 days <span className="font-normal text-brand-100">({extensionsLeft} left)</span>
+              </button>
+            ) : (
+              <span className="rounded-lg border border-gray-200 bg-gray-50 px-4 py-2 text-sm font-semibold text-gray-500">
+                Off-market — no extensions left
+              </span>
+            )}
             <button onClick={handleMarkRented} disabled={actionBusy}
               className="rounded-lg border border-blue-300 bg-blue-50 px-4 py-2 text-sm font-semibold text-blue-700 transition hover:bg-blue-100 disabled:opacity-60">
               Mark as Rented

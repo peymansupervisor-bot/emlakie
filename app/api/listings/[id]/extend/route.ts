@@ -2,9 +2,11 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createSupabaseWithToken } from '@/lib/supabase-server'
 
 import { logError } from '@/lib/log-error'
+import { LISTING_PERIOD_MS, MAX_LISTING_EXTENSIONS } from '@/lib/listing-lifecycle'
 
 export const dynamic = 'force-dynamic'
-// POST /api/listings/[id]/extend — add 45 days to expires_at
+
+// POST /api/listings/[id]/extend — add 45 days to expires_at, up to MAX_LISTING_EXTENSIONS times
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params
@@ -18,21 +20,32 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     // Get current expires_at
     const { data: listing } = await supabase
       .from('listings')
-      .select('expires_at, status')
+      .select('expires_at, status, extension_count')
       .eq('id', id)
       .eq('landlord_id', user.id)
       .single()
 
     if (!listing) return NextResponse.json({ error: 'Listing not found' }, { status: 404 })
 
+    if ((listing.extension_count ?? 0) >= MAX_LISTING_EXTENSIONS) {
+      return NextResponse.json(
+        { error: 'This listing has used all of its extensions and is permanently off-market. Create a new listing to re-list this property.' },
+        { status: 400 },
+      )
+    }
+
     const base = listing.status === 'expired' || !listing.expires_at
       ? new Date()
       : new Date(listing.expires_at)
-    const newExpiry = new Date(base.getTime() + 45 * 24 * 60 * 60 * 1000)
+    const newExpiry = new Date(base.getTime() + LISTING_PERIOD_MS)
 
     const { data, error } = await supabase
       .from('listings')
-      .update({ expires_at: newExpiry.toISOString(), status: 'active' })
+      .update({
+        expires_at: newExpiry.toISOString(),
+        status: 'active',
+        extension_count: (listing.extension_count ?? 0) + 1,
+      })
       .eq('id', id)
       .eq('landlord_id', user.id)
       .select()

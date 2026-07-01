@@ -8,6 +8,7 @@ import { getOrProvisionVirtualPhone } from '@/lib/twilio'
 import { submitToIndexNow } from '@/lib/indexnow'
 import { stateByAbbr } from '@/lib/states'
 import { qualifyReferralOnFirstListing } from '@/lib/referrals'
+import { LISTING_PERIOD_MS } from '@/lib/listing-lifecycle'
 
 export const dynamic = 'force-dynamic'
 // Route segment config — tells Next.js/Vercel this route needs extended body size
@@ -59,6 +60,7 @@ export async function GET(req: NextRequest) {
     virtual_tour_url: row.virtual_tour_url,
     slug: row.slug,
     expiresAt: row.expires_at,
+    extensionCount: Number(row.extension_count ?? 0),
     section_8_accepted: row.section_8_accepted ?? false,
     furnished: row.furnished ?? false,
     laundry_type: row.laundry_type ?? null,
@@ -201,7 +203,7 @@ export async function POST(req: NextRequest) {
       photos: photoUrls,
       available_date: formData.get('availableFrom') as string || null,
       status: 'active',
-      expires_at: new Date(Date.now() + 45 * 24 * 60 * 60 * 1000).toISOString(),
+      expires_at: new Date(Date.now() + LISTING_PERIOD_MS).toISOString(),
   }
 
   // Retry up to 3 times on unique slug constraint violations (concurrent submissions).

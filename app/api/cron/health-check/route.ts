@@ -428,6 +428,29 @@ async function checkDailyCron(): Promise<CheckResult> {
   }
 }
 
+async function checkExpireListingsCron(): Promise<CheckResult> {
+  try {
+    const sb = sbService();
+    // Only look at rows written by the cron itself (message starts with "Run ").
+    const { data } = await sb
+      .from('system_health')
+      .select('checked_at, message, status')
+      .eq('service', 'Listing Expiration Cron')
+      .like('message', 'Run %')
+      .order('checked_at', { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    if (!data) return { service: 'Listing Expiration Cron', status: 'degraded', message: 'No run on record yet' };
+    const hoursAgo = (Date.now() - new Date(data.checked_at).getTime()) / 3_600_000;
+    if (hoursAgo > 26) return { service: 'Listing Expiration Cron', status: 'down', message: `Last run was ${Math.round(hoursAgo)}h ago — missed a daily run` };
+    const runStatus = (data.status === 'ok' || data.status === 'degraded' || data.status === 'down') ? data.status : 'ok';
+    return { service: 'Listing Expiration Cron', status: runStatus, message: `Last run ${Math.round(hoursAgo)}h ago · ${data.message}` };
+  } catch (e: unknown) {
+    return { service: 'Listing Expiration Cron', status: 'down', message: String(e) };
+  }
+}
+
 // ─── alert email ─────────────────────────────────────────────────────────────
 
 async function sendAlertEmail(failures: CheckResult[]) {
@@ -495,6 +518,7 @@ export async function GET(req: NextRequest) {
       checkADAAudit(),
       checkSEOAudit(),
       checkDailyCron(),
+      checkExpireListingsCron(),
       checkSmartDescriptions(),
       checkIsolationPolicies(),
     ]);

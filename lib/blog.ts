@@ -2807,6 +2807,52 @@ export const posts: Post[] = [
 <p><a href="/rentals/city/bakersfield">Browse current Bakersfield rentals on EMLAKIE</a> — all posted directly by landlords. No broker fees, no commissions, no middlemen.</p>
     `.trim(),
   },
+  {
+    slug: 'la-renter-protections-notice-2026-update',
+    title: "LA's Renter Protections Notice Was Just Updated: What Landlords Need to Know",
+    description: "The City of Los Angeles refreshed its required Renter Protections Notice on July 1, 2026. Here's what changed — new appliance rules under AB 628, a revised rent-stabilization cap, and what you're still required to post.",
+    date: '2026-07-01',
+    category: 'Landlord Tips',
+    readTime: 5,
+    citySlug: 'los-angeles',
+    sources: [
+      { label: 'LAHD — Renter Protections Notice', url: 'https://housing.lacity.gov/protectionsnotice' },
+      { label: 'LAHD — Renter Protections overview', url: 'https://housing.lacity.gov/renter-protections-2' },
+      { label: 'LAHD — RSO Overview', url: 'https://housing.lacity.gov/residents/rso-overview' },
+      { label: 'California Legislative Information — AB 628', url: 'https://leginfo.legislature.ca.gov/faces/billTextClient.xhtml?bill_id=202520260AB628' },
+    ],
+    content: `
+<p>The Los Angeles Housing Department (LAHD) updated its official <strong>Renter Protections Notice</strong> on July 1, 2026. If you own or manage rental property in the City of LA, this is the one-page summary of tenant rights you're required to hand to renters at move-in and post in a common area — and the refreshed version reflects two real changes to the law, not just a formatting update.</p>
+
+<h2>Do you actually have to post this?</h2>
+<p>Yes, if your property is in the City of Los Angeles. Under <strong>Ordinance No. 187737</strong>, LA landlords must provide this renter-rights summary for any tenancy that commenced or was renewed on or after January 27, 2023, and post it somewhere accessible on the property. This applies more broadly than the city's rent-stabilization rules — it's a citywide notice requirement, not limited to rent-controlled buildings.</p>
+
+<h2>What actually changed in this update</h2>
+<h3>1. Working stove and refrigerator are now mandatory (AB 628)</h3>
+<p>Effective January 1, 2026, California's <strong>AB 628</strong> requires landlords to provide and maintain an operational stove and refrigerator in the unit. A unit missing either one is now treated as legally uninhabitable. This applies to new, amended, and renewed leases statewide — it isn't an LA-only rule, but it's now reflected in the city's notice. A small number of housing types (including certain supportive housing) are exempt.</p>
+
+<h3>2. Rent-stabilized increases are capped differently (LARSO amendment)</h3>
+<p>Effective February 2, 2026, the LA Rent Stabilization Ordinance (LARSO) changed how annual increases are calculated for covered units — generally, buildings with 2+ units built before October 1, 1978:</p>
+<ul>
+  <li>The <strong>1% utility surcharge</strong> landlords could previously add for gas and electricity has been eliminated.</li>
+  <li>The <strong>10% increase for an added dependent</strong> on the lease is no longer permitted.</li>
+  <li>Annual increases are capped at up to roughly 3% per 12-month period for covered units.</li>
+</ul>
+<p>If your property isn't RSO-covered (for example, most single-family homes and newer construction), these caps don't apply to you directly — but the notice itself still needs to be posted, since that requirement is citywide.</p>
+
+<h2>What to do this week</h2>
+<ul>
+  <li><strong>Download the current notice</strong> from <a href="https://housing.lacity.gov/protectionsnotice" rel="nofollow noopener" target="_blank">LAHD's Protections Notice page</a> and swap out any older version posted at the property or attached to your lease packet.</li>
+  <li><strong>Check your appliances.</strong> Confirm every unit has a working stove and refrigerator — this is now a habitability issue, not just a nice-to-have.</li>
+  <li><strong>Re-check your math if you're RSO-covered.</strong> If you built a utility surcharge or dependent increase into a rent calculation after February 2, 2026, revisit it.</li>
+  <li><strong>Confirm whether RSO applies to you.</strong> Building age, unit count, and construction date all matter — <a href="https://housing.lacity.gov/residents/rso-overview" rel="nofollow noopener" target="_blank">LAHD's RSO overview</a> is the fastest way to check.</li>
+</ul>
+
+<p class="text-sm"><em>This is general information, not legal advice. Requirements vary by property and change over time — verify your specific obligations with the <a href="https://housing.lacity.gov/" rel="nofollow noopener" target="_blank">LA Housing Department</a> (866-557-7368) or a qualified attorney before acting on it.</em></p>
+
+<p>Managing an LA rental? <a href="/landlords">List it free on EMLAKIE</a> — direct to tenants, no broker fees, with tools built for landlords who want to stay on top of compliance without a management company.</p>
+    `.trim(),
+  },
 ];
 
 export function getPost(slug: string): Post | undefined {

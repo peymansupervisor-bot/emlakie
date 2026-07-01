@@ -31,6 +31,8 @@ function rowToListing(row: Record<string, unknown>): Listing {
     bathrooms: Number(row.bathrooms),
     sqft: Number(row.living_area_sqft ?? row.sqft),
     property_type: row.property_type as Listing['property_type'],
+    ownership_type: row.ownership_type as Listing['ownership_type'],
+    e_rent_override: row.e_rent_override != null ? Number(row.e_rent_override) : null,
     amenities: (row.amenities as string[]) ?? [],
     photos: (row.photos as string[]) ?? [],
     status: row.status as string,

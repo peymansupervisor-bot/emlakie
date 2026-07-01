@@ -244,7 +244,7 @@ export default function Navbar() {
             aria-label="EMLAKIE home"
             className="shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 rounded"
           >
-            <Logo className="h-9" textClassName="text-2xl" />
+            <Logo className="h-9" />
           </Link>
 
           {/* Desktop nav + CTAs — all right-aligned */}

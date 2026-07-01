@@ -16,7 +16,7 @@ export default async function TrendingCities() {
           >
             <span className="text-gray-900">{c.city}</span>
             {c.avgRent > 0 && (
-              <span className="rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-500 transition group-hover:bg-brand-50 group-hover:text-brand-700">
+              <span className="rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-600 transition group-hover:bg-brand-50 group-hover:text-brand-700">
                 avg ${c.avgRent.toLocaleString()}
               </span>
             )}

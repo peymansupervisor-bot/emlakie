@@ -50,12 +50,15 @@ export const metadata: Metadata = {
     googleBot: { index: true, follow: true },
   },
   icons: {
+    // Versioned query param busts browsers' notoriously sticky favicon cache
+    // (they often ignore normal Cache-Control headers for these). Bump ?v=
+    // whenever the icon artwork changes so returning visitors see it.
     icon: [
-      { url: '/favicon-32x32.png', type: 'image/png', sizes: '32x32' },
-      { url: '/favicon.svg', type: 'image/svg+xml' },
-      { url: '/favicon.ico', sizes: 'any', type: 'image/x-icon' },
+      { url: '/favicon-32x32.png?v=2', type: 'image/png', sizes: '32x32' },
+      { url: '/favicon.svg?v=2', type: 'image/svg+xml' },
+      { url: '/favicon.ico?v=2', sizes: 'any', type: 'image/x-icon' },
     ],
-    apple: '/apple-touch-icon.png',
+    apple: '/apple-touch-icon.png?v=2',
   },
 };
 

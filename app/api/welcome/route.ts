@@ -57,6 +57,27 @@ export async function POST(req: NextRequest) {
 
       // Mark welcome email as sent
       await admin.from('profiles').update({ welcome_sent: true }).eq('id', user.id);
+
+      // Notify admin of the new landlord signup
+      try {
+        await resend.emails.send({
+          from: 'EMLAKIE <notifications@emlakie.com>',
+          to: 'peymansupervisor@gmail.com',
+          subject: `New landlord signup: ${firstName}`,
+          html: `
+            <div style="font-family:sans-serif;font-size:14px;color:#111;line-height:1.6;">
+              <p>A new landlord just completed signup on EMLAKIE.</p>
+              <ul>
+                <li><strong>Name:</strong> ${profile.display_name ?? firstName}</li>
+                <li><strong>Email:</strong> ${recipientEmail}</li>
+                <li><strong>User ID:</strong> ${user.id}</li>
+              </ul>
+            </div>
+          `,
+        });
+      } catch (e) {
+        console.error('[welcome] admin notification failed:', e);
+      }
     } catch (e) {
       console.error('[welcome] email failed:', e);
     }

@@ -176,6 +176,10 @@ export async function calculateEValue(listing: {
 
   const sb = supabase()
 
+  // Comps must match property_type — a condo's rent doesn't track a nearby
+  // apartment's, so cross-type matches get excluded at the query level rather
+  // than just deprioritized after the fact (previously an uncommon type with
+  // no same-type inventory nearby would silently comp against unrelated types).
   // 1. Try zip code + exact bedrooms (most precise — same micro-market)
   let comps: { monthly_rent: number; living_area_sqft: number; bedrooms: number; property_type: string }[] = []
   if (listing.zip) {
@@ -184,6 +188,7 @@ export async function calculateEValue(listing: {
       .select('monthly_rent, living_area_sqft, bedrooms, property_type')
       .eq('zip', listing.zip)
       .eq('status', 'active')
+      .eq('property_type', listing.property_type)
       .neq('id', listing.id)
       .eq('bedrooms', listing.bedrooms)
       .limit(50)
@@ -197,6 +202,7 @@ export async function calculateEValue(listing: {
       .select('monthly_rent, living_area_sqft, bedrooms, property_type')
       .eq('zip', listing.zip)
       .eq('status', 'active')
+      .eq('property_type', listing.property_type)
       .neq('id', listing.id)
       .gte('bedrooms', listing.bedrooms - 1)
       .lte('bedrooms', listing.bedrooms + 1)
@@ -211,6 +217,7 @@ export async function calculateEValue(listing: {
       .select('monthly_rent, living_area_sqft, bedrooms, property_type')
       .eq('city', listing.city)
       .eq('status', 'active')
+      .eq('property_type', listing.property_type)
       .neq('id', listing.id)
       .eq('bedrooms', listing.bedrooms)
       .limit(50)
@@ -224,6 +231,7 @@ export async function calculateEValue(listing: {
       .select('monthly_rent, living_area_sqft, bedrooms, property_type')
       .eq('city', listing.city)
       .eq('status', 'active')
+      .eq('property_type', listing.property_type)
       .neq('id', listing.id)
       .gte('bedrooms', listing.bedrooms - 1)
       .lte('bedrooms', listing.bedrooms + 1)
@@ -231,9 +239,7 @@ export async function calculateEValue(listing: {
     comps = wideComps ?? []
   }
 
-  // Prefer same property type if we have enough
-  const sameType = comps.filter((c) => c.property_type === listing.property_type)
-  const workingSet = sameType.length >= 3 ? sameType : comps
+  const workingSet = comps
 
   let prices = workingSet.map((c) => Number(c.monthly_rent)).filter((p) => p > 0)
 

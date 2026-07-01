@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { getModeratorSession, adminClient } from '@/lib/moderator';
 import AdminSignOut from './AdminSignOut';
 import ChangePasswordButton from './ChangePasswordButton';
+import BfcacheRefresh from './BfcacheRefresh';
 
 export const metadata = { title: { absolute: 'Moderator Dashboard — EMLAKIE' }, robots: { index: false } };
 
@@ -51,6 +52,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
 
   return (
     <div className="min-h-screen bg-gray-950 text-white">
+      <BfcacheRefresh />
       <header className="border-b border-gray-800 bg-gray-900">
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
           <div className="flex items-center justify-between py-3">

@@ -238,8 +238,15 @@ export default function MapView({ listings, activeId, onMarkerClick, drawMode = 
 
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return;
+    let cancelled = false;
 
     import('leaflet').then((L) => {
+      // Re-check after the async import resolves: React StrictMode double-invokes
+      // this effect in dev, and the guard above runs before either import settles,
+      // so both invocations can otherwise pass it and each call L.map() on the same
+      // container — Leaflet then throws "Map container is already initialized."
+      if (cancelled || mapRef.current) return;
+
       delete (L.Icon.Default.prototype as any)._getIconUrl;
       L.Icon.Default.mergeOptions({
         iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
@@ -265,6 +272,7 @@ export default function MapView({ listings, activeId, onMarkerClick, drawMode = 
 
     const markers = markersRef.current;
     return () => {
+      cancelled = true;
       mapRef.current?.map.remove();
       mapRef.current = null;
       markers.clear();

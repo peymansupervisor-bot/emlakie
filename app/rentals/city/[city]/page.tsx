@@ -4,9 +4,11 @@ import { notFound } from 'next/navigation';
 import ListingCard from '@/components/ListingCard';
 import SeoLinkGrid from '@/components/SeoLinkGrid';
 import RelatedArticles from '@/components/RelatedArticles';
+import CityAdCard from '@/components/CityAdCard';
 import { getListingsByCity, getTrendingCities } from '@/lib/api';
 import { formatPrice } from '@/lib/format';
 import { getCityContent } from '@/lib/city-content';
+import { getCityAd } from '@/lib/city-ads';
 
 interface Props {
   params: Promise<{ city: string }>;
@@ -60,6 +62,7 @@ export default async function CityPage({ params }: Props) {
   const label = state ? `${city}, ${state}` : city;
   const hasListings = listings.length > 0;
   const content = getCityContent(slug);
+  const cityAd = getCityAd(slug);
 
   const prices = listings.map(l => l.price);
   const avgPrice = hasListings ? Math.round(prices.reduce((a, b) => a + b, 0) / prices.length) : null;
@@ -157,6 +160,9 @@ export default async function CityPage({ params }: Props) {
           ))}
         </section>
       )}
+
+      {/* Sponsored placement */}
+      {cityAd && <CityAdCard ad={cityAd} />}
 
       {/* Listings grid */}
       {hasListings ? (

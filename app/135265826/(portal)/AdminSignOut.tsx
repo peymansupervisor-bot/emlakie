@@ -1,13 +1,14 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 
 export default function AdminSignOut() {
-  const router = useRouter();
   async function handleSignOut() {
     await supabase.auth.signOut();
-    router.replace('/135265826/login');
+    // Full navigation, not router.replace() — guarantees a clean reload of
+    // the current deployment's JS instead of the SPA carrying stale client
+    // router cache/state across sign-out/sign-in cycles in a long-lived tab.
+    window.location.href = '/135265826/login';
   }
   return (
     <button onClick={handleSignOut}

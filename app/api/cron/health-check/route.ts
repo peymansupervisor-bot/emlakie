@@ -307,6 +307,32 @@ async function checkADAAudit(): Promise<CheckResult> {
   }
 }
 
+async function checkSEOAudit(): Promise<CheckResult> {
+  try {
+    const sb = sbService();
+    // Only look at rows written by the audit cron itself (message starts with "Run ").
+    // Rows written by this health check (e.g. "Last audit was Xh ago") are excluded
+    // to prevent a feedback loop where stale health-check rows shadow fresh audit rows.
+    const { data } = await sb
+      .from('system_health')
+      .select('checked_at, message, status')
+      .eq('service', 'SEO Audit')
+      .like('message', 'Run %')
+      .order('checked_at', { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    if (!data) return { service: 'SEO Audit', status: 'degraded', message: 'No audit run on record yet' };
+    const hoursAgo = (Date.now() - new Date(data.checked_at).getTime()) / 3_600_000;
+    if (hoursAgo > 26) return { service: 'SEO Audit', status: 'down', message: `Last audit was ${Math.round(hoursAgo)}h ago — missed a daily run` };
+    // Preserve the original audit status ('ok' = no issues, 'degraded' = issues found, 'down' = cron error)
+    const auditStatus = (data.status === 'ok' || data.status === 'degraded' || data.status === 'down') ? data.status : 'ok';
+    return { service: 'SEO Audit', status: auditStatus, message: `Last audit ${Math.round(hoursAgo)}h ago · ${data.message}` };
+  } catch (e: unknown) {
+    return { service: 'SEO Audit', status: 'down', message: String(e) };
+  }
+}
+
 async function checkIsolationPolicies(): Promise<CheckResult> {
   try {
     // pg_policies is a Postgres system catalog — not accessible via PostgREST.
@@ -467,6 +493,7 @@ export async function GET(req: NextRequest) {
       checkFacebookSignIn(),
       checkPhotoSystem(),
       checkADAAudit(),
+      checkSEOAudit(),
       checkDailyCron(),
       checkSmartDescriptions(),
       checkIsolationPolicies(),

@@ -1,5 +1,4 @@
 import { createClient } from '@supabase/supabase-js'
-import { getRentEstimate } from './rentcast'
 
 // Property types that always have an individual deed — can be sold as standalone units
 export const ALWAYS_SALEABLE   = ['house', 'condo', 'townhouse'] as const
@@ -45,9 +44,6 @@ export interface EValueResult {
   lastRent: number
   propertyType: string
   ownershipType?: string | null
-  // Where eRent came from — lets the UI explain a thin-market estimate
-  // without falling back to "insufficient comparables" language.
-  dataSource: 'local' | 'market-data' | 'asking-price'
 }
 
 const DEFAULT_CAP_RATE = 0.055   // 5.5% — coastal/high-demand markets
@@ -146,7 +142,6 @@ export async function getAreaEValue(city: string, state: string): Promise<AreaEV
 
 export async function calculateEValue(listing: {
   id: string
-  address?: string
   city: string
   state?: string
   zip?: string
@@ -232,34 +227,11 @@ export async function calculateEValue(listing: {
     }
   }
 
-  let eRent: number
-  let dataSource: EValueResult['dataSource']
-  let marketRange: { min: number; max: number } | null = null
-  let marketComparablesCount = 0
-
-  if (prices.length >= 3) {
-    eRent = roundToNearest(median(prices), 25)
-    dataSource = 'local'
-  } else {
-    // Too few in-house comps — this is where EMLAKIE's own data is thinnest
-    // (new markets, low inventory). Back the estimate with RentCast's
-    // licensed nationwide AVM instead of falling through to raw asking price.
-    const rc = listing.address ? await getRentEstimate(listing.address) : null
-    if (rc?.rent && rc.rent > 0) {
-      eRent = roundToNearest(rc.rent, 25)
-      dataSource = 'market-data'
-      marketComparablesCount = rc.comparablesCount
-      if (rc.rentRangeLow && rc.rentRangeHigh) {
-        marketRange = {
-          min: roundToNearest(rc.rentRangeLow, 25),
-          max: roundToNearest(rc.rentRangeHigh, 25),
-        }
-      }
-    } else {
-      eRent = listing.price > 0 ? roundToNearest(listing.price, 25) : 0
-      dataSource = 'asking-price'
-    }
-  }
+  const eRent = prices.length >= 3
+    ? roundToNearest(median(prices), 25)
+    : listing.price > 0
+      ? roundToNearest(listing.price, 25)   // use asking price directly — not enough market data
+      : 0
 
   const capRate = getCapRate(listing.city)
   const sellable = canSellIndividually(listing.property_type, listing.ownership_type)
@@ -267,13 +239,12 @@ export async function calculateEValue(listing: {
     ? roundToNearest((eRent * 12) / capRate, 1000)
     : null
 
-  const priceMin = marketRange ? marketRange.min : prices.length >= 3 ? Math.min(...prices) : eRent * 0.93
-  const priceMax = marketRange ? marketRange.max : prices.length >= 3 ? Math.max(...prices) : eRent * 1.07
+  const priceMin = prices.length >= 3 ? Math.min(...prices) : eRent * 0.93
+  const priceMax = prices.length >= 3 ? Math.max(...prices) : eRent * 1.07
 
   const confidence: EValueResult['confidence'] =
     prices.length >= 10 ? 'high' :
-    prices.length >= 4  ? 'medium' :
-    dataSource === 'market-data' ? 'medium' : 'low'
+    prices.length >= 4  ? 'medium' : 'low'
 
   return {
     eRent,
@@ -281,7 +252,7 @@ export async function calculateEValue(listing: {
     showSale: sellable,
     saleNotApplicableReason: saleNotApplicableReason(listing.property_type, listing.ownership_type),
     confidence,
-    comparablesCount: dataSource === 'market-data' ? marketComparablesCount : workingSet.length,
+    comparablesCount: workingSet.length,
     priceRange: {
       min: roundToNearest(priceMin, 25),
       max: roundToNearest(priceMax, 25),
@@ -290,6 +261,5 @@ export async function calculateEValue(listing: {
     lastRent: listing.price,
     propertyType: listing.property_type,
     ownershipType: listing.ownership_type,
-    dataSource,
   }
 }

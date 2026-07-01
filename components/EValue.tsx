@@ -57,10 +57,8 @@ export default function EValue({ ev }: { ev: EValueResult }) {
             </span>
           </div>
           <p className="mt-0.5 text-sm text-gray-500">
-            {ev.dataSource === 'local'
+            {ev.comparablesCount >= 3
               ? `Automated rental market estimate based on ${ev.comparablesCount} active comparables in this area`
-              : ev.dataSource === 'market-data'
-              ? 'Backed by nationwide market data — EMLAKIE comparables in this area are still growing'
               : 'Based on asking price — insufficient market comparables in this area'}
           </p>
         </div>

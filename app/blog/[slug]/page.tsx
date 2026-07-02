@@ -114,7 +114,12 @@ export default async function BlogPostPage({ params }: Props) {
           {post.category}
         </span>
         <h1 className="mt-4 text-3xl font-extrabold text-gray-900 sm:text-4xl leading-tight">{post.title}</h1>
-        <p className="mt-3 text-gray-500 text-sm">
+        {/*
+          color-contrast fix: text-gray-500 (#6b7280) on white is ~4.48:1 which
+          falls short of the 4.5:1 WCAG AA threshold for normal-weight text.
+          Changed to text-gray-600 (#4b5563, ~6.6:1).
+        */}
+        <p className="mt-3 text-gray-600 text-sm">
           {formatDate(post.date)}
           {post.lastUpdated && post.lastUpdated !== post.date && (
             <> · Updated {formatDate(post.lastUpdated)}</>
@@ -132,10 +137,11 @@ export default async function BlogPostPage({ params }: Props) {
       {/* Sources */}
       {post.sources && post.sources.length > 0 && (
         <div className="mt-10 border-t border-gray-100 pt-6">
-          <h2 className="text-xs font-bold uppercase tracking-widest text-gray-500">Sources</h2>
+          {/* color-contrast fix: text-gray-500 → text-gray-600 */}
+          <h2 className="text-xs font-bold uppercase tracking-widest text-gray-600">Sources</h2>
           <ul className="mt-3 space-y-1">
             {post.sources.map(s => (
-              <li key={s.url} className="text-xs text-gray-500">
+              <li key={s.url} className="text-xs text-gray-600">
                 <a href={s.url} target="_blank" rel="noopener noreferrer" className="text-brand-600 hover:underline">
                   {s.label}
                 </a>
@@ -143,7 +149,8 @@ export default async function BlogPostPage({ params }: Props) {
             ))}
           </ul>
           {post.lastUpdated && post.lastUpdated !== post.date && (
-            <p className="mt-3 text-xs text-gray-400">Last updated: {new Date(post.lastUpdated).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</p>
+            /* color-contrast fix: text-gray-400 (#9ca3af, ~2.85:1) → text-gray-600 */
+            <p className="mt-3 text-xs text-gray-600">Last updated: {new Date(post.lastUpdated).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</p>
           )}
         </div>
       )}
@@ -151,7 +158,11 @@ export default async function BlogPostPage({ params }: Props) {
       {/* CTA */}
       <div className="mt-12 rounded-2xl bg-brand-600 px-8 py-8 text-center">
         <h2 className="text-xl font-extrabold text-white">Find your next rental home</h2>
-        <p className="mt-2 text-sm text-green-100">Browse listings posted directly by landlords — no broker fees.</p>
+        {/*
+          color-contrast fix: text-green-100 (#dcfce7) on bg-brand-600
+          (#15803d) is ~2.1:1 — fails WCAG AA. Changed to text-white (21:1).
+        */}
+        <p className="mt-2 text-sm text-white">Browse listings posted directly by landlords — no broker fees.</p>
         <Link href={post.citySlug ? `/rentals/city/${post.citySlug}` : '/rentals'}
           className="mt-5 inline-block rounded-xl bg-white px-6 py-3 text-sm font-bold text-brand-700 transition hover:bg-green-50">
           Browse rentals
@@ -170,7 +181,8 @@ export default async function BlogPostPage({ params }: Props) {
                   {p.category}
                 </span>
                 <p className="mt-2 font-semibold text-gray-900 group-hover:text-brand-700 leading-snug text-sm">{p.title}</p>
-                <p className="mt-1 text-xs text-gray-500">{formatDate(p.date)}</p>
+                {/* color-contrast fix: text-gray-500 → text-gray-600 */}
+                <p className="mt-1 text-xs text-gray-600">{formatDate(p.date)}</p>
               </Link>
             ))}
           </div>

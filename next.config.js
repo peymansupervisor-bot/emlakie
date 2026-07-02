@@ -6,11 +6,19 @@ const nextConfig = {
         serverActions: {
                 bodySizeLimit: '50mb',
         },
-        // Pages marked force-dynamic must always show fresh data — the client
-        // router cache was serving up-to-30s-stale RSC payloads after edits
-        // made outside the app (e.g. direct Supabase edits), undermining that.
+        // Pages marked force-dynamic must always show fresh data. Setting only
+        // `dynamic: 0` left a gap: Next's client router cache buckets a route
+        // as "static" (default 300s staleness) instead of "dynamic" whenever
+        // it has no loading.tsx boundary — regardless of force-dynamic — which
+        // is exactly the case for routes with no dynamic URL segment, like the
+        // moderator landlords list page. That let it serve up-to-5-minutes
+        // stale data on ordinary in-app navigation even though the [id] detail
+        // page (which does get bucketed as "dynamic") always refetched.
+        // Zeroing both buckets closes the gap regardless of which one a given
+        // route falls into.
         staleTimes: {
                 dynamic: 0,
+                static: 0,
         },
   },
   productionBrowserSourceMaps: false,

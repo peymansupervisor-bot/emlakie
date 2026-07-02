@@ -110,7 +110,12 @@ function LandlordLoginInner() {
     <div className="mt-6">
       <div className="relative mb-4">
         <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-gray-200" /></div>
-        <div className="relative flex justify-center text-sm"><span className="bg-white px-3 text-gray-400">or continue with</span></div>
+        {/*
+          color-contrast fix: "or continue with" was text-gray-400 (#9ca3af)
+          on white — ~2.85:1, fails WCAG AA 4.5:1. Changed to text-gray-600
+          (#4b5563, ~6.6:1).
+        */}
+        <div className="relative flex justify-center text-sm"><span className="bg-white px-3 text-gray-600">or continue with</span></div>
       </div>
       <div className="flex flex-col gap-3">
         <button type="button" disabled={busy} onClick={() => onOAuth('google')}
@@ -138,11 +143,16 @@ function LandlordLoginInner() {
           Continue with Facebook
         </button>
       </div>
-      <p className="mt-4 text-center text-xs text-gray-400">
+      {/*
+        color-contrast fix: legal disclaimer text was text-gray-400 (#9ca3af)
+        on white — ~2.85:1, fails WCAG AA 4.5:1 for normal text.
+        Changed to text-gray-600 (#4b5563, ~6.6:1).
+      */}
+      <p className="mt-4 text-center text-xs text-gray-600">
         By signing in, you agree to our{' '}
-        <a href="/terms" className="underline hover:text-gray-600">Terms of Service</a>{' '}
+        <a href="/terms" className="underline hover:text-gray-800">Terms of Service</a>{' '}
         and{' '}
-        <a href="/privacy" className="underline hover:text-gray-600">Privacy Policy</a>.
+        <a href="/privacy" className="underline hover:text-gray-800">Privacy Policy</a>.
       </p>
     </div>
   );
@@ -164,7 +174,7 @@ function LandlordLoginInner() {
       <button
         type="button"
         onClick={() => setShowPassword((v) => !v)}
-        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-600"
+        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
         aria-label={showPassword ? 'Hide password' : 'Show password'}
       >
         {showPassword ? <EyeOffIcon /> : <EyeIcon />}
@@ -186,6 +196,7 @@ function LandlordLoginInner() {
         <h1 className="mx-auto max-w-2xl text-4xl font-extrabold text-gray-900 sm:text-5xl">
           Rent out your property with ease
         </h1>
+        {/* color-contrast fix: text-gray-600 is already sufficient (~6.6:1) */}
         <p className="mx-auto mt-4 max-w-xl text-lg text-gray-600">
           Post your property for free, get AI-matched applicants, and talk to tenants directly. No listing fees, no commissions.
         </p>
@@ -202,6 +213,7 @@ function LandlordLoginInner() {
               {i + 1}
             </div>
             <h3 className="mt-4 text-lg font-bold text-gray-900">{step.title}</h3>
+            {/* color-contrast fix: text-gray-600 (~6.6:1 on white) */}
             <p className="mt-2 text-gray-600">{step.body}</p>
           </div>
         ))}
@@ -229,16 +241,24 @@ function LandlordLoginInner() {
             <button type="submit" disabled={busy} className={btnClass} style={{ backgroundColor: '#16a34a' }}>
               {busy ? 'Signing in…' : 'Sign in'}
             </button>
-            <p className="text-center text-xs text-gray-400">
+            {/*
+              color-contrast fix: legal disclaimer text was text-gray-400
+              (#9ca3af) on white — ~2.85:1, fails WCAG AA. Changed to
+              text-gray-600 (#4b5563, ~6.6:1).
+            */}
+            <p className="text-center text-xs text-gray-600">
               By signing in, you agree to our{' '}
-              <a href="/terms" className="underline hover:text-gray-600">Terms of Service</a>{' '}
+              <a href="/terms" className="underline hover:text-gray-800">Terms of Service</a>{' '}
               and{' '}
-              <a href="/privacy" className="underline hover:text-gray-600">Privacy Policy</a>.
+              <a href="/privacy" className="underline hover:text-gray-800">Privacy Policy</a>.
             </p>
           </form>
           {error && <p role="alert" className="mt-4 rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700">{error}</p>}
           <SocialButtons />
-          <p className="mt-6 text-center text-sm text-gray-500">
+          {/*
+            color-contrast fix: text-gray-500 → text-gray-600
+          */}
+          <p className="mt-6 text-center text-sm text-gray-600">
             No account?{' '}
             <button onClick={() => { setError(''); setStep('signup'); }}
               className="font-semibold text-green-600 hover:underline">Create one</button>
@@ -250,7 +270,8 @@ function LandlordLoginInner() {
       {step === 'signup' && (
         <>
           <h2 className="text-3xl font-extrabold text-gray-900">Create account</h2>
-          <p className="mt-2 text-gray-500">List your rentals on EMLAKIE for free.</p>
+          {/* color-contrast fix: text-gray-500 → text-gray-600 */}
+          <p className="mt-2 text-gray-600">List your rentals on EMLAKIE for free.</p>
           <form onSubmit={onSignup} className="mt-8 space-y-4">
             <div className="grid grid-cols-2 gap-3">
               <input
@@ -278,16 +299,20 @@ function LandlordLoginInner() {
             <button type="submit" disabled={busy} className={btnClass} style={{ backgroundColor: '#16a34a' }}>
               {busy ? 'Creating account…' : 'Create account'}
             </button>
-            <p className="text-center text-xs text-gray-400">
+            {/*
+              color-contrast fix: text-gray-400 → text-gray-600
+            */}
+            <p className="text-center text-xs text-gray-600">
               By creating an account, you agree to our{' '}
-              <a href="/terms" className="underline hover:text-gray-600">Terms of Service</a>{' '}
+              <a href="/terms" className="underline hover:text-gray-800">Terms of Service</a>{' '}
               and{' '}
-              <a href="/privacy" className="underline hover:text-gray-600">Privacy Policy</a>.
+              <a href="/privacy" className="underline hover:text-gray-800">Privacy Policy</a>.
             </p>
           </form>
           {error && <p role="alert" className="mt-4 rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700">{error}</p>}
           <SocialButtons />
-          <p className="mt-6 text-center text-sm text-gray-500">
+          {/* color-contrast fix: text-gray-500 → text-gray-600 */}
+          <p className="mt-6 text-center text-sm text-gray-600">
             Already have an account?{' '}
             <button onClick={() => { setError(''); setStep('login'); }}
               className="font-semibold text-green-600 hover:underline">Sign in</button>
@@ -299,7 +324,8 @@ function LandlordLoginInner() {
       {step === 'forgot' && (
         <>
           <h2 className="text-3xl font-extrabold text-gray-900">Reset password</h2>
-          <p className="mt-2 text-gray-500">Enter your email and we&apos;ll send you a reset link.</p>
+          {/* color-contrast fix: text-gray-500 → text-gray-600 */}
+          <p className="mt-2 text-gray-600">Enter your email and we&apos;ll send you a reset link.</p>
           <form onSubmit={onForgot} className="mt-8 space-y-4">
             <input id="forgot-email" type="email" value={email} onChange={(e) => setEmail(e.target.value)}
               placeholder="Email address" aria-label="Email address" autoComplete="email" required className={inputClass} />
@@ -308,7 +334,8 @@ function LandlordLoginInner() {
             </button>
           </form>
           {error && <p role="alert" className="mt-4 rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700">{error}</p>}
-          <p className="mt-6 text-center text-sm text-gray-500">
+          {/* color-contrast fix: text-gray-500 → text-gray-600 */}
+          <p className="mt-6 text-center text-sm text-gray-600">
             <button onClick={() => { setError(''); setStep('login'); }}
               className="font-semibold text-green-600 hover:underline">Back to sign in</button>
           </p>
@@ -320,7 +347,8 @@ function LandlordLoginInner() {
         <>
           <div className="flex h-16 w-16 items-center justify-center rounded-full bg-green-100 text-3xl">✉️</div>
           <h2 className="mt-4 text-3xl font-extrabold text-gray-900">Check your email</h2>
-          <p className="mt-2 text-gray-500">
+          {/* color-contrast fix: text-gray-500 → text-gray-600 */}
+          <p className="mt-2 text-gray-600">
             We sent a password reset link to <strong>{email}</strong>. Click the link to set a new password.
           </p>
           <button onClick={() => { setError(''); setStep('login'); }} className="mt-8 font-semibold text-green-600 hover:underline">
@@ -330,7 +358,8 @@ function LandlordLoginInner() {
       )}
 
       <div className="mt-10 border-t border-gray-200 pt-6 text-center">
-        <p className="text-sm text-gray-500">Just want a look around first?</p>
+        {/* color-contrast fix: text-gray-500 → text-gray-600 */}
+        <p className="text-sm text-gray-600">Just want a look around first?</p>
         <button onClick={onDemo} className="mt-2 font-semibold text-green-600 hover:underline">
           Browse listings as a tenant →
         </button>

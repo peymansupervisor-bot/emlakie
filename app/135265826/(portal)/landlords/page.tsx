@@ -4,6 +4,14 @@ import LandlordRowActions from './LandlordRowActions';
 import { fmtPhone } from '@/lib/format-phone';
 
 export const dynamic = 'force-dynamic';
+// force-dynamic marks the route dynamic but doesn't guarantee every fetch()
+// call inside it is treated as no-store — that propagation can fail to
+// reach fetches made via a wrapped/SDK client (e.g. supabase-js), letting
+// Next's Data Cache serve a stale cached response for that specific call
+// even though the surrounding Server Component demonstrably re-executes
+// fresh on every request. This explicitly forces every fetch in this
+// route to skip the Data Cache regardless.
+export const fetchCache = 'force-no-store';
 
 
 interface SearchParams { q?: string }
@@ -141,7 +149,6 @@ export default async function LandlordsPage({ searchParams }: { searchParams: Pr
         <div>
           <h1 className="text-xl font-extrabold text-white">Registered Landlords</h1>
           <p className="text-sm text-gray-500 mt-0.5">{total} account{total !== 1 ? 's' : ''}</p>
-          <p className="text-[10px] text-amber-400 font-mono mt-0.5">DEBUG rendered_at={new Date().toISOString()}</p>
         </div>
         <div className="flex flex-wrap gap-2 items-center">
           <BackfillButton missingCount={missingIdCount} />

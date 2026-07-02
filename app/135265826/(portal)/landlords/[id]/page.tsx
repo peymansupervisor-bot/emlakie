@@ -6,6 +6,8 @@ import EditProfileForm from './EditProfileForm';
 import { fmtPhone } from '@/lib/format-phone';
 
 export const dynamic = 'force-dynamic';
+// See landlords/page.tsx for why this is also needed alongside force-dynamic.
+export const fetchCache = 'force-no-store';
 
 export default async function LandlordProfilePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;

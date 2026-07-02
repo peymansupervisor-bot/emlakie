@@ -7,6 +7,14 @@ import BfcacheRefresh from './BfcacheRefresh';
 
 export const metadata = { title: { absolute: 'Moderator Dashboard — EMLAKIE' }, robots: { index: false } };
 
+// This layout also queries Supabase (nav badge counts) on every request.
+// force-dynamic + fetchCache: 'force-no-store' together guarantee those
+// fetches skip Next's Data Cache — see landlords/page.tsx for why both are
+// needed (force-dynamic alone doesn't reliably propagate no-store into
+// fetches made via a wrapped/SDK client like supabase-js).
+export const dynamic = 'force-dynamic';
+export const fetchCache = 'force-no-store';
+
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const session = await getModeratorSession();
   if (!session) redirect('/135265826/login');

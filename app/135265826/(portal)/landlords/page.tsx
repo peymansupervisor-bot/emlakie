@@ -141,6 +141,7 @@ export default async function LandlordsPage({ searchParams }: { searchParams: Pr
         <div>
           <h1 className="text-xl font-extrabold text-white">Registered Landlords</h1>
           <p className="text-sm text-gray-500 mt-0.5">{total} account{total !== 1 ? 's' : ''}</p>
+          <p className="text-[10px] text-amber-400 font-mono mt-0.5">DEBUG rendered_at={new Date().toISOString()}</p>
         </div>
         <div className="flex flex-wrap gap-2 items-center">
           <BackfillButton missingCount={missingIdCount} />
